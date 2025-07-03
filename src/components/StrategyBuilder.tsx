@@ -22,7 +22,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   });
   
   const [showSummary, setShowSummary] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(isGenerating
   const { toast } = useToast();
 
   // Comprehensive template data for all business types
@@ -270,19 +270,19 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   useEffect(() => {
-    console.log('Template received:', template);
+    console.log('StrategyBuilder - Template received:', template);
+    
     if (template && template.id) {
-      console.log('Loading template data for:', template.id);
+      console.log('StrategyBuilder - Loading template data for:', template.id);
       const templateContent = templateData[template.id];
       if (templateContent) {
-        console.log('Found template content, loading...');
+        console.log('StrategyBuilder - Found template content, loading:', templateContent);
         setStrategy(templateContent);
       } else {
-        console.log('No template content found for:', template.id);
+        console.log('StrategyBuilder - No template content found for:', template.id);
       }
     } else if (template === null) {
-      // Explicitly check for null to indicate "Start from Scratch"
-      console.log('No template - loading blank form');
+      console.log('StrategyBuilder - No template - loading blank form');
       setStrategy({
         businessName: '',
         vision: '',
@@ -306,7 +306,6 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   const handleSave = () => {
-    // Simulate saving to local storage or backend
     localStorage.setItem('current-strategy', JSON.stringify(strategy));
     toast({
       title: "Strategy Saved!",
@@ -316,7 +315,6 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
 
   const handleGenerateSummary = () => {
     setIsGenerating(true);
-    // Simulate AI generation time
     setTimeout(() => {
       setIsGenerating(false);
       setShowSummary(true);
