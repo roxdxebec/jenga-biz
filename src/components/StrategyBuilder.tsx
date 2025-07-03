@@ -271,11 +271,17 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
 
   useEffect(() => {
     console.log('Template received:', template);
-    if (template && template.id && templateData[template.id]) {
+    if (template && template.id) {
       console.log('Loading template data for:', template.id);
-      setStrategy(templateData[template.id]);
-    } else if (!template) {
-      // Reset to empty form for "Start from Scratch"
+      const templateContent = templateData[template.id];
+      if (templateContent) {
+        console.log('Found template content, loading...');
+        setStrategy(templateContent);
+      } else {
+        console.log('No template content found for:', template.id);
+      }
+    } else if (template === null) {
+      // Explicitly check for null to indicate "Start from Scratch"
       console.log('No template - loading blank form');
       setStrategy({
         businessName: '',
@@ -353,6 +359,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
             <div>
               <h1 className="text-xl font-bold text-gray-800">Strategy Builder</h1>
               {template && <p className="text-sm text-gray-600">{template.name} Template</p>}
+              {template === null && <p className="text-sm text-gray-600">Custom Strategy</p>}
             </div>
           </div>
           

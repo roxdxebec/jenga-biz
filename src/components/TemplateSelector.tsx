@@ -1,14 +1,14 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Plus, Target } from 'lucide-react';
+import { ArrowLeft, Plus, Target, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
   const [selectedBusiness, setSelectedBusiness] = useState('');
 
   const businessTypes = [
-    { id: 'custom', name: 'Start from Scratch (Custom Business)' },
     { id: 'online-retail', name: 'Online Retail' },
     { id: 'agribusiness', name: 'Agribusiness' },
     { id: 'mobile-money', name: 'Mobile Money Agent' },
@@ -35,16 +35,17 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
     setSelectedBusiness(businessId);
   };
 
-  const handleGetStarted = () => {
+  const handleUseTemplate = () => {
     if (!selectedBusiness) return;
     
-    if (selectedBusiness === 'custom') {
-      onStartFromScratch();
-    } else {
-      // Pass the full business object with both id and name
-      const selectedTemplate = businessTypes.find(b => b.id === selectedBusiness);
-      onTemplateSelect(selectedTemplate);
-    }
+    const selectedTemplate = businessTypes.find(b => b.id === selectedBusiness);
+    console.log('Selecting template:', selectedTemplate);
+    onTemplateSelect(selectedTemplate);
+  };
+
+  const handleBuildYourOwn = () => {
+    console.log('Starting from scratch');
+    onStartFromScratch();
   };
 
   return (
@@ -61,14 +62,14 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Business Type Selection */}
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Template Selection Card */}
           <Card className="border-2 border-orange-200 shadow-lg">
             <CardHeader className="text-center pb-6">
               <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-2xl text-gray-800 mb-2">Build Your Business Strategy</CardTitle>
+              <CardTitle className="text-2xl text-gray-800 mb-2">Use a Business Template</CardTitle>
               <p className="text-gray-600">Select your business type to get started with a tailored strategy template</p>
             </CardHeader>
             
@@ -92,23 +93,15 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
               </div>
 
               <Button 
-                onClick={handleGetStarted}
+                onClick={handleUseTemplate}
                 disabled={!selectedBusiness}
                 className="w-full h-12 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-lg font-medium"
               >
-                {selectedBusiness === 'custom' ? (
-                  <>
-                    <Plus className="w-5 h-5 mr-2" />
-                    Start from Scratch
-                  </>
-                ) : (
-                  <>
-                    Get Started
-                  </>
-                )}
+                <Sparkles className="w-5 h-5 mr-2" />
+                Use This Template
               </Button>
 
-              {selectedBusiness && selectedBusiness !== 'custom' && (
+              {selectedBusiness && (
                 <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
                   <p className="text-sm text-orange-800">
                     <strong>Selected:</strong> {businessTypes.find(b => b.id === selectedBusiness)?.name}
@@ -118,6 +111,27 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
                   </p>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Build Your Own Card */}
+          <Card className="border-2 border-green-200 shadow-lg">
+            <CardHeader className="text-center pb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Plus className="w-8 h-8 text-white" />
+              </div>
+              <CardTitle className="text-2xl text-gray-800 mb-2">Build Your Own</CardTitle>
+              <p className="text-gray-600">Start with a blank strategy template and customize everything yourself</p>
+            </CardHeader>
+            
+            <CardContent>
+              <Button 
+                onClick={handleBuildYourOwn}
+                className="w-full h-12 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-lg font-medium"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Start from Scratch
+              </Button>
             </CardContent>
           </Card>
 
