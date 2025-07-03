@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,6 +41,7 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
     if (selectedBusiness === 'custom') {
       onStartFromScratch();
     } else {
+      // Pass the full business object with both id and name
       const selectedTemplate = businessTypes.find(b => b.id === selectedBusiness);
       onTemplateSelect(selectedTemplate);
     }

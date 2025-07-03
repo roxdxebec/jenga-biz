@@ -270,8 +270,25 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   useEffect(() => {
-    if (template && templateData[template.id]) {
+    console.log('Template received:', template);
+    if (template && template.id && templateData[template.id]) {
+      console.log('Loading template data for:', template.id);
       setStrategy(templateData[template.id]);
+    } else if (!template) {
+      // Reset to empty form for "Start from Scratch"
+      console.log('No template - loading blank form');
+      setStrategy({
+        businessName: '',
+        vision: '',
+        mission: '',
+        targetMarket: '',
+        revenueModel: '',
+        valueProposition: '',
+        keyPartners: '',
+        marketingApproach: '',
+        operationalNeeds: '',
+        growthGoals: ''
+      });
     }
   }, [template]);
 
