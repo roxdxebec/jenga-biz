@@ -1,74 +1,51 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, Store, Truck, Smartphone, Leaf, Scissors, Camera, Users, Car } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Plus, Target } from 'lucide-react';
+import { useState } from 'react';
 
 const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
-  const businessTemplates = [
-    {
-      id: 'mitumba',
-      name: 'Mitumba Seller',
-      icon: Store,
-      description: 'Second-hand clothing business',
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      id: 'food-vendor',
-      name: 'Food Vendor',
-      icon: Store,
-      description: 'Street food or restaurant business',
-      color: 'from-red-500 to-red-600'
-    },
-    {
-      id: 'boda-boda',
-      name: 'Boda Boda',
-      icon: Car,
-      description: 'Motorcycle taxi service',
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      id: 'mobile-money',
-      name: 'Mobile Money Agent',
-      icon: Smartphone,
-      description: 'Mobile money transfer service',
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      id: 'farmer',
-      name: 'Small-Scale Farmer',
-      icon: Leaf,
-      description: 'Agricultural business',
-      color: 'from-green-400 to-green-500'
-    },
-    {
-      id: 'beauty-salon',
-      name: 'Beauty Salon',
-      icon: Scissors,
-      description: 'Hair and beauty services',
-      color: 'from-pink-500 to-pink-600'
-    },
-    {
-      id: 'content-creator',
-      name: 'Digital Content Creator',
-      icon: Camera,
-      description: 'Social media and digital content',
-      color: 'from-orange-500 to-orange-600'
-    },
-    {
-      id: 'logistics',
-      name: 'Logistics & Delivery',
-      icon: Truck,
-      description: 'Transportation and delivery service',
-      color: 'from-yellow-500 to-yellow-600'
-    },
-    {
-      id: 'community-business',
-      name: 'Community Business',
-      icon: Users,
-      description: 'SACCO, Chama, or group enterprise',
-      color: 'from-indigo-500 to-indigo-600'
-    }
+  const [selectedBusiness, setSelectedBusiness] = useState('');
+
+  const businessTypes = [
+    { id: 'custom', name: 'Start from Scratch (Custom Business)' },
+    { id: 'online-retail', name: 'Online Retail' },
+    { id: 'agribusiness', name: 'Agribusiness' },
+    { id: 'mobile-money', name: 'Mobile Money Agent' },
+    { id: 'cyber-cafe', name: 'Cyber Café' },
+    { id: 'real-estate', name: 'Real Estate Agency' },
+    { id: 'cleaning-services', name: 'Cleaning Services' },
+    { id: 'event-planning', name: 'Event Planning' },
+    { id: 'photography', name: 'Photography & Videography' },
+    { id: 'food-delivery', name: 'Food Delivery Services' },
+    { id: 'mitumba', name: 'Second-Hand Clothing (Mitumba)' },
+    { id: 'beauty-salon', name: 'Beauty Salon & Barber Shop' },
+    { id: 'auto-repair', name: 'Auto Repair Services' },
+    { id: 'boda-boda', name: 'Boda Boda Business' },
+    { id: 'freelance-writing', name: 'Freelance Writing & Content Creation' },
+    { id: 'bakery', name: 'Bakery' },
+    { id: 'tutoring', name: 'Tutoring Services' },
+    { id: 'fitness-training', name: 'Fitness Training' },
+    { id: 'daycare', name: 'Daycare Services' },
+    { id: 'social-media', name: 'Social Media Management' },
+    { id: 'handmade-crafts', name: 'Handmade Crafts' }
   ];
+
+  const handleBusinessSelect = (businessId) => {
+    setSelectedBusiness(businessId);
+  };
+
+  const handleGetStarted = () => {
+    if (!selectedBusiness) return;
+    
+    if (selectedBusiness === 'custom') {
+      onStartFromScratch();
+    } else {
+      const selectedTemplate = businessTypes.find(b => b.id === selectedBusiness);
+      onTemplateSelect(selectedTemplate);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -84,62 +61,84 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack }) => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Start from Scratch Option */}
-        <Card className="mb-8 border-2 border-dashed border-orange-300 hover:border-orange-400 transition-colors">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center">
-                  <Plus className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800">Start from Scratch</h3>
-                  <p className="text-gray-600">Build your strategy from a blank canvas</p>
-                </div>
+        <div className="max-w-2xl mx-auto">
+          {/* Business Type Selection */}
+          <Card className="border-2 border-orange-200 shadow-lg">
+            <CardHeader className="text-center pb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Target className="w-8 h-8 text-white" />
               </div>
-              <Button onClick={onStartFromScratch} variant="outline">
-                Get Started
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <CardTitle className="text-2xl text-gray-800 mb-2">Build Your Business Strategy</CardTitle>
+              <p className="text-gray-600">Select your business type to get started with a tailored strategy template</p>
+            </CardHeader>
+            
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <label htmlFor="business-select" className="text-sm font-medium text-gray-700">
+                  Select a Business Type
+                </label>
+                <Select value={selectedBusiness} onValueChange={handleBusinessSelect}>
+                  <SelectTrigger className="w-full h-12">
+                    <SelectValue placeholder="Choose your business type..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {businessTypes.map((business) => (
+                      <SelectItem key={business.id} value={business.id}>
+                        {business.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        {/* Template Options */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Local Business Templates</h2>
-          <p className="text-gray-600">Pre-built strategies tailored for common African businesses</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {businessTemplates.map((template) => {
-            const IconComponent = template.icon;
-            return (
-              <Card 
-                key={template.id} 
-                className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-                onClick={() => onTemplateSelect(template)}
+              <Button 
+                onClick={handleGetStarted}
+                disabled={!selectedBusiness}
+                className="w-full h-12 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-lg font-medium"
               >
-                <CardHeader className="pb-3">
-                  <div className={`w-12 h-12 bg-gradient-to-r ${template.color} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                    <IconComponent className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-lg">{template.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 text-sm mb-4">{template.description}</p>
-                  <Button 
-                    className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onTemplateSelect(template);
-                    }}
-                  >
-                    Use Template
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+                {selectedBusiness === 'custom' ? (
+                  <>
+                    <Plus className="w-5 h-5 mr-2" />
+                    Start from Scratch
+                  </>
+                ) : (
+                  <>
+                    Get Started
+                  </>
+                )}
+              </Button>
+
+              {selectedBusiness && selectedBusiness !== 'custom' && (
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                  <p className="text-sm text-orange-800">
+                    <strong>Selected:</strong> {businessTypes.find(b => b.id === selectedBusiness)?.name}
+                  </p>
+                  <p className="text-xs text-orange-600 mt-1">
+                    Your strategy builder will be pre-filled with content tailored for this business type.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Info Section */}
+          <div className="mt-8 text-center">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">What you'll get:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+              <div className="bg-white/60 p-4 rounded-lg">
+                <strong>Tailored Content</strong><br />
+                Pre-filled strategy sections specific to your business type
+              </div>
+              <div className="bg-white/60 p-4 rounded-lg">
+                <strong>Local Insights</strong><br />
+                Content designed for African market realities
+              </div>
+              <div className="bg-white/60 p-4 rounded-lg">
+                <strong>AI Summary</strong><br />
+                Professional strategy summary you can save or download
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
