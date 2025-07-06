@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   });
   
   const [showSummary, setShowSummary] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(isGenerating
+  const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
 
   // Comprehensive template data for all business types
