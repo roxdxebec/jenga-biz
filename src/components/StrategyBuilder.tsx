@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import StrategySummary from '@/components/StrategySummary';
 
 const StrategyBuilder = ({ template, onBack, onHome }) => {
+  console.log('StrategyBuilder - Component rendering with template:', template);
+  
   const [strategy, setStrategy] = useState({
     businessName: '',
     vision: '',
@@ -271,19 +272,26 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   useEffect(() => {
-    console.log('StrategyBuilder - Template received:', template);
+    console.log('StrategyBuilder - useEffect triggered with template:', template);
+    console.log('StrategyBuilder - Template type:', typeof template);
+    console.log('StrategyBuilder - Template is null?', template === null);
+    console.log('StrategyBuilder - Template has id?', template?.id);
     
     if (template && template.id) {
-      console.log('StrategyBuilder - Loading template data for:', template.id);
+      console.log('StrategyBuilder - Processing template with id:', template.id);
       const templateContent = templateData[template.id];
+      console.log('StrategyBuilder - Found template content:', templateContent);
+      
       if (templateContent) {
-        console.log('StrategyBuilder - Found template content, loading:', templateContent);
+        console.log('StrategyBuilder - Setting strategy with template content');
         setStrategy(templateContent);
+        console.log('StrategyBuilder - Strategy updated successfully');
       } else {
-        console.log('StrategyBuilder - No template content found for:', template.id);
+        console.log('StrategyBuilder - No template content found for id:', template.id);
+        console.log('StrategyBuilder - Available template ids:', Object.keys(templateData));
       }
     } else if (template === null) {
-      console.log('StrategyBuilder - No template - loading blank form');
+      console.log('StrategyBuilder - Loading blank form for custom strategy');
       setStrategy({
         businessName: '',
         vision: '',
@@ -296,10 +304,14 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         operationalNeeds: '',
         growthGoals: ''
       });
+      console.log('StrategyBuilder - Blank strategy loaded');
+    } else {
+      console.log('StrategyBuilder - Template is undefined or invalid:', template);
     }
   }, [template]);
 
   const handleInputChange = (field, value) => {
+    console.log('StrategyBuilder - Input changed:', field, '=', value);
     setStrategy(prev => ({
       ...prev,
       [field]: value
@@ -307,6 +319,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   const handleSave = () => {
+    console.log('StrategyBuilder - Saving strategy:', strategy);
     localStorage.setItem('current-strategy', JSON.stringify(strategy));
     toast({
       title: "Strategy Saved!",
@@ -315,6 +328,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   const handleGenerateSummary = () => {
+    console.log('StrategyBuilder - Generating summary for strategy:', strategy);
     setIsGenerating(true);
     setTimeout(() => {
       setIsGenerating(false);
@@ -335,7 +349,11 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
     { key: 'growthGoals', label: 'Growth Goals', type: 'textarea' }
   ];
 
+  console.log('StrategyBuilder - About to render with showSummary:', showSummary);
+  console.log('StrategyBuilder - Current strategy state:', strategy);
+
   if (showSummary) {
+    console.log('StrategyBuilder - Rendering StrategySummary component');
     return (
       <StrategySummary 
         strategy={strategy}
@@ -344,6 +362,8 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       />
     );
   }
+
+  console.log('StrategyBuilder - Rendering main form with sections:', sections.length);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -379,31 +399,34 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         <div className="max-w-4xl mx-auto">
           {/* Strategy Form */}
           <div className="space-y-6">
-            {sections.map((section) => (
-              <Card key={section.key} className="border-orange-200">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-gray-800">{section.label}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {section.type === 'input' ? (
-                    <Input
-                      value={strategy[section.key]}
-                      onChange={(e) => handleInputChange(section.key, e.target.value)}
-                      placeholder={`Enter your ${section.label.toLowerCase()}`}
-                      className="w-full"
-                    />
-                  ) : (
-                    <Textarea
-                      value={strategy[section.key]}
-                      onChange={(e) => handleInputChange(section.key, e.target.value)}
-                      placeholder={`Describe your ${section.label.toLowerCase()}`}
-                      className="w-full min-h-[100px]"
-                      rows={4}
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+            {sections.map((section) => {
+              console.log('StrategyBuilder - Rendering section:', section.key, 'with value:', strategy[section.key]);
+              return (
+                <Card key={section.key} className="border-orange-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg text-gray-800">{section.label}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {section.type === 'input' ? (
+                      <Input
+                        value={strategy[section.key]}
+                        onChange={(e) => handleInputChange(section.key, e.target.value)}
+                        placeholder={`Enter your ${section.label.toLowerCase()}`}
+                        className="w-full"
+                      />
+                    ) : (
+                      <Textarea
+                        value={strategy[section.key]}
+                        onChange={(e) => handleInputChange(section.key, e.target.value)}
+                        placeholder={`Describe your ${section.label.toLowerCase()}`}
+                        className="w-full min-h-[100px]"
+                        rows={4}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Action Buttons */}
