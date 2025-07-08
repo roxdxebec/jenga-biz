@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import TemplateSelector from '@/components/TemplateSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
-import CustomerPersonaBuilder from '@/components/CustomerPersonaBuilder';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('home');
@@ -34,21 +33,6 @@ const Index = () => {
     setCurrentView('home');
     setSelectedTemplate(null);
   };
-
-  const handlePersonaBuilder = () => {
-    console.log('Index - Opening persona builder');
-    setCurrentView('persona');
-  };
-
-  // Customer Persona Builder View
-  if (currentView === 'persona') {
-    return (
-      <CustomerPersonaBuilder
-        onBack={handleBackToHome}
-        isPro={false} // Set to true for Pro users
-      />
-    );
-  }
 
   // Template Selector View
   if (currentView === 'templates') {
@@ -92,19 +76,13 @@ const Index = () => {
             >
               Build Strategy
             </button>
-            <button
-              onClick={handlePersonaBuilder}
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
-            >
-              Build Customer Persona
-            </button>
           </div>
         </div>
       </div>
 
       {/* Features Section */}
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Business Templates</h3>
             <p className="text-gray-600">Choose from 20+ pre-built templates for popular African businesses</p>
@@ -116,10 +94,6 @@ const Index = () => {
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Local Insights</h3>
             <p className="text-gray-600">Content designed specifically for African market realities</p>
-          </div>
-          <div className="bg-white/60 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">AI Summary</h3>
-            <p className="text-gray-600">Generate professional strategy summaries you can save or download</p>
           </div>
         </div>
       </div>
