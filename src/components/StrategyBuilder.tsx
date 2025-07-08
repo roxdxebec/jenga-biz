@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import StrategySummary from '@/components/StrategySummary';
 import CustomerPersonaSection from '@/components/CustomerPersonaSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
+import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 
 const StrategyBuilder = ({ template, onBack, onHome }) => {
   console.log('StrategyBuilder - Component rendering with template:', template);
@@ -439,6 +441,11 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
           {/* Business Milestones Section */}
           <div className="mt-12">
             <BusinessMilestonesSection isPro={false} strategyData={strategy} />
+          </div>
+
+          {/* Monthly Revenue Section */}
+          <div className="mt-12">
+            <MonthlyRevenueSection isPro={false} strategyData={strategy} />
           </div>
 
           {/* Action Buttons */}
