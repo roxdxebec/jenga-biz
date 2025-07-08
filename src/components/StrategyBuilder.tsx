@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Save, Download, Eye, Wand2, Home } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import StrategySummary from '@/components/StrategySummary';
+import CustomerPersonaSection from '@/components/CustomerPersonaSection';
 
 const StrategyBuilder = ({ template, onBack, onHome }) => {
   console.log('StrategyBuilder - Component rendering with template:', template);
@@ -427,6 +428,11 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
                 </Card>
               );
             })}
+          </div>
+
+          {/* Customer Persona Section */}
+          <div className="mt-12">
+            <CustomerPersonaSection isPro={false} strategyData={strategy} />
           </div>
 
           {/* Action Buttons */}
