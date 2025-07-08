@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import TemplateSelector from '@/components/TemplateSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
+import CustomerPersonaBuilder from '@/components/CustomerPersonaBuilder';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('home');
@@ -33,6 +34,21 @@ const Index = () => {
     setCurrentView('home');
     setSelectedTemplate(null);
   };
+
+  const handlePersonaBuilder = () => {
+    console.log('Index - Opening persona builder');
+    setCurrentView('persona');
+  };
+
+  // Customer Persona Builder View
+  if (currentView === 'persona') {
+    return (
+      <CustomerPersonaBuilder
+        onBack={handleBackToHome}
+        isPro={false} // Set to true for Pro users
+      />
+    );
+  }
 
   // Template Selector View
   if (currentView === 'templates') {
@@ -74,7 +90,13 @@ const Index = () => {
               onClick={() => setCurrentView('templates')}
               className="px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              Get Started
+              Build Strategy
+            </button>
+            <button
+              onClick={handlePersonaBuilder}
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+            >
+              Build Customer Persona
             </button>
           </div>
         </div>
@@ -82,10 +104,14 @@ const Index = () => {
 
       {/* Features Section */}
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Business Templates</h3>
             <p className="text-gray-600">Choose from 20+ pre-built templates for popular African businesses</p>
+          </div>
+          <div className="bg-white/60 p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Customer Personas</h3>
+            <p className="text-gray-600">Build detailed customer profiles to better understand your target market</p>
           </div>
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Local Insights</h3>
