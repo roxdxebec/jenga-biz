@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Lock, Crown, TrendingUp, Plus, DollarSign, Edit, Save, X } from 'lucide-react';
+import { TrendingUp, Plus, DollarSign, Edit, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -20,9 +19,10 @@ interface RevenueEntry {
 interface MonthlyRevenueSectionProps {
   isPro?: boolean;
   strategyData?: any;
+  language?: string;
 }
 
-const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRevenueSectionProps) => {
+const MonthlyRevenueSection = ({ isPro = true, strategyData = null, language = 'en' }: MonthlyRevenueSectionProps) => {
   const [revenueData, setRevenueData] = useState<RevenueEntry[]>([
     {
       id: '1',
@@ -48,15 +48,83 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
   const { toast } = useToast();
 
-  // Sample data for free users
-  const sampleData = [
-    { month: 'Jan', revenue: 2500, notes: 'Starting small' },
-    { month: 'Feb', revenue: 4200, notes: 'Growing steadily' },
-    { month: 'Mar', revenue: 6800, notes: 'Marketing boost' },
-    { month: 'Apr', revenue: 8500, notes: 'New customers' },
-    { month: 'May', revenue: 11200, notes: 'Peak season' },
-    { month: 'Jun', revenue: 9800, notes: 'Seasonal dip' }
-  ];
+  // Translation object
+  const translations = {
+    en: {
+      title: 'Monthly Revenue Tracker',
+      subtitle: 'Monitor your business growth and identify revenue trends.',
+      revenueOverview: 'Revenue Overview',
+      addMonth: 'Add Month',
+      lineChart: 'Line Chart',
+      barChart: 'Bar Chart',
+      latestMonth: 'Latest Month',
+      growthRate: 'Growth Rate',
+      revenueEntries: 'Revenue Entries',
+      aiInsight: 'AI Growth Insight',
+      revenueAmount: 'Revenue amount',
+      monthNotes: 'Add notes about this month...',
+      insightFast: 'Looks like you\'re growing fast! Consider increasing prices or exploring new channels.',
+      insightSteady: 'Steady growth is great! Focus on customer retention and referrals.',
+      insightDip: 'Revenue dipped this month. Review your marketing strategy and customer feedback.',
+      insightDefault: 'Track your revenue consistently to identify patterns and opportunities.'
+    },
+    sw: {
+      title: 'Kifuatiliaji cha Mapato ya Kila Mwezi',
+      subtitle: 'Fuatilia ukuaji wa biashara yako na kutambua mielekeo ya mapato.',
+      revenueOverview: 'Muhtasari wa Mapato',
+      addMonth: 'Ongeza Mwezi',
+      lineChart: 'Chati ya Mstari',
+      barChart: 'Chati ya Baa',
+      latestMonth: 'Mwezi wa Hivi Karibuni',
+      growthRate: 'Kiwango cha Ukuaji',
+      revenueEntries: 'Maingizo ya Mapato',
+      aiInsight: 'Ufahamu wa Ukuaji wa AI',
+      revenueAmount: 'Kiasi cha mapato',
+      monthNotes: 'Ongeza maelezo kuhusu mwezi huu...',
+      insightFast: 'Inaonekana unakua haraka! Fikiria kuongeza bei au kuchunguza njia mpya.',
+      insightSteady: 'Ukuaji wa kawaida ni mzuri! Zingatia uhifadhi wa wateja na marejesho.',
+      insightDip: 'Mapato yameshuka mwezi huu. Kagua mkakati wako wa uuzaji na maoni ya wateja.',
+      insightDefault: 'Fuatilia mapato yako kwa uongozi ili kutambua mifumo na fursa.'
+    },
+    ar: {
+      title: 'متتبع الإيرادات الشهرية',
+      subtitle: 'راقب نمو أعمالك وحدد اتجاهات الإيرادات.',
+      revenueOverview: 'نظرة عامة على الإيرادات',
+      addMonth: 'إضافة شهر',
+      lineChart: 'مخطط خطي',
+      barChart: 'مخطط بياني',
+      latestMonth: 'أحدث شهر',
+      growthRate: 'معدل النمو',
+      revenueEntries: 'إدخالات الإيرادات',
+      aiInsight: 'رؤية النمو بالذكاء الاصطناعي',
+      revenueAmount: 'مبلغ الإيرادات',
+      monthNotes: 'أضف ملاحظات حول هذا الشهر...',
+      insightFast: 'يبدو أنك تنمو بسرعة! فكر في زيادة الأسعار أو استكشاف قنوات جديدة.',
+      insightSteady: 'النمو المستقر رائع! ركز على الاحتفاظ بالعملاء والإحالات.',
+      insightDip: 'انخفضت الإيرادات هذا الشهر. راجع استراتيجية التسويق وتعليقات العملاء.',
+      insightDefault: 'تتبع إيراداتك باستمرار لتحديد الأنماط والفرص.'
+    },
+    fr: {
+      title: 'Suivi des Revenus Mensuels',
+      subtitle: 'Surveillez la croissance de votre entreprise et identifiez les tendances de revenus.',
+      revenueOverview: 'Aperçu des Revenus',
+      addMonth: 'Ajouter un Mois',
+      lineChart: 'Graphique Linéaire',
+      barChart: 'Graphique en Barres',
+      latestMonth: 'Dernier Mois',
+      growthRate: 'Taux de Croissance',
+      revenueEntries: 'Entrées de Revenus',
+      aiInsight: 'Insight de Croissance IA',
+      revenueAmount: 'Montant des revenus',
+      monthNotes: 'Ajoutez des notes sur ce mois...',
+      insightFast: 'Il semble que vous grandissiez rapidement ! Considérez augmenter les prix ou explorer de nouveaux canaux.',
+      insightSteady: 'Une croissance stable c\'est génial ! Concentrez-vous sur la rétention client et les références.',
+      insightDip: 'Les revenus ont chuté ce mois-ci. Révisez votre stratégie marketing et les commentaires clients.',
+      insightDefault: 'Suivez vos revenus de manière cohérente pour identifier les modèles et opportunités.'
+    }
+  };
+
+  const t = translations[language] || translations.en;
 
   const chartConfig = {
     revenue: {
@@ -65,21 +133,11 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
     },
   };
 
-  const currentData = isPro ? revenueData : sampleData;
-  const latestRevenue = currentData[currentData.length - 1]?.revenue || 0;
-  const previousRevenue = currentData[currentData.length - 2]?.revenue || 0;
+  const latestRevenue = revenueData[revenueData.length - 1]?.revenue || 0;
+  const previousRevenue = revenueData[revenueData.length - 2]?.revenue || 0;
   const growthRate = previousRevenue > 0 ? ((latestRevenue - previousRevenue) / previousRevenue * 100).toFixed(1) : 0;
 
   const addRevenueEntry = () => {
-    if (!isPro) {
-      toast({
-        title: "Upgrade Required",
-        description: "Upgrade to Strategy Grid Pro to track your real business revenue.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const currentMonth = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     const newEntry: RevenueEntry = {
       id: Date.now().toString(),
@@ -102,26 +160,16 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
     setRevenueData(revenueData.filter(entry => entry.id !== id));
   };
 
-  const handleUpgrade = () => {
-    toast({
-      title: "Upgrade Required",
-      description: "Upgrade to Strategy Grid Pro to track your real business revenue and get AI insights.",
-      variant: "destructive",
-    });
-  };
-
   const getAIInsight = () => {
-    if (!isPro) return null;
-    
     const growth = parseFloat(growthRate.toString());
     if (growth > 20) {
-      return "Looks like you're growing fast! Consider increasing prices or exploring new channels.";
+      return t.insightFast;
     } else if (growth > 0) {
-      return "Steady growth is great! Focus on customer retention and referrals.";
+      return t.insightSteady;
     } else if (growth < -10) {
-      return "Revenue dipped this month. Review your marketing strategy and customer feedback.";
+      return t.insightDip;
     }
-    return "Track your revenue consistently to identify patterns and opportunities.";
+    return t.insightDefault;
   };
 
   return (
@@ -129,10 +177,10 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
       {/* Section Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Monthly Revenue Tracker
+          {t.title}
         </h2>
         <p className="text-gray-600">
-          Monitor your business growth and identify revenue trends.
+          {t.subtitle}
         </p>
       </div>
 
@@ -142,59 +190,34 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
               <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-              Revenue Overview
-              {!isPro && (
-                <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-700">
-                  <Crown className="w-3 h-3 mr-1" />
-                  Pro Feature
-                </Badge>
-              )}
+              {t.revenueOverview}
             </div>
-            {isPro && (
-              <div className="flex items-center space-x-2">
-                <Button
-                  onClick={() => setChartType(chartType === 'line' ? 'bar' : 'line')}
-                  size="sm"
-                  variant="outline"
-                >
-                  {chartType === 'line' ? 'Bar Chart' : 'Line Chart'}
-                </Button>
-                <Button
-                  onClick={addRevenueEntry}
-                  size="sm"
-                  variant="outline"
-                  className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Month
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={() => setChartType(chartType === 'line' ? 'bar' : 'line')}
+                size="sm"
+                variant="outline"
+              >
+                {chartType === 'line' ? t.barChart : t.lineChart}
+              </Button>
+              <Button
+                onClick={addRevenueEntry}
+                size="sm"
+                variant="outline"
+                className="text-orange-600 border-orange-300 hover:bg-orange-50"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                {t.addMonth}
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {!isPro && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
-                <div className="text-center">
-                  <Lock className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-gray-600 mb-2">
-                    Upgrade to Strategy Grid Pro to track your real business revenue.
-                  </p>
-                  <Button onClick={handleUpgrade} size="sm" className="bg-gradient-to-r from-orange-500 to-yellow-500">
-                    <Crown className="w-4 h-4 mr-2" />
-                    Upgrade Now
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="h-64 w-full">
             <ChartContainer config={chartConfig}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'line' ? (
-                  <LineChart data={currentData}>
+                  <LineChart data={revenueData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis 
                       dataKey="month" 
@@ -220,7 +243,7 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
                     />
                   </LineChart>
                 ) : (
-                  <BarChart data={currentData}>
+                  <BarChart data={revenueData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis 
                       dataKey="month" 
@@ -253,7 +276,7 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
             <div className="bg-green-50 p-3 rounded-lg">
               <div className="flex items-center">
                 <DollarSign className="w-4 h-4 text-green-600 mr-2" />
-                <span className="text-sm font-medium text-green-800">Latest Month</span>
+                <span className="text-sm font-medium text-green-800">{t.latestMonth}</span>
               </div>
               <p className="text-xl font-bold text-green-900">
                 ${latestRevenue.toLocaleString()}
@@ -262,7 +285,7 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
             <div className="bg-blue-50 p-3 rounded-lg">
               <div className="flex items-center">
                 <TrendingUp className="w-4 h-4 text-blue-600 mr-2" />
-                <span className="text-sm font-medium text-blue-800">Growth Rate</span>
+                <span className="text-sm font-medium text-blue-800">{t.growthRate}</span>
               </div>
               <p className="text-xl font-bold text-blue-900">
                 {growthRate}%
@@ -272,128 +295,101 @@ const MonthlyRevenueSection = ({ isPro = false, strategyData = null }: MonthlyRe
         </CardContent>
       </Card>
 
-      {/* Revenue Entries (Pro Only) */}
-      {isPro && (
-        <Card className="border-orange-200">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <DollarSign className="w-5 h-5 mr-2 text-orange-600" />
-              Revenue Entries
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {revenueData.map((entry) => (
-                <div key={entry.id} className="flex items-center space-x-4 p-3 border rounded-lg">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-4 mb-2">
-                      <div className="w-24">
-                        <span className="text-sm font-medium text-gray-700">{entry.month}</span>
-                      </div>
-                      <div className="flex-1">
-                        {editingEntry === entry.id ? (
-                          <Input
-                            type="number"
-                            value={entry.revenue}
-                            onChange={(e) => updateRevenueEntry(entry.id, 'revenue', parseInt(e.target.value) || 0)}
-                            placeholder="Revenue amount"
-                            className="w-full"
-                          />
-                        ) : (
-                          <span className="text-lg font-semibold text-gray-900">
-                            ${entry.revenue.toLocaleString()}
-                          </span>
-                        )}
-                      </div>
+      {/* Revenue Entries */}
+      <Card className="border-orange-200">
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <DollarSign className="w-5 h-5 mr-2 text-orange-600" />
+            {t.revenueEntries}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {revenueData.map((entry) => (
+              <div key={entry.id} className="flex items-center space-x-4 p-3 border rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-4 mb-2">
+                    <div className="w-24">
+                      <span className="text-sm font-medium text-gray-700">{entry.month}</span>
                     </div>
-                    {editingEntry === entry.id ? (
-                      <Textarea
-                        value={entry.notes}
-                        onChange={(e) => updateRevenueEntry(entry.id, 'notes', e.target.value)}
-                        placeholder="Add notes about this month..."
-                        className="w-full"
-                        rows={2}
-                      />
-                    ) : (
-                      entry.notes && (
-                        <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
-                      )
-                    )}
+                    <div className="flex-1">
+                      {editingEntry === entry.id ? (
+                        <Input
+                          type="number"
+                          value={entry.revenue}
+                          onChange={(e) => updateRevenueEntry(entry.id, 'revenue', parseInt(e.target.value) || 0)}
+                          placeholder={t.revenueAmount}
+                          className="w-full"
+                        />
+                      ) : (
+                        <span className="text-lg font-semibold text-gray-900">
+                          ${entry.revenue.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {editingEntry === entry.id ? (
-                      <>
-                        <Button
-                          onClick={() => setEditingEntry(null)}
-                          size="sm"
-                          variant="outline"
-                        >
-                          <Save className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          onClick={() => setEditingEntry(null)}
-                          size="sm"
-                          variant="ghost"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </>
-                    ) : (
+                  {editingEntry === entry.id ? (
+                    <Textarea
+                      value={entry.notes}
+                      onChange={(e) => updateRevenueEntry(entry.id, 'notes', e.target.value)}
+                      placeholder={t.monthNotes}
+                      className="w-full"
+                      rows={2}
+                    />
+                  ) : (
+                    entry.notes && (
+                      <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
+                    )
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  {editingEntry === entry.id ? (
+                    <>
                       <Button
-                        onClick={() => setEditingEntry(entry.id)}
+                        onClick={() => setEditingEntry(null)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <Save className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={() => setEditingEntry(null)}
                         size="sm"
                         variant="ghost"
                       >
-                        <Edit className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                       </Button>
-                    )}
-                  </div>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={() => setEditingEntry(entry.id)}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* AI Insights (Pro Only) */}
-      {isPro && getAIInsight() && (
-        <Card className="border-green-200 bg-green-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <div className="bg-green-100 p-2 rounded-full">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <h4 className="font-medium text-green-800 mb-1">AI Growth Insight</h4>
-                <p className="text-sm text-green-700">{getAIInsight()}</p>
-              </div>
+      {/* AI Insights */}
+      <Card className="border-green-200 bg-green-50">
+        <CardContent className="pt-6">
+          <div className="flex items-start space-x-3">
+            <div className="bg-green-100 p-2 rounded-full">
+              <TrendingUp className="w-5 h-5 text-green-600" />
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Upgrade Message for Free Users */}
-      {!isPro && (
-        <Card className="border-orange-200">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-                <Crown className="w-8 h-8 text-orange-500 mx-auto mb-3" />
-                <p className="text-sm font-medium text-gray-800 mb-3">
-                  Upgrade to Strategy Grid Pro to track your real business revenue and get personalized AI insights.
-                </p>
-                <Button 
-                  onClick={handleUpgrade}
-                  className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
-                >
-                  <Crown className="w-4 h-4 mr-2" />
-                  Upgrade Now
-                </Button>
-              </div>
+            <div>
+              <h4 className="font-medium text-green-800 mb-1">{t.aiInsight}</h4>
+              <p className="text-sm text-green-700">{getAIInsight()}</p>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

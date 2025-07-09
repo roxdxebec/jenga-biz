@@ -1,77 +1,94 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, Edit, Share, Home } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, Home } from 'lucide-react';
+import ShareModal from '@/components/ShareModal';
 
-const StrategySummary = ({ strategy, onBack, onHome }) => {
-  const { toast } = useToast();
+interface StrategySummaryProps {
+  strategy: any;
+  onBack: () => void;
+  onHome: () => void;
+  language?: string;
+}
 
-  const generateAISummary = () => {
-    return `
-**${strategy.businessName} - Strategic Overview**
-
-**Vision & Mission**
-${strategy.businessName} aims to ${strategy.vision.toLowerCase()}. Our mission focuses on ${strategy.mission.toLowerCase()}.
-
-**Market Opportunity**
-We target ${strategy.targetMarket.toLowerCase()}, addressing their need for quality and affordable solutions in the local market.
-
-**Business Model**
-Our revenue strategy includes ${strategy.revenueModel.toLowerCase()}, leveraging both traditional and digital channels common in African markets.
-
-**Competitive Advantage**
-What sets us apart: ${strategy.valueProposition.toLowerCase()}, combined with deep understanding of local customer needs and preferences.
-
-**Partnership Strategy**
-Key collaborations with ${strategy.keyPartners.toLowerCase()} will provide essential support for operations and growth.
-
-**Go-to-Market Approach**
-Our marketing strategy emphasizes ${strategy.marketingApproach.toLowerCase()}, focusing on community engagement and word-of-mouth referrals.
-
-**Operational Foundation**
-Essential requirements include ${strategy.operationalNeeds.toLowerCase()}, ensuring smooth day-to-day operations.
-
-**Growth Roadmap**
-Future expansion plans: ${strategy.growthGoals.toLowerCase()}, building on our initial success and market presence.
-
-**Success Factors**
-This strategy leverages local market knowledge, community relationships, and practical business approaches proven effective in African entrepreneurship contexts. Focus on building trust, maintaining quality, and adapting to customer feedback will be crucial for long-term success.
-    `;
-  };
-
-  const handleDownload = () => {
-    const summaryContent = generateAISummary();
-    const blob = new Blob([summaryContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${strategy.businessName.replace(/\s+/g, '_')}_Strategy.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast({
-      title: "Download Started",
-      description: "Your strategy summary is being downloaded.",
-    });
-  };
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `${strategy.businessName} Strategy`,
-        text: generateAISummary().substring(0, 200) + '...',
-      });
-    } else {
-      navigator.clipboard.writeText(generateAISummary());
-      toast({
-        title: "Copied to Clipboard",
-        description: "Strategy summary copied to clipboard.",
-      });
+const StrategySummary = ({ strategy, onBack, onHome, language = 'en' }: StrategySummaryProps) => {
+  const translations = {
+    en: {
+      strategySummary: 'Strategy Summary',
+      backToBuilder: 'Back to Builder',
+      home: 'Home',
+      businessName: 'Business Name',
+      vision: 'Vision Statement',
+      mission: 'Mission Statement',
+      targetMarket: 'Target Market',
+      revenueModel: 'Revenue Model',
+      valueProposition: 'Unique Value Proposition',
+      keyPartners: 'Key Partners',
+      marketingApproach: 'Marketing Approach',
+      operationalNeeds: 'Operational Needs',
+      growthGoals: 'Growth Goals'
+    },
+    sw: {
+      strategySummary: 'Muhtasari wa Mkakati',
+      backToBuilder: 'Rudi kwa Mjenzi',
+      home: 'Nyumbani',
+      businessName: 'Jina la Biashara',
+      vision: 'Kauli ya Maono',
+      mission: 'Kauli ya Dhumuni',
+      targetMarket: 'Soko la Lengo',
+      revenueModel: 'Mfumo wa Mapato',
+      valueProposition: 'Thamani ya Kipekee',
+      keyPartners: 'Washirika Wakuu',
+      marketingApproach: 'Mbinu za Uuzaji',
+      operationalNeeds: 'Mahitaji ya Uendeshaji',
+      growthGoals: 'Malengo ya Ukuaji'
+    },
+    ar: {
+      strategySummary: 'ملخص الاستراتيجية',
+      backToBuilder: 'العودة إلى المنشئ',
+      home: 'الرئيسية',
+      businessName: 'اسم الشركة',
+      vision: 'بيان الرؤية',
+      mission: 'بيان المهمة',
+      targetMarket: 'السوق المستهدف',
+      revenueModel: 'نموذج الإيرادات',
+      valueProposition: 'اقتراح القيمة الفريدة',
+      keyPartners: 'الشركاء الرئيسيون',
+      marketingApproach: 'نهج التسويق',
+      operationalNeeds: 'الاحتياجات التشغيلية',
+      growthGoals: 'أهداف النمو'
+    },
+    fr: {
+      strategySummary: 'Résumé de la Stratégie',
+      backToBuilder: 'Retour au Constructeur',
+      home: 'Accueil',
+      businessName: 'Nom de l\'Entreprise',
+      vision: 'Déclaration de Vision',
+      mission: 'Déclaration de Mission',
+      targetMarket: 'Marché Cible',
+      revenueModel: 'Modèle de Revenus',
+      valueProposition: 'Proposition de Valeur Unique',
+      keyPartners: 'Partenaires Clés',
+      marketingApproach: 'Approche Marketing',
+      operationalNeeds: 'Besoins Opérationnels',
+      growthGoals: 'Objectifs de Croissance'
     }
   };
+
+  const t = translations[language] || translations.en;
+
+  const sections = [
+    { key: 'businessName', label: t.businessName },
+    { key: 'vision', label: t.vision },
+    { key: 'mission', label: t.mission },
+    { key: 'targetMarket', label: t.targetMarket },
+    { key: 'revenueModel', label: t.revenueModel },
+    { key: 'valueProposition', label: t.valueProposition },
+    { key: 'keyPartners', label: t.keyPartners },
+    { key: 'marketingApproach', label: t.marketingApproach },
+    { key: 'operationalNeeds', label: t.operationalNeeds },
+    { key: 'growthGoals', label: t.growthGoals }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -81,94 +98,37 @@ This strategy leverages local market knowledge, community relationships, and pra
           <div className="flex items-center">
             <Button variant="ghost" onClick={onBack} className="mr-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Editor
+              {t.backToBuilder}
             </Button>
-            <h1 className="text-xl font-bold text-gray-800">Strategy Summary</h1>
+            <h1 className="text-xl font-bold text-gray-800">{t.strategySummary}</h1>
           </div>
           
           <div className="flex items-center space-x-2">
             <Button variant="outline" onClick={onHome}>
               <Home className="w-4 h-4 mr-2" />
-              Home
+              {t.home}
             </Button>
-            <Button variant="outline" onClick={onBack}>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit
-            </Button>
+            <ShareModal strategy={strategy} language={language} />
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* AI Generated Summary */}
-          <Card className="mb-6 border-orange-200">
-            <CardHeader>
-              <CardTitle className="text-2xl text-gray-800 flex items-center">
-                <span className="mr-2">🤖</span>
-                AI-Generated Strategy Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-lg max-w-none">
-                {generateAISummary().split('\n').map((line, index) => {
-                  if (line.startsWith('**') && line.endsWith('**')) {
-                    return (
-                      <h3 key={index} className="text-lg font-semibold text-gray-800 mt-4 mb-2">
-                        {line.replace(/\*\*/g, '')}
-                      </h3>
-                    );
-                  } else if (line.trim()) {
-                    return (
-                      <p key={index} className="text-gray-700 mb-3 leading-relaxed">
-                        {line}
-                      </p>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              onClick={handleDownload}
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download PDF
-            </Button>
-            <Button 
-              onClick={handleShare}
-              variant="outline"
-            >
-              <Share className="w-4 h-4 mr-2" />
-              Share Strategy
-            </Button>
-            <Button 
-              onClick={onBack}
-              variant="outline"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Strategy
-            </Button>
+          <div className="grid gap-6">
+            {sections.map((section) => (
+              <Card key={section.key} className="border-orange-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg text-gray-800">{section.label}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 leading-relaxed">
+                    {strategy[section.key] || 'Not specified'}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-
-          {/* Additional Resources */}
-          <Card className="mt-8 border-green-200 bg-green-50">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-green-800 mb-4">Next Steps</h3>
-              <ul className="list-disc list-inside space-y-2 text-green-700">
-                <li>Review and refine your strategy regularly</li>
-                <li>Start with small pilot tests to validate assumptions</li>
-                <li>Track key metrics and customer feedback</li>
-                <li>Connect with local business networks and SACCOs</li>
-                <li>Consider joining Kuza Catalyst programs for additional support</li>
-              </ul>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

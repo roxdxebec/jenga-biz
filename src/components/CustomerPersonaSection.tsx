@@ -6,10 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Lock, Crown, Users } from 'lucide-react';
+import { Users, Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
+interface CustomerPersonaSectionProps {
+  isPro?: boolean;
+  strategyData?: any;
+  language?: string;
+}
+
+const CustomerPersonaSection = ({ isPro = true, strategyData = null, language = 'en' }: CustomerPersonaSectionProps) => {
   const [selectedPersona, setSelectedPersona] = useState('');
   const [personaData, setPersonaData] = useState({
     name: '',
@@ -22,6 +28,96 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
   });
   
   const { toast } = useToast();
+
+  // Translation object
+  const translations = {
+    en: {
+      title: 'Now define your ideal customer to refine your strategy',
+      subtitle: 'Understanding your customer persona will help tailor your business strategy',
+      selectPersona: 'Select a Customer Persona',
+      choosePlaceholder: 'Choose a persona template or start from scratch',
+      customPersona: 'Start from Scratch (Custom Persona)',
+      budgetConscious: 'Budget-Conscious Buyer',
+      aspirationalPro: 'Aspirational Middle-Income Professional',
+      digitalNative: 'Informed Digital Native',
+      traditionalShopper: 'Traditional Shopper',
+      personaDetails: 'Persona Details',
+      name: 'Name (Optional)',
+      namePlaceholder: 'e.g., Sarah the Budget Shopper',
+      ageRange: 'Age Range',
+      incomeLevel: 'Income Level',
+      topValues: 'Top 3 Values',
+      behaviorSummary: 'Customer Behavior Summary',
+      behaviorPlaceholder: 'One-sentence summary of this customer\'s behavior patterns...',
+      strategicInsight: 'AI Strategic Insight',
+      insightText: 'Strategic insights and personalized recommendations tailored specifically for this customer persona will appear here. Get detailed advice on how to position your product, what messaging resonates, and which channels work best...'
+    },
+    sw: {
+      title: 'Sasa fafanua mteja wako bora ili kuboresha mkakati wako',
+      subtitle: 'Kuelewa umbo la mteja wako kutasaidia kupanga mkakati wa biashara yako',
+      selectPersona: 'Chagua Umbo la Mteja',
+      choosePlaceholder: 'Chagua kiolezo cha umbo au anza kutoka mwanzo',
+      customPersona: 'Anza Kutoka Mwanzo (Umbo la Kawaida)',
+      budgetConscious: 'Mnunuzi Mwenye Uongozi wa Bajeti',
+      aspirationalPro: 'Mtaalamu wa Kati Mwenye Malengo',
+      digitalNative: 'Mzawa wa Kidijitali Mwenye Ujuzi',
+      traditionalShopper: 'Mnunuzi wa Kitamaduni',
+      personaDetails: 'Maelezo ya Umbo',
+      name: 'Jina (Si Lazima)',
+      namePlaceholder: 'k.m., Sarah Mnunuzi wa Bajeti',
+      ageRange: 'Kipimo cha Umri',
+      incomeLevel: 'Kiwango cha Mapato',
+      topValues: 'Maadili 3 Bora',
+      behaviorSummary: 'Muhtasari wa Tabia za Mteja',
+      behaviorPlaceholder: 'Muhtasari wa sentensi moja wa mifumo ya tabia za mteja huyu...',
+      strategicInsight: 'Maarifa ya Kimkakati ya AI',
+      insightText: 'Maarifa ya kimkakati na mapendekezo ya kibinafsi yaliyopangwa maalum kwa umbo hili la mteja yataonekana hapa. Pata ushauri wa kina kuhusu jinsi ya kuweka bidhaa yako, ujumbe upi unaowavuta, na njia zipi zinafanya kazi vizuri zaidi...'
+    },
+    ar: {
+      title: 'الآن حدد عميلك المثالي لتحسين استراتيجيتك',
+      subtitle: 'فهم شخصية العميل سيساعد في تخصيص استراتيجية عملك',
+      selectPersona: 'اختر شخصية العميل',
+      choosePlaceholder: 'اختر قالب شخصية أو ابدأ من الصفر',
+      customPersona: 'ابدأ من الصفر (شخصية مخصصة)',
+      budgetConscious: 'المشتري الواعي بالميزانية',
+      aspirationalPro: 'المحترف الطموح متوسط الدخل',
+      digitalNative: 'الرقمي المطلع',
+      traditionalShopper: 'المتسوق التقليدي',
+      personaDetails: 'تفاصيل الشخصية',
+      name: 'الاسم (اختياري)',
+      namePlaceholder: 'مثال: سارة المتسوقة الموفرة',
+      ageRange: 'الفئة العمرية',
+      incomeLevel: 'مستوى الدخل',
+      topValues: 'أهم 3 قيم',
+      behaviorSummary: 'ملخص سلوك العميل',
+      behaviorPlaceholder: 'ملخص من جملة واحدة لأنماط سلوك هذا العميل...',
+      strategicInsight: 'رؤية استراتيجية بالذكاء الاصطناعي',
+      insightText: 'الرؤى الاستراتيجية والتوصيات الشخصية المصممة خصيصاً لشخصية العميل هذه ستظهر هنا. احصل على نصائح مفصلة حول كيفية وضع منتجك، والرسائل المؤثرة، والقنوات الأكثر فعالية...'
+    },
+    fr: {
+      title: 'Maintenant définissez votre client idéal pour affiner votre stratégie',
+      subtitle: 'Comprendre votre persona client aidera à adapter votre stratégie commerciale',
+      selectPersona: 'Sélectionner un Persona Client',
+      choosePlaceholder: 'Choisissez un modèle de persona ou commencez de zéro',
+      customPersona: 'Commencer de Zéro (Persona Personnalisé)',
+      budgetConscious: 'Acheteur Soucieux du Budget',
+      aspirationalPro: 'Professionnel Ambitieux à Revenu Moyen',
+      digitalNative: 'Natif Numérique Informé',
+      traditionalShopper: 'Acheteur Traditionnel',
+      personaDetails: 'Détails du Persona',
+      name: 'Nom (Optionnel)',
+      namePlaceholder: 'ex: Sarah l\'Acheteuse Économe',
+      ageRange: 'Tranche d\'Âge',
+      incomeLevel: 'Niveau de Revenus',
+      topValues: 'Top 3 des Valeurs',
+      behaviorSummary: 'Résumé du Comportement Client',
+      behaviorPlaceholder: 'Résumé en une phrase des modèles de comportement de ce client...',
+      strategicInsight: 'Insight Stratégique IA',
+      insightText: 'Les insights stratégiques et recommandations personnalisées adaptées spécifiquement à ce persona client apparaîtront ici. Obtenez des conseils détaillés sur comment positionner votre produit, quels messages résonnent, et quels canaux fonctionnent le mieux...'
+    }
+  };
+
+  const t = translations[language] || translations.en;
 
   const personaTemplates = {
     'budget-conscious': {
@@ -75,16 +171,6 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
     'Value for money', 'Quality', 'Convenience', 'Status', 'Innovation',
     'Tradition', 'Community support', 'Environmental impact', 'Health benefits'
   ];
-  
-  const availablePainPoints = [
-    'Limited budget', 'Time constraints', 'Quality concerns', 'Trust issues',
-    'Delivery problems', 'Payment security', 'Limited options', 'Social pressure'
-  ];
-
-  const buyingChannels = [
-    'Local markets', 'Online shopping', 'Mobile apps', 'Social media',
-    'Physical stores', 'Group buying', 'Door-to-door', 'Wholesale markets'
-  ];
 
   const handlePersonaSelect = (value) => {
     setSelectedPersona(value);
@@ -103,23 +189,15 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
     }
   };
 
-  const handleUpgrade = () => {
-    toast({
-      title: "Upgrade Required",
-      description: "Upgrade to Strategy Grid Pro to unlock full persona features.",
-      variant: "destructive",
-    });
-  };
-
   return (
     <div className="space-y-6">
       {/* Section Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          Now define your ideal customer to refine your strategy
+          {t.title}
         </h2>
         <p className="text-gray-600">
-          Understanding your customer persona will help tailor your business strategy
+          {t.subtitle}
         </p>
       </div>
 
@@ -128,61 +206,51 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Users className="w-5 h-5 mr-2 text-orange-600" />
-            Select a Customer Persona
-            {!isPro && (
-              <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-700">
-                <Crown className="w-3 h-3 mr-1" />
-                Pro Feature
-              </Badge>
-            )}
+            {t.selectPersona}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Select 
             value={selectedPersona} 
             onValueChange={handlePersonaSelect}
-            disabled={!isPro}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choose a persona template or start from scratch" />
+              <SelectValue placeholder={t.choosePlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="custom">Start from Scratch (Custom Persona)</SelectItem>
-              <SelectItem value="budget-conscious">Budget-Conscious Buyer</SelectItem>
-              <SelectItem value="aspirational-professional">Aspirational Middle-Income Professional</SelectItem>
-              <SelectItem value="digital-native">Informed Digital Native</SelectItem>
-              <SelectItem value="traditional-shopper">Traditional Shopper</SelectItem>
+              <SelectItem value="custom">{t.customPersona}</SelectItem>
+              <SelectItem value="budget-conscious">{t.budgetConscious}</SelectItem>
+              <SelectItem value="aspirational-professional">{t.aspirationalPro}</SelectItem>
+              <SelectItem value="digital-native">{t.digitalNative}</SelectItem>
+              <SelectItem value="traditional-shopper">{t.traditionalShopper}</SelectItem>
             </SelectContent>
           </Select>
         </CardContent>
       </Card>
 
-      {/* Persona Form (Sample/Readonly for free users) */}
+      {/* Persona Form */}
       {selectedPersona && (
         <Card className="border-orange-200">
           <CardHeader>
-            <CardTitle>Persona Details</CardTitle>
+            <CardTitle>{t.personaDetails}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Name (Optional)</label>
+              <label className="block text-sm font-medium mb-2">{t.name}</label>
               <Input
                 value={personaData.name}
-                onChange={(e) => isPro && setPersonaData({...personaData, name: e.target.value})}
-                placeholder="e.g., Sarah the Budget Shopper"
-                readOnly={!isPro}
-                className={!isPro ? "bg-gray-50" : ""}
+                onChange={(e) => setPersonaData({...personaData, name: e.target.value})}
+                placeholder={t.namePlaceholder}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Age Range</label>
+              <label className="block text-sm font-medium mb-2">{t.ageRange}</label>
               <Select 
                 value={personaData.ageRange} 
-                onValueChange={(value) => isPro && setPersonaData({...personaData, ageRange: value})}
-                disabled={!isPro}
+                onValueChange={(value) => setPersonaData({...personaData, ageRange: value})}
               >
-                <SelectTrigger className={!isPro ? "bg-gray-50" : ""}>
+                <SelectTrigger>
                   <SelectValue placeholder="Select age range" />
                 </SelectTrigger>
                 <SelectContent>
@@ -194,13 +262,12 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Income Level</label>
+              <label className="block text-sm font-medium mb-2">{t.incomeLevel}</label>
               <Select 
                 value={personaData.incomeLevel} 
-                onValueChange={(value) => isPro && setPersonaData({...personaData, incomeLevel: value})}
-                disabled={!isPro}
+                onValueChange={(value) => setPersonaData({...personaData, incomeLevel: value})}
               >
-                <SelectTrigger className={!isPro ? "bg-gray-50" : ""}>
+                <SelectTrigger>
                   <SelectValue placeholder="Select income level" />
                 </SelectTrigger>
                 <SelectContent>
@@ -212,15 +279,14 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Top 3 Values</label>
+              <label className="block text-sm font-medium mb-2">{t.topValues}</label>
               <div className="flex flex-wrap gap-2">
                 {availableValues.slice(0, 6).map(value => (
                   <Badge
                     key={value}
                     variant={personaData.values.includes(value) ? "default" : "outline"}
-                    className={`cursor-pointer ${!isPro ? "opacity-60" : ""}`}
+                    className="cursor-pointer"
                     onClick={() => {
-                      if (!isPro) return;
                       const newValues = personaData.values.includes(value)
                         ? personaData.values.filter(v => v !== value)
                         : personaData.values.length < 3
@@ -236,62 +302,34 @@ const CustomerPersonaSection = ({ isPro = false, strategyData = null }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Customer Behavior Summary</label>
+              <label className="block text-sm font-medium mb-2">{t.behaviorSummary}</label>
               <Textarea
                 value={personaData.behaviorSummary}
-                onChange={(e) => isPro && setPersonaData({...personaData, behaviorSummary: e.target.value})}
-                placeholder="One-sentence summary of this customer's behavior patterns..."
+                onChange={(e) => setPersonaData({...personaData, behaviorSummary: e.target.value})}
+                placeholder={t.behaviorPlaceholder}
                 rows={3}
-                readOnly={!isPro}
-                className={!isPro ? "bg-gray-50" : ""}
               />
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* AI Coaching Insight (Locked for free users) */}
+      {/* AI Strategic Insight */}
       {selectedPersona && (
-        <Card className="border-orange-200">
+        <Card className="border-green-200 bg-green-50">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Lock className="w-5 h-5 mr-2 text-orange-600" />
-              AI Strategic Insight
+              <Lightbulb className="w-5 h-5 mr-2 text-green-600" />
+              {t.strategicInsight}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {isPro ? (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-800">
-                  <strong>Strategic Insight:</strong> This persona responds well to {personaData.values.join(', ').toLowerCase()} messaging. 
-                  Focus your marketing on addressing their key concerns through {personaData.buyingChannel} to maximize conversion.
-                </p>
-              </div>
-            ) : (
-              <div className="relative">
-                <div className="p-4 bg-gray-100 border border-gray-200 rounded-lg blur-sm">
-                  <p className="text-gray-600">
-                    Strategic insights and personalized recommendations tailored specifically for this customer persona will appear here. 
-                    Get detailed advice on how to position your product, what messaging resonates, and which channels work best...
-                  </p>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-white border border-orange-200 rounded-lg p-6 shadow-lg text-center">
-                    <Crown className="w-8 h-8 text-orange-500 mx-auto mb-3" />
-                    <p className="text-sm font-medium text-gray-800 mb-3">
-                      Upgrade to Strategy Grid Pro to unlock personalized strategy tips for your ideal customer
-                    </p>
-                    <Button 
-                      onClick={handleUpgrade}
-                      className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
-                    >
-                      <Crown className="w-4 h-4 mr-2" />
-                      Upgrade Now
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="p-4 bg-green-100 border border-green-200 rounded-lg">
+              <p className="text-green-800">
+                <strong>Strategic Insight:</strong> This persona responds well to {personaData.values.join(', ').toLowerCase()} messaging. 
+                Focus your marketing on addressing their key concerns through {personaData.buyingChannel} to maximize conversion.
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}

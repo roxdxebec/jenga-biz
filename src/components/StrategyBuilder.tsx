@@ -1,15 +1,15 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Download, Eye, Wand2, Home } from 'lucide-react';
+import { ArrowLeft, Save, Download, Eye, Wand2, Home, Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import StrategySummary from '@/components/StrategySummary';
 import CustomerPersonaSection from '@/components/CustomerPersonaSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const StrategyBuilder = ({ template, onBack, onHome }) => {
   console.log('StrategyBuilder - Component rendering with template:', template);
@@ -29,7 +29,110 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   
   const [showSummary, setShowSummary] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('en');
   const { toast } = useToast();
+
+  // Translation object
+  const translations = {
+    en: {
+      strategyBuilder: 'Strategy Builder',
+      customStrategy: 'Custom Strategy',
+      businessName: 'Business Name',
+      vision: 'Vision Statement',
+      mission: 'Mission Statement',
+      targetMarket: 'Target Market',
+      revenueModel: 'Revenue Model',
+      valueProposition: 'Unique Value Proposition',
+      keyPartners: 'Key Partners',
+      marketingApproach: 'Marketing Approach',
+      operationalNeeds: 'Operational Needs',
+      growthGoals: 'Growth Goals',
+      save: 'Save',
+      home: 'Home',
+      back: 'Back',
+      generateSummary: 'Generate AI Summary',
+      generatingSummary: 'Generating Summary...',
+      strategySaved: 'Strategy Saved!',
+      strategySavedDesc: 'Your business strategy has been saved successfully.',
+      testingNote: 'This feature will be part of Strategy Grid Pro (Tier 2) once live. Enjoy full access during testing.',
+      enterPlaceholder: 'Enter your',
+      describePlaceholder: 'Describe your'
+    },
+    sw: {
+      strategyBuilder: 'Mjenzi wa Mkakati',
+      customStrategy: 'Mkakati wa Kawaida',
+      businessName: 'Jina la Biashara',
+      vision: 'Kauli ya Maono',
+      mission: 'Kauli ya Dhumuni',
+      targetMarket: 'Soko la Lengo',
+      revenueModel: 'Mfumo wa Mapato',
+      valueProposition: 'Thamani ya Kipekee',
+      keyPartners: 'Washirika Wakuu',
+      marketingApproach: 'Mbinu za Uuzaji',
+      operationalNeeds: 'Mahitaji ya Uendeshaji',
+      growthGoals: 'Malengo ya Ukuaji',
+      save: 'Hifadhi',
+      home: 'Nyumbani',
+      back: 'Rudi',
+      generateSummary: 'Tengeneza Muhtasari wa AI',
+      generatingSummary: 'Inatengeneza Muhtasari...',
+      strategySaved: 'Mkakati Umehifadhiwa!',
+      strategySavedDesc: 'Mkakati wako wa biashara umehifadhiwa kwa mafanikio.',
+      testingNote: 'Kipengele hiki kitakuwa sehemu ya Strategy Grid Pro (Daraja la 2) baada ya kuanzishwa. Furahia ufikiaji kamili wakati wa upimaji.',
+      enterPlaceholder: 'Ingiza',
+      describePlaceholder: 'Eleza'
+    },
+    ar: {
+      strategyBuilder: 'منشئ الاستراتيجية',
+      customStrategy: 'استراتيجية مخصصة',
+      businessName: 'اسم الشركة',
+      vision: 'بيان الرؤية',
+      mission: 'بيان المهمة',
+      targetMarket: 'السوق المستهدف',
+      revenueModel: 'نموذج الإيرادات',
+      valueProposition: 'اقتراح القيمة الفريدة',
+      keyPartners: 'الشركاء الرئيسيون',
+      marketingApproach: 'نهج التسويق',
+      operationalNeeds: 'الاحتياجات التشغيلية',
+      growthGoals: 'أهداف النمو',
+      save: 'حفظ',
+      home: 'الرئيسية',
+      back: 'رجوع',
+      generateSummary: 'إنشاء ملخص AI',
+      generatingSummary: 'جاري إنشاء الملخص...',
+      strategySaved: 'تم حفظ الاستراتيجية!',
+      strategySavedDesc: 'تم حفظ استراتيجية عملك بنجاح.',
+      testingNote: 'ستكون هذه الميزة جزءًا من Strategy Grid Pro (المستوى 2) بمجرد النشر. استمتع بالوصول الكامل أثناء الاختبار.',
+      enterPlaceholder: 'أدخل',
+      describePlaceholder: 'وصف'
+    },
+    fr: {
+      strategyBuilder: 'Constructeur de Stratégie',
+      customStrategy: 'Stratégie Personnalisée',
+      businessName: 'Nom de l\'Entreprise',
+      vision: 'Déclaration de Vision',
+      mission: 'Déclaration de Mission',
+      targetMarket: 'Marché Cible',
+      revenueModel: 'Modèle de Revenus',
+      valueProposition: 'Proposition de Valeur Unique',
+      keyPartners: 'Partenaires Clés',
+      marketingApproach: 'Approche Marketing',
+      operationalNeeds: 'Besoins Opérationnels',
+      growthGoals: 'Objectifs de Croissance',
+      save: 'Sauvegarder',
+      home: 'Accueil',
+      back: 'Retour',
+      generateSummary: 'Générer un Résumé IA',
+      generatingSummary: 'Génération du Résumé...',
+      strategySaved: 'Stratégie Sauvegardée!',
+      strategySavedDesc: 'Votre stratégie d\'entreprise a été sauvegardée avec succès.',
+      testingNote: 'Cette fonctionnalité fera partie de Strategy Grid Pro (Niveau 2) une fois lancée. Profitez d\'un accès complet pendant les tests.',
+      enterPlaceholder: 'Entrez votre',
+      describePlaceholder: 'Décrivez votre'
+    }
+  };
+
+  const t = translations[currentLanguage] || translations.en;
 
   // Comprehensive template data for all business types
   const templateData = {
@@ -326,8 +429,8 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
     console.log('StrategyBuilder - Saving strategy:', strategy);
     localStorage.setItem('current-strategy', JSON.stringify(strategy));
     toast({
-      title: "Strategy Saved!",
-      description: "Your business strategy has been saved successfully.",
+      title: t.strategySaved,
+      description: t.strategySavedDesc,
     });
   };
 
@@ -341,16 +444,16 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   };
 
   const sections = [
-    { key: 'businessName', label: 'Business Name', type: 'input' },
-    { key: 'vision', label: 'Vision Statement', type: 'textarea' },
-    { key: 'mission', label: 'Mission Statement', type: 'textarea' },
-    { key: 'targetMarket', label: 'Target Market', type: 'textarea' },
-    { key: 'revenueModel', label: 'Revenue Model', type: 'textarea' },
-    { key: 'valueProposition', label: 'Unique Value Proposition', type: 'textarea' },
-    { key: 'keyPartners', label: 'Key Partners', type: 'textarea' },
-    { key: 'marketingApproach', label: 'Marketing Approach', type: 'textarea' },
-    { key: 'operationalNeeds', label: 'Operational Needs', type: 'textarea' },
-    { key: 'growthGoals', label: 'Growth Goals', type: 'textarea' }
+    { key: 'businessName', label: t.businessName, type: 'input' },
+    { key: 'vision', label: t.vision, type: 'textarea' },
+    { key: 'mission', label: t.mission, type: 'textarea' },
+    { key: 'targetMarket', label: t.targetMarket, type: 'textarea' },
+    { key: 'revenueModel', label: t.revenueModel, type: 'textarea' },
+    { key: 'valueProposition', label: t.valueProposition, type: 'textarea' },
+    { key: 'keyPartners', label: t.keyPartners, type: 'textarea' },
+    { key: 'marketingApproach', label: t.marketingApproach, type: 'textarea' },
+    { key: 'operationalNeeds', label: t.operationalNeeds, type: 'textarea' },
+    { key: 'growthGoals', label: t.growthGoals, type: 'textarea' }
   ];
 
   console.log('StrategyBuilder - About to render with showSummary:', showSummary);
@@ -363,6 +466,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         strategy={strategy}
         onBack={() => setShowSummary(false)}
         onHome={onHome}
+        language={currentLanguage}
       />
     );
   }
@@ -377,23 +481,27 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
           <div className="flex items-center">
             <Button variant="ghost" onClick={onBack} className="mr-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {t.back}
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Strategy Builder</h1>
+              <h1 className="text-xl font-bold text-gray-800">{t.strategyBuilder}</h1>
               {template && <p className="text-sm text-gray-600">{template.name} Template</p>}
-              {template === null && <p className="text-sm text-gray-600">Custom Strategy</p>}
+              {template === null && <p className="text-sm text-gray-600">{t.customStrategy}</p>}
             </div>
           </div>
           
           <div className="flex items-center space-x-2">
+            <LanguageSelector 
+              currentLanguage={currentLanguage}
+              onLanguageChange={setCurrentLanguage}
+            />
             <Button variant="outline" onClick={onHome}>
               <Home className="w-4 h-4 mr-2" />
-              Home
+              {t.home}
             </Button>
             <Button variant="outline" onClick={handleSave}>
               <Save className="w-4 h-4 mr-2" />
-              Save
+              {t.save}
             </Button>
           </div>
         </div>
@@ -415,14 +523,14 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
                       <Input
                         value={strategy[section.key]}
                         onChange={(e) => handleInputChange(section.key, e.target.value)}
-                        placeholder={`Enter your ${section.label.toLowerCase()}`}
+                        placeholder={`${t.enterPlaceholder} ${section.label.toLowerCase()}`}
                         className="w-full"
                       />
                     ) : (
                       <Textarea
                         value={strategy[section.key]}
                         onChange={(e) => handleInputChange(section.key, e.target.value)}
-                        placeholder={`Describe your ${section.label.toLowerCase()}`}
+                        placeholder={`${t.describePlaceholder} ${section.label.toLowerCase()}`}
                         className="w-full min-h-[100px]"
                         rows={4}
                       />
@@ -433,19 +541,40 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
             })}
           </div>
 
+          {/* Testing Note */}
+          <div className="mt-8 mb-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800 text-center">
+                {t.testingNote}
+              </p>
+            </div>
+          </div>
+
           {/* Customer Persona Section */}
           <div className="mt-12">
-            <CustomerPersonaSection isPro={false} strategyData={strategy} />
+            <CustomerPersonaSection 
+              isPro={true} 
+              strategyData={strategy} 
+              language={currentLanguage}
+            />
           </div>
 
           {/* Business Milestones Section */}
           <div className="mt-12">
-            <BusinessMilestonesSection isPro={false} strategyData={strategy} />
+            <BusinessMilestonesSection 
+              isPro={true} 
+              strategyData={strategy}
+              language={currentLanguage}
+            />
           </div>
 
           {/* Monthly Revenue Section */}
           <div className="mt-12">
-            <MonthlyRevenueSection isPro={false} strategyData={strategy} />
+            <MonthlyRevenueSection 
+              isPro={true} 
+              strategyData={strategy}
+              language={currentLanguage}
+            />
           </div>
 
           {/* Action Buttons */}
@@ -458,12 +587,12 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
               {isGenerating ? (
                 <>
                   <Wand2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating Summary...
+                  {t.generatingSummary}
                 </>
               ) : (
                 <>
                   <Eye className="w-4 h-4 mr-2" />
-                  Generate AI Summary
+                  {t.generateSummary}
                 </>
               )}
             </Button>
