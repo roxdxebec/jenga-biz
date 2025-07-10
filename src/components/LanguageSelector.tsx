@@ -15,6 +15,14 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelecto
     { code: 'fr', name: 'Français' }
   ];
 
+  const translations = {
+    en: { language: 'Language' },
+    sw: { language: 'Lugha' },
+    ar: { language: 'اللغة' },
+    fr: { language: 'Langue' }
+  };
+
+  const t = translations[currentLanguage] || translations.en;
   const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
   return (
@@ -22,7 +30,7 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelecto
       <SelectTrigger className="w-auto min-w-[120px]">
         <div className="flex items-center space-x-2">
           <Globe className="w-4 h-4" />
-          <span className="hidden sm:inline">{currentLang.name}</span>
+          <span className="hidden sm:inline">{t.language}</span>
         </div>
       </SelectTrigger>
       <SelectContent>

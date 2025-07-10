@@ -1,6 +1,6 @@
 
+import { Globe } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin } from 'lucide-react';
 
 interface CountrySelectorProps {
   currentCountry: string;
@@ -21,29 +21,28 @@ const CountrySelector = ({ currentCountry, onCountryChange, language = 'en' }: C
   ];
 
   const translations = {
-    en: { selectCountry: 'Select your country' },
-    sw: { selectCountry: 'Chagua nchi yako' },
-    ar: { selectCountry: 'اختر بلدك' },
-    fr: { selectCountry: 'Sélectionnez votre pays' }
+    en: { currency: 'Currency' },
+    sw: { currency: 'Sarafu' },
+    ar: { currency: 'العملة' },
+    fr: { currency: 'Devise' }
   };
 
   const t = translations[language] || translations.en;
+  const currentCountryInfo = countries.find(c => c.code === currentCountry) || countries[0];
 
   return (
     <Select value={currentCountry} onValueChange={onCountryChange}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className="w-auto min-w-[120px]">
         <div className="flex items-center space-x-2">
-          <MapPin className="w-4 h-4" />
-          <SelectValue placeholder={t.selectCountry} />
+          <Globe className="w-4 h-4" />
+          <span className="hidden sm:inline">{t.currency}</span>
+          <span className="font-medium">{currentCountryInfo.symbol}</span>
         </div>
       </SelectTrigger>
       <SelectContent>
         {countries.map((country) => (
           <SelectItem key={country.code} value={country.code}>
-            <div className="flex items-center justify-between">
-              <span>{country.name}</span>
-              <span className="text-sm text-gray-500 ml-2">({country.currency})</span>
-            </div>
+            {country.name} ({country.symbol})
           </SelectItem>
         ))}
       </SelectContent>
@@ -52,4 +51,3 @@ const CountrySelector = ({ currentCountry, onCountryChange, language = 'en' }: C
 };
 
 export default CountrySelector;
-export { countries };

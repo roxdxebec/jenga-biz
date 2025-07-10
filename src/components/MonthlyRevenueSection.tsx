@@ -5,24 +5,35 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TrendingUp, Plus, DollarSign, Edit, Save, X, Download, TrendingDown } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { TrendingUp, Plus, DollarSign, Edit, Save, X, Download, TrendingDown, CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import CoachingTip from '@/components/CoachingTip';
+import { format } from 'date-fns';
 
 interface FinancialEntry {
   id: string;
+  date: Date;
   month: string;
   revenue: number;
   expenses: number;
   notes: string;
+  incomeBreakdown: {
+    mobileMoney: number;
+    cash: number;
+    bankTransfer: number;
+    custom: Record<string, number>;
+  };
   expenseBreakdown: {
     rent: number;
     transport: number;
     supplies: number;
     marketing: number;
-    other: number;
+    misc: number;
+    custom: Record<string, number>;
   };
 }
 
@@ -44,48 +55,48 @@ const MonthlyRevenueSection = ({
   const [financialData, setFinancialData] = useState<FinancialEntry[]>([
     {
       id: '1',
+      date: new Date('2024-01-15'),
       month: 'Jan 2024',
       revenue: 5000,
       expenses: 2000,
       notes: 'Launch month - better than expected!',
-      expenseBreakdown: { rent: 800, transport: 200, supplies: 500, marketing: 300, other: 200 }
+      incomeBreakdown: { mobileMoney: 3000, cash: 1500, bankTransfer: 500, custom: {} },
+      expenseBreakdown: { rent: 800, transport: 200, supplies: 500, marketing: 300, misc: 200, custom: {} }
     },
     {
       id: '2',
+      date: new Date('2024-02-15'),
       month: 'Feb 2024',
       revenue: 7500,
       expenses: 2500,
       notes: 'Added new marketing channels',
-      expenseBreakdown: { rent: 800, transport: 250, supplies: 600, marketing: 500, other: 350 }
-    },
-    {
-      id: '3',
-      month: 'Mar 2024',
-      revenue: 12000,
-      expenses: 3500,
-      notes: 'First profitable month',
-      expenseBreakdown: { rent: 800, transport: 300, supplies: 800, marketing: 800, other: 800 }
+      incomeBreakdown: { mobileMoney: 4500, cash: 2000, bankTransfer: 1000, custom: {} },
+      expenseBreakdown: { rent: 800, transport: 250, supplies: 600, marketing: 500, misc: 350, custom: {} }
     }
   ]);
 
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
-  const [timePeriod, setTimePeriod] = useState<'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const [timePeriod, setTimePeriod] = useState<'daily' | 'weekly' | 'monthly' | 'quarterly'>('monthly');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [newIncomeSource, setNewIncomeSource] = useState('');
+  const [newExpenseCategory, setNewExpenseCategory] = useState('');
   const { toast } = useToast();
 
   // Translation object
   const translations = {
     en: {
-      title: 'Business Revenue & Expense Summary',
+      title: 'Business Revenue & Expense Tracker',
       subtitle: 'Monitor your business growth and track profitability.',
       financialOverview: 'Financial Overview',
-      addMonth: 'Add Month',
+      addEntry: 'Add Entry',
       lineChart: 'Line Chart',
       barChart: 'Bar Chart',
       timePeriod: 'Time Period',
+      daily: 'Daily',
+      weekly: 'Weekly',
       monthly: 'Monthly',
       quarterly: 'Quarterly',
-      yearly: 'Yearly',
       totalRevenue: 'Total Revenue',
       totalExpenses: 'Total Expenses',
       netProfit: 'Net Profit',
@@ -93,28 +104,38 @@ const MonthlyRevenueSection = ({
       financialEntries: 'Financial Entries',
       revenueAmount: 'Revenue amount',
       expenseAmount: 'Expense amount',
-      monthNotes: 'Add notes about this month...',
-      expenseBreakdown: 'Expense Breakdown',
+      entryNotes: 'Add notes about this entry...',
+      incomeBreakdown: 'Income Sources',
+      expenseBreakdown: 'Expense Categories',
+      mobileMoney: 'Mobile Money',
+      cash: 'Cash',
+      bankTransfer: 'Bank Transfer',
       rent: 'Rent',
       transport: 'Transport',
       supplies: 'Supplies',
       marketing: 'Marketing',
-      other: 'Other',
-      downloadPdf: 'Download My Revenue & Expense Summary (PDF)',
+      misc: 'Miscellaneous',
+      downloadPdf: 'Download Summary (PDF)',
+      selectDate: 'Select Date',
+      addCustomIncome: 'Add Custom Income Source',
+      addCustomExpense: 'Add Custom Expense Category',
+      customSource: 'Custom Source',
+      customCategory: 'Custom Category',
       tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
       coachingTip: 'Track every expense, no matter how small. Understanding your costs helps you make better pricing decisions and find areas to save money.'
     },
     sw: {
-      title: 'Muhtasari wa Mapato na Gharama za Biashara',
+      title: 'Kufuatilia Mapato na Gharama za Biashara',
       subtitle: 'Fuatilia ukuaji wa biashara yako na ufuatilie faida.',
       financialOverview: 'Muhtasari wa Kifedha',
-      addMonth: 'Ongeza Mwezi',
+      addEntry: 'Ongeza Ingizo',
       lineChart: 'Chati ya Mstari',
       barChart: 'Chati ya Baa',
       timePeriod: 'Kipindi cha Muda',
+      daily: 'Kila Siku',
+      weekly: 'Kila Wiki',
       monthly: 'Kila Mwezi',
       quarterly: 'Kila Robo',
-      yearly: 'Kila Mwaka',
       totalRevenue: 'Jumla ya Mapato',
       totalExpenses: 'Jumla ya Gharama',
       netProfit: 'Faida Halisi',
@@ -122,28 +143,38 @@ const MonthlyRevenueSection = ({
       financialEntries: 'Maingizo ya Kifedha',
       revenueAmount: 'Kiasi cha mapato',
       expenseAmount: 'Kiasi cha gharama',
-      monthNotes: 'Ongeza maelezo kuhusu mwezi huu...',
-      expenseBreakdown: 'Mgawanyiko wa Gharama',
+      entryNotes: 'Ongeza maelezo kuhusu ingizo hili...',
+      incomeBreakdown: 'Vyanzo vya Mapato',
+      expenseBreakdown: 'Makundi ya Gharama',
+      mobileMoney: 'Pesa za Simu',
+      cash: 'Fedha Taslimu',
+      bankTransfer: 'Uhamisho wa Benki',
       rent: 'Kodi',
       transport: 'Usafiri',
       supplies: 'Vifaa',
       marketing: 'Uuzaji',
-      other: 'Mengineyo',
-      downloadPdf: 'Pakua Muhtasari Wangu wa Mapato na Gharama (PDF)',
+      misc: 'Mengineyo',
+      downloadPdf: 'Pakua Muhtasari (PDF)',
+      selectDate: 'Chagua Tarehe',
+      addCustomIncome: 'Ongeza Chanzo cha Mapato',
+      addCustomExpense: 'Ongeza Kundi la Gharama',
+      customSource: 'Chanzo cha Kawaida',
+      customCategory: 'Kundi la Kawaida',
       tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
       coachingTip: 'Fuatilia kila gharama, haijalishi ni ndogo kiasi gani. Kuelewa gharama zako kunakusaidia kufanya maamuzi bora ya bei na kupata maeneo ya kuokoa pesa.'
     },
     ar: {
-      title: 'ملخص إيرادات ومصروفات الأعمال',
+      title: 'متتبع إيرادات ومصروفات الأعمال',
       subtitle: 'راقب نمو أعمالك وتتبع الربحية.',
       financialOverview: 'نظرة عامة مالية',
-      addMonth: 'إضافة شهر',
+      addEntry: 'إضافة إدخال',
       lineChart: 'مخطط خطي',
       barChart: 'مخطط بياني',
       timePeriod: 'الفترة الزمنية',
+      daily: 'يومي',
+      weekly: 'أسبوعي',
       monthly: 'شهري',
       quarterly: 'ربع سنوي',
-      yearly: 'سنوي',
       totalRevenue: 'إجمالي الإيرادات',
       totalExpenses: 'إجمالي المصروفات',
       netProfit: 'صافي الربح',
@@ -151,28 +182,38 @@ const MonthlyRevenueSection = ({
       financialEntries: 'الإدخالات المالية',
       revenueAmount: 'مبلغ الإيرادات',
       expenseAmount: 'مبلغ المصروفات',
-      monthNotes: 'أضف ملاحظات حول هذا الشهر...',
-      expenseBreakdown: 'تفصيل المصروفات',
+      entryNotes: 'أضف ملاحظات حول هذا الإدخال...',
+      incomeBreakdown: 'مصادر الدخل',
+      expenseBreakdown: 'فئات المصروفات',
+      mobileMoney: 'أموال الهاتف المحمول',
+      cash: 'نقداً',
+      bankTransfer: 'تحويل بنكي',
       rent: 'إيجار',
       transport: 'نقل',
       supplies: 'إمدادات',
       marketing: 'تسويق',
-      other: 'أخرى',
-      downloadPdf: 'تحميل ملخص الإيرادات والمصروفات (PDF)',
+      misc: 'متفرقات',
+      downloadPdf: 'تحميل الملخص (PDF)',
+      selectDate: 'اختر التاريخ',
+      addCustomIncome: 'إضافة مصدر دخل مخصص',
+      addCustomExpense: 'إضافة فئة مصروفات مخصصة',
+      customSource: 'مصدر مخصص',
+      customCategory: 'فئة مخصصة',
       tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
       coachingTip: 'تتبع كل مصروف مهما كان صغيراً. فهم تكاليفك يساعدك على اتخاذ قرارات تسعير أفضل وإيجاد مجالات لتوفير المال.'
     },
     fr: {
-      title: 'Résumé des Revenus et Dépenses d\'Affaires',
+      title: 'Suivi des Revenus et Dépenses d\'Affaires',
       subtitle: 'Surveillez la croissance de votre entreprise et suivez la rentabilité.',
       financialOverview: 'Aperçu Financier',
-      addMonth: 'Ajouter un Mois',
+      addEntry: 'Ajouter une Entrée',
       lineChart: 'Graphique Linéaire',
       barChart: 'Graphique en Barres',
       timePeriod: 'Période',
+      daily: 'Quotidien',
+      weekly: 'Hebdomadaire',
       monthly: 'Mensuel',
       quarterly: 'Trimestriel',
-      yearly: 'Annuel',
       totalRevenue: 'Revenus Totaux',
       totalExpenses: 'Dépenses Totales',
       netProfit: 'Bénéfice Net',
@@ -180,14 +221,23 @@ const MonthlyRevenueSection = ({
       financialEntries: 'Entrées Financières',
       revenueAmount: 'Montant des revenus',
       expenseAmount: 'Montant des dépenses',
-      monthNotes: 'Ajoutez des notes sur ce mois...',
-      expenseBreakdown: 'Répartition des Dépenses',
+      entryNotes: 'Ajoutez des notes sur cette entrée...',
+      incomeBreakdown: 'Sources de Revenus',
+      expenseBreakdown: 'Catégories de Dépenses',
+      mobileMoney: 'Argent Mobile',
+      cash: 'Espèces',
+      bankTransfer: 'Virement Bancaire',
       rent: 'Loyer',
       transport: 'Transport',
       supplies: 'Fournitures',
       marketing: 'Marketing',
-      other: 'Autres',
-      downloadPdf: 'Télécharger Mon Résumé de Revenus et Dépenses (PDF)',
+      misc: 'Divers',
+      downloadPdf: 'Télécharger Résumé (PDF)',
+      selectDate: 'Sélectionner la Date',
+      addCustomIncome: 'Ajouter Source de Revenus',
+      addCustomExpense: 'Ajouter Catégorie de Dépenses',
+      customSource: 'Source Personnalisée',
+      customCategory: 'Catégorie Personnalisée',
       tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
       coachingTip: 'Suivez chaque dépense, peu importe sa taille. Comprendre vos coûts vous aide à prendre de meilleures décisions de prix et à trouver des domaines pour économiser de l\'argent.'
     }
@@ -220,14 +270,15 @@ const MonthlyRevenueSection = ({
   };
 
   const addFinancialEntry = () => {
-    const currentMonth = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     const newEntry: FinancialEntry = {
       id: Date.now().toString(),
-      month: currentMonth,
+      date: selectedDate || new Date(),
+      month: format(selectedDate || new Date(), 'MMM yyyy'),
       revenue: 0,
       expenses: 0,
       notes: '',
-      expenseBreakdown: { rent: 0, transport: 0, supplies: 0, marketing: 0, other: 0 }
+      incomeBreakdown: { mobileMoney: 0, cash: 0, bankTransfer: 0, custom: {} },
+      expenseBreakdown: { rent: 0, transport: 0, supplies: 0, marketing: 0, misc: 0, custom: {} }
     };
 
     setFinancialData([...financialData, newEntry]);
@@ -240,14 +291,64 @@ const MonthlyRevenueSection = ({
     ));
   };
 
+  const updateIncomeBreakdown = (id: string, category: string, value: number) => {
+    setFinancialData(financialData.map(entry => 
+      entry.id === id ? { 
+        ...entry, 
+        incomeBreakdown: { ...entry.incomeBreakdown, [category]: value },
+        revenue: Object.values({ ...entry.incomeBreakdown, [category]: value }).reduce((sum: number, val: any) => {
+          if (typeof val === 'object') {
+            return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
+          }
+          return sum + (typeof val === 'number' ? val : 0);
+        }, 0)
+      } : entry
+    ));
+  };
+
   const updateExpenseBreakdown = (id: string, category: string, value: number) => {
     setFinancialData(financialData.map(entry => 
       entry.id === id ? { 
         ...entry, 
         expenseBreakdown: { ...entry.expenseBreakdown, [category]: value },
-        expenses: Object.values({ ...entry.expenseBreakdown, [category]: value }).reduce((sum, val) => sum + val, 0)
+        expenses: Object.values({ ...entry.expenseBreakdown, [category]: value }).reduce((sum: number, val: any) => {
+          if (typeof val === 'object') {
+            return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
+          }
+          return sum + (typeof val === 'number' ? val : 0);
+        }, 0)
       } : entry
     ));
+  };
+
+  const addCustomIncomeSource = (entryId: string) => {
+    if (!newIncomeSource.trim()) return;
+    
+    setFinancialData(financialData.map(entry => 
+      entry.id === entryId ? {
+        ...entry,
+        incomeBreakdown: {
+          ...entry.incomeBreakdown,
+          custom: { ...entry.incomeBreakdown.custom, [newIncomeSource]: 0 }
+        }
+      } : entry
+    ));
+    setNewIncomeSource('');
+  };
+
+  const addCustomExpenseCategory = (entryId: string) => {
+    if (!newExpenseCategory.trim()) return;
+    
+    setFinancialData(financialData.map(entry => 
+      entry.id === entryId ? {
+        ...entry,
+        expenseBreakdown: {
+          ...entry.expenseBreakdown,
+          custom: { ...entry.expenseBreakdown.custom, [newExpenseCategory]: 0 }
+        }
+      } : entry
+    ));
+    setNewExpenseCategory('');
   };
 
   const downloadPDF = () => {
@@ -287,15 +388,34 @@ const MonthlyRevenueSection = ({
               <DollarSign className="w-5 h-5 mr-2 text-orange-600" />
               {t.financialEntries}
             </div>
-            <Button
-              onClick={addFinancialEntry}
-              size="sm"
-              variant="outline"
-              className="text-orange-600 border-orange-300 hover:bg-orange-50"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              {t.addMonth}
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <CalendarIcon className="w-4 h-4 mr-1" />
+                    {t.selectDate}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              <Button
+                onClick={addFinancialEntry}
+                size="sm"
+                variant="outline"
+                className="text-orange-600 border-orange-300 hover:bg-orange-50"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                {t.addEntry}
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -303,7 +423,10 @@ const MonthlyRevenueSection = ({
             {financialData.map((entry) => (
               <div key={entry.id} className="p-4 border rounded-lg space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">{entry.month}</span>
+                  <div>
+                    <span className="font-medium text-gray-700">{format(entry.date, 'PPP')}</span>
+                    <p className="text-sm text-gray-500">{entry.month}</p>
+                  </div>
                   <Button
                     onClick={() => setEditingEntry(editingEntry === entry.id ? null : entry.id)}
                     size="sm"
@@ -316,20 +439,10 @@ const MonthlyRevenueSection = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-600">{t.totalRevenue}</label>
-                    {editingEntry === entry.id ? (
-                      <Input
-                        type="number"
-                        value={entry.revenue}
-                        onChange={(e) => updateFinancialEntry(entry.id, 'revenue', parseInt(e.target.value) || 0)}
-                        placeholder={t.revenueAmount}
-                      />
-                    ) : (
-                      <p className="text-lg font-semibold text-green-600">
-                        {currencySymbol}{entry.revenue.toLocaleString()}
-                      </p>
-                    )}
+                    <p className="text-lg font-semibold text-green-600">
+                      {currencySymbol}{entry.revenue.toLocaleString()}
+                    </p>
                   </div>
-
                   <div>
                     <label className="text-sm font-medium text-gray-600">{t.totalExpenses}</label>
                     <p className="text-lg font-semibold text-red-600">
@@ -339,23 +452,97 @@ const MonthlyRevenueSection = ({
                 </div>
 
                 {editingEntry === entry.id && (
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-gray-700">{t.expenseBreakdown}</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {Object.entries(entry.expenseBreakdown).map(([category, amount]) => (
-                        <div key={category}>
-                          <label className="text-xs text-gray-500 capitalize">
-                            {t[category] || category}
-                          </label>
-                          <Input
-                            type="number"
-                            value={amount}
-                            onChange={(e) => updateExpenseBreakdown(entry.id, category, parseInt(e.target.value) || 0)}
-                            placeholder="0"
-                            size="sm"
-                          />
-                        </div>
-                      ))}
+                  <div className="space-y-4">
+                    {/* Income Breakdown */}
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-2">{t.incomeBreakdown}</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {Object.entries(entry.incomeBreakdown).map(([category, amount]) => {
+                          if (category === 'custom') {
+                            return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
+                              <div key={`income-${customCat}`}>
+                                <label className="text-xs text-gray-500 capitalize">{customCat}</label>
+                                <Input
+                                  type="number"
+                                  value={customAmount}
+                                  onChange={(e) => updateIncomeBreakdown(entry.id, `custom.${customCat}`, parseInt(e.target.value) || 0)}
+                                  size="sm"
+                                />
+                              </div>
+                            ));
+                          }
+                          return (
+                            <div key={`income-${category}`}>
+                              <label className="text-xs text-gray-500 capitalize">
+                                {t[category] || category}
+                              </label>
+                              <Input
+                                type="number"
+                                value={amount as number}
+                                onChange={(e) => updateIncomeBreakdown(entry.id, category, parseInt(e.target.value) || 0)}
+                                size="sm"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        <Input
+                          placeholder={t.customSource}
+                          value={newIncomeSource}
+                          onChange={(e) => setNewIncomeSource(e.target.value)}
+                          size="sm"
+                        />
+                        <Button size="sm" onClick={() => addCustomIncomeSource(entry.id)}>
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Expense Breakdown */}
+                    <div>
+                      <h4 className="font-medium text-gray-700 mb-2">{t.expenseBreakdown}</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {Object.entries(entry.expenseBreakdown).map(([category, amount]) => {
+                          if (category === 'custom') {
+                            return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
+                              <div key={`expense-${customCat}`}>
+                                <label className="text-xs text-gray-500 capitalize">{customCat}</label>
+                                <Input
+                                  type="number"
+                                  value={customAmount}
+                                  onChange={(e) => updateExpenseBreakdown(entry.id, `custom.${customCat}`, parseInt(e.target.value) || 0)}
+                                  size="sm"
+                                />
+                              </div>
+                            ));
+                          }
+                          return (
+                            <div key={`expense-${category}`}>
+                              <label className="text-xs text-gray-500 capitalize">
+                                {t[category] || category}
+                              </label>
+                              <Input
+                                type="number"
+                                value={amount as number}
+                                onChange={(e) => updateExpenseBreakdown(entry.id, category, parseInt(e.target.value) || 0)}
+                                size="sm"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        <Input
+                          placeholder={t.customCategory}
+                          value={newExpenseCategory}
+                          onChange={(e) => setNewExpenseCategory(e.target.value)}
+                          size="sm"
+                        />
+                        <Button size="sm" onClick={() => addCustomExpenseCategory(entry.id)}>
+                          <Plus className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -373,7 +560,7 @@ const MonthlyRevenueSection = ({
                   <Textarea
                     value={entry.notes}
                     onChange={(e) => updateFinancialEntry(entry.id, 'notes', e.target.value)}
-                    placeholder={t.monthNotes}
+                    placeholder={t.entryNotes}
                     rows={2}
                   />
                 ) : (
@@ -396,14 +583,15 @@ const MonthlyRevenueSection = ({
               {t.financialOverview}
             </div>
             <div className="flex items-center space-x-2">
-              <Select value={timePeriod} onValueChange={(value: 'monthly' | 'quarterly' | 'yearly') => setTimePeriod(value)}>
+              <Select value={timePeriod} onValueChange={(value: 'daily' | 'weekly' | 'monthly' | 'quarterly') => setTimePeriod(value)}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="daily">{t.daily}</SelectItem>
+                  <SelectItem value="weekly">{t.weekly}</SelectItem>
                   <SelectItem value="monthly">{t.monthly}</SelectItem>
                   <SelectItem value="quarterly">{t.quarterly}</SelectItem>
-                  <SelectItem value="yearly">{t.yearly}</SelectItem>
                 </SelectContent>
               </Select>
               <Button

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Share2, MessageCircle, Copy, Download, Check } from 'lucide-react';
+import { Share2, MessageCircle, Copy, Download, Check, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ShareModalProps {
@@ -19,45 +19,53 @@ const ShareModal = ({ strategy, language = 'en' }: ShareModalProps) => {
       shareStrategy: 'Share Strategy',
       shareVia: 'Share via',
       whatsapp: 'WhatsApp',
+      email: 'Email',
       copyText: 'Copy Text',
       downloadPdf: 'Download PDF',
       copied: 'Copied!',
       shareTitle: 'My Business Strategy',
       copiedToast: 'Strategy copied to clipboard!',
-      pdfToast: 'PDF download feature coming soon!'
+      pdfToast: 'PDF download feature coming soon!',
+      emailToast: 'Email share feature coming soon!'
     },
     sw: {
       shareStrategy: 'Shiriki Mkakati',
       shareVia: 'Shiriki kupitia',
       whatsapp: 'WhatsApp',
+      email: 'Barua pepe',
       copyText: 'Nakili Maandishi',
       downloadPdf: 'Pakua PDF',
       copied: 'Imenakiliwa!',
       shareTitle: 'Mkakati Wangu wa Biashara',
       copiedToast: 'Mkakati umenakiliwa kwenye ubao wa kunakili!',
-      pdfToast: 'Kipengele cha kupakua PDF kinakuja hivi karibuni!'
+      pdfToast: 'Kipengele cha kupakua PDF kinakuja hivi karibuni!',
+      emailToast: 'Kipengele cha kushiriki barua pepe kinakuja hivi karibuni!'
     },
     ar: {
       shareStrategy: 'مشاركة الاستراتيجية',
       shareVia: 'مشاركة عبر',
       whatsapp: 'واتساب',
+      email: 'البريد الإلكتروني',
       copyText: 'نسخ النص',
       downloadPdf: 'تحميل PDF',
       copied: 'تم النسخ!',
       shareTitle: 'استراتيجية عملي',
       copiedToast: 'تم نسخ الاستراتيجية إلى الحافظة!',
-      pdfToast: 'ميزة تحميل PDF قادمة قريباً!'
+      pdfToast: 'ميزة تحميل PDF قادمة قريباً!',
+      emailToast: 'ميزة مشاركة البريد الإلكتروني قادمة قريباً!'
     },
     fr: {
       shareStrategy: 'Partager la Stratégie',
       shareVia: 'Partager via',
       whatsapp: 'WhatsApp',
+      email: 'E-mail',
       copyText: 'Copier le Texte',
       downloadPdf: 'Télécharger PDF',
       copied: 'Copié!',
       shareTitle: 'Ma Stratégie d\'Entreprise',
       copiedToast: 'Stratégie copiée dans le presse-papiers!',
-      pdfToast: 'Fonctionnalité de téléchargement PDF à venir bientôt!'
+      pdfToast: 'Fonctionnalité de téléchargement PDF à venir bientôt!',
+      emailToast: 'Fonctionnalité de partage par e-mail à venir bientôt!'
     }
   };
 
@@ -93,6 +101,16 @@ Created with Strategy Grid ✨`;
     const text = encodeURIComponent(generateShareText());
     const url = `https://wa.me/?text=${text}`;
     window.open(url, '_blank');
+  };
+
+  const handleEmailShare = () => {
+    const subject = encodeURIComponent(t.shareTitle);
+    const body = encodeURIComponent(generateShareText());
+    const url = `mailto:?subject=${subject}&body=${body}`;
+    window.open(url, '_blank');
+    toast({
+      title: t.emailToast,
+    });
   };
 
   const handleCopyText = async () => {
@@ -136,6 +154,15 @@ Created with Strategy Grid ✨`;
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               {t.whatsapp}
+            </Button>
+            
+            <Button
+              onClick={handleEmailShare}
+              variant="outline"
+              className="w-full"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              {t.email}
             </Button>
             
             <Button

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,7 +50,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
 
   const currentCountryInfo = countries.find(c => c.code === currentCountry) || countries[0];
 
-  // Translation object
+  // Translation object with template content in different languages
   const translations = {
     en: {
       strategyBuilder: 'Strategy Builder',
@@ -86,6 +87,32 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         marketingApproach: 'Start with one or two channels you can do well rather than trying everything.',
         operationalNeeds: 'List the essentials first - what do you absolutely need to start?',
         growthGoals: 'Set specific, measurable goals with realistic timelines.'
+      },
+      templateContent: {
+        'online-retail': {
+          businessName: 'My Online Store',
+          vision: 'To become the leading online retailer for quality products in my region',
+          mission: 'Providing convenient online shopping with reliable delivery and excellent customer service',
+          targetMarket: 'Urban professionals, tech-savvy consumers, busy families seeking convenience',
+          revenueModel: 'Product sales with markup, delivery fees, affiliate commissions, premium memberships',
+          valueProposition: 'Quality products with doorstep delivery, competitive prices, and easy returns',
+          keyPartners: 'Suppliers, logistics companies, payment processors, social media influencers',
+          marketingApproach: 'Social media marketing, WhatsApp catalogs, Google ads, customer referrals',
+          operationalNeeds: 'E-commerce platform, inventory storage, packaging materials, delivery network',
+          growthGoals: 'Expand product range, establish physical showroom, build mobile app, enter new cities'
+        },
+        'mitumba': {
+          businessName: 'My Mitumba Store',
+          vision: 'To be the most trusted source of quality second-hand clothing in my community',
+          mission: 'Providing affordable, quality clothing while promoting sustainable fashion choices',
+          targetMarket: 'Price-conscious families, young professionals, students in urban and peri-urban areas',
+          revenueModel: 'Direct sales from physical store and WhatsApp marketing, bulk sales to other retailers',
+          valueProposition: 'Quality second-hand clothes at affordable prices with personalized service',
+          keyPartners: 'Bale suppliers, local tailors for alterations, WhatsApp groups, chama members',
+          marketingApproach: 'Word-of-mouth, WhatsApp business, local community events, referral programs',
+          operationalNeeds: 'Store space, storage for inventory, transportation for bale collection, mobile money account',
+          growthGoals: 'Expand to online sales, add more product categories, establish multiple outlets'
+        }
       }
     },
     sw: {
@@ -123,6 +150,32 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         marketingApproach: 'Anza na chaneli moja au mbili unazoweza kuzifanya vizuri badala ya kujaribu kila kitu.',
         operationalNeeds: 'Orodhesha muhimu kwanza - ni nini unahitaji kabisa kuanza?',
         growthGoals: 'Weka malengo mahususi, yanayoweza kupimwa na yenye ratiba za busara.'
+      },
+      templateContent: {
+        'online-retail': {
+          businessName: 'Duka Langu la Mtandaoni',
+          vision: 'Kuwa muuzaji mkuu wa mtandaoni wa bidhaa za ubora katika eneo langu',
+          mission: 'Kutoa ununuzi wa mtandaoni wa urahisi na uongozaji wa kuaminika na huduma bora za wateja',
+          targetMarket: 'Wataalamu wa mijini, watumiaji wa teknolojia, familia zenye shughuli nyingi zinazotaka urahisi',
+          revenueModel: 'Mauzo ya bidhaa kwa bei ya juu, ada za uongozaji, mapato ya uongozaji, uanachama wa aina ya juu',
+          valueProposition: 'Bidhaa za ubora zilizokamilishwa kwa uongozaji wa mlangoni, bei za ushindani, na kurudi kwa urahisi',
+          keyPartners: 'Wasambazaji, makampuni ya logistik, wachakataji wa malipo, wahudumishaji wa mitandao ya kijamii',
+          marketingApproach: 'Uuzaji wa mitandao ya kijamii, orodha za WhatsApp, matangazo ya Google, marejeleo ya wateja',
+          operationalNeeds: 'Jukwaa la biashara ya mtandaoni, uhifadhi wa bidhaa, vifaa vya ufungaji, mtandao wa uongozaji',
+          growthGoals: 'Panua orodha ya bidhaa, anzisha chumba cha onyesho cha kimwili, jenga programu ya simu, ingia miji mipya'
+        },
+        'mitumba': {
+          businessName: 'Duka Langu la Mitumba',
+          vision: 'Kuwa chanzo cha kuaminika zaidi cha nguo za mitumba za ubora katika jamii yangu',
+          mission: 'Kutoa nguo za bei nafuu na za ubora huku nikihimiza uchaguzi wa mtindo endelevu',
+          targetMarket: 'Familia zinazojali bei, wataalamu vijana, wanafunzi katika maeneo ya mijini na karibu na mijini',
+          revenueModel: 'Mauzo ya moja kwa moja kutoka duka la kimwili na uuzaji wa WhatsApp, mauzo makubwa kwa wauzaji wengine',
+          valueProposition: 'Nguo za mitumba za ubora kwa bei nafuu na huduma ya kibinafsi',
+          keyPartners: 'Wasambazaji wa mabanda, mashona wa mitaani wa marekebisho, vikundi vya WhatsApp, wanachama wa chama',
+          marketingApproach: 'Maneno ya mdomo, biashara ya WhatsApp, matukio ya kijamii ya mtaani, programu za marejeleo',
+          operationalNeeds: 'Nafasi ya duka, uhifadhi wa bidhaa, usafiri wa kukusanya mabanda, akaunti ya pesa za simu',
+          growthGoals: 'Panua hadi mauzo ya mtandaoni, ongeza kategoria zaidi za bidhaa, anzisha matawi mengi'
+        }
       }
     },
     ar: {
@@ -154,12 +207,38 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         vision: 'فكر بشكل كبير! ما التأثير الذي تريد أن يكون لعملك في 5-10 سنوات؟',
         mission: 'اجعلها بسيطة ومركزة على القيمة التي تقدمها للعملاء.',
         targetMarket: 'تصور عميلك المثالي - عمره ودخله واحتياجاته اليومية وأسلوب حياته.',
-        revenueModel: ' Concentر على 2-3 طرق رئيسية لكسب المال بدلاً من تجربة كل شيء مرة واحدة.',
+        revenueModel: 'ركز على 2-3 طرق رئيسية لكسب المال بدلاً من تجربة كل شيء مرة واحدة.',
         valueProposition: 'ما الذي يجعلك مختلفاً عن المنافسين؟ ما القيمة الفريدة التي تقدمها؟',
         keyPartners: 'فكر في من يمكنه مساعدتك على النجاح - الموردين والموزعين والمرشدين.',
         marketingApproach: 'ابدأ بقناة أو قناتين يمكنك أن تجيدهما بدلاً من تجربة كل شيء.',
         operationalNeeds: 'اسرد الأساسيات أولاً - ما الذي تحتاجه بالضرورة للبدء؟',
         growthGoals: 'ضع أهدافاً محددة وقابلة للقياس مع جداول زمنية واقعية.'
+      },
+      templateContent: {
+        'online-retail': {
+          businessName: 'متجري الإلكتروني',
+          vision: 'أن أصبح بائع التجزئة الإلكتروني الرائد للمنتجات عالية الجودة في منطقتي',
+          mission: 'توفير التسوق الإلكتروني المريح مع التوصيل الموثوق وخدمة العملاء الممتازة',
+          targetMarket: 'المهنيون الحضريون، المستهلكون التقنيون، العائلات المشغولة التي تسعى للراحة',
+          revenueModel: 'مبيعات المنتجات بهامش ربح، رسوم التوصيل، عمولات التسويق بالعمولة، العضويات المميزة',
+          valueProposition: 'منتجات عالية الجودة مع التوصيل للمنزل، أسعار تنافسية، وإرجاع سهل',
+          keyPartners: 'الموردون، شركات اللوجستيك، معالجو المدفوعات، مؤثرو وسائل التواصل الاجتماعي',
+          marketingApproach: 'التسويق عبر وسائل التواصل الاجتماعي، كتالوجات واتساب، إعلانات جوجل، إحالات العملاء',
+          operationalNeeds: 'منصة التجارة الإلكترونية، تخزين المخزون، مواد التعبئة، شبكة التوصيل',
+          growthGoals: 'توسيع نطاق المنتجات، إنشاء صالة عرض فعلية، بناء تطبيق للهاتف المحمول، دخول مدن جديدة'
+        },
+        'mitumba': {
+          businessName: 'متجر الملابس المستعملة',
+          vision: 'أن أكون المصدر الأكثر ثقة للملابس المستعملة عالية الجودة في مجتمعي',
+          mission: 'توفير ملابس عالية الجودة وبأسعار معقولة مع تعزيز خيارات الموضة المستدامة',
+          targetMarket: 'العائلات الواعية بالأسعار، المهنيون الشباب، الطلاب في المناطق الحضرية وشبه الحضرية',
+          revenueModel: 'المبيعات المباشرة من المتجر الفعلي وتسويق واتساب، المبيعات بالجملة لتجار التجزئة الآخرين',
+          valueProposition: 'ملابس مستعملة عالية الجودة بأسعار معقولة مع خدمة شخصية',
+          keyPartners: 'موردو البالات، الخياطون المحليون للتعديلات، مجموعات واتساب، أعضاء الجمعيات',
+          marketingApproach: 'التسويق الشفهي، أعمال واتساب، الأحداث المجتمعية المحلية، برامج الإحالة',
+          operationalNeeds: 'مساحة المتجر، تخزين المخزون، النقل لجمع البالات، حساب الأموال المحمولة',
+          growthGoals: 'التوسع إلى المبيعات عبر الإنترنت، إضافة المزيد من فئات المنتجات، إنشاء منافذ متعددة'
+        }
       }
     },
     fr: {
@@ -197,6 +276,32 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         marketingApproach: 'Commencez par un ou deux canaux que vous pouvez bien faire plutôt que d\'essayer tout.',
         operationalNeeds: 'Listez d\'abord l\'essentiel - de quoi avez-vous absolument besoin pour commencer ?',
         growthGoals: 'Fixez des objectifs spécifiques et mesurables avec des délais réalistes.'
+      },
+      templateContent: {
+        'online-retail': {
+          businessName: 'Ma Boutique en Ligne',
+          vision: 'Devenir le principal détaillant en ligne de produits de qualité dans ma région',
+          mission: 'Fournir des achats en ligne pratiques avec une livraison fiable et un excellent service client',
+          targetMarket: 'Professionnels urbains, consommateurs technophiles, familles occupées recherchant la commodité',
+          revenueModel: 'Ventes de produits avec marge, frais de livraison, commissions d\'affiliation, abonnements premium',
+          valueProposition: 'Produits de qualité avec livraison à domicile, prix compétitifs et retours faciles',
+          keyPartners: 'Fournisseurs, entreprises de logistique, processeurs de paiement, influenceurs des médias sociaux',
+          marketingApproach: 'Marketing des médias sociaux, catalogues WhatsApp, publicités Google, références clients',
+          operationalNeeds: 'Plateforme e-commerce, stockage d\'inventaire, matériaux d\'emballage, réseau de livraison',
+          growthGoals: 'Élargir la gamme de produits, établir une salle d\'exposition physique, créer une application mobile, entrer dans de nouvelles villes'
+        },
+        'mitumba': {
+          businessName: 'Ma Boutique Mitumba',
+          vision: 'Être la source la plus fiable de vêtements d\'occasion de qualité dans ma communauté',
+          mission: 'Fournir des vêtements de qualité à prix abordable tout en promouvant des choix de mode durables',
+          targetMarket: 'Familles soucieuses des prix, jeunes professionnels, étudiants dans les zones urbaines et périurbaines',
+          revenueModel: 'Ventes directes du magasin physique et marketing WhatsApp, ventes en gros à d\'autres détaillants',
+          valueProposition: 'Vêtements d\'occasion de qualité à prix abordables avec service personnalisé',
+          keyPartners: 'Fournisseurs de balles, tailleurs locaux pour retouches, groupes WhatsApp, membres de chama',
+          marketingApproach: 'Bouche-à-oreille, business WhatsApp, événements communautaires locaux, programmes de référence',
+          operationalNeeds: 'Espace de magasin, stockage pour inventaire, transport pour collecte de balles, compte argent mobile',
+          growthGoals: 'Étendre aux ventes en ligne, ajouter plus de catégories de produits, établir plusieurs points de vente'
+        }
       }
     }
   };
@@ -455,7 +560,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
     
     if (template && template.id) {
       console.log('StrategyBuilder - Processing template with id:', template.id);
-      const templateContent = templateData[template.id];
+      const templateContent = t.templateContent?.[template.id];
       console.log('StrategyBuilder - Found template content:', templateContent);
       
       if (templateContent) {
@@ -464,7 +569,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
         console.log('StrategyBuilder - Strategy updated successfully');
       } else {
         console.log('StrategyBuilder - No template content found for id:', template.id);
-        console.log('StrategyBuilder - Available template ids:', Object.keys(templateData));
+        console.log('StrategyBuilder - Available template ids:', Object.keys(t.templateContent || {}));
       }
     } else if (template === null) {
       console.log('StrategyBuilder - Loading blank form for custom strategy');
@@ -484,7 +589,7 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
     } else {
       console.log('StrategyBuilder - Template is undefined or invalid:', template);
     }
-  }, [template]);
+  }, [template, currentLanguage]);
 
   const handleInputChange = (field, value) => {
     console.log('StrategyBuilder - Input changed:', field, '=', value);
@@ -564,15 +669,15 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="hidden sm:flex items-center space-x-2">
+            <LanguageSelector 
+              currentLanguage={currentLanguage}
+              onLanguageChange={setCurrentLanguage}
+            />
             <CountrySelector 
               currentCountry={currentCountry}
               onCountryChange={setCurrentCountry}
               language={currentLanguage}
-            />
-            <LanguageSelector 
-              currentLanguage={currentLanguage}
-              onLanguageChange={setCurrentLanguage}
             />
             <Button variant="outline" onClick={onHome}>
               <Home className="w-4 h-4 mr-2" />
@@ -580,6 +685,27 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
             </Button>
             <Button variant="outline" onClick={handleSave}>
               <Save className="w-4 h-4 mr-2" />
+              {t.save}
+            </Button>
+          </div>
+
+          {/* Mobile utility buttons - stacked vertically */}
+          <div className="flex sm:hidden flex-col space-y-1">
+            <LanguageSelector 
+              currentLanguage={currentLanguage}
+              onLanguageChange={setCurrentLanguage}
+            />
+            <CountrySelector 
+              currentCountry={currentCountry}
+              onCountryChange={setCurrentCountry}
+              language={currentLanguage}
+            />
+            <Button variant="outline" size="sm" onClick={onHome}>
+              <Home className="w-4 h-4 mr-1" />
+              {t.home}
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSave}>
+              <Save className="w-4 h-4 mr-1" />
               {t.save}
             </Button>
           </div>
