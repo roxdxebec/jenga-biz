@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,7 +93,7 @@ const MonthlyRevenueSection = ({
       supplies: 'Supplies',
       marketing: 'Marketing',
       misc: 'Miscellaneous',
-      downloadPdf: 'Download Summary (PDF)',
+      downloadPdf: 'Download Business Tracker Summary',
       selectDate: 'Select Date',
       addCustomIncome: 'Add Custom Income Source',
       addCustomExpense: 'Add Custom Expense Category',
@@ -103,7 +104,7 @@ const MonthlyRevenueSection = ({
     },
     sw: {
       title: 'Kufuatilia Mapato na Gharama za Biashara',
-      subtitle: 'Fuatilia ukuaji wa biashara yako na ufuatilie faida.',
+      subtitle: 'Fuatilia ukuaji wa biashara yako na ufuatilikie faida.',
       financialOverview: 'Muhtasari wa Kifedha',
       addEntry: 'Ongeza Ingizo',
       lineChart: 'Chati ya Mstari',
@@ -131,7 +132,7 @@ const MonthlyRevenueSection = ({
       supplies: 'Vifaa',
       marketing: 'Uuzaji',
       misc: 'Mengineyo',
-      downloadPdf: 'Pakua Muhtasari (PDF)',
+      downloadPdf: 'Pakua Muhtasari wa Kufuatilia Biashara',
       selectDate: 'Chagua Tarehe',
       addCustomIncome: 'Ongeza Chanzo cha Mapato',
       addCustomExpense: 'Ongeza Kundi la Gharama',
@@ -170,7 +171,7 @@ const MonthlyRevenueSection = ({
       supplies: 'إمدادات',
       marketing: 'تسويق',
       misc: 'متفرقات',
-      downloadPdf: 'تحميل الملخص (PDF)',
+      downloadPdf: 'تحميل ملخص متتبع الأعمال',
       selectDate: 'اختر التاريخ',
       addCustomIncome: 'إضافة مصدر دخل مخصص',
       addCustomExpense: 'إضافة فئة مصروفات مخصصة',
@@ -209,7 +210,7 @@ const MonthlyRevenueSection = ({
       supplies: 'Fournitures',
       marketing: 'Marketing',
       misc: 'Divers',
-      downloadPdf: 'Télécharger Résumé (PDF)',
+      downloadPdf: 'Télécharger Résumé Suivi Entreprise',
       selectDate: 'Sélectionner la Date',
       addCustomIncome: 'Ajouter Source de Revenus',
       addCustomExpense: 'Ajouter Catégorie de Dépenses',
@@ -268,17 +269,21 @@ const MonthlyRevenueSection = ({
     ));
   };
 
+  const calculateTotal = (breakdown: any): number => {
+    return Object.values(breakdown).reduce((sum: number, val: any) => {
+      if (typeof val === 'object' && val !== null) {
+        return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
+      }
+      return sum + (typeof val === 'number' ? val : 0);
+    }, 0);
+  };
+
   const updateIncomeBreakdown = (id: string, category: string, value: number) => {
     setFinancialData(financialData.map(entry => 
       entry.id === id ? { 
         ...entry, 
         incomeBreakdown: { ...entry.incomeBreakdown, [category]: value },
-        revenue: Object.values({ ...entry.incomeBreakdown, [category]: value }).reduce((sum: number, val: any) => {
-          if (typeof val === 'object' && val !== null) {
-            return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
-          }
-          return sum + (typeof val === 'number' ? val : 0);
-        }, 0)
+        revenue: calculateTotal({ ...entry.incomeBreakdown, [category]: value })
       } : entry
     ));
   };
@@ -288,12 +293,39 @@ const MonthlyRevenueSection = ({
       entry.id === id ? { 
         ...entry, 
         expenseBreakdown: { ...entry.expenseBreakdown, [category]: value },
-        expenses: Object.values({ ...entry.expenseBreakdown, [category]: value }).reduce((sum: number, val: any) => {
-          if (typeof val === 'object' && val !== null) {
-            return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
-          }
-          return sum + (typeof val === 'number' ? val : 0);
-        }, 0)
+        expenses: calculateTotal({ ...entry.expenseBreakdown, [category]: value })
+      } : entry
+    ));
+  };
+
+  const updateCustomIncomeBreakdown = (id: string, customCategory: string, value: number) => {
+    setFinancialData(financialData.map(entry => 
+      entry.id === id ? {
+        ...entry,
+        incomeBreakdown: {
+          ...entry.incomeBreakdown,
+          custom: { ...entry.incomeBreakdown.custom, [customCategory]: value }
+        },
+        revenue: calculateTotal({
+          ...entry.incomeBreakdown,
+          custom: { ...entry.incomeBreakdown.custom, [customCategory]: value }
+        })
+      } : entry
+    ));
+  };
+
+  const updateCustomExpenseBreakdown = (id: string, customCategory: string, value: number) => {
+    setFinancialData(financialData.map(entry => 
+      entry.id === id ? {
+        ...entry,
+        expenseBreakdown: {
+          ...entry.expenseBreakdown,
+          custom: { ...entry.expenseBreakdown.custom, [customCategory]: value }
+        },
+        expenses: calculateTotal({
+          ...entry.expenseBreakdown,
+          custom: { ...entry.expenseBreakdown.custom, [customCategory]: value }
+        })
       } : entry
     ));
   };
@@ -448,7 +480,7 @@ const MonthlyRevenueSection = ({
                                   <Input
                                     type="number"
                                     value={customAmount}
-                                    onChange={(e) => updateIncomeBreakdown(entry.id, `custom.${customCat}`, Number(e.target.value) || 0)}
+                                    onChange={(e) => updateCustomIncomeBreakdown(entry.id, customCat, Number(e.target.value) || 0)}
                                     size="sm"
                                   />
                                 </div>
@@ -494,7 +526,7 @@ const MonthlyRevenueSection = ({
                                   <Input
                                     type="number"
                                     value={customAmount}
-                                    onChange={(e) => updateExpenseBreakdown(entry.id, `custom.${customCat}`, Number(e.target.value) || 0)}
+                                    onChange={(e) => updateCustomExpenseBreakdown(entry.id, customCat, Number(e.target.value) || 0)}
                                     size="sm"
                                   />
                                 </div>
