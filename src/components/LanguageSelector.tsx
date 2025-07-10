@@ -9,10 +9,10 @@ interface LanguageSelectorProps {
 
 const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelectorProps) => {
   const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' },
-    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' }
+    { code: 'en', name: 'English' },
+    { code: 'sw', name: 'Kiswahili' },
+    { code: 'ar', name: 'العربية' },
+    { code: 'fr', name: 'Français' }
   ];
 
   const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
@@ -22,19 +22,13 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelecto
       <SelectTrigger className="w-auto min-w-[120px]">
         <div className="flex items-center space-x-2">
           <Globe className="w-4 h-4" />
-          <span className="flex items-center space-x-1">
-            <span>{currentLang.flag}</span>
-            <span className="hidden sm:inline">{currentLang.name}</span>
-          </span>
+          <span className="hidden sm:inline">{currentLang.name}</span>
         </div>
       </SelectTrigger>
       <SelectContent>
         {languages.map((language) => (
           <SelectItem key={language.code} value={language.code}>
-            <div className="flex items-center space-x-2">
-              <span>{language.flag}</span>
-              <span>{language.name}</span>
-            </div>
+            {language.name}
           </SelectItem>
         ))}
       </SelectContent>

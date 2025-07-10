@@ -10,6 +10,8 @@ import CustomerPersonaSection from '@/components/CustomerPersonaSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import LanguageSelector from '@/components/LanguageSelector';
+import CoachingTip from '@/components/CoachingTip';
+import CountrySelector from '@/components/CountrySelector';
 
 const StrategyBuilder = ({ template, onBack, onHome }) => {
   console.log('StrategyBuilder - Component rendering with template:', template);
@@ -30,7 +32,22 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
   const [showSummary, setShowSummary] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [currentCountry, setCurrentCountry] = useState('KE');
   const { toast } = useToast();
+
+  // Get currency info based on country
+  const countries = [
+    { code: 'KE', name: 'Kenya', currency: 'KES', symbol: 'KSh' },
+    { code: 'NG', name: 'Nigeria', currency: 'NGN', symbol: '₦' },
+    { code: 'UG', name: 'Uganda', currency: 'UGX', symbol: 'USh' },
+    { code: 'ZA', name: 'South Africa', currency: 'ZAR', symbol: 'R' },
+    { code: 'TZ', name: 'Tanzania', currency: 'TZS', symbol: 'TSh' },
+    { code: 'RW', name: 'Rwanda', currency: 'RWF', symbol: 'FRw' },
+    { code: 'GH', name: 'Ghana', currency: 'GHS', symbol: 'GH₵' },
+    { code: 'ET', name: 'Ethiopia', currency: 'ETB', symbol: 'Br' }
+  ];
+
+  const currentCountryInfo = countries.find(c => c.code === currentCountry) || countries[0];
 
   // Translation object
   const translations = {
@@ -56,7 +73,20 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       strategySavedDesc: 'Your business strategy has been saved successfully.',
       testingNote: 'This feature will be part of Strategy Grid Pro (Tier 2) once live. Enjoy full access during testing.',
       enterPlaceholder: 'Enter your',
-      describePlaceholder: 'Describe your'
+      describePlaceholder: 'Describe your',
+      strategyTooltip: 'This roadmap is your business strategy in simple, actionable steps.',
+      coachingTips: {
+        businessName: 'Choose a name that\'s easy to remember and reflects what you do.',
+        vision: 'Think big! What impact do you want your business to have in 5-10 years?',
+        mission: 'Keep it simple and focused on the value you provide to customers.',
+        targetMarket: 'Visualize your ideal customer — their age, income, daily needs, and lifestyle.',
+        revenueModel: 'Focus on 2-3 main ways to make money rather than trying everything at once.',
+        valueProposition: 'What makes you different from competitors? What unique value do you offer?',
+        keyPartners: 'Think about who can help you succeed - suppliers, distributors, mentors.',
+        marketingApproach: 'Start with one or two channels you can do well rather than trying everything.',
+        operationalNeeds: 'List the essentials first - what do you absolutely need to start?',
+        growthGoals: 'Set specific, measurable goals with realistic timelines.'
+      }
     },
     sw: {
       strategyBuilder: 'Mjenzi wa Mkakati',
@@ -80,7 +110,20 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       strategySavedDesc: 'Mkakati wako wa biashara umehifadhiwa kwa mafanikio.',
       testingNote: 'Kipengele hiki kitakuwa sehemu ya Strategy Grid Pro (Daraja la 2) baada ya kuanzishwa. Furahia ufikiaji kamili wakati wa upimaji.',
       enterPlaceholder: 'Ingiza',
-      describePlaceholder: 'Eleza'
+      describePlaceholder: 'Eleza',
+      strategyTooltip: 'Ramani hii ni mkakati wako wa biashara katika hatua rahisi na zinazoweza kutekelezwa.',
+      coachingTips: {
+        businessName: 'Chagua jina ambalo ni rahisi kukumbuka na linaonyesha unachofanya.',
+        vision: 'Fikiria kubwa! Ni athari gani unayotaka biashara yako iwe nayo katika miaka 5-10?',
+        mission: 'Iweke rahisi na lenga thamani unayotoa kwa wateja.',
+        targetMarket: 'Ona mteja wako mzuri - umri wake, mapato, mahitaji ya kila siku, na mtindo wa maisha.',
+        revenueModel: 'Zingatia njia 2-3 kuu za kupata pesa badala ya kujaribu kila kitu mara moja.',
+        valueProposition: 'Ni nini kinachokufanya tofauti na washindani? Ni thamani gani ya kipekee unayotoa?',
+        keyPartners: 'Fikiria ni nani anayeweza kukusaidia kufanikiwa - wasambazaji, wasafirishaji, washauri.',
+        marketingApproach: 'Anza na chaneli moja au mbili unazoweza kuzifanya vizuri badala ya kujaribu kila kitu.',
+        operationalNeeds: 'Orodhesha muhimu kwanza - ni nini unahitaji kabisa kuanza?',
+        growthGoals: 'Weka malengo mahususi, yanayoweza kupimwa na yenye ratiba za busara.'
+      }
     },
     ar: {
       strategyBuilder: 'منشئ الاستراتيجية',
@@ -104,7 +147,20 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       strategySavedDesc: 'تم حفظ استراتيجية عملك بنجاح.',
       testingNote: 'ستكون هذه الميزة جزءًا من Strategy Grid Pro (المستوى 2) بمجرد النشر. استمتع بالوصول الكامل أثناء الاختبار.',
       enterPlaceholder: 'أدخل',
-      describePlaceholder: 'وصف'
+      describePlaceholder: 'وصف',
+      strategyTooltip: 'هذه الخريطة هي استراتيجية عملك في خطوات بسيطة وقابلة للتنفيذ.',
+      coachingTips: {
+        businessName: 'اختر اسماً سهل التذكر ويعكس ما تفعله.',
+        vision: 'فكر بشكل كبير! ما التأثير الذي تريد أن يكون لعملك في 5-10 سنوات؟',
+        mission: 'اجعلها بسيطة ومركزة على القيمة التي تقدمها للعملاء.',
+        targetMarket: 'تصور عميلك المثالي - عمره ودخله واحتياجاته اليومية وأسلوب حياته.',
+        revenueModel: ' Concentر على 2-3 طرق رئيسية لكسب المال بدلاً من تجربة كل شيء مرة واحدة.',
+        valueProposition: 'ما الذي يجعلك مختلفاً عن المنافسين؟ ما القيمة الفريدة التي تقدمها؟',
+        keyPartners: 'فكر في من يمكنه مساعدتك على النجاح - الموردين والموزعين والمرشدين.',
+        marketingApproach: 'ابدأ بقناة أو قناتين يمكنك أن تجيدهما بدلاً من تجربة كل شيء.',
+        operationalNeeds: 'اسرد الأساسيات أولاً - ما الذي تحتاجه بالضرورة للبدء؟',
+        growthGoals: 'ضع أهدافاً محددة وقابلة للقياس مع جداول زمنية واقعية.'
+      }
     },
     fr: {
       strategyBuilder: 'Constructeur de Stratégie',
@@ -128,7 +184,20 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       strategySavedDesc: 'Votre stratégie d\'entreprise a été sauvegardée avec succès.',
       testingNote: 'Cette fonctionnalité fera partie de Strategy Grid Pro (Niveau 2) une fois lancée. Profitez d\'un accès complet pendant les tests.',
       enterPlaceholder: 'Entrez votre',
-      describePlaceholder: 'Décrivez votre'
+      describePlaceholder: 'Décrivez votre',
+      strategyTooltip: 'Cette feuille de route est votre stratégie d\'entreprise en étapes simples et réalisables.',
+      coachingTips: {
+        businessName: 'Choisissez un nom facile à retenir et qui reflète ce que vous faites.',
+        vision: 'Pensez grand ! Quel impact voulez-vous que votre entreprise ait dans 5 à 10 ans ?',
+        mission: 'Gardez-la simple et concentrée sur la valeur que vous apportez aux clients.',
+        targetMarket: 'Visualisez votre client idéal - son âge, ses revenus, ses besoins quotidiens et son style de vie.',
+        revenueModel: 'Concentrez-vous sur 2-3 moyens principaux de gagner de l\'argent plutôt que d\'essayer tout en même temps.',
+        valueProposition: 'Qu\'est-ce qui vous rend différent des concurrents ? Quelle valeur unique offrez-vous ?',
+        keyPartners: 'Pensez à qui peut vous aider à réussir - fournisseurs, distributeurs, mentors.',
+        marketingApproach: 'Commencez par un ou deux canaux que vous pouvez bien faire plutôt que d\'essayer tout.',
+        operationalNeeds: 'Listez d\'abord l\'essentiel - de quoi avez-vous absolument besoin pour commencer ?',
+        growthGoals: 'Fixez des objectifs spécifiques et mesurables avec des délais réalistes.'
+      }
     }
   };
 
@@ -484,13 +553,23 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
               {t.back}
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">{t.strategyBuilder}</h1>
+              <h1 className="text-xl font-bold text-gray-800">
+                {t.strategyBuilder}
+                <span className="text-sm text-gray-500 ml-2" title={t.strategyTooltip}>
+                  💡
+                </span>
+              </h1>
               {template && <p className="text-sm text-gray-600">{template.name} Template</p>}
               {template === null && <p className="text-sm text-gray-600">{t.customStrategy}</p>}
             </div>
           </div>
           
           <div className="flex items-center space-x-2">
+            <CountrySelector 
+              currentCountry={currentCountry}
+              onCountryChange={setCurrentCountry}
+              language={currentLanguage}
+            />
             <LanguageSelector 
               currentLanguage={currentLanguage}
               onLanguageChange={setCurrentLanguage}
@@ -514,29 +593,37 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
             {sections.map((section) => {
               console.log('StrategyBuilder - Rendering section:', section.key, 'with value:', strategy[section.key]);
               return (
-                <Card key={section.key} className="border-orange-200">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg text-gray-800">{section.label}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {section.type === 'input' ? (
-                      <Input
-                        value={strategy[section.key]}
-                        onChange={(e) => handleInputChange(section.key, e.target.value)}
-                        placeholder={`${t.enterPlaceholder} ${section.label.toLowerCase()}`}
-                        className="w-full"
-                      />
-                    ) : (
-                      <Textarea
-                        value={strategy[section.key]}
-                        onChange={(e) => handleInputChange(section.key, e.target.value)}
-                        placeholder={`${t.describePlaceholder} ${section.label.toLowerCase()}`}
-                        className="w-full min-h-[100px]"
-                        rows={4}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
+                <div key={section.key}>
+                  <Card className="border-orange-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg text-gray-800">{section.label}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {section.type === 'input' ? (
+                        <Input
+                          value={strategy[section.key]}
+                          onChange={(e) => handleInputChange(section.key, e.target.value)}
+                          placeholder={`${t.enterPlaceholder} ${section.label.toLowerCase()}`}
+                          className="w-full"
+                        />
+                      ) : (
+                        <Textarea
+                          value={strategy[section.key]}
+                          onChange={(e) => handleInputChange(section.key, e.target.value)}
+                          placeholder={`${t.describePlaceholder} ${section.label.toLowerCase()}`}
+                          className="w-full min-h-[100px]"
+                          rows={4}
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Coaching Tip for each section */}
+                  <CoachingTip 
+                    tip={t.coachingTips[section.key]}
+                    language={currentLanguage}
+                  />
+                </div>
               );
             })}
           </div>
@@ -574,6 +661,8 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
               isPro={true} 
               strategyData={strategy}
               language={currentLanguage}
+              currency={currentCountryInfo.currency}
+              currencySymbol={currentCountryInfo.symbol}
             />
           </div>
 

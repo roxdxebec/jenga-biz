@@ -11,6 +11,7 @@ import { Target, Plus, Calendar as CalendarIcon, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import CoachingTip from '@/components/CoachingTip';
 
 interface Milestone {
   id: string;
@@ -26,6 +27,7 @@ interface BusinessMilestonesSectionProps {
 }
 
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en' }: BusinessMilestonesSectionProps) => {
+  const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
   const [milestones, setMilestones] = useState<Milestone[]>([
     {
       id: '1',
@@ -48,6 +50,13 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     en: {
       title: 'Business Milestones',
       subtitle: 'Track your business goals and stay focused on progress.',
+      businessStage: 'Business Stage',
+      ideation: 'Ideation',
+      early: 'Early Stage',
+      growth: 'Growth Stage',
+      ideationDesc: 'Still exploring business ideas or validating a concept.',
+      earlyDesc: 'Launched and selling, still refining operations or product.',
+      growthDesc: 'Established with regular income, focused on expansion.',
       yourMilestones: 'Your Milestones',
       addMilestone: 'Add Milestone',
       enterTitle: 'Enter milestone title',
@@ -55,11 +64,20 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       selectStatus: 'Select status',
       notStarted: 'Not Started',
       inProgress: 'In Progress',
-      complete: 'Complete'
+      complete: 'Complete',
+      tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
+      coachingTip: 'Break down big goals into smaller, actionable milestones. Each milestone should be specific and have a clear deadline.'
     },
     sw: {
       title: 'Malengo ya Biashara',
       subtitle: 'Fuatilia malengo yako ya biashara na uongozane na maendeleo.',
+      businessStage: 'Hatua ya Biashara',
+      ideation: 'Wazo',
+      early: 'Hatua ya Awali',
+      growth: 'Hatua ya Ukuaji',
+      ideationDesc: 'Bado ninachunguza mawazo ya biashara au kuthibitisha dhana.',
+      earlyDesc: 'Imeanzishwa na kuuza, bado ninaboresha uendeshaji au bidhaa.',
+      growthDesc: 'Imesimamishwa na mapato ya kawaida, inalenga upanuzi.',
       yourMilestones: 'Malengo Yako',
       addMilestone: 'Ongeza Lengo',
       enterTitle: 'Ingiza kichwa cha lengo',
@@ -67,11 +85,20 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       selectStatus: 'Chagua hali',
       notStarted: 'Haijuaanza',
       inProgress: 'Inaendelea',
-      complete: 'Imekamilika'
+      complete: 'Imekamilika',
+      tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
+      coachingTip: 'Gawanya malengo makubwa kuwa malengo madogo yanayoweza kutekelezwa. Kila lengo linapaswa kuwa mahususi na kuwa na tarehe ya mwisho ya wazi.'
     },
     ar: {
       title: 'معالم الأعمال',
       subtitle: 'تتبع أهداف عملك وحافظ على التركيز على التقدم.',
+      businessStage: 'مرحلة الأعمال',
+      ideation: 'التفكير',
+      early: 'المرحلة المبكرة',
+      growth: 'مرحلة النمو',
+      ideationDesc: 'لا تزال تستكشف أفكار تجارية أو تتحقق من مفهوم.',
+      earlyDesc: 'تم الإطلاق والبيع، لا تزال تحسن العمليات أو المنتج.',
+      growthDesc: 'راسخة مع دخل منتظم، تركز على التوسع.',
       yourMilestones: 'معالمك',
       addMilestone: 'إضافة معلم',
       enterTitle: 'أدخل عنوان المعلم',
@@ -79,11 +106,20 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       selectStatus: 'اختر الحالة',
       notStarted: 'لم تبدأ',
       inProgress: 'قيد التنفيذ',
-      complete: 'مكتمل'
+      complete: 'مكتمل',
+      tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
+      coachingTip: 'قسم الأهداف الكبيرة إلى معالم أصغر قابلة للتنفيذ. يجب أن يكون كل معلم محددًا وله موعد نهائي واضح.'
     },
     fr: {
       title: 'Jalons d\'Affaires',
       subtitle: 'Suivez vos objectifs commerciaux et restez concentré sur les progrès.',
+      businessStage: 'Étape d\'Affaires',
+      ideation: 'Idéation',
+      early: 'Étape Précoce',
+      growth: 'Étape de Croissance',
+      ideationDesc: 'Explore encore des idées d\'affaires ou valide un concept.',
+      earlyDesc: 'Lancé et vendant, affine encore les opérations ou le produit.',
+      growthDesc: 'Établi avec un revenu régulier, axé sur l\'expansion.',
       yourMilestones: 'Vos Jalons',
       addMilestone: 'Ajouter un Jalon',
       enterTitle: 'Entrez le titre du jalon',
@@ -91,7 +127,9 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       selectStatus: 'Sélectionner le statut',
       notStarted: 'Pas Commencé',
       inProgress: 'En Cours',
-      complete: 'Terminé'
+      complete: 'Terminé',
+      tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
+      coachingTip: 'Divisez les grands objectifs en jalons plus petits et réalisables. Chaque jalon doit être spécifique et avoir une échéance claire.'
     }
   };
 
@@ -102,6 +140,36 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     { value: 'in-progress', label: t.inProgress, color: 'bg-blue-100 text-blue-700' },
     { value: 'complete', label: t.complete, color: 'bg-green-100 text-green-700' }
   ];
+
+  const businessStages = [
+    { value: 'ideation', label: t.ideation, description: t.ideationDesc },
+    { value: 'early', label: t.early, description: t.earlyDesc },
+    { value: 'growth', label: t.growth, description: t.growthDesc }
+  ];
+
+  const getStageSpecificMilestones = (stage: string) => {
+    const stageMilestones = {
+      ideation: [
+        'Validate business idea with potential customers',
+        'Research target market and competition',
+        'Create basic business plan',
+        'Secure initial funding or savings'
+      ],
+      early: [
+        'Register business name',
+        'Open business bank account',
+        'Launch minimum viable product/service',
+        'Get first 10 customers'
+      ],
+      growth: [
+        'Expand product/service offerings',
+        'Hire first employees',
+        'Establish partnerships',
+        'Scale marketing efforts'
+      ]
+    };
+    return stageMilestones[stage] || [];
+  };
 
   const getStatusColor = (status: string) => {
     return statusOptions.find(opt => opt.value === status)?.color || 'bg-gray-100 text-gray-700';
@@ -128,6 +196,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     setMilestones(milestones.filter(milestone => milestone.id !== id));
   };
 
+  const currentStage = businessStages.find(stage => stage.value === businessStage);
+
   return (
     <div className="space-y-6">
       {/* Section Header */}
@@ -139,6 +209,62 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
           {t.subtitle}
         </p>
       </div>
+
+      {/* Tier 3 Note */}
+      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+        <p className="text-sm text-purple-800 text-center">
+          {t.tier3Note}
+        </p>
+      </div>
+
+      {/* Coaching Tip */}
+      <CoachingTip tip={t.coachingTip} language={language} />
+
+      {/* Business Stage Selector */}
+      <Card className="border-orange-200">
+        <CardHeader>
+          <CardTitle className="text-lg text-gray-800">{t.businessStage}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Select value={businessStage} onValueChange={(value: 'ideation' | 'early' | 'growth') => setBusinessStage(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {businessStages.map((stage) => (
+                <SelectItem key={stage.value} value={stage.value}>
+                  <div>
+                    <div className="font-medium">{stage.label}</div>
+                    <div className="text-sm text-gray-500">{stage.description}</div>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {currentStage && (
+            <p className="text-sm text-gray-600 mt-2">{currentStage.description}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Suggested Milestones for Current Stage */}
+      {getStageSpecificMilestones(businessStage).length > 0 && (
+        <Card className="border-green-200 bg-green-50">
+          <CardHeader>
+            <CardTitle className="text-lg text-green-800">Suggested Milestones for {currentStage?.label}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {getStageSpecificMilestones(businessStage).map((milestone, index) => (
+                <li key={index} className="flex items-center text-sm text-green-700">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                  {milestone}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Milestones List */}
       <Card className="border-orange-200">
