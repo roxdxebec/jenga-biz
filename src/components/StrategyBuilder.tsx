@@ -1,22 +1,37 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Download, Eye, Wand2, Home, Globe } from 'lucide-react';
+import { Lightbulb, Target, Users, DollarSign, Star, Handshake, Megaphone, Wrench, TrendingUp, Globe, Home, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import StrategySummary from '@/components/StrategySummary';
-import CustomerPersonaSection from '@/components/CustomerPersonaSection';
-import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
-import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import LanguageSelector from '@/components/LanguageSelector';
-import CoachingTip from '@/components/CoachingTip';
 import CountrySelector from '@/components/CountrySelector';
+import CoachingTip from '@/components/CoachingTip';
 
-const StrategyBuilder = ({ template, onBack, onHome }) => {
-  console.log('StrategyBuilder - Component rendering with template:', template);
-  
+interface StrategyBuilderProps {
+  template?: any;
+  onStrategyChange?: (strategy: any) => void;
+  onShowSummary?: () => void;
+  language?: string;
+  onLanguageChange?: (language: string) => void;
+  country?: string;
+  onCountryChange?: (country: string) => void;
+  currency?: string;
+  currencySymbol?: string;
+}
+
+const StrategyBuilder = ({ 
+  template, 
+  onStrategyChange, 
+  onShowSummary, 
+  language = 'en',
+  onLanguageChange,
+  country = 'KE',
+  onCountryChange,
+  currency = 'KES',
+  currencySymbol = 'KSh'
+}: StrategyBuilderProps) => {
   const [strategy, setStrategy] = useState({
     businessName: '',
     vision: '',
@@ -29,32 +44,166 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
     operationalNeeds: '',
     growthGoals: ''
   });
-  
-  const [showSummary, setShowSummary] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('en');
-  const [currentCountry, setCurrentCountry] = useState('KE');
+
   const { toast } = useToast();
 
-  // Get currency info based on country
-  const countries = [
-    { code: 'KE', name: 'Kenya', currency: 'KES', symbol: 'KSh' },
-    { code: 'NG', name: 'Nigeria', currency: 'NGN', symbol: '₦' },
-    { code: 'UG', name: 'Uganda', currency: 'UGX', symbol: 'USh' },
-    { code: 'ZA', name: 'South Africa', currency: 'ZAR', symbol: 'R' },
-    { code: 'TZ', name: 'Tanzania', currency: 'TZS', symbol: 'TSh' },
-    { code: 'RW', name: 'Rwanda', currency: 'RWF', symbol: 'FRw' },
-    { code: 'GH', name: 'Ghana', currency: 'GHS', symbol: 'GH₵' },
-    { code: 'ET', name: 'Ethiopia', currency: 'ETB', symbol: 'Br' }
-  ];
+  const templates = {
+    'mitumba': {
+      en: {
+        businessName: 'My Mitumba Store',
+        vision: 'To be the most trusted source of quality second-hand clothing in my community',
+        mission: 'Providing affordable, quality clothing while promoting sustainable fashion choices',
+        targetMarket: 'Price-conscious families, young professionals, students in urban and peri-urban areas',
+        revenueModel: 'Direct sales from physical store and WhatsApp marketing, bulk sales to other retailers',
+        valueProposition: 'Quality second-hand clothes at affordable prices with personalized service',
+        keyPartners: 'Bale suppliers, local tailors for alterations, WhatsApp groups, chama members',
+        marketingApproach: 'Word-of-mouth, WhatsApp business, local community events, referral programs',
+        operationalNeeds: 'Store space, storage for inventory, transportation for bale collection, mobile money account',
+        growthGoals: 'Expand to online sales, add more product categories, establish multiple outlets'
+      },
+      sw: {
+        businessName: 'Duka Langu la Mitumba',
+        vision: 'Kuwa chanzo cha kuaminika zaidi cha nguo za mitumba za ubora katika jamii yangu',
+        mission: 'Kutoa nguo za bei nafuu na za ubora huku nikihimiza uchaguzi wa mtindo endelevu',
+        targetMarket: 'Familia zinazojali bei, wataalamu vijana, wanafunzi katika maeneo ya mijini na karibu na mijini',
+        revenueModel: 'Mauzo ya moja kwa moja kutoka duka la kimwili na uuzaji wa WhatsApp, mauzo makubwa kwa wauzaji wengine',
+        valueProposition: 'Nguo za mitumba za ubora kwa bei nafuu na huduma ya kibinafsi',
+        keyPartners: 'Wasambazaji wa mabanda, mashona wa mitaani wa marekebisho, vikundi vya WhatsApp, wanachama wa chama',
+        marketingApproach: 'Maneno ya mdomo, biashara ya WhatsApp, matukio ya kijamii ya mtaani, programu za marejeleo',
+        operationalNeeds: 'Nafasi ya duka, uhifadhi wa bidhaa, usafiri wa kukusanya mabanda, akaunti ya pesa za simu',
+        growthGoals: 'Panua hadi mauzo ya mtandaoni, ongeza kategoria zaidi za bidhaa, anzisha matawi mengi'
+      },
+      ar: {
+        businessName: 'متجر الملابس المستعملة',
+        vision: 'أن أكون المصدر الأكثر موثوقية للملابس المستعملة عالية الجودة في مجتمعي',
+        mission: 'توفير ملابس عالية الجودة وبأسعار معقولة مع تعزيز خيارات الموضة المستدامة',
+        targetMarket: 'العائلات الواعية بالأسعار، المهنيون الشباب، الطلاب في المناطق الحضرية وشبه الحضرية',
+        revenueModel: 'المبيعات المباشرة من المتجر الفعلي والتسويق عبر واتساب، المبيعات بالجملة لتجار آخرين',
+        valueProposition: 'ملابس مستعملة عالية الجودة بأسعار معقولة مع خدمة شخصية',
+        keyPartners: 'موردو البالات، الخياطون المحليون للتعديلات، مجموعات واتساب، أعضاء الجمعيات',
+        marketingApproach: 'التسويق الشفهي، أعمال واتساب، الأحداث المجتمعية المحلية، برامج الإحالة',
+        operationalNeeds: 'مساحة المتجر، تخزين للمخزون، وسائل نقل لجمع البالات، حساب الأموال المحمولة',
+        growthGoals: 'التوسع في المبيعات عبر الإنترنت، إضافة فئات منتجات أكثر، إنشاء منافذ متعددة'
+      },
+      fr: {
+        businessName: 'Mon Magasin de Vêtements d\'Occasion',
+        vision: 'Être la source la plus fiable de vêtements d\'occasion de qualité dans ma communauté',
+        mission: 'Fournir des vêtements de qualité et abordables tout en promouvant des choix de mode durables',
+        targetMarket: 'Familles soucieuses des prix, jeunes professionnels, étudiants dans les zones urbaines et périurbaines',
+        revenueModel: 'Ventes directes du magasin physique et marketing WhatsApp, ventes en gros à d\'autres détaillants',
+        valueProposition: 'Vêtements d\'occasion de qualité à des prix abordables avec un service personnalisé',
+        keyPartners: 'Fournisseurs de balles, tailleurs locaux pour les retouches, groupes WhatsApp, membres de chama',
+        marketingApproach: 'Bouche-à-oreille, entreprise WhatsApp, événements communautaires locaux, programmes de parrainage',
+        operationalNeeds: 'Espace de magasin, stockage pour l\'inventaire, transport pour la collecte de balles, compte d\'argent mobile',
+        growthGoals: 'Étendre aux ventes en ligne, ajouter plus de catégories de produits, établir plusieurs points de vente'
+      }
+    },
+    'agribusiness': {
+      en: {
+        businessName: 'Green Valley Agribusiness',
+        vision: 'To become the leading provider of fresh, organic produce in our region',
+        mission: 'Connecting farmers with consumers through sustainable agricultural practices and fair trade',
+        targetMarket: 'Health-conscious consumers, restaurants, schools, local markets, organic food enthusiasts',
+        revenueModel: 'Direct farm sales, wholesale to retailers, farmers market stalls, subscription boxes',
+        valueProposition: 'Fresh, organic produce delivered directly from farm to table with complete traceability',
+        keyPartners: 'Local farmers, organic certification bodies, transportation companies, retail stores',
+        marketingApproach: 'Social media marketing, farmers markets, partnerships with restaurants, community events',
+        operationalNeeds: 'Farmland, irrigation systems, storage facilities, transportation, packaging materials',
+        growthGoals: 'Expand cultivation area, add value-added products, establish processing facility'
+      },
+      sw: {
+        businessName: 'Biashara ya Kilimo ya Green Valley',
+        vision: 'Kuwa mtoa mkuu wa mazao safi na ya kiasili katika mkoa wetu',
+        mission: 'Kuunganisha wakulima na wateja kupitia mbinu endelevu za kilimo na biashara ya haki',
+        targetMarket: 'Wateja wanaojali afya, migahawa, shule, masoko ya mitaani, wapenda chakula cha kiasili',
+        revenueModel: 'Mauzo ya moja kwa moja kutoka shambani, jumla kwa wauzaji, vibanda vya soko la wakulima',
+        valueProposition: 'Mazao safi ya kiasili yanayopelekwa moja kwa moja kutoka shambani hadi mezani',
+        keyPartners: 'Wakulima wa mitaani, mashirika ya udhibitisho wa kiasili, makampuni ya usafiri',
+        marketingApproach: 'Uuzaji wa mitandao ya kijamii, masoko ya wakulima, ushirikiano na migahawa',
+        operationalNeeds: 'Ardhi ya kilimo, mifumo ya umwagiliaji, ghala za uhifadhi, usafiri',
+        growthGoals: 'Panua eneo la kilimo, ongeza bidhaa za thamani ya ziada, unda kituo cha uchakataji'
+      },
+      ar: {
+        businessName: 'الأعمال الزراعية للوادي الأخضر',
+        vision: 'أن نصبح المزود الرائد للمنتجات الطازجة والعضوية في منطقتنا',
+        mission: 'ربط المزارعين بالمستهلكين من خلال الممارسات الزراعية المستدامة والتجارة العادلة',
+        targetMarket: 'المستهلكون المهتمون بالصحة، المطاعم، المدارس، الأسواق المحلية، عشاق الطعام العضوي',
+        revenueModel: 'مبيعات مباشرة من المزرعة، بيع بالجملة للتجار، أكشاك أسواق المزارعين',
+        valueProposition: 'منتجات طازجة وعضوية تُسلم مباشرة من المزرعة إلى المائدة مع إمكانية التتبع الكامل',
+        keyPartners: 'المزارعون المحليون، هيئات التصديق العضوي، شركات النقل، المتاجر',
+        marketingApproach: 'التسويق عبر وسائل التواصل الاجتماعي، أسواق المزارعين، الشراكات مع المطاعم',
+        operationalNeeds: 'أراضي زراعية، أنظمة ري، مرافق تخزين، نقل، مواد تعبئة',
+        growthGoals: 'توسيع منطقة الزراعة، إضافة منتجات ذات قيمة مضافة، إنشاء مرفق معالجة'
+      },
+      fr: {
+        businessName: 'Agrobusiness de la Vallée Verte',
+        vision: 'Devenir le principal fournisseur de produits frais et biologiques de notre région',
+        mission: 'Connecter les agriculteurs aux consommateurs grâce à des pratiques agricoles durables et au commerce équitable',
+        targetMarket: 'Consommateurs soucieux de leur santé, restaurants, écoles, marchés locaux, amateurs de produits biologiques',
+        revenueModel: 'Ventes directes de la ferme, vente en gros aux détaillants, stands de marchés fermiers',
+        valueProposition: 'Produits frais et biologiques livrés directement de la ferme à la table avec traçabilité complète',
+        keyPartners: 'Agriculteurs locaux, organismes de certification biologique, entreprises de transport, magasins',
+        marketingApproach: 'Marketing sur les réseaux sociaux, marchés fermiers, partenariats avec restaurants',
+        operationalNeeds: 'Terres agricoles, systèmes d\'irrigation, installations de stockage, transport',
+        growthGoals: 'Étendre la zone de culture, ajouter des produits à valeur ajoutée, établir une installation de traitement'
+      }
+    },
+    'mobile-money': {
+      en: {
+        businessName: 'QuickCash Mobile Money Services',
+        vision: 'To be the most reliable and accessible mobile money service provider in our community',
+        mission: 'Providing convenient, secure, and affordable financial services to underserved communities',
+        targetMarket: 'Rural communities, small business owners, people without bank accounts, urban workers',
+        revenueModel: 'Transaction fees, commission from mobile money operators, value-added services',
+        valueProposition: 'Convenient, secure, and fast mobile money transactions with extended operating hours',
+        keyPartners: 'Mobile network operators, banks, microfinance institutions, local businesses',
+        marketingApproach: 'Community engagement, word-of-mouth, partnerships with local businesses, signage',
+        operationalNeeds: 'Shop space, mobile phone, cash float, security measures, reliable internet connection',
+        growthGoals: 'Add more service lines, expand to multiple locations, introduce bill payment services'
+      },
+      sw: {
+        businessName: 'Huduma za Pesa za Simu za QuickCash',
+        vision: 'Kuwa mtoa huduma wa pesa za simu muaminifu na unaofikiwa zaidi katika jamii yetu',
+        mission: 'Kutoa huduma za kifedha zenye urahisi, usalama na bei nafuu kwa jamii zisizotumikiwa',
+        targetMarket: 'Jamii za vijijini, wamiliki wa biashara ndogo, watu bila akaunti za benki, wafanyakazi wa mijini',
+        revenueModel: 'Ada za muamala, kamisheni kutoka kwa waendeshaji wa pesa za simu, huduma za ziada',
+        valueProposition: 'Miamala ya pesa za simu yenye urahisi, usalama na haraka na masaa ya kazi yaliyoongezwa',
+        keyPartners: 'Waendeshaji wa mitandao ya simu, mabenki, taasisi za mikopo, biashara za mitaani',
+        marketingApproach: 'Ushiriki wa kijamii, maneno ya mdomo, ushirikiano na biashara za mitaani, alama',
+        operationalNeeds: 'Nafasi ya duka, simu ya mkononi, fedha za mzunguko, hatua za usalama, muunganisho wa mtandao',
+        growthGoals: 'Ongeza mistari mingine ya huduma, panua hadi maeneo mengi, anzisha huduma za malipo ya bili'
+      },
+      ar: {
+        businessName: 'خدمات الأموال المحمولة كويك كاش',
+        vision: 'أن نكون مزود خدمات الأموال المحمولة الأكثر موثوقية وإتاحة في مجتمعنا',
+        mission: 'توفير خدمات مالية مريحة وآمنة وبأسعار معقولة للمجتمعات المحرومة من الخدمات',
+        targetMarket: 'المجتمعات الريفية، أصحاب الأعمال الصغيرة، الأشخاص بدون حسابات مصرفية، العمال الحضريون',
+        revenueModel: 'رسوم المعاملات، عمولة من مشغلي الأموال المحمولة، خدمات ذات قيمة مضافة',
+        valueProposition: 'معاملات أموال محمولة مريحة وآمنة وسريعة مع ساعات عمل ممتدة',
+        keyPartners: 'مشغلو الشبكات المحمولة، البنوك، مؤسسات التمويل الأصغر، الأعمال المحلية',
+        marketingApproach: 'المشاركة المجتمعية، التسويق الشفهي، الشراكات مع الأعمال المحلية، اللافتات',
+        operationalNeeds: 'مساحة متجر، هاتف محمول، رصيد نقدي، تدابير أمنية، اتصال إنترنت موثوق',
+        growthGoals: 'إضافة المزيد من خطوط الخدمة، التوسع إلى مواقع متعددة، تقديم خدمات دفع الفواتير'
+      },
+      fr: {
+        businessName: 'Services d\'Argent Mobile QuickCash',
+        vision: 'Être le fournisseur de services d\'argent mobile le plus fiable et accessible de notre communauté',
+        mission: 'Fournir des services financiers pratiques, sécurisés et abordables aux communautés mal desservies',
+        targetMarket: 'Communautés rurales, propriétaires de petites entreprises, personnes sans comptes bancaires, travailleurs urbains',
+        revenueModel: 'Frais de transaction, commission des opérateurs d\'argent mobile, services à valeur ajoutée',
+        valueProposition: 'Transactions d\'argent mobile pratiques, sécurisées et rapides avec des heures d\'ouverture étendues',
+        keyPartners: 'Opérateurs de réseaux mobiles, banques, institutions de microfinance, entreprises locales',
+        marketingApproach: 'Engagement communautaire, bouche-à-oreille, partenariats avec entreprises locales, signalisation',
+        operationalNeeds: 'Espace de magasin, téléphone mobile, fonds de roulement, mesures de sécurité, connexion internet fiable',
+        growthGoals: 'Ajouter plus de lignes de service, étendre à plusieurs emplacements, introduire des services de paiement de factures'
+      }
+    }
+  };
 
-  const currentCountryInfo = countries.find(c => c.code === currentCountry) || countries[0];
-
-  // Translation object with template content in different languages
   const translations = {
     en: {
-      strategyBuilder: 'Strategy Builder',
-      customStrategy: 'Custom Strategy',
+      title: 'Build Your Business Strategy',
+      subtitle: 'Create a comprehensive strategy for your business success',
       businessName: 'Business Name',
       vision: 'Vision Statement',
       mission: 'Mission Statement',
@@ -65,123 +214,79 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       marketingApproach: 'Marketing Approach',
       operationalNeeds: 'Operational Needs',
       growthGoals: 'Growth Goals',
-      save: 'Save',
-      home: 'Home',
-      back: 'Back',
+      businessNamePlaceholder: 'Enter your business name...',
+      visionPlaceholder: 'What is your long-term vision?',
+      missionPlaceholder: 'What is your core purpose?',
+      targetMarketPlaceholder: 'Who are your ideal customers?',
+      revenueModelPlaceholder: 'How will you make money?',
+      valuePropositionPlaceholder: 'What makes you unique?',
+      keyPartnersPlaceholder: 'Who will you work with?',
+      marketingApproachPlaceholder: 'How will you reach customers?',
+      operationalNeedsPlaceholder: 'What do you need to operate?',
+      growthGoalsPlaceholder: 'What are your expansion plans?',
       generateSummary: 'Generate AI Summary',
-      generatingSummary: 'Generating Summary...',
-      strategySaved: 'Strategy Saved!',
-      strategySavedDesc: 'Your business strategy has been saved successfully.',
-      testingNote: 'This feature will be part of Strategy Grid Pro (Tier 2) once live. Enjoy full access during testing.',
-      enterPlaceholder: 'Enter your',
-      describePlaceholder: 'Describe your',
-      strategyTooltip: 'This roadmap is your business strategy in simple, actionable steps.',
+      language: 'Language',
+      currency: 'Currency',
+      home: 'Home',
+      save: 'Save',
       coachingTips: {
-        businessName: 'Choose a name that\'s easy to remember and reflects what you do.',
-        vision: 'Think big! What impact do you want your business to have in 5-10 years?',
-        mission: 'Keep it simple and focused on the value you provide to customers.',
-        targetMarket: 'Visualize your ideal customer — their age, income, daily needs, and lifestyle.',
-        revenueModel: 'Focus on 2-3 main ways to make money rather than trying everything at once.',
-        valueProposition: 'What makes you different from competitors? What unique value do you offer?',
-        keyPartners: 'Think about who can help you succeed - suppliers, distributors, mentors.',
-        marketingApproach: 'Start with one or two channels you can do well rather than trying everything.',
-        operationalNeeds: 'List the essentials first - what do you absolutely need to start?',
-        growthGoals: 'Set specific, measurable goals with realistic timelines.'
-      },
-      templateContent: {
-        'online-retail': {
-          businessName: 'My Online Store',
-          vision: 'To become the leading online retailer for quality products in my region',
-          mission: 'Providing convenient online shopping with reliable delivery and excellent customer service',
-          targetMarket: 'Urban professionals, tech-savvy consumers, busy families seeking convenience',
-          revenueModel: 'Product sales with markup, delivery fees, affiliate commissions, premium memberships',
-          valueProposition: 'Quality products with doorstep delivery, competitive prices, and easy returns',
-          keyPartners: 'Suppliers, logistics companies, payment processors, social media influencers',
-          marketingApproach: 'Social media marketing, WhatsApp catalogs, Google ads, customer referrals',
-          operationalNeeds: 'E-commerce platform, inventory storage, packaging materials, delivery network',
-          growthGoals: 'Expand product range, establish physical showroom, build mobile app, enter new cities'
-        },
-        'mitumba': {
-          businessName: 'My Mitumba Store',
-          vision: 'To be the most trusted source of quality second-hand clothing in my community',
-          mission: 'Providing affordable, quality clothing while promoting sustainable fashion choices',
-          targetMarket: 'Price-conscious families, young professionals, students in urban and peri-urban areas',
-          revenueModel: 'Direct sales from physical store and WhatsApp marketing, bulk sales to other retailers',
-          valueProposition: 'Quality second-hand clothes at affordable prices with personalized service',
-          keyPartners: 'Bale suppliers, local tailors for alterations, WhatsApp groups, chama members',
-          marketingApproach: 'Word-of-mouth, WhatsApp business, local community events, referral programs',
-          operationalNeeds: 'Store space, storage for inventory, transportation for bale collection, mobile money account',
-          growthGoals: 'Expand to online sales, add more product categories, establish multiple outlets'
-        }
+        businessName: 'Choose a memorable name that reflects your brand and is easy to pronounce.',
+        vision: 'Think big! Your vision should inspire and guide your long-term direction.',
+        mission: 'Keep it clear and focused. What problem are you solving for your customers?',
+        targetMarket: 'Be specific about your ideal customers. Age, income, location, and needs matter.',
+        revenueModel: 'Consider multiple income streams. How will money flow into your business?',
+        valueProposition: 'What makes customers choose you over competitors? Be specific and compelling.',
+        keyPartners: 'Think about suppliers, distributors, and other businesses that can help you succeed.',
+        marketingApproach: 'Focus on channels where your target customers spend their time.',
+        operationalNeeds: 'List everything you need to run your business day-to-day.',
+        growthGoals: 'Set realistic but ambitious goals for the next 1-3 years.'
       }
     },
     sw: {
-      strategyBuilder: 'Mjenzi wa Mkakati',
-      customStrategy: 'Mkakati wa Kawaida',
+      title: 'Jenga Mkakati wa Biashara Yako',
+      subtitle: 'Unda mkakati wa kina kwa mafanikio ya biashara yako',
       businessName: 'Jina la Biashara',
       vision: 'Kauli ya Maono',
-      mission: 'Kauli ya Dhumuni',
-      targetMarket: 'Soko la Lengo',
-      revenueModel: 'Mfumo wa Mapato',
-      valueProposition: 'Thamani ya Kipekee',
+      mission: 'Kauli ya Dhamira',
+      targetMarket: 'Soko Lengwa',
+      revenueModel: 'Muundo wa Mapato',
+      valueProposition: 'Toa la Kipekee',
       keyPartners: 'Washirika Wakuu',
       marketingApproach: 'Mbinu za Uuzaji',
       operationalNeeds: 'Mahitaji ya Uendeshaji',
       growthGoals: 'Malengo ya Ukuaji',
-      save: 'Hifadhi',
-      home: 'Nyumbani',
-      back: 'Rudi',
+      businessNamePlaceholder: 'Ingiza jina la biashara yako...',
+      visionPlaceholder: 'Maono yako ya muda mrefu ni yapi?',
+      missionPlaceholder: 'Kusudi lako kuu ni lipi?',
+      targetMarketPlaceholder: 'Wateja wako bora ni akina nani?',
+      revenueModelPlaceholder: 'Utapataje pesa?',
+      valuePropositionPlaceholder: 'Ni nini kinachokufanya wa kipekee?',
+      keyPartnersPlaceholder: 'Utashirikiana na nani?',
+      marketingApproachPlaceholder: 'Utawafikaje wateja?',
+      operationalNeedsPlaceholder: 'Unahitaji nini kuendesha biashara?',
+      growthGoalsPlaceholder: 'Mipango yako ya upanuzi ni ipi?',
       generateSummary: 'Tengeneza Muhtasari wa AI',
-      generatingSummary: 'Inatengeneza Muhtasari...',
-      strategySaved: 'Mkakati Umehifadhiwa!',
-      strategySavedDesc: 'Mkakati wako wa biashara umehifadhiwa kwa mafanikio.',
-      testingNote: 'Kipengele hiki kitakuwa sehemu ya Strategy Grid Pro (Daraja la 2) baada ya kuanzishwa. Furahia ufikiaji kamili wakati wa upimaji.',
-      enterPlaceholder: 'Ingiza',
-      describePlaceholder: 'Eleza',
-      strategyTooltip: 'Ramani hii ni mkakati wako wa biashara katika hatua rahisi na zinazoweza kutekelezwa.',
+      language: 'Lugha',
+      currency: 'Sarafu',
+      home: 'Nyumbani',
+      save: 'Hifadhi',
       coachingTips: {
-        businessName: 'Chagua jina ambalo ni rahisi kukumbuka na linaonyesha unachofanya.',
-        vision: 'Fikiria kubwa! Ni athari gani unayotaka biashara yako iwe nayo katika miaka 5-10?',
-        mission: 'Iweke rahisi na lenga thamani unayotoa kwa wateja.',
-        targetMarket: 'Ona mteja wako mzuri - umri wake, mapato, mahitaji ya kila siku, na mtindo wa maisha.',
-        revenueModel: 'Zingatia njia 2-3 kuu za kupata pesa badala ya kujaribu kila kitu mara moja.',
-        valueProposition: 'Ni nini kinachokufanya tofauti na washindani? Ni thamani gani ya kipekee unayotoa?',
-        keyPartners: 'Fikiria ni nani anayeweza kukusaidia kufanikiwa - wasambazaji, wasafirishaji, washauri.',
-        marketingApproach: 'Anza na chaneli moja au mbili unazoweza kuzifanya vizuri badala ya kujaribu kila kitu.',
-        operationalNeeds: 'Orodhesha muhimu kwanza - ni nini unahitaji kabisa kuanza?',
-        growthGoals: 'Weka malengo mahususi, yanayoweza kupimwa na yenye ratiba za busara.'
-      },
-      templateContent: {
-        'online-retail': {
-          businessName: 'Duka Langu la Mtandaoni',
-          vision: 'Kuwa muuzaji mkuu wa mtandaoni wa bidhaa za ubora katika eneo langu',
-          mission: 'Kutoa ununuzi wa mtandaoni wa urahisi na uongozaji wa kuaminika na huduma bora za wateja',
-          targetMarket: 'Wataalamu wa mijini, watumiaji wa teknolojia, familia zenye shughuli nyingi zinazotaka urahisi',
-          revenueModel: 'Mauzo ya bidhaa kwa bei ya juu, ada za uongozaji, mapato ya uongozaji, uanachama wa aina ya juu',
-          valueProposition: 'Bidhaa za ubora zilizokamilishwa kwa uongozaji wa mlangoni, bei za ushindani, na kurudi kwa urahisi',
-          keyPartners: 'Wasambazaji, makampuni ya logistik, wachakataji wa malipo, wahudumishaji wa mitandao ya kijamii',
-          marketingApproach: 'Uuzaji wa mitandao ya kijamii, orodha za WhatsApp, matangazo ya Google, marejeleo ya wateja',
-          operationalNeeds: 'Jukwaa la biashara ya mtandaoni, uhifadhi wa bidhaa, vifaa vya ufungaji, mtandao wa uongozaji',
-          growthGoals: 'Panua orodha ya bidhaa, anzisha chumba cha onyesho cha kimwili, jenga programu ya simu, ingia miji mipya'
-        },
-        'mitumba': {
-          businessName: 'Duka Langu la Mitumba',
-          vision: 'Kuwa chanzo cha kuaminika zaidi cha nguo za mitumba za ubora katika jamii yangu',
-          mission: 'Kutoa nguo za bei nafuu na za ubora huku nikihimiza uchaguzi wa mtindo endelevu',
-          targetMarket: 'Familia zinazojali bei, wataalamu vijana, wanafunzi katika maeneo ya mijini na karibu na mijini',
-          revenueModel: 'Mauzo ya moja kwa moja kutoka duka la kimwili na uuzaji wa WhatsApp, mauzo makubwa kwa wauzaji wengine',
-          valueProposition: 'Nguo za mitumba za ubora kwa bei nafuu na huduma ya kibinafsi',
-          keyPartners: 'Wasambazaji wa mabanda, mashona wa mitaani wa marekebisho, vikundi vya WhatsApp, wanachama wa chama',
-          marketingApproach: 'Maneno ya mdomo, biashara ya WhatsApp, matukio ya kijamii ya mtaani, programu za marejeleo',
-          operationalNeeds: 'Nafasi ya duka, uhifadhi wa bidhaa, usafiri wa kukusanya mabanda, akaunti ya pesa za simu',
-          growthGoals: 'Panua hadi mauzo ya mtandaoni, ongeza kategoria zaidi za bidhaa, anzisha matawi mengi'
-        }
+        businessName: 'Chagua jina linalofikiriwa ambalo linaonyesha chapa yako na ni rahisi kutamka.',
+        vision: 'Fikiria kubwa! Maono yako yanapaswa kuhamasisha na kuongoza mwelekeo wako wa muda mrefu.',
+        mission: 'Iweke wazi na iwe na lengo. Ni tatizo gani unalihali kwa wateja wako?',
+        targetMarket: 'Kuwa mahususi kuhusu wateja wako bora. Umri, mapato, mahali, na mahitaji ni muhimu.',
+        revenueModel: 'Fikiria njia nyingi za kupata mapato. Pesa zitaingiaje katika biashara yako?',
+        valueProposition: 'Ni nini kinachofanya wateja wakuchague badala ya washindani? Kuwa mahususi na mvutio.',
+        keyPartners: 'Fikiria kuhusu wasambazaji, wasambazaji, na biashara zingine zinazoweza kukusaidia kufanikiwa.',
+        marketingApproach: 'Zingatia njia ambapo wateja wako walengwa wanaotumia muda wao.',
+        operationalNeeds: 'Orodhesha kila kitu unachohitaji kuendesha biashara yako kila siku.',
+        growthGoals: 'Weka malengo ya uhalali lakini ya matumaini kwa miaka 1-3 ijayo.'
       }
     },
     ar: {
-      strategyBuilder: 'منشئ الاستراتيجية',
-      customStrategy: 'استراتيجية مخصصة',
-      businessName: 'اسم الشركة',
+      title: 'بناء استراتيجية عملك',
+      subtitle: 'إنشاء استراتيجية شاملة لنجاح عملك',
+      businessName: 'اسم العمل',
       vision: 'بيان الرؤية',
       mission: 'بيان المهمة',
       targetMarket: 'السوق المستهدف',
@@ -191,59 +296,37 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       marketingApproach: 'نهج التسويق',
       operationalNeeds: 'الاحتياجات التشغيلية',
       growthGoals: 'أهداف النمو',
-      save: 'حفظ',
+      businessNamePlaceholder: 'أدخل اسم عملك...',
+      visionPlaceholder: 'ما هي رؤيتك طويلة المدى؟',
+      missionPlaceholder: 'ما هو هدفك الأساسي؟',
+      targetMarketPlaceholder: 'من هم عملاؤك المثاليون؟',
+      revenueModelPlaceholder: 'كيف ستحقق المال؟',
+      valuePropositionPlaceholder: 'ما الذي يجعلك فريداً؟',
+      keyPartnersPlaceholder: 'مع من ستعمل؟',
+      marketingApproachPlaceholder: 'كيف ستصل إلى العملاء؟',
+      operationalNeedsPlaceholder: 'ما الذي تحتاجه للعمل؟',
+      growthGoalsPlaceholder: 'ما هي خطط التوسع؟',
+      generateSummary: 'إنشاء ملخص بالذكاء الاصطناعي',
+      language: 'اللغة',
+      currency: 'العملة',
       home: 'الرئيسية',
-      back: 'رجوع',
-      generateSummary: 'إنشاء ملخص AI',
-      generatingSummary: 'جاري إنشاء الملخص...',
-      strategySaved: 'تم حفظ الاستراتيجية!',
-      strategySavedDesc: 'تم حفظ استراتيجية عملك بنجاح.',
-      testingNote: 'ستكون هذه الميزة جزءًا من Strategy Grid Pro (المستوى 2) بمجرد النشر. استمتع بالوصول الكامل أثناء الاختبار.',
-      enterPlaceholder: 'أدخل',
-      describePlaceholder: 'وصف',
-      strategyTooltip: 'هذه الخريطة هي استراتيجية عملك في خطوات بسيطة وقابلة للتنفيذ.',
+      save: 'حفظ',
       coachingTips: {
-        businessName: 'اختر اسماً سهل التذكر ويعكس ما تفعله.',
-        vision: 'فكر بشكل كبير! ما التأثير الذي تريد أن يكون لعملك في 5-10 سنوات؟',
-        mission: 'اجعلها بسيطة ومركزة على القيمة التي تقدمها للعملاء.',
-        targetMarket: 'تصور عميلك المثالي - عمره ودخله واحتياجاته اليومية وأسلوب حياته.',
-        revenueModel: 'ركز على 2-3 طرق رئيسية لكسب المال بدلاً من تجربة كل شيء مرة واحدة.',
-        valueProposition: 'ما الذي يجعلك مختلفاً عن المنافسين؟ ما القيمة الفريدة التي تقدمها؟',
-        keyPartners: 'فكر في من يمكنه مساعدتك على النجاح - الموردين والموزعين والمرشدين.',
-        marketingApproach: 'ابدأ بقناة أو قناتين يمكنك أن تجيدهما بدلاً من تجربة كل شيء.',
-        operationalNeeds: 'اسرد الأساسيات أولاً - ما الذي تحتاجه بالضرورة للبدء؟',
-        growthGoals: 'ضع أهدافاً محددة وقابلة للقياس مع جداول زمنية واقعية.'
-      },
-      templateContent: {
-        'online-retail': {
-          businessName: 'متجري الإلكتروني',
-          vision: 'أن أصبح بائع التجزئة الإلكتروني الرائد للمنتجات عالية الجودة في منطقتي',
-          mission: 'توفير التسوق الإلكتروني المريح مع التوصيل الموثوق وخدمة العملاء الممتازة',
-          targetMarket: 'المهنيون الحضريون، المستهلكون التقنيون، العائلات المشغولة التي تسعى للراحة',
-          revenueModel: 'مبيعات المنتجات بهامش ربح، رسوم التوصيل، عمولات التسويق بالعمولة، العضويات المميزة',
-          valueProposition: 'منتجات عالية الجودة مع التوصيل للمنزل، أسعار تنافسية، وإرجاع سهل',
-          keyPartners: 'الموردون، شركات اللوجستيك، معالجو المدفوعات، مؤثرو وسائل التواصل الاجتماعي',
-          marketingApproach: 'التسويق عبر وسائل التواصل الاجتماعي، كتالوجات واتساب، إعلانات جوجل، إحالات العملاء',
-          operationalNeeds: 'منصة التجارة الإلكترونية، تخزين المخزون، مواد التعبئة، شبكة التوصيل',
-          growthGoals: 'توسيع نطاق المنتجات، إنشاء صالة عرض فعلية، بناء تطبيق للهاتف المحمول، دخول مدن جديدة'
-        },
-        'mitumba': {
-          businessName: 'متجر الملابس المستعملة',
-          vision: 'أن أكون المصدر الأكثر ثقة للملابس المستعملة عالية الجودة في مجتمعي',
-          mission: 'توفير ملابس عالية الجودة وبأسعار معقولة مع تعزيز خيارات الموضة المستدامة',
-          targetMarket: 'العائلات الواعية بالأسعار، المهنيون الشباب، الطلاب في المناطق الحضرية وشبه الحضرية',
-          revenueModel: 'المبيعات المباشرة من المتجر الفعلي وتسويق واتساب، المبيعات بالجملة لتجار التجزئة الآخرين',
-          valueProposition: 'ملابس مستعملة عالية الجودة بأسعار معقولة مع خدمة شخصية',
-          keyPartners: 'موردو البالات، الخياطون المحليون للتعديلات، مجموعات واتساب، أعضاء الجمعيات',
-          marketingApproach: 'التسويق الشفهي، أعمال واتساب، الأحداث المجتمعية المحلية، برامج الإحالة',
-          operationalNeeds: 'مساحة المتجر، تخزين المخزون، النقل لجمع البالات، حساب الأموال المحمولة',
-          growthGoals: 'التوسع إلى المبيعات عبر الإنترنت، إضافة المزيد من فئات المنتجات، إنشاء منافذ متعددة'
-        }
+        businessName: 'اختر اسماً لا يُنسى يعكس علامتك التجارية وسهل النطق.',
+        vision: 'فكر بشكل كبير! يجب أن تلهم رؤيتك وتوجه اتجاهك طويل المدى.',
+        mission: 'اجعلها واضحة ومركزة. ما المشكلة التي تحلها لعملائك؟',
+        targetMarket: 'كن محدداً حول عملائك المثاليين. العمر والدخل والموقع والاحتياجات مهمة.',
+        revenueModel: 'فكر في تدفقات دخل متعددة. كيف ستتدفق الأموال إلى عملك؟',
+        valueProposition: 'ما الذي يجعل العملاء يختارونك على المنافسين؟ كن محدداً ومقنعاً.',
+        keyPartners: 'فكر في الموردين والموزعين والشركات الأخرى التي يمكنها مساعدتك على النجاح.',
+        marketingApproach: 'ركز على القنوات حيث يقضي عملاؤك المستهدفون وقتهم.',
+        operationalNeeds: 'اسرد كل ما تحتاجه لتشغيل عملك يومياً.',
+        growthGoals: 'ضع أهدافاً واقعية ولكن طموحة للسنوات 1-3 القادمة.'
       }
     },
     fr: {
-      strategyBuilder: 'Constructeur de Stratégie',
-      customStrategy: 'Stratégie Personnalisée',
+      title: 'Construire Votre Stratégie d\'Entreprise',
+      subtitle: 'Créer une stratégie complète pour le succès de votre entreprise',
       businessName: 'Nom de l\'Entreprise',
       vision: 'Déclaration de Vision',
       mission: 'Déclaration de Mission',
@@ -254,303 +337,37 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
       marketingApproach: 'Approche Marketing',
       operationalNeeds: 'Besoins Opérationnels',
       growthGoals: 'Objectifs de Croissance',
-      save: 'Sauvegarder',
-      home: 'Accueil',
-      back: 'Retour',
+      businessNamePlaceholder: 'Entrez le nom de votre entreprise...',
+      visionPlaceholder: 'Quelle est votre vision à long terme?',
+      missionPlaceholder: 'Quel est votre objectif principal?',
+      targetMarketPlaceholder: 'Qui sont vos clients idéaux?',
+      revenueModelPlaceholder: 'Comment allez-vous gagner de l\'argent?',
+      valuePropositionPlaceholder: 'Qu\'est-ce qui vous rend unique?',
+      keyPartnersPlaceholder: 'Avec qui allez-vous travailler?',
+      marketingApproachPlaceholder: 'Comment allez-vous atteindre les clients?',
+      operationalNeedsPlaceholder: 'De quoi avez-vous besoin pour fonctionner?',
+      growthGoalsPlaceholder: 'Quels sont vos plans d\'expansion?',
       generateSummary: 'Générer un Résumé IA',
-      generatingSummary: 'Génération du Résumé...',
-      strategySaved: 'Stratégie Sauvegardée!',
-      strategySavedDesc: 'Votre stratégie d\'entreprise a été sauvegardée avec succès.',
-      testingNote: 'Cette fonctionnalité fera partie de Strategy Grid Pro (Niveau 2) une fois lancée. Profitez d\'un accès complet pendant les tests.',
-      enterPlaceholder: 'Entrez votre',
-      describePlaceholder: 'Décrivez votre',
-      strategyTooltip: 'Cette feuille de route est votre stratégie d\'entreprise en étapes simples et réalisables.',
+      language: 'Langue',
+      currency: 'Devise',
+      home: 'Accueil',
+      save: 'Sauvegarder',
       coachingTips: {
-        businessName: 'Choisissez un nom facile à retenir et qui reflète ce que vous faites.',
-        vision: 'Pensez grand ! Quel impact voulez-vous que votre entreprise ait dans 5 à 10 ans ?',
-        mission: 'Gardez-la simple et concentrée sur la valeur que vous apportez aux clients.',
-        targetMarket: 'Visualisez votre client idéal - son âge, ses revenus, ses besoins quotidiens et son style de vie.',
-        revenueModel: 'Concentrez-vous sur 2-3 moyens principaux de gagner de l\'argent plutôt que d\'essayer tout en même temps.',
-        valueProposition: 'Qu\'est-ce qui vous rend différent des concurrents ? Quelle valeur unique offrez-vous ?',
-        keyPartners: 'Pensez à qui peut vous aider à réussir - fournisseurs, distributeurs, mentors.',
-        marketingApproach: 'Commencez par un ou deux canaux que vous pouvez bien faire plutôt que d\'essayer tout.',
-        operationalNeeds: 'Listez d\'abord l\'essentiel - de quoi avez-vous absolument besoin pour commencer ?',
-        growthGoals: 'Fixez des objectifs spécifiques et mesurables avec des délais réalistes.'
-      },
-      templateContent: {
-        'online-retail': {
-          businessName: 'Ma Boutique en Ligne',
-          vision: 'Devenir le principal détaillant en ligne de produits de qualité dans ma région',
-          mission: 'Fournir des achats en ligne pratiques avec une livraison fiable et un excellent service client',
-          targetMarket: 'Professionnels urbains, consommateurs technophiles, familles occupées recherchant la commodité',
-          revenueModel: 'Ventes de produits avec marge, frais de livraison, commissions d\'affiliation, abonnements premium',
-          valueProposition: 'Produits de qualité avec livraison à domicile, prix compétitifs et retours faciles',
-          keyPartners: 'Fournisseurs, entreprises de logistique, processeurs de paiement, influenceurs des médias sociaux',
-          marketingApproach: 'Marketing des médias sociaux, catalogues WhatsApp, publicités Google, références clients',
-          operationalNeeds: 'Plateforme e-commerce, stockage d\'inventaire, matériaux d\'emballage, réseau de livraison',
-          growthGoals: 'Élargir la gamme de produits, établir une salle d\'exposition physique, créer une application mobile, entrer dans de nouvelles villes'
-        },
-        'mitumba': {
-          businessName: 'Ma Boutique Mitumba',
-          vision: 'Être la source la plus fiable de vêtements d\'occasion de qualité dans ma communauté',
-          mission: 'Fournir des vêtements de qualité à prix abordable tout en promouvant des choix de mode durables',
-          targetMarket: 'Familles soucieuses des prix, jeunes professionnels, étudiants dans les zones urbaines et périurbaines',
-          revenueModel: 'Ventes directes du magasin physique et marketing WhatsApp, ventes en gros à d\'autres détaillants',
-          valueProposition: 'Vêtements d\'occasion de qualité à prix abordables avec service personnalisé',
-          keyPartners: 'Fournisseurs de balles, tailleurs locaux pour retouches, groupes WhatsApp, membres de chama',
-          marketingApproach: 'Bouche-à-oreille, business WhatsApp, événements communautaires locaux, programmes de référence',
-          operationalNeeds: 'Espace de magasin, stockage pour inventaire, transport pour collecte de balles, compte argent mobile',
-          growthGoals: 'Étendre aux ventes en ligne, ajouter plus de catégories de produits, établir plusieurs points de vente'
-        }
+        businessName: 'Choisissez un nom mémorable qui reflète votre marque et est facile à prononcer.',
+        vision: 'Pensez grand! Votre vision devrait inspirer et guider votre direction à long terme.',
+        mission: 'Gardez-la claire et ciblée. Quel problème résolvez-vous pour vos clients?',
+        targetMarket: 'Soyez spécifique sur vos clients idéaux. L\'âge, le revenu, l\'emplacement et les besoins comptent.',
+        revenueModel: 'Considérez plusieurs flux de revenus. Comment l\'argent affluera-t-il dans votre entreprise?',
+        valueProposition: 'Qu\'est-ce qui fait que les clients vous choisissent plutôt que les concurrents? Soyez spécifique et convaincant.',
+        keyPartners: 'Pensez aux fournisseurs, distributeurs et autres entreprises qui peuvent vous aider à réussir.',
+        marketingApproach: 'Concentrez-vous sur les canaux où vos clients cibles passent leur temps.',
+        operationalNeeds: 'Listez tout ce dont vous avez besoin pour gérer votre entreprise au quotidien.',
+        growthGoals: 'Fixez des objectifs réalistes mais ambitieux pour les 1-3 prochaines années.'
       }
     }
   };
 
-  const t = translations[currentLanguage] || translations.en;
-
-  // Comprehensive template data for all business types
-  const templateData = {
-    'online-retail': {
-      businessName: 'My Online Store',
-      vision: 'To become the leading online retailer for quality products in my region',
-      mission: 'Providing convenient online shopping with reliable delivery and excellent customer service',
-      targetMarket: 'Urban professionals, tech-savvy consumers, busy families seeking convenience',
-      revenueModel: 'Product sales with markup, delivery fees, affiliate commissions, premium memberships',
-      valueProposition: 'Quality products with doorstep delivery, competitive prices, and easy returns',
-      keyPartners: 'Suppliers, logistics companies, payment processors, social media influencers',
-      marketingApproach: 'Social media marketing, WhatsApp catalogs, Google ads, customer referrals',
-      operationalNeeds: 'E-commerce platform, inventory storage, packaging materials, delivery network',
-      growthGoals: 'Expand product range, establish physical showroom, build mobile app, enter new cities'
-    },
-    'agribusiness': {
-      businessName: 'My Agribusiness',
-      vision: 'To be a leading sustainable agricultural enterprise improving food security',
-      mission: 'Producing quality crops using modern farming techniques while empowering local farmers',
-      targetMarket: 'Local markets, restaurants, food processors, export companies, retail chains',
-      revenueModel: 'Direct crop sales, value-added products, farming consultancy, equipment rental',
-      valueProposition: 'Fresh, quality produce with consistent supply and competitive pricing',
-      keyPartners: 'Seed suppliers, agricultural extension services, cooperatives, financial institutions',
-      marketingApproach: 'Market associations, agricultural shows, direct buyer relationships, digital platforms',
-      operationalNeeds: 'Land, farming equipment, irrigation system, storage facilities, transportation',
-      growthGoals: 'Expand acreage, add processing unit, develop export markets, establish farmer network'
-    },
-    'mobile-money': {
-      businessName: 'My Mobile Money Service',
-      vision: 'To be the most trusted mobile money agent in my community',
-      mission: 'Providing reliable financial services that connect people to digital economy',
-      targetMarket: 'Unbanked population, small traders, remittance senders, bill payers',
-      revenueModel: 'Transaction commissions, float interest, value-added services, bill payment fees',
-      valueProposition: 'Convenient, secure money transfers with extended hours and friendly service',
-      keyPartners: 'Mobile network operators, banks, microfinance institutions, local businesses',
-      marketingApproach: 'Community engagement, referral programs, local advertising, partnership marketing',
-      operationalNeeds: 'Shop space, cash float, mobile devices, security measures, network connectivity',
-      growthGoals: 'Multiple outlets, additional services, agent network, digital payment integration'
-    },
-    'cyber-cafe': {
-      businessName: 'My Cyber Café',
-      vision: 'To be the premier digital services hub in my neighborhood',
-      mission: 'Bridging the digital divide by providing affordable internet and computer services',
-      targetMarket: 'Students, job seekers, small business owners, digital service seekers',
-      revenueModel: 'Internet charges, printing services, typing services, computer training fees',
-      valueProposition: 'Affordable internet access with additional services like printing and training',
-      keyPartners: 'Internet service providers, equipment suppliers, educational institutions, government offices',
-      marketingApproach: 'Student discounts, loyalty programs, community partnerships, local advertising',
-      operationalNeeds: 'Computers, internet connection, printer, furniture, software licenses, security',
-      growthGoals: 'Upgrade equipment, add gaming section, expand training programs, multiple locations'
-    },
-    'real-estate': {
-      businessName: 'My Real Estate Agency',
-      vision: 'To be the most trusted real estate partner in property transactions',
-      mission: 'Connecting property owners with buyers and tenants through professional service',
-      targetMarket: 'Property investors, homebuyers, tenants, landlords, developers',
-      revenueModel: 'Sales commissions, rental commissions, property management fees, consultation charges',
-      valueProposition: 'Expert market knowledge with honest advice and smooth transaction processes',
-      keyPartners: 'Property developers, banks, lawyers, surveyors, contractors, insurance companies',
-      marketingApproach: 'Online listings, referral network, property exhibitions, social media marketing',
-      operationalNeeds: 'Office space, vehicle, marketing materials, legal documentation, database system',
-      growthGoals: 'Build agent network, develop properties, expand service area, digital platform'
-    },
-    'cleaning-services': {
-      businessName: 'My Cleaning Services',
-      vision: 'To provide the highest quality cleaning services with exceptional customer care',
-      mission: 'Creating clean, healthy environments for homes and businesses',
-      targetMarket: 'Busy professionals, offices, hotels, restaurants, residential complexes',
-      revenueModel: 'Service contracts, one-time cleaning fees, specialized cleaning charges, maintenance contracts',
-      valueProposition: 'Reliable, thorough cleaning with eco-friendly products and flexible scheduling',
-      keyPartners: 'Cleaning supply companies, equipment suppliers, facility managers, property managers',
-      marketingApproach: 'Referral programs, online presence, corporate partnerships, door-to-door marketing',
-      operationalNeeds: 'Cleaning supplies, equipment, transportation, uniforms, insurance, staff training',
-      growthGoals: 'Hire more staff, specialized services, commercial contracts, franchise expansion'
-    },
-    'event-planning': {
-      businessName: 'My Event Planning Service',
-      vision: 'To create unforgettable experiences through exceptional event planning',
-      mission: 'Turning celebrations into perfect memories with creative planning and flawless execution',
-      targetMarket: 'Wedding couples, corporations, families, religious organizations, social groups',
-      revenueModel: 'Planning fees, vendor commissions, package deals, coordination charges',
-      valueProposition: 'Stress-free event planning with creative themes and reliable vendor network',
-      keyPartners: 'Venues, caterers, decorators, photographers, musicians, florists, equipment rentals',
-      marketingApproach: 'Portfolio showcasing, social media, vendor referrals, satisfied client testimonials',
-      operationalNeeds: 'Planning tools, transportation, communication devices, vendor relationships, portfolio materials',
-      growthGoals: 'Expand service offerings, build venue partnerships, hire assistants, establish brand'
-    },
-    'photography': {
-      businessName: 'My Photography Studio',
-      vision: 'To capture life\'s precious moments with artistic excellence',
-      mission: 'Preserving memories through professional photography and videography services',
-      targetMarket: 'Wedding couples, families, businesses, events, social media influencers',
-      revenueModel: 'Session fees, package deals, print sales, digital products, commercial shoots',
-      valueProposition: 'High-quality images with creative style and professional service',
-      keyPartners: 'Equipment suppliers, photo labs, event planners, makeup artists, venue owners',
-      marketingApproach: 'Portfolio marketing, social media showcase, referral programs, vendor partnerships',
-      operationalNeeds: 'Camera equipment, lighting, editing software, studio space, transportation',
-      growthGoals: 'Upgrade equipment, establish studio, expand into videography, build team'
-    },
-    'food-delivery': {
-      businessName: 'My Food Delivery Service',
-      vision: 'To be the fastest and most reliable food delivery service in the area',
-      mission: 'Connecting hungry customers with their favorite meals through efficient delivery',
-      targetMarket: 'Busy professionals, students, families, office workers, event organizers',
-      revenueModel: 'Delivery fees, restaurant commissions, surge pricing, subscription plans',
-      valueProposition: 'Fast, hot food delivery with real-time tracking and diverse restaurant options',
-      keyPartners: 'Restaurants, delivery riders, payment processors, mapping services, food aggregators',
-      marketingApproach: 'App-based marketing, restaurant partnerships, promotional offers, social media',
-      operationalNeeds: 'Mobile app, delivery fleet, payment system, order management, customer support',
-      growthGoals: 'Expand coverage area, increase restaurant partners, improve technology, scale operations'
-    },
-    'mitumba': {
-      businessName: 'My Mitumba Store',
-      vision: 'To be the most trusted source of quality second-hand clothing in my community',
-      mission: 'Providing affordable, quality clothing while promoting sustainable fashion choices',
-      targetMarket: 'Price-conscious families, young professionals, students in urban and peri-urban areas',
-      revenueModel: 'Direct sales from physical store and WhatsApp marketing, bulk sales to other retailers',
-      valueProposition: 'Quality second-hand clothes at affordable prices with personalized service',
-      keyPartners: 'Bale suppliers, local tailors for alterations, WhatsApp groups, chama members',
-      marketingApproach: 'Word-of-mouth, WhatsApp business, local community events, referral programs',
-      operationalNeeds: 'Store space, storage for inventory, transportation for bale collection, mobile money account',
-      growthGoals: 'Expand to online sales, add more product categories, establish multiple outlets'
-    },
-    'beauty-salon': {
-      businessName: 'My Beauty Salon',
-      vision: 'To be the premier beauty destination providing exceptional styling services',
-      mission: 'Enhancing natural beauty through professional hair care and beauty treatments',
-      targetMarket: 'Women of all ages, men seeking grooming, bridal parties, special occasion clients',
-      revenueModel: 'Service fees, product sales, treatment packages, bridal packages, membership plans',
-      valueProposition: 'Professional styling with quality products in a relaxing environment',
-      keyPartners: 'Product suppliers, beauty schools, wedding planners, fashion designers, equipment suppliers',
-      marketingApproach: 'Social media showcasing, referral incentives, loyalty programs, community events',
-      operationalNeeds: 'Salon equipment, beauty products, furniture, licenses, trained staff, payment systems',
-      growthGoals: 'Add more services, hire additional stylists, expand space, franchise opportunities'
-    },
-    'auto-repair': {
-      businessName: 'My Auto Repair Shop',
-      vision: 'To be the most trusted automotive service provider in the region',
-      mission: 'Keeping vehicles safe and reliable through expert repair and maintenance services',
-      targetMarket: 'Vehicle owners, taxi operators, delivery companies, government fleets, private individuals',
-      revenueModel: 'Labor charges, parts markup, maintenance contracts, diagnostic fees, emergency services',
-      valueProposition: 'Honest repairs with quality parts, experienced mechanics, and fair pricing',
-      keyPartners: 'Parts suppliers, insurance companies, towing services, automotive training centers',
-      marketingApproach: 'Referral programs, fleet partnerships, local advertising, online presence',
-      operationalNeeds: 'Workshop space, tools and equipment, parts inventory, skilled mechanics, licenses',
-      growthGoals: 'Expand services, modernize equipment, hire certified mechanics, multiple locations'
-    },
-    'boda-boda': {
-      businessName: 'My Transport Service',
-      vision: 'To provide safe, reliable, and affordable transportation in my area',
-      mission: 'Connecting people to opportunities through dependable motorcycle transport',
-      targetMarket: 'Daily commuters, students, market vendors, emergency transport needs',
-      revenueModel: 'Per-trip charges, daily/weekly customer subscriptions, delivery services',
-      valueProposition: 'Fast, reliable transport with good customer service and fair pricing',
-      keyPartners: 'Boda boda SACCO, fuel stations, spare parts dealers, mobile money agents',
-      marketingApproach: 'Customer referrals, SACCO networks, strategic location positioning, mobile app registration',
-      operationalNeeds: 'Motorcycle maintenance, insurance, protective gear, mobile phone, SACCO membership',
-      growthGoals: 'Own multiple motorcycles, hire other riders, add cargo services, digital platform integration'
-    },
-    'freelance-writing': {
-      businessName: 'My Content Creation Service',
-      vision: 'To be the go-to content creator for businesses seeking quality written content',
-      mission: 'Helping businesses communicate effectively through compelling written content',
-      targetMarket: 'Small businesses, startups, marketing agencies, bloggers, e-commerce sites',
-      revenueModel: 'Per-word rates, project fees, retainer contracts, content packages, consulting fees',
-      valueProposition: 'High-quality, engaging content that drives results with quick turnaround',
-      keyPartners: 'Marketing agencies, web developers, graphic designers, business consultants',
-      marketingApproach: 'Portfolio website, LinkedIn networking, content marketing, client referrals',
-      operationalNeeds: 'Computer, internet connection, writing software, portfolio samples, payment system',
-      growthGoals: 'Expand service offerings, build client base, increase rates, hire sub-contractors'
-    },
-    'bakery': {
-      businessName: 'My Bakery',
-      vision: 'To be the neighborhood\'s favorite bakery known for fresh, delicious baked goods',
-      mission: 'Bringing joy to the community through freshly baked breads, cakes, and pastries',
-      targetMarket: 'Local residents, offices, schools, restaurants, special event customers',
-      revenueModel: 'Daily sales, custom orders, wholesale to retailers, catering services, delivery charges',
-      valueProposition: 'Fresh, quality baked goods with traditional and modern varieties',
-      keyPartners: 'Ingredient suppliers, equipment vendors, delivery services, event planners, local stores',
-      marketingApproach: 'Local advertising, social media, loyalty programs, seasonal promotions',
-      operationalNeeds: 'Baking equipment, ingredients, display cases, packaging, skilled bakers, permits',
-      growthGoals: 'Expand product line, add café seating, wholesale expansion, additional locations'
-    },
-    'tutoring': {
-      businessName: 'My Tutoring Center',
-      vision: 'To be the leading educational support center improving student performance',
-      mission: 'Empowering students to achieve academic excellence through personalized tutoring',
-      targetMarket: 'Struggling students, exam candidates, homeschool families, adult learners',
-      revenueModel: 'Hourly tutoring fees, group class rates, exam prep packages, online session charges',
-      valueProposition: 'Personalized learning with experienced tutors and proven results',
-      keyPartners: 'Schools, teachers, educational publishers, online platforms, parent associations',
-      marketingApproach: 'School partnerships, parent referrals, academic performance testimonials, online presence',
-      operationalNeeds: 'Teaching space, educational materials, whiteboards, computers, qualified tutors',
-      growthGoals: 'Hire more tutors, expand subjects, online tutoring, franchising opportunities'
-    },
-    'fitness-training': {
-      businessName: 'My Fitness Training Service',
-      vision: 'To help people achieve their fitness goals through expert guidance and motivation',
-      mission: 'Transforming lives through fitness with personalized training and wellness programs',
-      targetMarket: 'Fitness enthusiasts, weight loss seekers, athletes, busy professionals, seniors',
-      revenueModel: 'Personal training fees, group class rates, fitness packages, nutrition consulting',
-      valueProposition: 'Expert fitness guidance with personalized programs and motivational support',
-      keyPartners: 'Gyms, nutritionists, sports medicine doctors, equipment suppliers, wellness centers',
-      marketingApproach: 'Transformation showcases, referral programs, social media, health seminars',
-      operationalNeeds: 'Training space, fitness equipment, certification, insurance, marketing materials',
-      growthGoals: 'Expand client base, add group classes, online programs, fitness facility'
-    },
-    'daycare': {
-      businessName: 'My Daycare Center',
-      vision: 'To provide the safest, most nurturing environment for children\'s early development',
-      mission: 'Supporting working parents by providing quality childcare with educational activities',
-      targetMarket: 'Working parents, single parents, families needing flexible childcare, employers',
-      revenueModel: 'Daily care fees, monthly packages, extended hours charges, meal plans, activity fees',
-      valueProposition: 'Safe, nurturing childcare with educational programs and flexible scheduling',
-      keyPartners: 'Educational suppliers, healthcare providers, nutrition specialists, parent organizations',
-      marketingApproach: 'Parent referrals, employer partnerships, community events, online reviews',
-      operationalNeeds: 'Child-safe facility, toys and materials, qualified staff, licenses, insurance',
-      growthGoals: 'Expand capacity, add educational programs, longer hours, additional locations'
-    },
-    'social-media': {
-      businessName: 'My Social Media Agency',
-      vision: 'To be the premier social media management service for growing businesses',
-      mission: 'Helping businesses build strong online presence and engage with their customers',
-      targetMarket: 'Small businesses, startups, restaurants, retail stores, service providers',
-      revenueModel: 'Monthly management fees, content creation charges, advertising management, consulting fees',
-      valueProposition: 'Professional social media presence with engaging content and measurable results',
-      keyPartners: 'Content creators, graphic designers, photographers, marketing agencies, platform reps',
-      marketingApproach: 'Portfolio showcasing, case studies, networking events, digital marketing',
-      operationalNeeds: 'Design software, scheduling tools, analytics platforms, content creation equipment',
-      growthGoals: 'Expand client base, hire team members, add video services, develop proprietary tools'
-    },
-    'handmade-crafts': {
-      businessName: 'My Handmade Crafts Business',
-      vision: 'To preserve traditional craftsmanship while creating beautiful, unique products',
-      mission: 'Creating high-quality handmade items that celebrate local culture and artistry',
-      targetMarket: 'Gift buyers, tourists, interior decorators, cultural enthusiasts, online shoppers',
-      revenueModel: 'Direct sales, custom orders, wholesale to retailers, exhibition sales, online sales',
-      valueProposition: 'Unique, authentic handmade products with cultural significance and quality craftsmanship',
-      keyPartners: 'Material suppliers, retail stores, tourism boards, craft associations, online marketplaces',
-      marketingApproach: 'Craft fairs, online marketplaces, social media, cultural events, tourist centers',
-      operationalNeeds: 'Craft materials, tools, workspace, packaging supplies, display materials',
-      growthGoals: 'Expand product line, teach workshops, export opportunities, artisan cooperative'
-    }
-  };
+  const t = translations[language] || translations.en;
 
   useEffect(() => {
     console.log('StrategyBuilder - useEffect triggered with template:', template);
@@ -560,256 +377,218 @@ const StrategyBuilder = ({ template, onBack, onHome }) => {
     
     if (template && template.id) {
       console.log('StrategyBuilder - Processing template with id:', template.id);
-      const templateContent = t.templateContent?.[template.id];
-      console.log('StrategyBuilder - Found template content:', templateContent);
+      const templateContent = templates[template.id]?.[language] || templates[template.id]?.en;
       
       if (templateContent) {
+        console.log('StrategyBuilder - Found template content:', templateContent);
         console.log('StrategyBuilder - Setting strategy with template content');
         setStrategy(templateContent);
         console.log('StrategyBuilder - Strategy updated successfully');
       } else {
-        console.log('StrategyBuilder - No template content found for id:', template.id);
-        console.log('StrategyBuilder - Available template ids:', Object.keys(t.templateContent || {}));
+        console.log('StrategyBuilder - Template content not found for:', template.id, 'language:', language);
       }
-    } else if (template === null) {
-      console.log('StrategyBuilder - Loading blank form for custom strategy');
-      setStrategy({
-        businessName: '',
-        vision: '',
-        mission: '',
-        targetMarket: '',
-        revenueModel: '',
-        valueProposition: '',
-        keyPartners: '',
-        marketingApproach: '',
-        operationalNeeds: '',
-        growthGoals: ''
-      });
-      console.log('StrategyBuilder - Blank strategy loaded');
-    } else {
-      console.log('StrategyBuilder - Template is undefined or invalid:', template);
     }
-  }, [template, currentLanguage]);
+  }, [template, language]);
 
-  const handleInputChange = (field, value) => {
-    console.log('StrategyBuilder - Input changed:', field, '=', value);
-    setStrategy(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleInputChange = (field: string, value: string) => {
+    const newStrategy = { ...strategy, [field]: value };
+    setStrategy(newStrategy);
+    onStrategyChange?.(newStrategy);
   };
 
   const handleSave = () => {
-    console.log('StrategyBuilder - Saving strategy:', strategy);
-    localStorage.setItem('current-strategy', JSON.stringify(strategy));
     toast({
-      title: t.strategySaved,
-      description: t.strategySavedDesc,
+      title: "Strategy Saved",
+      description: "Your business strategy has been saved successfully!",
     });
   };
 
-  const handleGenerateSummary = () => {
-    console.log('StrategyBuilder - Generating summary for strategy:', strategy);
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-      setShowSummary(true);
-    }, 2000);
-  };
-
   const sections = [
-    { key: 'businessName', label: t.businessName, type: 'input' },
-    { key: 'vision', label: t.vision, type: 'textarea' },
-    { key: 'mission', label: t.mission, type: 'textarea' },
-    { key: 'targetMarket', label: t.targetMarket, type: 'textarea' },
-    { key: 'revenueModel', label: t.revenueModel, type: 'textarea' },
-    { key: 'valueProposition', label: t.valueProposition, type: 'textarea' },
-    { key: 'keyPartners', label: t.keyPartners, type: 'textarea' },
-    { key: 'marketingApproach', label: t.marketingApproach, type: 'textarea' },
-    { key: 'operationalNeeds', label: t.operationalNeeds, type: 'textarea' },
-    { key: 'growthGoals', label: t.growthGoals, type: 'textarea' }
+    {
+      id: 'businessName',
+      title: t.businessName,
+      icon: Star,
+      placeholder: t.businessNamePlaceholder,
+      tip: t.coachingTips.businessName,
+      type: 'input'
+    },
+    {
+      id: 'vision',
+      title: t.vision,
+      icon: Lightbulb,
+      placeholder: t.visionPlaceholder,
+      tip: t.coachingTips.vision,
+      type: 'textarea'
+    },
+    {
+      id: 'mission',
+      title: t.mission,
+      icon: Target,
+      placeholder: t.missionPlaceholder,
+      tip: t.coachingTips.mission,
+      type: 'textarea'
+    },
+    {
+      id: 'targetMarket',
+      title: t.targetMarket,
+      icon: Users,
+      placeholder: t.targetMarketPlaceholder,
+      tip: t.coachingTips.targetMarket,
+      type: 'textarea'
+    },
+    {
+      id: 'revenueModel',
+      title: t.revenueModel,
+      icon: DollarSign,
+      placeholder: t.revenueModelPlaceholder,
+      tip: t.coachingTips.revenueModel,
+      type: 'textarea'
+    },
+    {
+      id: 'valueProposition',
+      title: t.valueProposition,
+      icon: Star,
+      placeholder: t.valuePropositionPlaceholder,
+      tip: t.coachingTips.valueProposition,
+      type: 'textarea'
+    },
+    {
+      id: 'keyPartners',
+      title: t.keyPartners,
+      icon: Handshake,
+      placeholder: t.keyPartnersPlaceholder,
+      tip: t.coachingTips.keyPartners,
+      type: 'textarea'
+    },
+    {
+      id: 'marketingApproach',
+      title: t.marketingApproach,
+      icon: Megaphone,
+      placeholder: t.marketingApproachPlaceholder,
+      tip: t.coachingTips.marketingApproach,
+      type: 'textarea'
+    },
+    {
+      id: 'operationalNeeds',
+      title: t.operationalNeeds,
+      icon: Wrench,
+      placeholder: t.operationalNeedsPlaceholder,
+      tip: t.coachingTips.operationalNeeds,
+      type: 'textarea'
+    },
+    {
+      id: 'growthGoals',
+      title: t.growthGoals,
+      icon: TrendingUp,
+      placeholder: t.growthGoalsPlaceholder,
+      tip: t.coachingTips.growthGoals,
+      type: 'textarea'
+    }
   ];
 
-  console.log('StrategyBuilder - About to render with showSummary:', showSummary);
+  console.log('StrategyBuilder - Component rendering with template:', template);
   console.log('StrategyBuilder - Current strategy state:', strategy);
 
-  if (showSummary) {
-    console.log('StrategyBuilder - Rendering StrategySummary component');
-    return (
-      <StrategySummary 
-        strategy={strategy}
-        onBack={() => setShowSummary(false)}
-        onHome={onHome}
-        language={currentLanguage}
-      />
-    );
-  }
-
-  console.log('StrategyBuilder - Rendering main form with sections:', sections.length);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-orange-200 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              {t.back}
-            </Button>
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
             <div>
-              <h1 className="text-xl font-bold text-gray-800">
-                {t.strategyBuilder}
-                <span className="text-sm text-gray-500 ml-2" title={t.strategyTooltip}>
-                  💡
-                </span>
-              </h1>
-              {template && <p className="text-sm text-gray-600">{template.name} Template</p>}
-              {template === null && <p className="text-sm text-gray-600">{t.customStrategy}</p>}
+              <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
             </div>
-          </div>
-          
-          <div className="hidden sm:flex items-center space-x-2">
-            <LanguageSelector 
-              currentLanguage={currentLanguage}
-              onLanguageChange={setCurrentLanguage}
-            />
-            <CountrySelector 
-              currentCountry={currentCountry}
-              onCountryChange={setCurrentCountry}
-              language={currentLanguage}
-            />
-            <Button variant="outline" onClick={onHome}>
-              <Home className="w-4 h-4 mr-2" />
-              {t.home}
-            </Button>
-            <Button variant="outline" onClick={handleSave}>
-              <Save className="w-4 h-4 mr-2" />
-              {t.save}
-            </Button>
-          </div>
-
-          {/* Mobile utility buttons - stacked vertically */}
-          <div className="flex sm:hidden flex-col space-y-1">
-            <LanguageSelector 
-              currentLanguage={currentLanguage}
-              onLanguageChange={setCurrentLanguage}
-            />
-            <CountrySelector 
-              currentCountry={currentCountry}
-              onCountryChange={setCurrentCountry}
-              language={currentLanguage}
-            />
-            <Button variant="outline" size="sm" onClick={onHome}>
-              <Home className="w-4 h-4 mr-1" />
-              {t.home}
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleSave}>
-              <Save className="w-4 h-4 mr-1" />
-              {t.save}
-            </Button>
+            
+            {/* Utility Buttons - Mobile Stacked, Desktop Horizontal */}
+            <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+              <LanguageSelector 
+                currentLanguage={language} 
+                onLanguageChange={onLanguageChange || (() => {})} 
+              />
+              
+              <CountrySelector
+                currentCountry={country}
+                onCountryChange={onCountryChange || (() => {})}
+              />
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="flex items-center justify-start w-full sm:w-auto"
+                onClick={() => window.location.href = '/'}
+              >
+                <Home className="w-4 h-4 mr-2" />
+                <span>{t.home}</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="flex items-center justify-start w-full sm:w-auto"
+                onClick={handleSave}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                <span>{t.save}</span>
+              </Button>
+            </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Strategy Form */}
-          <div className="space-y-6">
-            {sections.map((section) => {
-              console.log('StrategyBuilder - Rendering section:', section.key, 'with value:', strategy[section.key]);
-              return (
-                <div key={section.key}>
-                  <Card className="border-orange-200">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg text-gray-800">{section.label}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {section.type === 'input' ? (
-                        <Input
-                          value={strategy[section.key]}
-                          onChange={(e) => handleInputChange(section.key, e.target.value)}
-                          placeholder={`${t.enterPlaceholder} ${section.label.toLowerCase()}`}
-                          className="w-full"
-                        />
-                      ) : (
-                        <Textarea
-                          value={strategy[section.key]}
-                          onChange={(e) => handleInputChange(section.key, e.target.value)}
-                          placeholder={`${t.describePlaceholder} ${section.label.toLowerCase()}`}
-                          className="w-full min-h-[100px]"
-                          rows={4}
-                        />
-                      )}
-                    </CardContent>
-                  </Card>
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center mb-8">
+          <p className="text-gray-600 text-lg">
+            {t.subtitle}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {sections.map((section) => {
+            const Icon = section.icon;
+            console.log('StrategyBuilder - Rendering section:', section.id, 'with value:', strategy[section.id]);
+            
+            return (
+              <Card key={section.id} className="border-orange-200 hover:border-orange-300 transition-colors">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-orange-800">
+                    <Icon className="w-5 h-5 mr-2" />
+                    {section.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <CoachingTip tip={section.tip} language={language} />
                   
-                  {/* Coaching Tip for each section */}
-                  <CoachingTip 
-                    tip={t.coachingTips[section.key]}
-                    language={currentLanguage}
-                  />
-                </div>
-              );
-            })}
-          </div>
+                  {section.type === 'input' ? (
+                    <Input
+                      value={strategy[section.id] || ''}
+                      onChange={(e) => handleInputChange(section.id, e.target.value)}
+                      placeholder={section.placeholder}
+                      className="w-full"
+                    />
+                  ) : (
+                    <Textarea
+                      value={strategy[section.id] || ''}
+                      onChange={(e) => handleInputChange(section.id, e.target.value)}
+                      placeholder={section.placeholder}
+                      rows={3}
+                      className="w-full resize-none"
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
 
-          {/* Testing Note */}
-          <div className="mt-8 mb-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800 text-center">
-                {t.testingNote}
-              </p>
-            </div>
-          </div>
-
-          {/* Customer Persona Section */}
-          <div className="mt-12">
-            <CustomerPersonaSection 
-              isPro={true} 
-              strategyData={strategy} 
-              language={currentLanguage}
-            />
-          </div>
-
-          {/* Business Milestones Section */}
-          <div className="mt-12">
-            <BusinessMilestonesSection 
-              isPro={true} 
-              strategyData={strategy}
-              language={currentLanguage}
-            />
-          </div>
-
-          {/* Monthly Revenue Section */}
-          <div className="mt-12">
-            <MonthlyRevenueSection 
-              isPro={true} 
-              strategyData={strategy}
-              language={currentLanguage}
-              currency={currentCountryInfo.currency}
-              currencySymbol={currentCountryInfo.symbol}
-            />
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              onClick={handleGenerateSummary}
-              disabled={isGenerating || !strategy.businessName}
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600"
+          {/* Generate Summary Button */}
+          <div className="text-center pt-8">
+            <Button
+              onClick={onShowSummary}
+              size="lg"
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              {isGenerating ? (
-                <>
-                  <Wand2 className="w-4 h-4 mr-2 animate-spin" />
-                  {t.generatingSummary}
-                </>
-              ) : (
-                <>
-                  <Eye className="w-4 h-4 mr-2" />
-                  {t.generateSummary}
-                </>
-              )}
+              <Lightbulb className="w-5 h-5 mr-2" />
+              {t.generateSummary}
             </Button>
           </div>
         </div>

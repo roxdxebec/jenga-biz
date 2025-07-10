@@ -52,28 +52,7 @@ const MonthlyRevenueSection = ({
   currency = 'USD',
   currencySymbol = '$'
 }: MonthlyRevenueSectionProps) => {
-  const [financialData, setFinancialData] = useState<FinancialEntry[]>([
-    {
-      id: '1',
-      date: new Date('2024-01-15'),
-      month: 'Jan 2024',
-      revenue: 5000,
-      expenses: 2000,
-      notes: 'Launch month - better than expected!',
-      incomeBreakdown: { mobileMoney: 3000, cash: 1500, bankTransfer: 500, custom: {} },
-      expenseBreakdown: { rent: 800, transport: 200, supplies: 500, marketing: 300, misc: 200, custom: {} }
-    },
-    {
-      id: '2',
-      date: new Date('2024-02-15'),
-      month: 'Feb 2024',
-      revenue: 7500,
-      expenses: 2500,
-      notes: 'Added new marketing channels',
-      incomeBreakdown: { mobileMoney: 4500, cash: 2000, bankTransfer: 1000, custom: {} },
-      expenseBreakdown: { rent: 800, transport: 250, supplies: 600, marketing: 500, misc: 350, custom: {} }
-    }
-  ]);
+  const [financialData, setFinancialData] = useState<FinancialEntry[]>([]);
 
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
@@ -383,15 +362,15 @@ const MonthlyRevenueSection = ({
       {/* Financial Entries */}
       <Card className="border-orange-200">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center">
               <DollarSign className="w-5 h-5 mr-2 text-orange-600" />
               {t.financialEntries}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto">
                     <CalendarIcon className="w-4 h-4 mr-1" />
                     {t.selectDate}
                   </Button>
@@ -410,7 +389,7 @@ const MonthlyRevenueSection = ({
                 onClick={addFinancialEntry}
                 size="sm"
                 variant="outline"
-                className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                className="text-orange-600 border-orange-300 hover:bg-orange-50 w-full sm:w-auto"
               >
                 <Plus className="w-4 h-4 mr-1" />
                 {t.addEntry}
@@ -420,262 +399,272 @@ const MonthlyRevenueSection = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {financialData.map((entry) => (
-              <div key={entry.id} className="p-4 border rounded-lg space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-medium text-gray-700">{format(entry.date, 'PPP')}</span>
-                    <p className="text-sm text-gray-500">{entry.month}</p>
-                  </div>
-                  <Button
-                    onClick={() => setEditingEntry(editingEntry === entry.id ? null : entry.id)}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    {editingEntry === entry.id ? <Save className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">{t.totalRevenue}</label>
-                    <p className="text-lg font-semibold text-green-600">
-                      {currencySymbol}{entry.revenue.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">{t.totalExpenses}</label>
-                    <p className="text-lg font-semibold text-red-600">
-                      {currencySymbol}{entry.expenses.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-
-                {editingEntry === entry.id && (
-                  <div className="space-y-4">
-                    {/* Income Breakdown */}
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">{t.incomeBreakdown}</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {Object.entries(entry.incomeBreakdown).map(([category, amount]) => {
-                          if (category === 'custom') {
-                            return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
-                              <div key={`income-${customCat}`}>
-                                <label className="text-xs text-gray-500 capitalize">{customCat}</label>
-                                <Input
-                                  type="number"
-                                  value={customAmount}
-                                  onChange={(e) => updateIncomeBreakdown(entry.id, `custom.${customCat}`, parseInt(e.target.value) || 0)}
-                                  size="sm"
-                                />
-                              </div>
-                            ));
-                          }
-                          return (
-                            <div key={`income-${category}`}>
-                              <label className="text-xs text-gray-500 capitalize">
-                                {t[category] || category}
-                              </label>
-                              <Input
-                                type="number"
-                                value={amount as number}
-                                onChange={(e) => updateIncomeBreakdown(entry.id, category, parseInt(e.target.value) || 0)}
-                                size="sm"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="flex gap-2 mt-2">
-                        <Input
-                          placeholder={t.customSource}
-                          value={newIncomeSource}
-                          onChange={(e) => setNewIncomeSource(e.target.value)}
-                          size="sm"
-                        />
-                        <Button size="sm" onClick={() => addCustomIncomeSource(entry.id)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Expense Breakdown */}
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">{t.expenseBreakdown}</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {Object.entries(entry.expenseBreakdown).map(([category, amount]) => {
-                          if (category === 'custom') {
-                            return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
-                              <div key={`expense-${customCat}`}>
-                                <label className="text-xs text-gray-500 capitalize">{customCat}</label>
-                                <Input
-                                  type="number"
-                                  value={customAmount}
-                                  onChange={(e) => updateExpenseBreakdown(entry.id, `custom.${customCat}`, parseInt(e.target.value) || 0)}
-                                  size="sm"
-                                />
-                              </div>
-                            ));
-                          }
-                          return (
-                            <div key={`expense-${category}`}>
-                              <label className="text-xs text-gray-500 capitalize">
-                                {t[category] || category}
-                              </label>
-                              <Input
-                                type="number"
-                                value={amount as number}
-                                onChange={(e) => updateExpenseBreakdown(entry.id, category, parseInt(e.target.value) || 0)}
-                                size="sm"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div className="flex gap-2 mt-2">
-                        <Input
-                          placeholder={t.customCategory}
-                          value={newExpenseCategory}
-                          onChange={(e) => setNewExpenseCategory(e.target.value)}
-                          size="sm"
-                        />
-                        <Button size="sm" onClick={() => addCustomExpenseCategory(entry.id)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    {entry.revenue - entry.expenses >= 0 ? t.netProfit : t.netLoss}
-                  </label>
-                  <p className={`text-lg font-semibold ${entry.revenue - entry.expenses >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {currencySymbol}{Math.abs(entry.revenue - entry.expenses).toLocaleString()}
-                  </p>
-                </div>
-
-                {editingEntry === entry.id ? (
-                  <Textarea
-                    value={entry.notes}
-                    onChange={(e) => updateFinancialEntry(entry.id, 'notes', e.target.value)}
-                    placeholder={t.entryNotes}
-                    rows={2}
-                  />
-                ) : (
-                  entry.notes && (
-                    <p className="text-sm text-gray-600">{entry.notes}</p>
-                  )
-                )}
+            {financialData.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <DollarSign className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No financial entries yet. Click "Add Entry" to get started!</p>
               </div>
-            ))}
+            ) : (
+              financialData.map((entry) => (
+                <div key={entry.id} className="p-4 border rounded-lg space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-medium text-gray-700">{format(entry.date, 'PPP')}</span>
+                      <p className="text-sm text-gray-500">{entry.month}</p>
+                    </div>
+                    <Button
+                      onClick={() => setEditingEntry(editingEntry === entry.id ? null : entry.id)}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      {editingEntry === entry.id ? <Save className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">{t.totalRevenue}</label>
+                      <p className="text-lg font-semibold text-green-600">
+                        {currencySymbol}{entry.revenue.toLocaleString()}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-600">{t.totalExpenses}</label>
+                      <p className="text-lg font-semibold text-red-600">
+                        {currencySymbol}{entry.expenses.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {editingEntry === entry.id && (
+                    <div className="space-y-4">
+                      {/* Income Breakdown */}
+                      <div>
+                        <h4 className="font-medium text-gray-700 mb-2">{t.incomeBreakdown}</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {Object.entries(entry.incomeBreakdown).map(([category, amount]) => {
+                            if (category === 'custom') {
+                              return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
+                                <div key={`income-${customCat}`}>
+                                  <label className="text-xs text-gray-500 capitalize">{customCat}</label>
+                                  <Input
+                                    type="number"
+                                    value={customAmount}
+                                    onChange={(e) => updateIncomeBreakdown(entry.id, `custom.${customCat}`, Number(e.target.value) || 0)}
+                                    size="sm"
+                                  />
+                                </div>
+                              ));
+                            }
+                            return (
+                              <div key={`income-${category}`}>
+                                <label className="text-xs text-gray-500 capitalize">
+                                  {t[category] || category}
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={amount as number}
+                                  onChange={(e) => updateIncomeBreakdown(entry.id, category, Number(e.target.value) || 0)}
+                                  size="sm"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          <Input
+                            placeholder={t.customSource}
+                            value={newIncomeSource}
+                            onChange={(e) => setNewIncomeSource(e.target.value)}
+                            size="sm"
+                          />
+                          <Button size="sm" onClick={() => addCustomIncomeSource(entry.id)}>
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Expense Breakdown */}
+                      <div>
+                        <h4 className="font-medium text-gray-700 mb-2">{t.expenseBreakdown}</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {Object.entries(entry.expenseBreakdown).map(([category, amount]) => {
+                            if (category === 'custom') {
+                              return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
+                                <div key={`expense-${customCat}`}>
+                                  <label className="text-xs text-gray-500 capitalize">{customCat}</label>
+                                  <Input
+                                    type="number"
+                                    value={customAmount}
+                                    onChange={(e) => updateExpenseBreakdown(entry.id, `custom.${customCat}`, Number(e.target.value) || 0)}
+                                    size="sm"
+                                  />
+                                </div>
+                              ));
+                            }
+                            return (
+                              <div key={`expense-${category}`}>
+                                <label className="text-xs text-gray-500 capitalize">
+                                  {t[category] || category}
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={amount as number}
+                                  onChange={(e) => updateExpenseBreakdown(entry.id, category, Number(e.target.value) || 0)}
+                                  size="sm"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          <Input
+                            placeholder={t.customCategory}
+                            value={newExpenseCategory}
+                            onChange={(e) => setNewExpenseCategory(e.target.value)}
+                            size="sm"
+                          />
+                          <Button size="sm" onClick={() => addCustomExpenseCategory(entry.id)}>
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">
+                      {entry.revenue - entry.expenses >= 0 ? t.netProfit : t.netLoss}
+                    </label>
+                    <p className={`text-lg font-semibold ${entry.revenue - entry.expenses >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {currencySymbol}{Math.abs(entry.revenue - entry.expenses).toLocaleString()}
+                    </p>
+                  </div>
+
+                  {editingEntry === entry.id ? (
+                    <Textarea
+                      value={entry.notes}
+                      onChange={(e) => updateFinancialEntry(entry.id, 'notes', e.target.value)}
+                      placeholder={t.entryNotes}
+                      rows={2}
+                    />
+                  ) : (
+                    entry.notes && (
+                      <p className="text-sm text-gray-600">{entry.notes}</p>
+                    )
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
 
       {/* Financial Overview Chart */}
-      <Card className="border-orange-200">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-              {t.financialOverview}
+      {financialData.length > 0 && (
+        <Card className="border-orange-200">
+          <CardHeader>
+            <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
+                {t.financialOverview}
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                <Select value={timePeriod} onValueChange={(value: 'daily' | 'weekly' | 'monthly' | 'quarterly') => setTimePeriod(value)}>
+                  <SelectTrigger className="w-full sm:w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t.daily}</SelectItem>
+                    <SelectItem value="weekly">{t.weekly}</SelectItem>
+                    <SelectItem value="monthly">{t.monthly}</SelectItem>
+                    <SelectItem value="quarterly">{t.quarterly}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={() => setChartType(chartType === 'line' ? 'bar' : 'line')}
+                  size="sm"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                >
+                  {chartType === 'line' ? t.barChart : t.lineChart}
+                </Button>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 w-full mb-4">
+              <ChartContainer config={chartConfig}>
+                <ResponsiveContainer width="100%" height="100%">
+                  {chartType === 'line' ? (
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
+                        tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={3} />
+                      <Line type="monotone" dataKey="expenses" stroke="var(--color-expenses)" strokeWidth={3} />
+                      <Line type="monotone" dataKey="profit" stroke="var(--color-profit)" strokeWidth={3} />
+                    </LineChart>
+                  ) : (
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
+                        tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="revenue" fill="var(--color-revenue)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="expenses" fill="var(--color-expenses)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  )}
+                </ResponsiveContainer>
+              </ChartContainer>
             </div>
-            <div className="flex items-center space-x-2">
-              <Select value={timePeriod} onValueChange={(value: 'daily' | 'weekly' | 'monthly' | 'quarterly') => setTimePeriod(value)}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t.daily}</SelectItem>
-                  <SelectItem value="weekly">{t.weekly}</SelectItem>
-                  <SelectItem value="monthly">{t.monthly}</SelectItem>
-                  <SelectItem value="quarterly">{t.quarterly}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={() => setChartType(chartType === 'line' ? 'bar' : 'line')}
-                size="sm"
-                variant="outline"
-              >
-                {chartType === 'line' ? t.barChart : t.lineChart}
+
+            {/* Financial Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <TrendingUp className="w-5 h-5 text-green-600 mr-2" />
+                  <span className="text-sm font-medium text-green-800">{t.totalRevenue}</span>
+                </div>
+                <p className="text-2xl font-bold text-green-900">
+                  {currencySymbol}{totalRevenue.toLocaleString()}
+                </p>
+              </div>
+              <div className="bg-red-50 p-4 rounded-lg">
+                <div className="flex items-center">
+                  <TrendingDown className="w-5 h-5 text-red-600 mr-2" />
+                  <span className="text-sm font-medium text-red-800">{t.totalExpenses}</span>
+                </div>
+                <p className="text-2xl font-bold text-red-900">
+                  {currencySymbol}{totalExpenses.toLocaleString()}
+                </p>
+              </div>
+              <div className={`p-4 rounded-lg ${netProfit >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
+                <div className="flex items-center">
+                  <DollarSign className={`w-5 h-5 mr-2 ${netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'}`} />
+                  <span className={`text-sm font-medium ${netProfit >= 0 ? 'text-blue-800' : 'text-orange-800'}`}>
+                    {netProfit >= 0 ? t.netProfit : t.netLoss}
+                  </span>
+                </div>
+                <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-900' : 'text-orange-900'}`}>
+                  {currencySymbol}{Math.abs(netProfit).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Download PDF Button */}
+            <div className="mt-6 text-center">
+              <Button onClick={downloadPDF} className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 w-full sm:w-auto">
+                <Download className="w-4 h-4 mr-2" />
+                {t.downloadPdf}
               </Button>
             </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 w-full mb-4">
-            <ChartContainer config={chartConfig}>
-              <ResponsiveContainer width="100%" height="100%">
-                {chartType === 'line' ? (
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
-                      tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={3} />
-                    <Line type="monotone" dataKey="expenses" stroke="var(--color-expenses)" strokeWidth={3} />
-                    <Line type="monotone" dataKey="profit" stroke="var(--color-profit)" strokeWidth={3} />
-                  </LineChart>
-                ) : (
-                  <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
-                      tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="revenue" fill="var(--color-revenue)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="expenses" fill="var(--color-expenses)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                )}
-              </ResponsiveContainer>
-            </ChartContainer>
-          </div>
-
-          {/* Financial Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <TrendingUp className="w-5 h-5 text-green-600 mr-2" />
-                <span className="text-sm font-medium text-green-800">{t.totalRevenue}</span>
-              </div>
-              <p className="text-2xl font-bold text-green-900">
-                {currencySymbol}{totalRevenue.toLocaleString()}
-              </p>
-            </div>
-            <div className="bg-red-50 p-4 rounded-lg">
-              <div className="flex items-center">
-                <TrendingDown className="w-5 h-5 text-red-600 mr-2" />
-                <span className="text-sm font-medium text-red-800">{t.totalExpenses}</span>
-              </div>
-              <p className="text-2xl font-bold text-red-900">
-                {currencySymbol}{totalExpenses.toLocaleString()}
-              </p>
-            </div>
-            <div className={`p-4 rounded-lg ${netProfit >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
-              <div className="flex items-center">
-                <DollarSign className={`w-5 h-5 mr-2 ${netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'}`} />
-                <span className={`text-sm font-medium ${netProfit >= 0 ? 'text-blue-800' : 'text-orange-800'}`}>
-                  {netProfit >= 0 ? t.netProfit : t.netLoss}
-                </span>
-              </div>
-              <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-900' : 'text-orange-900'}`}>
-                {currencySymbol}{Math.abs(netProfit).toLocaleString()}
-              </p>
-            </div>
-          </div>
-
-          {/* Download PDF Button */}
-          <div className="mt-6 text-center">
-            <Button onClick={downloadPDF} className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600">
-              <Download className="w-4 h-4 mr-2" />
-              {t.downloadPdf}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
