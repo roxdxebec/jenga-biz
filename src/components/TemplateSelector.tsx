@@ -14,10 +14,12 @@ interface Template {
 
 interface TemplateSelectorProps {
   onTemplateSelect: (template: Template) => void;
+  onStartFromScratch?: () => void;
+  onBack?: () => void;
   language?: string;
 }
 
-const TemplateSelector = ({ onTemplateSelect, language = 'en' }: TemplateSelectorProps) => {
+const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack, language = 'en' }: TemplateSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const translations = {
@@ -25,25 +27,29 @@ const TemplateSelector = ({ onTemplateSelect, language = 'en' }: TemplateSelecto
       title: 'Choose Your Business Template',
       subtitle: 'Select a template that matches your business type to get started quickly',
       searchPlaceholder: 'Search business templates...',
-      getStarted: 'Get Started'
+      getStarted: 'Get Started',
+      startFromScratch: 'Start from Scratch (Custom Business)'
     },
     sw: {
       title: 'Chagua Kiolezo cha Biashara Yako',
       subtitle: 'Chagua kiolezo kinacholingana na aina ya biashara yako ili uanze haraka',
       searchPlaceholder: 'Tafuta violezo vya biashara...',
-      getStarted: 'Anza'
+      getStarted: 'Anza',
+      startFromScratch: 'Anza Mwanzo (Biashara ya Kawaida)'
     },
     ar: {
       title: 'اختر قالب عملك',
       subtitle: 'حدد قالباً يتناسب مع نوع عملك للبدء بسرعة',
       searchPlaceholder: 'البحث في قوالب الأعمال...',
-      getStarted: 'ابدأ'
+      getStarted: 'ابدأ',
+      startFromScratch: 'ابدأ من الصفر (عمل مخصص)'
     },
     fr: {
       title: 'Choisissez Votre Modèle d\'Entreprise',
       subtitle: 'Sélectionnez un modèle qui correspond à votre type d\'entreprise pour commencer rapidement',
       searchPlaceholder: 'Rechercher des modèles d\'entreprise...',
-      getStarted: 'Commencer'
+      getStarted: 'Commencer',
+      startFromScratch: 'Commencer de Zéro (Entreprise Personnalisée)'
     }
   };
 
@@ -187,6 +193,36 @@ const TemplateSelector = ({ onTemplateSelect, language = 'en' }: TemplateSelecto
             />
           </div>
         </div>
+
+        {/* Start from Scratch Option */}
+        {onStartFromScratch && (
+          <div className="mb-8">
+            <Card className="border-2 border-dashed border-orange-300 hover:border-orange-400 transition-colors">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <PenTool className="w-8 h-8 text-orange-600" />
+                </div>
+                <CardTitle className="text-lg font-semibold text-gray-900">
+                  {t.startFromScratch}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-gray-600 mb-6 text-sm">
+                  {language === 'sw' ? 'Unda mkakati wa kibinafsi kutoka mwanzo' : 
+                   language === 'ar' ? 'إنشاء استراتيجية مخصصة من البداية' :
+                   language === 'fr' ? 'Créer une stratégie personnalisée depuis le début' :
+                   'Create a custom strategy from scratch'}
+                </p>
+                <Button
+                  onClick={onStartFromScratch}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                >
+                  {t.getStarted}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTemplates.map((template) => {

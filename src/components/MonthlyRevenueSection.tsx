@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -53,7 +52,6 @@ const MonthlyRevenueSection = ({
   currencySymbol = '$'
 }: MonthlyRevenueSectionProps) => {
   const [financialData, setFinancialData] = useState<FinancialEntry[]>([]);
-
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
   const [chartType, setChartType] = useState<'line' | 'bar'>('line');
   const [timePeriod, setTimePeriod] = useState<'daily' | 'weekly' | 'monthly' | 'quarterly'>('monthly');
@@ -276,7 +274,7 @@ const MonthlyRevenueSection = ({
         ...entry, 
         incomeBreakdown: { ...entry.incomeBreakdown, [category]: value },
         revenue: Object.values({ ...entry.incomeBreakdown, [category]: value }).reduce((sum: number, val: any) => {
-          if (typeof val === 'object') {
+          if (typeof val === 'object' && val !== null) {
             return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
           }
           return sum + (typeof val === 'number' ? val : 0);
@@ -291,7 +289,7 @@ const MonthlyRevenueSection = ({
         ...entry, 
         expenseBreakdown: { ...entry.expenseBreakdown, [category]: value },
         expenses: Object.values({ ...entry.expenseBreakdown, [category]: value }).reduce((sum: number, val: any) => {
-          if (typeof val === 'object') {
+          if (typeof val === 'object' && val !== null) {
             return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
           }
           return sum + (typeof val === 'number' ? val : 0);
@@ -593,6 +591,7 @@ const MonthlyRevenueSection = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Chart and summary content */}
             <div className="h-64 w-full mb-4">
               <ChartContainer config={chartConfig}>
                 <ResponsiveContainer width="100%" height="100%">

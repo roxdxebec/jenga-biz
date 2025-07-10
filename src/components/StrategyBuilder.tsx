@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Lightbulb, Target, Users, DollarSign, Star, Handshake, Megaphone, Wrench, TrendingUp, Globe, Home, Save } from 'lucide-react';
+import { Lightbulb, Target, Users, DollarSign, Star, Handshake, Megaphone, Wrench, TrendingUp, Globe, Home, Save, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
@@ -13,6 +14,8 @@ interface StrategyBuilderProps {
   template?: any;
   onStrategyChange?: (strategy: any) => void;
   onShowSummary?: () => void;
+  onBack?: () => void;
+  onHome?: () => void;
   language?: string;
   onLanguageChange?: (language: string) => void;
   country?: string;
@@ -25,6 +28,8 @@ const StrategyBuilder = ({
   template, 
   onStrategyChange, 
   onShowSummary, 
+  onBack,
+  onHome,
   language = 'en',
   onLanguageChange,
   country = 'KE',
@@ -495,7 +500,18 @@ const StrategyBuilder = ({
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div>
+            <div className="flex items-center">
+              {onBack && (
+                <Button
+                  onClick={onBack}
+                  variant="ghost"
+                  size="sm"
+                  className="mr-4"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
+              )}
               <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
             </div>
             
@@ -515,7 +531,7 @@ const StrategyBuilder = ({
                 variant="outline" 
                 size="sm"
                 className="flex items-center justify-start w-full sm:w-auto"
-                onClick={() => window.location.href = '/'}
+                onClick={onHome || (() => window.location.href = '/')}
               >
                 <Home className="w-4 h-4 mr-2" />
                 <span>{t.home}</span>
