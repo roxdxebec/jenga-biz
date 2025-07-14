@@ -8,7 +8,6 @@ import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Globe, DollarSign, Home, Save } from 'lucide-react';
 
 const Index = () => {
@@ -90,11 +89,57 @@ const Index = () => {
   // Template Selector View
   if (currentView === 'templates') {
     return (
-      <TemplateDropdownSelector
-        onTemplateSelect={handleTemplateSelect}
-        onStartFromScratch={handleStartFromScratch}
-        language={language}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <h1 className="text-xl font-bold text-gray-900">Strategy Grid</h1>
+              </div>
+              
+              {/* Utility Buttons */}
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center">
+                  <Globe className="w-4 h-4 mr-2" />
+                  <span className="mr-2 text-sm">Language</span>
+                  <LanguageSelector 
+                    currentLanguage={language} 
+                    onLanguageChange={setLanguage} 
+                  />
+                </div>
+                
+                <div className="flex items-center">
+                  <DollarSign className="w-4 h-4 mr-2" />
+                  <span className="mr-2 text-sm">Currency</span>
+                  <CountrySelector
+                    currentCountry={country}
+                    onCountryChange={setCountry}
+                  />
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={handleBackToHome}
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  <span>Home</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <TemplateDropdownSelector
+            onTemplateSelect={handleTemplateSelect}
+            onStartFromScratch={handleStartFromScratch}
+            language={language}
+          />
+        </div>
+      </div>
     );
   }
 
@@ -111,8 +156,8 @@ const Index = () => {
               </div>
               
               {/* Utility Buttons */}
-              <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                <div className="flex items-center justify-start w-full sm:w-auto">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center">
                   <Globe className="w-4 h-4 mr-2" />
                   <span className="mr-2 text-sm">Language</span>
                   <LanguageSelector 
@@ -121,7 +166,7 @@ const Index = () => {
                   />
                 </div>
                 
-                <div className="flex items-center justify-start w-full sm:w-auto">
+                <div className="flex items-center">
                   <DollarSign className="w-4 h-4 mr-2" />
                   <span className="mr-2 text-sm">Currency</span>
                   <CountrySelector
@@ -133,7 +178,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="flex items-center justify-start w-full sm:w-auto"
+                  className="flex items-center"
                   onClick={handleBackToTemplates}
                 >
                   <Home className="w-4 h-4 mr-2" />
@@ -155,7 +200,7 @@ const Index = () => {
     );
   }
 
-  // Strategy Builder View with Trackers
+  // Strategy Builder View with Trackers (Single Page)
   if (currentView === 'builder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -168,8 +213,8 @@ const Index = () => {
               </div>
               
               {/* Utility Buttons */}
-              <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                <div className="flex items-center justify-start w-full sm:w-auto">
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center">
                   <Globe className="w-4 h-4 mr-2" />
                   <span className="mr-2 text-sm">Language</span>
                   <LanguageSelector 
@@ -178,7 +223,7 @@ const Index = () => {
                   />
                 </div>
                 
-                <div className="flex items-center justify-start w-full sm:w-auto">
+                <div className="flex items-center">
                   <DollarSign className="w-4 h-4 mr-2" />
                   <span className="mr-2 text-sm">Currency</span>
                   <CountrySelector
@@ -190,7 +235,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="flex items-center justify-start w-full sm:w-auto"
+                  className="flex items-center"
                   onClick={handleBackToHome}
                 >
                   <Home className="w-4 h-4 mr-2" />
@@ -200,7 +245,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="flex items-center justify-start w-full sm:w-auto"
+                  className="flex items-center"
                   onClick={handleSave}
                 >
                   <Save className="w-4 h-4 mr-2" />
@@ -211,46 +256,40 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Tabs defaultValue="strategy" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="strategy">Strategy Builder</TabsTrigger>
-              <TabsTrigger value="milestones">Milestones Tracker</TabsTrigger>
-              <TabsTrigger value="finances">Revenue & Expense Tracker</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="strategy" className="mt-6">
-              <StrategyBuilder
-                template={selectedTemplate}
-                onStrategyChange={handleStrategyChange}
-                onBack={handleBackToStageSelector}
-                onHome={handleBackToHome}
-                language={language}
-                onLanguageChange={setLanguage}
-                country={country}
-                onCountryChange={setCountry}
-                currency={currency}
-                currencySymbol={currencySymbol}
-              />
-            </TabsContent>
-            
-            <TabsContent value="milestones" className="mt-6">
-              <BusinessMilestonesSection
-                businessStage={selectedStage}
-                strategyData={strategyData}
-                language={language}
-              />
-            </TabsContent>
-            
-            <TabsContent value="finances" className="mt-6">
-              <MonthlyRevenueSection
-                strategyData={strategyData}
-                language={language}
-                currency={currency}
-                currencySymbol={currencySymbol}
-              />
-            </TabsContent>
-          </Tabs>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+          {/* Strategy Builder Section */}
+          <div>
+            <StrategyBuilder
+              template={selectedTemplate}
+              onStrategyChange={handleStrategyChange}
+              onBack={handleBackToStageSelector}
+              onHome={handleBackToHome}
+              language={language}
+              onLanguageChange={setLanguage}
+              country={country}
+              onCountryChange={setCountry}
+              currency={currency}
+              currencySymbol={currencySymbol}
+            />
+          </div>
+          
+          {/* Milestones Tracker Section */}
+          <div>
+            <BusinessMilestonesSection
+              strategyData={strategyData}
+              language={language}
+            />
+          </div>
+          
+          {/* Revenue & Expense Tracker Section */}
+          <div>
+            <MonthlyRevenueSection
+              strategyData={strategyData}
+              language={language}
+              currency={currency}
+              currencySymbol={currencySymbol}
+            />
+          </div>
         </div>
       </div>
     );

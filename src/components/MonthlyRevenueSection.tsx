@@ -64,7 +64,7 @@ const MonthlyRevenueSection = ({
   // Translation object
   const translations = {
     en: {
-      title: 'Business Revenue & Expense Tracker',
+      title: 'Revenue & Expense Tracker',
       subtitle: 'Monitor your business growth and track profitability.',
       financialOverview: 'Financial Overview',
       addEntry: 'Add Entry',
@@ -93,7 +93,7 @@ const MonthlyRevenueSection = ({
       supplies: 'Supplies',
       marketing: 'Marketing',
       misc: 'Miscellaneous',
-      downloadPdf: 'Download Business Tracker Summary',
+      downloadPdf: 'Download Summary',
       selectDate: 'Select Date',
       addCustomIncome: 'Add Custom Income Source',
       addCustomExpense: 'Add Custom Expense Category',
@@ -103,7 +103,7 @@ const MonthlyRevenueSection = ({
       coachingTip: 'Track every expense, no matter how small. Understanding your costs helps you make better pricing decisions and find areas to save money.'
     },
     sw: {
-      title: 'Kufuatilia Mapato na Gharama za Biashara',
+      title: 'Kufuatilia Mapato na Gharama',
       subtitle: 'Fuatilia ukuaji wa biashara yako na ufuatilikie faida.',
       financialOverview: 'Muhtasari wa Kifedha',
       addEntry: 'Ongeza Ingizo',
@@ -132,7 +132,7 @@ const MonthlyRevenueSection = ({
       supplies: 'Vifaa',
       marketing: 'Uuzaji',
       misc: 'Mengineyo',
-      downloadPdf: 'Pakua Muhtasari wa Kufuatilia Biashara',
+      downloadPdf: 'Pakua Muhtasari',
       selectDate: 'Chagua Tarehe',
       addCustomIncome: 'Ongeza Chanzo cha Mapato',
       addCustomExpense: 'Ongeza Kundi la Gharama',
@@ -142,7 +142,7 @@ const MonthlyRevenueSection = ({
       coachingTip: 'Fuatilia kila gharama, haijalishi ni ndogo kiasi gani. Kuelewa gharama zako kunakusaidia kufanya maamuzi bora ya bei na kupata maeneo ya kuokoa pesa.'
     },
     ar: {
-      title: 'متتبع إيرادات ومصروفات الأعمال',
+      title: 'متتبع الإيرادات والمصروفات',
       subtitle: 'راقب نمو أعمالك وتتبع الربحية.',
       financialOverview: 'نظرة عامة مالية',
       addEntry: 'إضافة إدخال',
@@ -171,7 +171,7 @@ const MonthlyRevenueSection = ({
       supplies: 'إمدادات',
       marketing: 'تسويق',
       misc: 'متفرقات',
-      downloadPdf: 'تحميل ملخص متتبع الأعمال',
+      downloadPdf: 'تحميل الملخص',
       selectDate: 'اختر التاريخ',
       addCustomIncome: 'إضافة مصدر دخل مخصص',
       addCustomExpense: 'إضافة فئة مصروفات مخصصة',
@@ -181,10 +181,10 @@ const MonthlyRevenueSection = ({
       coachingTip: 'تتبع كل مصروف مهما كان صغيراً. فهم تكاليفك يساعدك على اتخاذ قرارات تسعير أفضل وإيجاد مجالات لتوفير المال.'
     },
     fr: {
-      title: 'Suivi des Revenus et Dépenses d\'Affaires',
+      title: 'Suivi des Revenus et Dépenses',
       subtitle: 'Surveillez la croissance de votre entreprise et suivez la rentabilité.',
       financialOverview: 'Aperçu Financier',
-      addEntry: 'Ajouter une Entrée',
+      addEntry: 'Ajouter Entrée',
       lineChart: 'Graphique Linéaire',
       barChart: 'Graphique en Barres',
       timePeriod: 'Période',
@@ -210,10 +210,10 @@ const MonthlyRevenueSection = ({
       supplies: 'Fournitures',
       marketing: 'Marketing',
       misc: 'Divers',
-      downloadPdf: 'Télécharger Résumé Suivi Entreprise',
-      selectDate: 'Sélectionner la Date',
-      addCustomIncome: 'Ajouter Source de Revenus',
-      addCustomExpense: 'Ajouter Catégorie de Dépenses',
+      downloadPdf: 'Télécharger Résumé',
+      selectDate: 'Sélectionner Date',
+      addCustomIncome: 'Ajouter Source Revenus',
+      addCustomExpense: 'Ajouter Catégorie Dépenses',
       customSource: 'Source Personnalisée',
       customCategory: 'Catégorie Personnalisée',
       tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
