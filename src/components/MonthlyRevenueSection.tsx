@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { TrendingUp, Plus, DollarSign, Edit, Save, X, Download, TrendingDown, CalendarIcon } from 'lucide-react';
+import { TrendingUp, Plus, DollarSign, Edit, Save, X, Download, TrendingDown, CalendarIcon, Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -59,7 +59,70 @@ const MonthlyRevenueSection = ({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [newIncomeSource, setNewIncomeSource] = useState('');
   const [newExpenseCategory, setNewExpenseCategory] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('KE');
   const { toast } = useToast();
+
+  // African countries with currencies
+  const countries = [
+    { code: 'DZ', name: 'Algeria', currency: 'DZD', symbol: 'DA' },
+    { code: 'AO', name: 'Angola', currency: 'AOA', symbol: 'Kz' },
+    { code: 'BJ', name: 'Benin', currency: 'XOF', symbol: 'CFA' },
+    { code: 'BW', name: 'Botswana', currency: 'BWP', symbol: 'P' },
+    { code: 'BF', name: 'Burkina Faso', currency: 'XOF', symbol: 'CFA' },
+    { code: 'BI', name: 'Burundi', currency: 'BIF', symbol: 'FBu' },
+    { code: 'CV', name: 'Cape Verde', currency: 'CVE', symbol: '$' },
+    { code: 'CM', name: 'Cameroon', currency: 'XAF', symbol: 'FCFA' },
+    { code: 'CF', name: 'Central African Republic', currency: 'XAF', symbol: 'FCFA' },
+    { code: 'TD', name: 'Chad', currency: 'XAF', symbol: 'FCFA' },
+    { code: 'KM', name: 'Comoros', currency: 'KMF', symbol: 'CF' },
+    { code: 'CG', name: 'Congo', currency: 'XAF', symbol: 'FCFA' },
+    { code: 'CD', name: 'Democratic Republic of Congo', currency: 'CDF', symbol: 'FC' },
+    { code: 'CI', name: 'Ivory Coast', currency: 'XOF', symbol: 'CFA' },
+    { code: 'DJ', name: 'Djibouti', currency: 'DJF', symbol: 'Fdj' },
+    { code: 'EG', name: 'Egypt', currency: 'EGP', symbol: 'E£' },
+    { code: 'GQ', name: 'Equatorial Guinea', currency: 'XAF', symbol: 'FCFA' },
+    { code: 'ER', name: 'Eritrea', currency: 'ERN', symbol: 'Nfk' },
+    { code: 'SZ', name: 'Eswatini', currency: 'SZL', symbol: 'L' },
+    { code: 'ET', name: 'Ethiopia', currency: 'ETB', symbol: 'Br' },
+    { code: 'GA', name: 'Gabon', currency: 'XAF', symbol: 'FCFA' },
+    { code: 'GM', name: 'Gambia', currency: 'GMD', symbol: 'D' },
+    { code: 'GH', name: 'Ghana', currency: 'GHS', symbol: 'GH₵' },
+    { code: 'GN', name: 'Guinea', currency: 'GNF', symbol: 'FG' },
+    { code: 'GW', name: 'Guinea-Bissau', currency: 'XOF', symbol: 'CFA' },
+    { code: 'KE', name: 'Kenya', currency: 'KES', symbol: 'KSh' },
+    { code: 'LS', name: 'Lesotho', currency: 'LSL', symbol: 'L' },
+    { code: 'LR', name: 'Liberia', currency: 'LRD', symbol: 'L$' },
+    { code: 'LY', name: 'Libya', currency: 'LYD', symbol: 'LD' },
+    { code: 'MG', name: 'Madagascar', currency: 'MGA', symbol: 'Ar' },
+    { code: 'MW', name: 'Malawi', currency: 'MWK', symbol: 'MK' },
+    { code: 'ML', name: 'Mali', currency: 'XOF', symbol: 'CFA' },
+    { code: 'MR', name: 'Mauritania', currency: 'MRU', symbol: 'UM' },
+    { code: 'MU', name: 'Mauritius', currency: 'MUR', symbol: 'Rs' },
+    { code: 'MA', name: 'Morocco', currency: 'MAD', symbol: 'DH' },
+    { code: 'MZ', name: 'Mozambique', currency: 'MZN', symbol: 'MT' },
+    { code: 'NA', name: 'Namibia', currency: 'NAD', symbol: 'N$' },
+    { code: 'NE', name: 'Niger', currency: 'XOF', symbol: 'CFA' },
+    { code: 'NG', name: 'Nigeria', currency: 'NGN', symbol: '₦' },
+    { code: 'RW', name: 'Rwanda', currency: 'RWF', symbol: 'FRw' },
+    { code: 'ST', name: 'São Tomé and Príncipe', currency: 'STN', symbol: 'Db' },
+    { code: 'SN', name: 'Senegal', currency: 'XOF', symbol: 'CFA' },
+    { code: 'SC', name: 'Seychelles', currency: 'SCR', symbol: 'Rs' },
+    { code: 'SL', name: 'Sierra Leone', currency: 'SLL', symbol: 'Le' },
+    { code: 'SO', name: 'Somalia', currency: 'SOS', symbol: 'Sh' },
+    { code: 'ZA', name: 'South Africa', currency: 'ZAR', symbol: 'R' },
+    { code: 'SS', name: 'South Sudan', currency: 'SSP', symbol: '£' },
+    { code: 'SD', name: 'Sudan', currency: 'SDG', symbol: 'ج.س' },
+    { code: 'TZ', name: 'Tanzania', currency: 'TZS', symbol: 'TSh' },
+    { code: 'TG', name: 'Togo', currency: 'XOF', symbol: 'CFA' },
+    { code: 'TN', name: 'Tunisia', currency: 'TND', symbol: 'د.ت' },
+    { code: 'UG', name: 'Uganda', currency: 'UGX', symbol: 'USh' },
+    { code: 'ZM', name: 'Zambia', currency: 'ZMW', symbol: 'ZK' },
+    { code: 'ZW', name: 'Zimbabwe', currency: 'ZWL', symbol: 'Z$' },
+    { code: 'US', name: 'United States', currency: 'USD', symbol: '$' }
+  ];
+
+  const currentCountry = countries.find(c => c.code === selectedCountry) || countries.find(c => c.code === 'KE')!;
+  const currentCurrencySymbol = currentCountry.symbol;
 
   // Translation object
   const translations = {
@@ -100,7 +163,8 @@ const MonthlyRevenueSection = ({
       customSource: 'Custom Source',
       customCategory: 'Custom Category',
       tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
-      coachingTip: 'Track every expense, no matter how small. Understanding your costs helps you make better pricing decisions and find areas to save money.'
+      coachingTip: 'Track every expense, no matter how small. Understanding your costs helps you make better pricing decisions and find areas to save money.',
+      currency: 'Currency'
     },
     sw: {
       title: 'Kufuatilia Mapato na Gharama',
@@ -139,7 +203,8 @@ const MonthlyRevenueSection = ({
       customSource: 'Chanzo cha Kawaida',
       customCategory: 'Kundi la Kawaida',
       tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
-      coachingTip: 'Fuatilia kila gharama, haijalishi ni ndogo kiasi gani. Kuelewa gharama zako kunakusaidia kufanya maamuzi bora ya bei na kupata maeneo ya kuokoa pesa.'
+      coachingTip: 'Fuatilia kila gharama, haijalishi ni ndogo kiasi gani. Kuelewa gharama zako kunakusaidia kufanya maamuzi bora ya bei na kupata maeneo ya kuokoa pesa.',
+      currency: 'Sarafu'
     },
     ar: {
       title: 'متتبع الإيرادات والمصروفات',
@@ -178,7 +243,8 @@ const MonthlyRevenueSection = ({
       customSource: 'مصدر مخصص',
       customCategory: 'فئة مخصصة',
       tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
-      coachingTip: 'تتبع كل مصروف مهما كان صغيراً. فهم تكاليفك يساعدك على اتخاذ قرارات تسعير أفضل وإيجاد مجالات لتوفير المال.'
+      coachingTip: 'تتبع كل مصروف مهما كان صغيراً. فهم تكاليفك يساعدك على اتخاذ قرارات تسعير أفضل وإيجاد مجالات لتوفير المال.',
+      currency: 'العملة'
     },
     fr: {
       title: 'Suivi des Revenus et Dépenses',
@@ -217,7 +283,8 @@ const MonthlyRevenueSection = ({
       customSource: 'Source Personnalisée',
       customCategory: 'Catégorie Personnalisée',
       tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
-      coachingTip: 'Suivez chaque dépense, peu importe sa taille. Comprendre vos coûts vous aide à prendre de meilleures décisions de prix et à trouver des domaines pour économiser de l\'argent.'
+      coachingTip: 'Suivez chaque dépense, peu importe sa taille. Comprendre vos coûts vous aide à prendre de meilleures décisions de prix et à trouver des domaines pour économiser de l\'argent.',
+      currency: 'Devise'
     }
   };
 
@@ -379,6 +446,31 @@ const MonthlyRevenueSection = ({
         </p>
       </div>
 
+      {/* Currency Selector inside Financial Tracker */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <DollarSign className="w-4 h-4" />
+            <span className="text-sm font-medium">{t.currency}</span>
+            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+              <SelectTrigger className="w-auto min-w-[120px]">
+                <div className="flex items-center space-x-2">
+                  <span className="font-medium">{currentCountry.symbol}</span>
+                  <span className="text-sm text-gray-600">{currentCountry.name}</span>
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.name} ({country.symbol})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
       {/* Tier 3 Note */}
       <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
         <p className="text-sm text-purple-800 text-center">
@@ -455,13 +547,13 @@ const MonthlyRevenueSection = ({
                     <div>
                       <label className="text-sm font-medium text-gray-600">{t.totalRevenue}</label>
                       <p className="text-lg font-semibold text-green-600">
-                        {currencySymbol}{entry.revenue.toLocaleString()}
+                        {currentCurrencySymbol}{entry.revenue.toLocaleString()}
                       </p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">{t.totalExpenses}</label>
                       <p className="text-lg font-semibold text-red-600">
-                        {currencySymbol}{entry.expenses.toLocaleString()}
+                        {currentCurrencySymbol}{entry.expenses.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -567,7 +659,7 @@ const MonthlyRevenueSection = ({
                       {entry.revenue - entry.expenses >= 0 ? t.netProfit : t.netLoss}
                     </label>
                     <p className={`text-lg font-semibold ${entry.revenue - entry.expenses >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {currencySymbol}{Math.abs(entry.revenue - entry.expenses).toLocaleString()}
+                      {currentCurrencySymbol}{Math.abs(entry.revenue - entry.expenses).toLocaleString()}
                     </p>
                   </div>
 
@@ -632,7 +724,7 @@ const MonthlyRevenueSection = ({
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                       <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
-                        tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`} />
+                        tickFormatter={(value) => `${currentCurrencySymbol}${value.toLocaleString()}`} />
                       <ChartTooltip content={<ChartTooltipContent />} />
                       <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={3} />
                       <Line type="monotone" dataKey="expenses" stroke="var(--color-expenses)" strokeWidth={3} />
@@ -643,7 +735,7 @@ const MonthlyRevenueSection = ({
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                       <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
-                        tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`} />
+                        tickFormatter={(value) => `${currentCurrencySymbol}${value.toLocaleString()}`} />
                       <ChartTooltip content={<ChartTooltipContent />} />
                       <Bar dataKey="revenue" fill="var(--color-revenue)" radius={[4, 4, 0, 0]} />
                       <Bar dataKey="expenses" fill="var(--color-expenses)" radius={[4, 4, 0, 0]} />
@@ -661,7 +753,7 @@ const MonthlyRevenueSection = ({
                   <span className="text-sm font-medium text-green-800">{t.totalRevenue}</span>
                 </div>
                 <p className="text-2xl font-bold text-green-900">
-                  {currencySymbol}{totalRevenue.toLocaleString()}
+                  {currentCurrencySymbol}{totalRevenue.toLocaleString()}
                 </p>
               </div>
               <div className="bg-red-50 p-4 rounded-lg">
@@ -670,7 +762,7 @@ const MonthlyRevenueSection = ({
                   <span className="text-sm font-medium text-red-800">{t.totalExpenses}</span>
                 </div>
                 <p className="text-2xl font-bold text-red-900">
-                  {currencySymbol}{totalExpenses.toLocaleString()}
+                  {currentCurrencySymbol}{totalExpenses.toLocaleString()}
                 </p>
               </div>
               <div className={`p-4 rounded-lg ${netProfit >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
@@ -681,7 +773,7 @@ const MonthlyRevenueSection = ({
                   </span>
                 </div>
                 <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-900' : 'text-orange-900'}`}>
-                  {currencySymbol}{Math.abs(netProfit).toLocaleString()}
+                  {currentCurrencySymbol}{Math.abs(netProfit).toLocaleString()}
                 </p>
               </div>
             </div>

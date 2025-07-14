@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
 import BusinessStageSelector from '@/components/BusinessStageSelector';
@@ -254,18 +253,8 @@ const Index = () => {
                 <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Navigation and Utility Buttons */}
+              {/* Simplified Navigation Buttons - Only Home and Save */}
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <DollarSign className="w-4 h-4" />
-                  <span className="text-sm">{t.currency}</span>
-                  <CountrySelector
-                    currentCountry={country}
-                    onCountryChange={setCountry}
-                    language={language}
-                  />
-                </div>
-                
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -323,7 +312,7 @@ const Index = () => {
             />
           </div>
 
-          {/* Summary & Actions Section */}
+          {/* Summary & Actions Section - Horizontal Layout Only */}
           <div className="bg-white p-6 rounded-lg border border-orange-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
@@ -356,10 +345,10 @@ const Index = () => {
     );
   }
 
-  // Home View
+  // Home View - Removed "Select Business Stage" button
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
-      {/* Header with Language Selector */}
+      {/* Header with Language Selector Only */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -390,7 +379,7 @@ const Index = () => {
             {t.subtitle}
           </p>
           
-          {/* Three Main Action Buttons */}
+          {/* Two Main Action Buttons - Removed "Select Business Stage" */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
             <button
               onClick={handleStartFromScratch}
@@ -404,13 +393,6 @@ const Index = () => {
               className="px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
             >
               {t.useTemplates}
-            </button>
-            
-            <button
-              onClick={() => setCurrentView('stage-selector')}
-              className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
-            >
-              {t.selectStage}
             </button>
           </div>
         </div>
