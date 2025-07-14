@@ -3,792 +3,506 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { TrendingUp, Plus, DollarSign, Edit, Save, X, Download, TrendingDown, CalendarIcon, Globe } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import CoachingTip from '@/components/CoachingTip';
+import { Plus, Trash2, CalendarIcon, Download, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
-interface FinancialEntry {
+interface RevenueEntry {
   id: string;
   date: Date;
-  month: string;
-  revenue: number;
-  expenses: number;
-  notes: string;
-  incomeBreakdown: {
-    mobileMoney: number;
-    cash: number;
-    bankTransfer: number;
-    custom: Record<string, number>;
-  };
-  expenseBreakdown: {
-    rent: number;
-    transport: number;
-    supplies: number;
-    marketing: number;
-    misc: number;
-    custom: Record<string, number>;
-  };
+  amount: number;
+  category: string;
+  description: string;
+  type: 'cash' | 'mobile_money' | 'bank_transfer' | 'card';
+}
+
+interface ExpenseEntry {
+  id: string;
+  date: Date;
+  amount: number;
+  category: string;
+  description: string;
 }
 
 interface MonthlyRevenueSectionProps {
-  isPro?: boolean;
-  strategyData?: any;
+  strategyData: any;
   language?: string;
   currency?: string;
   currencySymbol?: string;
 }
 
-const MonthlyRevenueSection = ({ 
-  isPro = true, 
-  strategyData = null, 
-  language = 'en',
-  currency = 'USD',
-  currencySymbol = '$'
-}: MonthlyRevenueSectionProps) => {
-  const [financialData, setFinancialData] = useState<FinancialEntry[]>([]);
-  const [editingEntry, setEditingEntry] = useState<string | null>(null);
-  const [chartType, setChartType] = useState<'line' | 'bar'>('line');
-  const [timePeriod, setTimePeriod] = useState<'daily' | 'weekly' | 'monthly' | 'quarterly'>('monthly');
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [newIncomeSource, setNewIncomeSource] = useState('');
-  const [newExpenseCategory, setNewExpenseCategory] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('KE');
-  const { toast } = useToast();
+const MonthlyRevenueSection = ({ strategyData, language = 'en', currency = 'KES', currencySymbol = 'KSh' }: MonthlyRevenueSectionProps) => {
+  const [revenueEntries, setRevenueEntries] = useState<RevenueEntry[]>([]);
+  const [expenseEntries, setExpenseEntries] = useState<ExpenseEntry[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState(currency);
+  const [selectedCurrencySymbol, setSelectedCurrencySymbol] = useState(currencySymbol);
 
-  // African countries with currencies
-  const countries = [
-    { code: 'DZ', name: 'Algeria', currency: 'DZD', symbol: 'DA' },
-    { code: 'AO', name: 'Angola', currency: 'AOA', symbol: 'Kz' },
-    { code: 'BJ', name: 'Benin', currency: 'XOF', symbol: 'CFA' },
-    { code: 'BW', name: 'Botswana', currency: 'BWP', symbol: 'P' },
-    { code: 'BF', name: 'Burkina Faso', currency: 'XOF', symbol: 'CFA' },
-    { code: 'BI', name: 'Burundi', currency: 'BIF', symbol: 'FBu' },
-    { code: 'CV', name: 'Cape Verde', currency: 'CVE', symbol: '$' },
-    { code: 'CM', name: 'Cameroon', currency: 'XAF', symbol: 'FCFA' },
-    { code: 'CF', name: 'Central African Republic', currency: 'XAF', symbol: 'FCFA' },
-    { code: 'TD', name: 'Chad', currency: 'XAF', symbol: 'FCFA' },
-    { code: 'KM', name: 'Comoros', currency: 'KMF', symbol: 'CF' },
-    { code: 'CG', name: 'Congo', currency: 'XAF', symbol: 'FCFA' },
-    { code: 'CD', name: 'Democratic Republic of Congo', currency: 'CDF', symbol: 'FC' },
-    { code: 'CI', name: 'Ivory Coast', currency: 'XOF', symbol: 'CFA' },
-    { code: 'DJ', name: 'Djibouti', currency: 'DJF', symbol: 'Fdj' },
-    { code: 'EG', name: 'Egypt', currency: 'EGP', symbol: 'E£' },
-    { code: 'GQ', name: 'Equatorial Guinea', currency: 'XAF', symbol: 'FCFA' },
-    { code: 'ER', name: 'Eritrea', currency: 'ERN', symbol: 'Nfk' },
-    { code: 'SZ', name: 'Eswatini', currency: 'SZL', symbol: 'L' },
-    { code: 'ET', name: 'Ethiopia', currency: 'ETB', symbol: 'Br' },
-    { code: 'GA', name: 'Gabon', currency: 'XAF', symbol: 'FCFA' },
-    { code: 'GM', name: 'Gambia', currency: 'GMD', symbol: 'D' },
-    { code: 'GH', name: 'Ghana', currency: 'GHS', symbol: 'GH₵' },
-    { code: 'GN', name: 'Guinea', currency: 'GNF', symbol: 'FG' },
-    { code: 'GW', name: 'Guinea-Bissau', currency: 'XOF', symbol: 'CFA' },
-    { code: 'KE', name: 'Kenya', currency: 'KES', symbol: 'KSh' },
-    { code: 'LS', name: 'Lesotho', currency: 'LSL', symbol: 'L' },
-    { code: 'LR', name: 'Liberia', currency: 'LRD', symbol: 'L$' },
-    { code: 'LY', name: 'Libya', currency: 'LYD', symbol: 'LD' },
-    { code: 'MG', name: 'Madagascar', currency: 'MGA', symbol: 'Ar' },
-    { code: 'MW', name: 'Malawi', currency: 'MWK', symbol: 'MK' },
-    { code: 'ML', name: 'Mali', currency: 'XOF', symbol: 'CFA' },
-    { code: 'MR', name: 'Mauritania', currency: 'MRU', symbol: 'UM' },
-    { code: 'MU', name: 'Mauritius', currency: 'MUR', symbol: 'Rs' },
-    { code: 'MA', name: 'Morocco', currency: 'MAD', symbol: 'DH' },
-    { code: 'MZ', name: 'Mozambique', currency: 'MZN', symbol: 'MT' },
-    { code: 'NA', name: 'Namibia', currency: 'NAD', symbol: 'N$' },
-    { code: 'NE', name: 'Niger', currency: 'XOF', symbol: 'CFA' },
-    { code: 'NG', name: 'Nigeria', currency: 'NGN', symbol: '₦' },
-    { code: 'RW', name: 'Rwanda', currency: 'RWF', symbol: 'FRw' },
-    { code: 'ST', name: 'São Tomé and Príncipe', currency: 'STN', symbol: 'Db' },
-    { code: 'SN', name: 'Senegal', currency: 'XOF', symbol: 'CFA' },
-    { code: 'SC', name: 'Seychelles', currency: 'SCR', symbol: 'Rs' },
-    { code: 'SL', name: 'Sierra Leone', currency: 'SLL', symbol: 'Le' },
-    { code: 'SO', name: 'Somalia', currency: 'SOS', symbol: 'Sh' },
-    { code: 'ZA', name: 'South Africa', currency: 'ZAR', symbol: 'R' },
-    { code: 'SS', name: 'South Sudan', currency: 'SSP', symbol: '£' },
-    { code: 'SD', name: 'Sudan', currency: 'SDG', symbol: 'ج.س' },
-    { code: 'TZ', name: 'Tanzania', currency: 'TZS', symbol: 'TSh' },
-    { code: 'TG', name: 'Togo', currency: 'XOF', symbol: 'CFA' },
-    { code: 'TN', name: 'Tunisia', currency: 'TND', symbol: 'د.ت' },
-    { code: 'UG', name: 'Uganda', currency: 'UGX', symbol: 'USh' },
-    { code: 'ZM', name: 'Zambia', currency: 'ZMW', symbol: 'ZK' },
-    { code: 'ZW', name: 'Zimbabwe', currency: 'ZWL', symbol: 'Z$' },
-    { code: 'US', name: 'United States', currency: 'USD', symbol: '$' }
-  ];
+  // Currency mapping for African countries + USD
+  const currencyMap = {
+    'KE': { currency: 'KES', symbol: 'KSh', name: 'Kenyan Shilling' },
+    'TZ': { currency: 'TZS', symbol: 'TSh', name: 'Tanzanian Shilling' },
+    'UG': { currency: 'UGX', symbol: 'USh', name: 'Ugandan Shilling' },
+    'RW': { currency: 'RWF', symbol: 'RWF', name: 'Rwandan Franc' },
+    'ET': { currency: 'ETB', symbol: 'Br', name: 'Ethiopian Birr' },
+    'GH': { currency: 'GHS', symbol: '₵', name: 'Ghanaian Cedi' },
+    'NG': { currency: 'NGN', symbol: '₦', name: 'Nigerian Naira' },
+    'ZA': { currency: 'ZAR', symbol: 'R', name: 'South African Rand' },
+    'EG': { currency: 'EGP', symbol: 'E£', name: 'Egyptian Pound' },
+    'MA': { currency: 'MAD', symbol: 'DH', name: 'Moroccan Dirham' },
+    'DZ': { currency: 'DZD', symbol: 'DA', name: 'Algerian Dinar' },
+    'TN': { currency: 'TND', symbol: 'DT', name: 'Tunisian Dinar' },
+    'LY': { currency: 'LYD', symbol: 'LD', name: 'Libyan Dinar' },
+    'SD': { currency: 'SDG', symbol: 'SDG', name: 'Sudanese Pound' },
+    'SS': { currency: 'SSP', symbol: 'SSP', name: 'South Sudanese Pound' },
+    'ER': { currency: 'ERN', symbol: 'Nfk', name: 'Eritrean Nakfa' },
+    'DJ': { currency: 'DJF', symbol: 'Fdj', name: 'Djiboutian Franc' },
+    'SO': { currency: 'SOS', symbol: 'Sh', name: 'Somali Shilling' },
+    'CF': { currency: 'XAF', symbol: 'CFA', name: 'Central African CFA Franc' },
+    'TD': { currency: 'XAF', symbol: 'CFA', name: 'Central African CFA Franc' },
+    'CM': { currency: 'XAF', symbol: 'CFA', name: 'Central African CFA Franc' },
+    'GQ': { currency: 'XAF', symbol: 'CFA', name: 'Central African CFA Franc' },
+    'GA': { currency: 'XAF', symbol: 'CFA', name: 'Central African CFA Franc' },
+    'CG': { currency: 'XAF', symbol: 'CFA', name: 'Central African CFA Franc' },
+    'SN': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'ML': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'BF': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'NE': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'CI': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'GN': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'TG': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'BJ': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'MW': { currency: 'MWK', symbol: 'MK', name: 'Malawian Kwacha' },
+    'ZM': { currency: 'ZMW', symbol: 'ZK', name: 'Zambian Kwacha' },
+    'ZW': { currency: 'ZWL', symbol: 'Z$', name: 'Zimbabwean Dollar' },
+    'BW': { currency: 'BWP', symbol: 'P', name: 'Botswanan Pula' },
+    'NA': { currency: 'NAD', symbol: 'N$', name: 'Namibian Dollar' },
+    'SZ': { currency: 'SZL', symbol: 'E', name: 'Swazi Lilangeni' },
+    'LS': { currency: 'LSL', symbol: 'L', name: 'Lesotho Loti' },
+    'MG': { currency: 'MGA', symbol: 'Ar', name: 'Malagasy Ariary' },
+    'MU': { currency: 'MUR', symbol: '₨', name: 'Mauritian Rupee' },
+    'SC': { currency: 'SCR', symbol: '₨', name: 'Seychellois Rupee' },
+    'KM': { currency: 'KMF', symbol: 'CF', name: 'Comorian Franc' },
+    'MZ': { currency: 'MZN', symbol: 'MT', name: 'Mozambican Metical' },
+    'AO': { currency: 'AOA', symbol: 'Kz', name: 'Angolan Kwanza' },
+    'CV': { currency: 'CVE', symbol: '$', name: 'Cape Verdean Escudo' },
+    'ST': { currency: 'STN', symbol: 'Db', name: 'São Tomé and Príncipe Dobra' },
+    'GW': { currency: 'XOF', symbol: 'CFA', name: 'West African CFA Franc' },
+    'SL': { currency: 'SLE', symbol: 'Le', name: 'Sierra Leonean Leone' },
+    'LR': { currency: 'LRD', symbol: 'L$', name: 'Liberian Dollar' },
+    'GM': { currency: 'GMD', symbol: 'D', name: 'Gambian Dalasi' },
+    'US': { currency: 'USD', symbol: '$', name: 'US Dollar' }
+  };
 
-  const currentCountry = countries.find(c => c.code === selectedCountry) || countries.find(c => c.code === 'KE')!;
-  const currentCurrencySymbol = currentCountry.symbol;
-
-  // Translation object
   const translations = {
     en: {
-      title: 'Revenue & Expense Tracker',
-      subtitle: 'Monitor your business growth and track profitability.',
-      financialOverview: 'Financial Overview',
-      addEntry: 'Add Entry',
-      lineChart: 'Line Chart',
-      barChart: 'Bar Chart',
-      timePeriod: 'Time Period',
-      daily: 'Daily',
-      weekly: 'Weekly',
-      monthly: 'Monthly',
-      quarterly: 'Quarterly',
+      title: 'Financial Tracker',
+      revenue: 'Revenue',
+      expenses: 'Expenses',
+      profit: 'Profit/Loss',
+      addRevenue: 'Add Revenue',
+      addExpense: 'Add Expense',
+      date: 'Date',
+      amount: 'Amount',
+      category: 'Category',
+      description: 'Description',
+      type: 'Payment Type',
+      cash: 'Cash',
+      mobileMoney: 'Mobile Money',
+      bankTransfer: 'Bank Transfer',
+      card: 'Card Payment',
+      currency: 'Currency',
+      downloadSummary: 'Download Summary',
+      selectDate: 'Select date',
       totalRevenue: 'Total Revenue',
       totalExpenses: 'Total Expenses',
-      netProfit: 'Net Profit',
-      netLoss: 'Net Loss',
-      financialEntries: 'Financial Entries',
-      revenueAmount: 'Revenue amount',
-      expenseAmount: 'Expense amount',
-      entryNotes: 'Add notes about this entry...',
-      incomeBreakdown: 'Income Sources',
-      expenseBreakdown: 'Expense Categories',
-      mobileMoney: 'Mobile Money',
-      cash: 'Cash',
-      bankTransfer: 'Bank Transfer',
-      rent: 'Rent',
-      transport: 'Transport',
-      supplies: 'Supplies',
-      marketing: 'Marketing',
-      misc: 'Miscellaneous',
-      downloadPdf: 'Download Summary',
-      selectDate: 'Select Date',
-      addCustomIncome: 'Add Custom Income Source',
-      addCustomExpense: 'Add Custom Expense Category',
-      customSource: 'Custom Source',
-      customCategory: 'Custom Category',
-      tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
-      coachingTip: 'Track every expense, no matter how small. Understanding your costs helps you make better pricing decisions and find areas to save money.',
-      currency: 'Currency'
+      netProfit: 'Net Profit'
     },
     sw: {
-      title: 'Kufuatilia Mapato na Gharama',
-      subtitle: 'Fuatilia ukuaji wa biashara yako na ufuatilikie faida.',
-      financialOverview: 'Muhtasari wa Kifedha',
-      addEntry: 'Ongeza Ingizo',
-      lineChart: 'Chati ya Mstari',
-      barChart: 'Chati ya Baa',
-      timePeriod: 'Kipindi cha Muda',
-      daily: 'Kila Siku',
-      weekly: 'Kila Wiki',
-      monthly: 'Kila Mwezi',
-      quarterly: 'Kila Robo',
-      totalRevenue: 'Jumla ya Mapato',
-      totalExpenses: 'Jumla ya Gharama',
-      netProfit: 'Faida Halisi',
-      netLoss: 'Hasara Halisi',
-      financialEntries: 'Maingizo ya Kifedha',
-      revenueAmount: 'Kiasi cha mapato',
-      expenseAmount: 'Kiasi cha gharama',
-      entryNotes: 'Ongeza maelezo kuhusu ingizo hili...',
-      incomeBreakdown: 'Vyanzo vya Mapato',
-      expenseBreakdown: 'Makundi ya Gharama',
+      title: 'Kiwango cha Fedha',
+      revenue: 'Mapato',
+      expenses: 'Matumizi',
+      profit: 'Faida/Hasara',
+      addRevenue: 'Ongeza Mapato',
+      addExpense: 'Ongeza Matumizi',
+      date: 'Tarehe',
+      amount: 'Kiasi',
+      category: 'Kategoria',
+      description: 'Maelezo',
+      type: 'Aina ya Malipo',
+      cash: 'Pesa Taslimu',
       mobileMoney: 'Pesa za Simu',
-      cash: 'Fedha Taslimu',
       bankTransfer: 'Uhamisho wa Benki',
-      rent: 'Kodi',
-      transport: 'Usafiri',
-      supplies: 'Vifaa',
-      marketing: 'Uuzaji',
-      misc: 'Mengineyo',
-      downloadPdf: 'Pakua Muhtasari',
-      selectDate: 'Chagua Tarehe',
-      addCustomIncome: 'Ongeza Chanzo cha Mapato',
-      addCustomExpense: 'Ongeza Kundi la Gharama',
-      customSource: 'Chanzo cha Kawaida',
-      customCategory: 'Kundi la Kawaida',
-      tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
-      coachingTip: 'Fuatilia kila gharama, haijalishi ni ndogo kiasi gani. Kuelewa gharama zako kunakusaidia kufanya maamuzi bora ya bei na kupata maeneo ya kuokoa pesa.',
-      currency: 'Sarafu'
+      card: 'Malipo ya Kadi',
+      currency: 'Sarafu',
+      downloadSummary: 'Pakua Muhtasari',
+      selectDate: 'Chagua tarehe',
+      totalRevenue: 'Jumla ya Mapato',
+      totalExpenses: 'Jumla ya Matumizi',
+      netProfit: 'Faida Halisi'
     },
     ar: {
-      title: 'متتبع الإيرادات والمصروفات',
-      subtitle: 'راقب نمو أعمالك وتتبع الربحية.',
-      financialOverview: 'نظرة عامة مالية',
-      addEntry: 'إضافة إدخال',
-      lineChart: 'مخطط خطي',
-      barChart: 'مخطط بياني',
-      timePeriod: 'الفترة الزمنية',
-      daily: 'يومي',
-      weekly: 'أسبوعي',
-      monthly: 'شهري',
-      quarterly: 'ربع سنوي',
+      title: 'متتبع الشؤون المالية',
+      revenue: 'الإيرادات',
+      expenses: 'المصروفات',
+      profit: 'الربح/الخسارة',
+      addRevenue: 'إضافة إيرادات',
+      addExpense: 'إضافة مصروفات',
+      date: 'التاريخ',
+      amount: 'المبلغ',
+      category: 'الفئة',
+      description: 'الوصف',
+      type: 'نوع الدفع',
+      cash: 'نقداً',
+      mobileMoney: 'الأموال المحمولة',
+      bankTransfer: 'تحويل بنكي',
+      card: 'دفع بالبطاقة',
+      currency: 'العملة',
+      downloadSummary: 'تحميل الملخص',
+      selectDate: 'اختر التاريخ',
       totalRevenue: 'إجمالي الإيرادات',
       totalExpenses: 'إجمالي المصروفات',
-      netProfit: 'صافي الربح',
-      netLoss: 'صافي الخسارة',
-      financialEntries: 'الإدخالات المالية',
-      revenueAmount: 'مبلغ الإيرادات',
-      expenseAmount: 'مبلغ المصروفات',
-      entryNotes: 'أضف ملاحظات حول هذا الإدخال...',
-      incomeBreakdown: 'مصادر الدخل',
-      expenseBreakdown: 'فئات المصروفات',
-      mobileMoney: 'أموال الهاتف المحمول',
-      cash: 'نقداً',
-      bankTransfer: 'تحويل بنكي',
-      rent: 'إيجار',
-      transport: 'نقل',
-      supplies: 'إمدادات',
-      marketing: 'تسويق',
-      misc: 'متفرقات',
-      downloadPdf: 'تحميل الملخص',
-      selectDate: 'اختر التاريخ',
-      addCustomIncome: 'إضافة مصدر دخل مخصص',
-      addCustomExpense: 'إضافة فئة مصروفات مخصصة',
-      customSource: 'مصدر مخصص',
-      customCategory: 'فئة مخصصة',
-      tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
-      coachingTip: 'تتبع كل مصروف مهما كان صغيراً. فهم تكاليفك يساعدك على اتخاذ قرارات تسعير أفضل وإيجاد مجالات لتوفير المال.',
-      currency: 'العملة'
+      netProfit: 'صافي الربح'
     },
     fr: {
-      title: 'Suivi des Revenus et Dépenses',
-      subtitle: 'Surveillez la croissance de votre entreprise et suivez la rentabilité.',
-      financialOverview: 'Aperçu Financier',
-      addEntry: 'Ajouter Entrée',
-      lineChart: 'Graphique Linéaire',
-      barChart: 'Graphique en Barres',
-      timePeriod: 'Période',
-      daily: 'Quotidien',
-      weekly: 'Hebdomadaire',
-      monthly: 'Mensuel',
-      quarterly: 'Trimestriel',
-      totalRevenue: 'Revenus Totaux',
-      totalExpenses: 'Dépenses Totales',
-      netProfit: 'Bénéfice Net',
-      netLoss: 'Perte Nette',
-      financialEntries: 'Entrées Financières',
-      revenueAmount: 'Montant des revenus',
-      expenseAmount: 'Montant des dépenses',
-      entryNotes: 'Ajoutez des notes sur cette entrée...',
-      incomeBreakdown: 'Sources de Revenus',
-      expenseBreakdown: 'Catégories de Dépenses',
-      mobileMoney: 'Argent Mobile',
+      title: 'Suivi Financier',
+      revenue: 'Revenus',
+      expenses: 'Dépenses',
+      profit: 'Profit/Perte',
+      addRevenue: 'Ajouter Revenus',
+      addExpense: 'Ajouter Dépense',
+      date: 'Date',
+      amount: 'Montant',
+      category: 'Catégorie',
+      description: 'Description',
+      type: 'Type de Paiement',
       cash: 'Espèces',
+      mobileMoney: 'Argent Mobile',
       bankTransfer: 'Virement Bancaire',
-      rent: 'Loyer',
-      transport: 'Transport',
-      supplies: 'Fournitures',
-      marketing: 'Marketing',
-      misc: 'Divers',
-      downloadPdf: 'Télécharger Résumé',
-      selectDate: 'Sélectionner Date',
-      addCustomIncome: 'Ajouter Source Revenus',
-      addCustomExpense: 'Ajouter Catégorie Dépenses',
-      customSource: 'Source Personnalisée',
-      customCategory: 'Catégorie Personnalisée',
-      tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
-      coachingTip: 'Suivez chaque dépense, peu importe sa taille. Comprendre vos coûts vous aide à prendre de meilleures décisions de prix et à trouver des domaines pour économiser de l\'argent.',
-      currency: 'Devise'
+      card: 'Paiement par Carte',
+      currency: 'Devise',
+      downloadSummary: 'Télécharger Résumé',
+      selectDate: 'Sélectionner date',
+      totalRevenue: 'Total des Revenus',
+      totalExpenses: 'Total des Dépenses',
+      netProfit: 'Bénéfice Net'
     }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
-  const chartData = financialData.map(entry => ({
-    ...entry,
-    profit: entry.revenue - entry.expenses
-  }));
+  // Calculate totals with proper type safety
+  const totalRevenue = revenueEntries.reduce((sum, entry) => {
+    const amount = typeof entry.amount === 'number' ? entry.amount : 0;
+    return sum + amount;
+  }, 0);
 
-  const totalRevenue = financialData.reduce((sum, entry) => sum + entry.revenue, 0);
-  const totalExpenses = financialData.reduce((sum, entry) => sum + entry.expenses, 0);
+  const totalExpenses = expenseEntries.reduce((sum, entry) => {
+    const amount = typeof entry.amount === 'number' ? entry.amount : 0;
+    return sum + amount;
+  }, 0);
+
   const netProfit = totalRevenue - totalExpenses;
 
-  const chartConfig = {
-    revenue: {
-      label: "Revenue",
-      color: "hsl(var(--primary))",
-    },
-    expenses: {
-      label: "Expenses",
-      color: "hsl(var(--destructive))",
-    },
-    profit: {
-      label: "Profit",
-      color: "hsl(var(--success))",
-    },
+  const handleCurrencyChange = (countryCode: string) => {
+    const currencyInfo = currencyMap[countryCode as keyof typeof currencyMap];
+    if (currencyInfo) {
+      setSelectedCurrency(currencyInfo.currency);
+      setSelectedCurrencySymbol(currencyInfo.symbol);
+    }
   };
 
-  const addFinancialEntry = () => {
-    const newEntry: FinancialEntry = {
+  const addRevenueEntry = () => {
+    const newEntry: RevenueEntry = {
       id: Date.now().toString(),
-      date: selectedDate || new Date(),
-      month: format(selectedDate || new Date(), 'MMM yyyy'),
-      revenue: 0,
-      expenses: 0,
-      notes: '',
-      incomeBreakdown: { mobileMoney: 0, cash: 0, bankTransfer: 0, custom: {} },
-      expenseBreakdown: { rent: 0, transport: 0, supplies: 0, marketing: 0, misc: 0, custom: {} }
+      date: new Date(),
+      amount: 0,
+      category: '',
+      description: '',
+      type: 'cash'
     };
-
-    setFinancialData([...financialData, newEntry]);
-    setEditingEntry(newEntry.id);
+    setRevenueEntries([...revenueEntries, newEntry]);
   };
 
-  const updateFinancialEntry = (id: string, field: keyof FinancialEntry, value: any) => {
-    setFinancialData(financialData.map(entry => 
-      entry.id === id ? { ...entry, [field]: value } : entry
-    ));
+  const addExpenseEntry = () => {
+    const newEntry: ExpenseEntry = {
+      id: Date.now().toString(),
+      date: new Date(),
+      amount: 0,
+      category: '',
+      description: ''
+    };
+    setExpenseEntries([...expenseEntries, newEntry]);
   };
 
-  const calculateTotal = (breakdown: any): number => {
-    return Object.values(breakdown).reduce((sum: number, val: any) => {
-      if (typeof val === 'object' && val !== null) {
-        return sum + Object.values(val).reduce((s: number, v: any) => s + (typeof v === 'number' ? v : 0), 0);
-      }
-      return sum + (typeof val === 'number' ? val : 0);
-    }, 0);
-  };
-
-  const updateIncomeBreakdown = (id: string, category: string, value: number) => {
-    setFinancialData(financialData.map(entry => 
+  const updateRevenueEntry = (id: string, field: keyof RevenueEntry, value: any) => {
+    setRevenueEntries(revenueEntries.map(entry => 
       entry.id === id ? { 
         ...entry, 
-        incomeBreakdown: { ...entry.incomeBreakdown, [category]: value },
-        revenue: calculateTotal({ ...entry.incomeBreakdown, [category]: value })
+        [field]: field === 'amount' ? (typeof value === 'string' ? parseFloat(value) || 0 : value) : value 
       } : entry
     ));
   };
 
-  const updateExpenseBreakdown = (id: string, category: string, value: number) => {
-    setFinancialData(financialData.map(entry => 
+  const updateExpenseEntry = (id: string, field: keyof ExpenseEntry, value: any) => {
+    setExpenseEntries(expenseEntries.map(entry => 
       entry.id === id ? { 
         ...entry, 
-        expenseBreakdown: { ...entry.expenseBreakdown, [category]: value },
-        expenses: calculateTotal({ ...entry.expenseBreakdown, [category]: value })
+        [field]: field === 'amount' ? (typeof value === 'string' ? parseFloat(value) || 0 : value) : value 
       } : entry
     ));
   };
 
-  const updateCustomIncomeBreakdown = (id: string, customCategory: string, value: number) => {
-    setFinancialData(financialData.map(entry => 
-      entry.id === id ? {
-        ...entry,
-        incomeBreakdown: {
-          ...entry.incomeBreakdown,
-          custom: { ...entry.incomeBreakdown.custom, [customCategory]: value }
-        },
-        revenue: calculateTotal({
-          ...entry.incomeBreakdown,
-          custom: { ...entry.incomeBreakdown.custom, [customCategory]: value }
-        })
-      } : entry
-    ));
+  const deleteRevenueEntry = (id: string) => {
+    setRevenueEntries(revenueEntries.filter(entry => entry.id !== id));
   };
 
-  const updateCustomExpenseBreakdown = (id: string, customCategory: string, value: number) => {
-    setFinancialData(financialData.map(entry => 
-      entry.id === id ? {
-        ...entry,
-        expenseBreakdown: {
-          ...entry.expenseBreakdown,
-          custom: { ...entry.expenseBreakdown.custom, [customCategory]: value }
-        },
-        expenses: calculateTotal({
-          ...entry.expenseBreakdown,
-          custom: { ...entry.expenseBreakdown.custom, [customCategory]: value }
-        })
-      } : entry
-    ));
+  const deleteExpenseEntry = (id: string) => {
+    setExpenseEntries(expenseEntries.filter(entry => entry.id !== id));
   };
 
-  const addCustomIncomeSource = (entryId: string) => {
-    if (!newIncomeSource.trim()) return;
-    
-    setFinancialData(financialData.map(entry => 
-      entry.id === entryId ? {
-        ...entry,
-        incomeBreakdown: {
-          ...entry.incomeBreakdown,
-          custom: { ...entry.incomeBreakdown.custom, [newIncomeSource]: 0 }
-        }
-      } : entry
-    ));
-    setNewIncomeSource('');
-  };
-
-  const addCustomExpenseCategory = (entryId: string) => {
-    if (!newExpenseCategory.trim()) return;
-    
-    setFinancialData(financialData.map(entry => 
-      entry.id === entryId ? {
-        ...entry,
-        expenseBreakdown: {
-          ...entry.expenseBreakdown,
-          custom: { ...entry.expenseBreakdown.custom, [newExpenseCategory]: 0 }
-        }
-      } : entry
-    ));
-    setNewExpenseCategory('');
-  };
-
-  const downloadPDF = () => {
-    toast({
-      title: t.downloadPdf,
-      description: "PDF download feature coming soon!"
-    });
+  const handleDownloadSummary = () => {
+    console.log('Downloading financial summary...');
+    // PDF generation would be implemented here
   };
 
   return (
-    <div className="space-y-6">
-      {/* Section Header */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+    <Card className="border-orange-200">
+      <CardHeader>
+        <CardTitle className="text-xl text-gray-800 flex items-center">
+          <DollarSign className="w-5 h-5 mr-2" />
           {t.title}
-        </h2>
-        <p className="text-gray-600">
-          {t.subtitle}
-        </p>
-      </div>
-
-      {/* Currency Selector inside Financial Tracker */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-center justify-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <DollarSign className="w-4 h-4" />
-            <span className="text-sm font-medium">{t.currency}</span>
-            <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-              <SelectTrigger className="w-auto min-w-[120px]">
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium">{currentCountry.symbol}</span>
-                  <span className="text-sm text-gray-600">{currentCountry.name}</span>
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                {countries.map((country) => (
-                  <SelectItem key={country.code} value={country.code}>
-                    {country.name} ({country.symbol})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        </CardTitle>
+        
+        {/* Currency Selector inside the Financial Tracker */}
+        <div className="flex items-center space-x-2 mt-4">
+          <span className="text-sm font-medium">{t.currency}:</span>
+          <Select value={Object.keys(currencyMap).find(key => currencyMap[key as keyof typeof currencyMap].currency === selectedCurrency)} onValueChange={handleCurrencyChange}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white z-50 max-h-60 overflow-y-auto">
+              {Object.entries(currencyMap).map(([code, info]) => (
+                <SelectItem key={code} value={code}>
+                  {info.symbol} - {info.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+            <h3 className="font-semibold text-green-800">{t.totalRevenue}</h3>
+            <p className="text-2xl font-bold text-green-600">
+              {selectedCurrencySymbol}{totalRevenue.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+            <h3 className="font-semibold text-red-800">{t.totalExpenses}</h3>
+            <p className="text-2xl font-bold text-red-600">
+              {selectedCurrencySymbol}{totalExpenses.toLocaleString()}
+            </p>
+          </div>
+          <div className={`p-4 rounded-lg border ${netProfit >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-red-50 border-red-200'}`}>
+            <h3 className={`font-semibold ${netProfit >= 0 ? 'text-blue-800' : 'text-red-800'}`}>
+              {t.netProfit}
+            </h3>
+            <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+              {selectedCurrencySymbol}{netProfit.toLocaleString()}
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Tier 3 Note */}
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-        <p className="text-sm text-purple-800 text-center">
-          {t.tier3Note}
-        </p>
-      </div>
-
-      {/* Coaching Tip */}
-      <CoachingTip tip={t.coachingTip} language={language} />
-
-      {/* Financial Entries */}
-      <Card className="border-orange-200">
-        <CardHeader>
-          <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center">
-              <DollarSign className="w-5 h-5 mr-2 text-orange-600" />
-              {t.financialEntries}
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                    <CalendarIcon className="w-4 h-4 mr-1" />
-                    {t.selectDate}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-              <Button
-                onClick={addFinancialEntry}
-                size="sm"
-                variant="outline"
-                className="text-orange-600 border-orange-300 hover:bg-orange-50 w-full sm:w-auto"
-              >
-                <Plus className="w-4 h-4 mr-1" />
-                {t.addEntry}
-              </Button>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {financialData.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <DollarSign className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No financial entries yet. Click "Add Entry" to get started!</p>
-              </div>
-            ) : (
-              financialData.map((entry) => (
-                <div key={entry.id} className="p-4 border rounded-lg space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="font-medium text-gray-700">{format(entry.date, 'PPP')}</span>
-                      <p className="text-sm text-gray-500">{entry.month}</p>
-                    </div>
-                    <Button
-                      onClick={() => setEditingEntry(editingEntry === entry.id ? null : entry.id)}
-                      size="sm"
-                      variant="ghost"
-                    >
-                      {editingEntry === entry.id ? <Save className="w-4 h-4" /> : <Edit className="w-4 h-4" />}
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">{t.totalRevenue}</label>
-                      <p className="text-lg font-semibold text-green-600">
-                        {currentCurrencySymbol}{entry.revenue.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-600">{t.totalExpenses}</label>
-                      <p className="text-lg font-semibold text-red-600">
-                        {currentCurrencySymbol}{entry.expenses.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-
-                  {editingEntry === entry.id && (
-                    <div className="space-y-4">
-                      {/* Income Breakdown */}
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">{t.incomeBreakdown}</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {Object.entries(entry.incomeBreakdown).map(([category, amount]) => {
-                            if (category === 'custom') {
-                              return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
-                                <div key={`income-${customCat}`}>
-                                  <label className="text-xs text-gray-500 capitalize">{customCat}</label>
-                                  <Input
-                                    type="number"
-                                    value={customAmount}
-                                    onChange={(e) => updateCustomIncomeBreakdown(entry.id, customCat, Number(e.target.value) || 0)}
-                                    size="sm"
-                                  />
-                                </div>
-                              ));
-                            }
-                            return (
-                              <div key={`income-${category}`}>
-                                <label className="text-xs text-gray-500 capitalize">
-                                  {t[category] || category}
-                                </label>
-                                <Input
-                                  type="number"
-                                  value={amount as number}
-                                  onChange={(e) => updateIncomeBreakdown(entry.id, category, Number(e.target.value) || 0)}
-                                  size="sm"
-                                />
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <div className="flex gap-2 mt-2">
-                          <Input
-                            placeholder={t.customSource}
-                            value={newIncomeSource}
-                            onChange={(e) => setNewIncomeSource(e.target.value)}
-                            size="sm"
-                          />
-                          <Button size="sm" onClick={() => addCustomIncomeSource(entry.id)}>
-                            <Plus className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Expense Breakdown */}
-                      <div>
-                        <h4 className="font-medium text-gray-700 mb-2">{t.expenseBreakdown}</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {Object.entries(entry.expenseBreakdown).map(([category, amount]) => {
-                            if (category === 'custom') {
-                              return Object.entries(amount as Record<string, number>).map(([customCat, customAmount]) => (
-                                <div key={`expense-${customCat}`}>
-                                  <label className="text-xs text-gray-500 capitalize">{customCat}</label>
-                                  <Input
-                                    type="number"
-                                    value={customAmount}
-                                    onChange={(e) => updateCustomExpenseBreakdown(entry.id, customCat, Number(e.target.value) || 0)}
-                                    size="sm"
-                                  />
-                                </div>
-                              ));
-                            }
-                            return (
-                              <div key={`expense-${category}`}>
-                                <label className="text-xs text-gray-500 capitalize">
-                                  {t[category] || category}
-                                </label>
-                                <Input
-                                  type="number"
-                                  value={amount as number}
-                                  onChange={(e) => updateExpenseBreakdown(entry.id, category, Number(e.target.value) || 0)}
-                                  size="sm"
-                                />
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <div className="flex gap-2 mt-2">
-                          <Input
-                            placeholder={t.customCategory}
-                            value={newExpenseCategory}
-                            onChange={(e) => setNewExpenseCategory(e.target.value)}
-                            size="sm"
-                          />
-                          <Button size="sm" onClick={() => addCustomExpenseCategory(entry.id)}>
-                            <Plus className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      {entry.revenue - entry.expenses >= 0 ? t.netProfit : t.netLoss}
-                    </label>
-                    <p className={`text-lg font-semibold ${entry.revenue - entry.expenses >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {currentCurrencySymbol}{Math.abs(entry.revenue - entry.expenses).toLocaleString()}
-                    </p>
-                  </div>
-
-                  {editingEntry === entry.id ? (
-                    <Textarea
-                      value={entry.notes}
-                      onChange={(e) => updateFinancialEntry(entry.id, 'notes', e.target.value)}
-                      placeholder={t.entryNotes}
-                      rows={2}
-                    />
-                  ) : (
-                    entry.notes && (
-                      <p className="text-sm text-gray-600">{entry.notes}</p>
-                    )
-                  )}
-                </div>
-              ))
-            )}
+        {/* Revenue Section */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-800">{t.revenue}</h3>
+            <Button onClick={addRevenueEntry} size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              {t.addRevenue}
+            </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Financial Overview Chart */}
-      {financialData.length > 0 && (
-        <Card className="border-orange-200">
-          <CardHeader>
-            <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
-                {t.financialOverview}
+          
+          {revenueEntries.map((entry) => (
+            <div key={entry.id} className="grid grid-cols-1 md:grid-cols-6 gap-4 p-4 border border-gray-200 rounded-lg">
+              <div>
+                <label className="text-sm font-medium">{t.date}</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !entry.date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {entry.date ? format(entry.date, "PPP") : <span>{t.selectDate}</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-white" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={entry.date}
+                      onSelect={(date) => date && updateRevenueEntry(entry.id, 'date', date)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                <Select value={timePeriod} onValueChange={(value: 'daily' | 'weekly' | 'monthly' | 'quarterly') => setTimePeriod(value)}>
-                  <SelectTrigger className="w-full sm:w-32">
+              
+              <div>
+                <label className="text-sm font-medium">{t.amount}</label>
+                <Input
+                  type="number"
+                  value={entry.amount || ''}
+                  onChange={(e) => updateRevenueEntry(entry.id, 'amount', e.target.value)}
+                  placeholder="0"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">{t.category}</label>
+                <Input
+                  value={entry.category}
+                  onChange={(e) => updateRevenueEntry(entry.id, 'category', e.target.value)}
+                  placeholder="Sales, Services..."
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">{t.description}</label>
+                <Input
+                  value={entry.description}
+                  onChange={(e) => updateRevenueEntry(entry.id, 'description', e.target.value)}
+                  placeholder="Description..."
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">{t.type}</label>
+                <Select value={entry.type} onValueChange={(value) => updateRevenueEntry(entry.id, 'type', value)}>
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="daily">{t.daily}</SelectItem>
-                    <SelectItem value="weekly">{t.weekly}</SelectItem>
-                    <SelectItem value="monthly">{t.monthly}</SelectItem>
-                    <SelectItem value="quarterly">{t.quarterly}</SelectItem>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="cash">{t.cash}</SelectItem>
+                    <SelectItem value="mobile_money">{t.mobileMoney}</SelectItem>
+                    <SelectItem value="bank_transfer">{t.bankTransfer}</SelectItem>
+                    <SelectItem value="card">{t.card}</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              
+              <div className="flex items-end">
                 <Button
-                  onClick={() => setChartType(chartType === 'line' ? 'bar' : 'line')}
-                  size="sm"
                   variant="outline"
-                  className="w-full sm:w-auto"
+                  size="sm"
+                  onClick={() => deleteRevenueEntry(entry.id)}
+                  className="text-red-600 hover:text-red-700"
                 >
-                  {chartType === 'line' ? t.barChart : t.lineChart}
+                  <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Chart and summary content */}
-            <div className="h-64 w-full mb-4">
-              <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height="100%">
-                  {chartType === 'line' ? (
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
-                        tickFormatter={(value) => `${currentCurrencySymbol}${value.toLocaleString()}`} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={3} />
-                      <Line type="monotone" dataKey="expenses" stroke="var(--color-expenses)" strokeWidth={3} />
-                      <Line type="monotone" dataKey="profit" stroke="var(--color-profit)" strokeWidth={3} />
-                    </LineChart>
-                  ) : (
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}
-                        tickFormatter={(value) => `${currentCurrencySymbol}${value.toLocaleString()}`} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="revenue" fill="var(--color-revenue)" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="expenses" fill="var(--color-expenses)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  )}
-                </ResponsiveContainer>
-              </ChartContainer>
             </div>
+          ))}
+        </div>
 
-            {/* Financial Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="flex items-center">
-                  <TrendingUp className="w-5 h-5 text-green-600 mr-2" />
-                  <span className="text-sm font-medium text-green-800">{t.totalRevenue}</span>
-                </div>
-                <p className="text-2xl font-bold text-green-900">
-                  {currentCurrencySymbol}{totalRevenue.toLocaleString()}
-                </p>
+        {/* Expense Section */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-800">{t.expenses}</h3>
+            <Button onClick={addExpenseEntry} size="sm" variant="outline">
+              <Plus className="w-4 h-4 mr-2" />
+              {t.addExpense}
+            </Button>
+          </div>
+          
+          {expenseEntries.map((entry) => (
+            <div key={entry.id} className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border border-gray-200 rounded-lg">
+              <div>
+                <label className="text-sm font-medium">{t.date}</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !entry.date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {entry.date ? format(entry.date, "PPP") : <span>{t.selectDate}</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-white" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={entry.date}
+                      onSelect={(date) => date && updateExpenseEntry(entry.id, 'date', date)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
-              <div className="bg-red-50 p-4 rounded-lg">
-                <div className="flex items-center">
-                  <TrendingDown className="w-5 h-5 text-red-600 mr-2" />
-                  <span className="text-sm font-medium text-red-800">{t.totalExpenses}</span>
-                </div>
-                <p className="text-2xl font-bold text-red-900">
-                  {currentCurrencySymbol}{totalExpenses.toLocaleString()}
-                </p>
+              
+              <div>
+                <label className="text-sm font-medium">{t.amount}</label>
+                <Input
+                  type="number"
+                  value={entry.amount || ''}
+                  onChange={(e) => updateExpenseEntry(entry.id, 'amount', e.target.value)}
+                  placeholder="0"
+                />
               </div>
-              <div className={`p-4 rounded-lg ${netProfit >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
-                <div className="flex items-center">
-                  <DollarSign className={`w-5 h-5 mr-2 ${netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'}`} />
-                  <span className={`text-sm font-medium ${netProfit >= 0 ? 'text-blue-800' : 'text-orange-800'}`}>
-                    {netProfit >= 0 ? t.netProfit : t.netLoss}
-                  </span>
-                </div>
-                <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-900' : 'text-orange-900'}`}>
-                  {currentCurrencySymbol}{Math.abs(netProfit).toLocaleString()}
-                </p>
+              
+              <div>
+                <label className="text-sm font-medium">{t.category}</label>
+                <Input
+                  value={entry.category}
+                  onChange={(e) => updateExpenseEntry(entry.id, 'category', e.target.value)}
+                  placeholder="Rent, Supplies..."
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">{t.description}</label>
+                <Input
+                  value={entry.description}
+                  onChange={(e) => updateExpenseEntry(entry.id, 'description', e.target.value)}
+                  placeholder="Description..."
+                />
+              </div>
+              
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => deleteExpenseEntry(entry.id)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* Download PDF Button */}
-            <div className="mt-6 text-center">
-              <Button onClick={downloadPDF} className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 w-full sm:w-auto">
-                <Download className="w-4 h-4 mr-2" />
-                {t.downloadPdf}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+        {/* Download Summary Button */}
+        <div className="flex justify-center pt-4">
+          <Button onClick={handleDownloadSummary} className="bg-green-600 hover:bg-green-700">
+            <Download className="w-4 h-4 mr-2" />
+            {t.downloadSummary}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
