@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
 import BusinessStageSelector from '@/components/BusinessStageSelector';
@@ -5,14 +6,14 @@ import StrategyBuilder from '@/components/StrategyBuilder';
 import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import LanguageSelector from '@/components/LanguageSelector';
-import CountrySelector from '@/components/CountrySelector';
 import ShareModal from '@/components/ShareModal';
 import { Button } from '@/components/ui/button';
-import { Globe, DollarSign, Home, Save, Download, Bot } from 'lucide-react';
+import { Globe, Home, Save, Download, Bot, ArrowLeft } from 'lucide-react';
+import { TemplateData } from '@/data/templateData';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('home');
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
   const [selectedStage, setSelectedStage] = useState('');
   const [language, setLanguage] = useState('en');
   const [country, setCountry] = useState('KE');
@@ -54,7 +55,8 @@ const Index = () => {
       save: 'Save',
       aiSummary: 'AI Summary',
       downloadSummary: 'Download Summary',
-      share: 'Share'
+      share: 'Share',
+      back: 'Back'
     },
     sw: {
       title: 'Jenga Biz Africa',
@@ -68,7 +70,8 @@ const Index = () => {
       save: 'Hifadhi',
       aiSummary: 'Muhtasari wa AI',
       downloadSummary: 'Pakua Muhtasari',
-      share: 'Shiriki'
+      share: 'Shiriki',
+      back: 'Rudi'
     },
     ar: {
       title: 'جينجا بيز أفريقيا',
@@ -82,7 +85,8 @@ const Index = () => {
       save: 'حفظ',
       aiSummary: 'ملخص الذكاء الاصطناعي',
       downloadSummary: 'تحميل الملخص',
-      share: 'مشاركة'
+      share: 'مشاركة',
+      back: 'رجوع'
     },
     fr: {
       title: 'Jenga Biz Africa',
@@ -96,13 +100,14 @@ const Index = () => {
       save: 'Sauvegarder',
       aiSummary: 'Résumé IA',
       downloadSummary: 'Télécharger Résumé',
-      share: 'Partager'
+      share: 'Partager',
+      back: 'Retour'
     }
   };
 
   const t = translations[language] || translations.en;
 
-  const handleTemplateSelect = (template) => {
+  const handleTemplateSelect = (template: TemplateData) => {
     console.log('Index - Template selected:', template);
     setSelectedTemplate(template);
     setCurrentView('stage-selector');
@@ -129,6 +134,11 @@ const Index = () => {
     setCurrentView('home');
     setSelectedTemplate(null);
     setSelectedStage('');
+  };
+
+  const handleBackToTemplates = () => {
+    console.log('Index - Back to templates');
+    setCurrentView('templates');
   };
 
   const handleSave = () => {
@@ -200,7 +210,16 @@ const Index = () => {
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={handleBackToTemplates}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <span>{t.back}</span>
+                </Button>
                 <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
@@ -249,11 +268,20 @@ const Index = () => {
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={() => setCurrentView('stage-selector')}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <span>{t.back}</span>
+                </Button>
                 <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Simplified Navigation Buttons - Only Home and Save */}
+              {/* Clean Navigation - Only Home and Save */}
               <div className="flex items-center space-x-4">
                 <Button 
                   variant="outline" 
@@ -309,10 +337,12 @@ const Index = () => {
               language={language}
               currency={currency}
               currencySymbol={currencySymbol}
+              country={country}
+              onCountryChange={setCountry}
             />
           </div>
 
-          {/* Summary & Actions Section - Horizontal Layout Only */}
+          {/* Summary & Actions Section - Clean Horizontal Layout */}
           <div className="bg-white p-6 rounded-lg border border-orange-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
@@ -345,7 +375,7 @@ const Index = () => {
     );
   }
 
-  // Home View - Removed "Select Business Stage" button
+  // Home View
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       {/* Header with Language Selector Only */}
@@ -379,7 +409,7 @@ const Index = () => {
             {t.subtitle}
           </p>
           
-          {/* Two Main Action Buttons - Removed "Select Business Stage" */}
+          {/* Two Main Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
             <button
               onClick={handleStartFromScratch}
