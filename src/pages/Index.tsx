@@ -7,8 +7,9 @@ import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
+import ShareModal from '@/components/ShareModal';
 import { Button } from '@/components/ui/button';
-import { Globe, DollarSign, Home, Save } from 'lucide-react';
+import { Globe, DollarSign, Home, Save, Download, Bot } from 'lucide-react';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState('home');
@@ -41,6 +42,67 @@ const Index = () => {
 
   const { currency, symbol: currencySymbol } = currencyMap[country] || currencyMap['KE'];
 
+  const translations = {
+    en: {
+      title: 'Jenga Biz Africa',
+      subtitle: 'Build Your Business Strategy for the African Market',
+      startFromScratch: 'Start from Scratch',
+      useTemplates: 'Use Templates',
+      selectStage: 'Select Business Stage',
+      language: 'Language',
+      currency: 'Currency',
+      home: 'Home',
+      save: 'Save',
+      aiSummary: 'AI Summary',
+      downloadSummary: 'Download Summary',
+      share: 'Share'
+    },
+    sw: {
+      title: 'Jenga Biz Africa',
+      subtitle: 'Jenga Mkakati wa Biashara Yako kwa Soko la Afrika',
+      startFromScratch: 'Anza kutoka Mwanzo',
+      useTemplates: 'Tumia Violezo',
+      selectStage: 'Chagua Hatua ya Biashara',
+      language: 'Lugha',
+      currency: 'Sarafu',
+      home: 'Nyumbani',
+      save: 'Hifadhi',
+      aiSummary: 'Muhtasari wa AI',
+      downloadSummary: 'Pakua Muhtasari',
+      share: 'Shiriki'
+    },
+    ar: {
+      title: 'جينجا بيز أفريقيا',
+      subtitle: 'اصنع استراتيجية عملك للسوق الأفريقي',
+      startFromScratch: 'ابدأ من الصفر',
+      useTemplates: 'استخدم القوالب',
+      selectStage: 'اختر مرحلة العمل',
+      language: 'اللغة',
+      currency: 'العملة',
+      home: 'الرئيسية',
+      save: 'حفظ',
+      aiSummary: 'ملخص الذكاء الاصطناعي',
+      downloadSummary: 'تحميل الملخص',
+      share: 'مشاركة'
+    },
+    fr: {
+      title: 'Jenga Biz Africa',
+      subtitle: 'Construisez votre stratégie d\'entreprise pour le marché africain',
+      startFromScratch: 'Commencer de Zéro',
+      useTemplates: 'Utiliser des Modèles',
+      selectStage: 'Sélectionner l\'Étape',
+      language: 'Langue',
+      currency: 'Devise',
+      home: 'Accueil',
+      save: 'Sauvegarder',
+      aiSummary: 'Résumé IA',
+      downloadSummary: 'Télécharger Résumé',
+      share: 'Partager'
+    }
+  };
+
+  const t = translations[language] || translations.en;
+
   const handleTemplateSelect = (template) => {
     console.log('Index - Template selected:', template);
     setSelectedTemplate(template);
@@ -63,18 +125,6 @@ const Index = () => {
     setStrategyData(strategy);
   };
 
-  const handleBackToTemplates = () => {
-    console.log('Index - Back to template selector');
-    setCurrentView('templates');
-    setSelectedTemplate(null);
-    setSelectedStage('');
-  };
-
-  const handleBackToStageSelector = () => {
-    console.log('Index - Back to stage selector');
-    setCurrentView('stage-selector');
-  };
-
   const handleBackToHome = () => {
     console.log('Index - Back to home');
     setCurrentView('home');
@@ -86,6 +136,14 @@ const Index = () => {
     console.log('Saving strategy data');
   };
 
+  const generateAISummary = () => {
+    console.log('Generating AI summary');
+  };
+
+  const downloadSummary = () => {
+    console.log('Downloading summary');
+  };
+
   // Template Selector View
   if (currentView === 'templates') {
     return (
@@ -95,29 +153,11 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">Strategy Grid</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Utility Buttons */}
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center">
-                  <Globe className="w-4 h-4 mr-2" />
-                  <span className="mr-2 text-sm">Language</span>
-                  <LanguageSelector 
-                    currentLanguage={language} 
-                    onLanguageChange={setLanguage} 
-                  />
-                </div>
-                
-                <div className="flex items-center">
-                  <DollarSign className="w-4 h-4 mr-2" />
-                  <span className="mr-2 text-sm">Currency</span>
-                  <CountrySelector
-                    currentCountry={country}
-                    onCountryChange={setCountry}
-                  />
-                </div>
-                
+              {/* Navigation Buttons */}
+              <div className="flex items-center space-x-4">
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -125,7 +165,17 @@ const Index = () => {
                   onClick={handleBackToHome}
                 >
                   <Home className="w-4 h-4 mr-2" />
-                  <span>Home</span>
+                  <span>{t.home}</span>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={handleSave}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  <span>{t.save}</span>
                 </Button>
               </div>
             </div>
@@ -152,37 +202,29 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">Strategy Grid</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Utility Buttons */}
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center">
-                  <Globe className="w-4 h-4 mr-2" />
-                  <span className="mr-2 text-sm">Language</span>
-                  <LanguageSelector 
-                    currentLanguage={language} 
-                    onLanguageChange={setLanguage} 
-                  />
-                </div>
-                
-                <div className="flex items-center">
-                  <DollarSign className="w-4 h-4 mr-2" />
-                  <span className="mr-2 text-sm">Currency</span>
-                  <CountrySelector
-                    currentCountry={country}
-                    onCountryChange={setCountry}
-                  />
-                </div>
+              {/* Navigation Buttons */}
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={handleBackToHome}
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  <span>{t.home}</span>
+                </Button>
                 
                 <Button 
                   variant="outline" 
                   size="sm"
                   className="flex items-center"
-                  onClick={handleBackToTemplates}
+                  onClick={handleSave}
                 >
-                  <Home className="w-4 h-4 mr-2" />
-                  <span>Home</span>
+                  <Save className="w-4 h-4 mr-2" />
+                  <span>{t.save}</span>
                 </Button>
               </div>
             </div>
@@ -209,26 +251,18 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">Strategy Grid</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Utility Buttons */}
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center">
-                  <Globe className="w-4 h-4 mr-2" />
-                  <span className="mr-2 text-sm">Language</span>
-                  <LanguageSelector 
-                    currentLanguage={language} 
-                    onLanguageChange={setLanguage} 
-                  />
-                </div>
-                
-                <div className="flex items-center">
-                  <DollarSign className="w-4 h-4 mr-2" />
-                  <span className="mr-2 text-sm">Currency</span>
+              {/* Navigation and Utility Buttons */}
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="w-4 h-4" />
+                  <span className="text-sm">{t.currency}</span>
                   <CountrySelector
                     currentCountry={country}
                     onCountryChange={setCountry}
+                    language={language}
                   />
                 </div>
                 
@@ -239,7 +273,7 @@ const Index = () => {
                   onClick={handleBackToHome}
                 >
                   <Home className="w-4 h-4 mr-2" />
-                  <span>Home</span>
+                  <span>{t.home}</span>
                 </Button>
                 
                 <Button 
@@ -249,7 +283,7 @@ const Index = () => {
                   onClick={handleSave}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  <span>Save</span>
+                  <span>{t.save}</span>
                 </Button>
               </div>
             </div>
@@ -262,8 +296,6 @@ const Index = () => {
             <StrategyBuilder
               template={selectedTemplate}
               onStrategyChange={handleStrategyChange}
-              onBack={handleBackToStageSelector}
-              onHome={handleBackToHome}
               language={language}
               onLanguageChange={setLanguage}
               country={country}
@@ -290,6 +322,35 @@ const Index = () => {
               currencySymbol={currencySymbol}
             />
           </div>
+
+          {/* Summary & Actions Section */}
+          <div className="bg-white p-6 rounded-lg border border-orange-200 space-y-4">
+            <h3 className="text-xl font-semibold text-gray-800 text-center">
+              Business Strategy Summary
+            </h3>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={generateAISummary}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+              >
+                <Bot className="w-4 h-4 mr-2" />
+                {t.aiSummary}
+              </Button>
+              
+              <Button
+                onClick={downloadSummary}
+                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                {t.downloadSummary}
+              </Button>
+              
+              {strategyData && (
+                <ShareModal strategy={strategyData} language={language} />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -298,22 +359,58 @@ const Index = () => {
   // Home View
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+      {/* Header with Language Selector */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
+            </div>
+            
+            {/* Language Selector */}
+            <div className="flex items-center space-x-2">
+              <Globe className="w-4 h-4" />
+              <span className="text-sm">{t.language}</span>
+              <LanguageSelector 
+                currentLanguage={language} 
+                onLanguageChange={setLanguage} 
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent mb-6">
-            African Business Strategy Builder
+            {t.title}
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Create a comprehensive business strategy tailored for the African market
+          <p className="text-xl text-gray-600 mb-12">
+            {t.subtitle}
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* Three Main Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
+            <button
+              onClick={handleStartFromScratch}
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
+            >
+              {t.startFromScratch}
+            </button>
+            
             <button
               onClick={() => setCurrentView('templates')}
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
             >
-              Build Strategy
+              {t.useTemplates}
+            </button>
+            
+            <button
+              onClick={() => setCurrentView('stage-selector')}
+              className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
+            >
+              {t.selectStage}
             </button>
           </div>
         </div>
