@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Minus, DollarSign } from 'lucide-react';
+import { CalendarIcon, Plus, Minus, DollarSign, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface RevenueEntry {
@@ -94,7 +95,8 @@ const MonthlyRevenueSection = ({
       totalRevenue: 'Total Revenue',
       totalExpenses: 'Total Expenses',
       netProfit: 'Net Profit',
-      noEntries: 'No entries yet'
+      noEntries: 'No entries yet',
+      deleteEntry: 'Delete'
     },
     sw: {
       title: 'Kufuatilia Fedha',
@@ -122,7 +124,8 @@ const MonthlyRevenueSection = ({
       totalRevenue: 'Jumla ya Mapato',
       totalExpenses: 'Jumla ya Matumizi',
       netProfit: 'Faida Safi',
-      noEntries: 'Hakuna ingizo bado'
+      noEntries: 'Hakuna ingizo bado',
+      deleteEntry: 'Futa'
     },
     ar: {
       title: 'متتبع الماليات',
@@ -150,7 +153,8 @@ const MonthlyRevenueSection = ({
       totalRevenue: 'إجمالي الإيرادات',
       totalExpenses: 'إجمالي المصروفات',
       netProfit: 'صافي الربح',
-      noEntries: 'لا توجد إدخالات بعد'
+      noEntries: 'لا توجد إدخالات بعد',
+      deleteEntry: 'حذف'
     },
     fr: {
       title: 'Suivi Financier',
@@ -178,7 +182,8 @@ const MonthlyRevenueSection = ({
       totalRevenue: 'Revenus Totaux',
       totalExpenses: 'Dépenses Totales',
       netProfit: 'Bénéfice Net',
-      noEntries: 'Aucune entrée encore'
+      noEntries: 'Aucune entrée encore',
+      deleteEntry: 'Supprimer'
     }
   };
 
@@ -238,6 +243,16 @@ const MonthlyRevenueSection = ({
     console.log('Expense entry added successfully:', newEntry);
   };
 
+  const deleteRevenueEntry = (id: number) => {
+    setRevenueEntries(prev => prev.filter(entry => entry.id !== id));
+    console.log('Revenue entry deleted:', id);
+  };
+
+  const deleteExpenseEntry = (id: number) => {
+    setExpenseEntries(prev => prev.filter(entry => entry.id !== id));
+    console.log('Expense entry deleted:', id);
+  };
+
   const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
   const totalExpenses = expenseEntries.reduce((sum, entry) => sum + entry.amount, 0);
   const netProfit = totalRevenue - totalExpenses;
@@ -255,7 +270,6 @@ const MonthlyRevenueSection = ({
               <p className="text-gray-600 mt-2">{t.subtitle}</p>
             </div>
             
-            {/* Currency Selector */}
             {onCountryChange && (
               <div className="flex items-center space-x-2">
                 <Label className="text-sm font-medium">{t.currency}</Label>
@@ -277,7 +291,6 @@ const MonthlyRevenueSection = ({
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
-          {/* Date Selector */}
           <div className="flex justify-center">
             <Popover>
               <PopoverTrigger asChild>
@@ -298,7 +311,6 @@ const MonthlyRevenueSection = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Revenue Section */}
             <Card className="border-green-200">
               <CardHeader className="bg-green-50">
                 <CardTitle className="text-lg text-green-800 flex items-center">
@@ -343,7 +355,6 @@ const MonthlyRevenueSection = ({
               </CardContent>
             </Card>
 
-            {/* Expenses Section */}
             <Card className="border-red-200">
               <CardHeader className="bg-red-50">
                 <CardTitle className="text-lg text-red-800 flex items-center">
@@ -389,7 +400,6 @@ const MonthlyRevenueSection = ({
             </Card>
           </div>
 
-          {/* Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="border-green-200 bg-green-50">
               <CardContent className="p-4 text-center">
@@ -419,7 +429,6 @@ const MonthlyRevenueSection = ({
             </Card>
           </div>
 
-          {/* Entries List */}
           {(revenueEntries.length > 0 || expenseEntries.length > 0) && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Recent Entries</h3>
@@ -437,9 +446,19 @@ const MonthlyRevenueSection = ({
                           </p>
                           <p className="text-sm text-gray-600">{entry.type}</p>
                         </div>
-                        <p className="text-sm text-gray-500">
-                          {format(new Date(entry.date), 'MMM dd, yyyy')}
-                        </p>
+                        <div className="flex items-center space-x-2">
+                          <p className="text-sm text-gray-500">
+                            {format(new Date(entry.date), 'MMM dd, yyyy')}
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => entry.category === 'revenue' ? deleteRevenueEntry(entry.id) : deleteExpenseEntry(entry.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}

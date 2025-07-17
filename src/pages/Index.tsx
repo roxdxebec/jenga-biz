@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
@@ -241,10 +242,11 @@ Generated on: ${new Date().toLocaleDateString()}
     );
   }
 
-  // Strategy Builder View with Trackers (Single Page)
+  // Strategy Builder View with Trackers (Single Page) - CLEAN UI
   if (currentView === 'builder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        {/* CLEAN TOP NAV - ONLY HOME AND SAVE */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -318,7 +320,8 @@ Generated on: ${new Date().toLocaleDateString()}
             />
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-orange-200 space-y-4">
+          {/* FINAL SUMMARY SECTION - CLEAN LAYOUT */}
+          <div className="bg-white p-6 rounded-lg border border-blue-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
             </h3>
