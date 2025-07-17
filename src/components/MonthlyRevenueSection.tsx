@@ -10,6 +10,22 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, Plus, Minus, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 
+interface RevenueEntry {
+  id: number;
+  date: Date;
+  amount: number;
+  type: string;
+  category: 'revenue';
+}
+
+interface ExpenseEntry {
+  id: number;
+  date: Date;
+  amount: number;
+  type: string;
+  category: 'expense';
+}
+
 interface MonthlyRevenueSectionProps {
   strategyData?: any;
   language?: string;
@@ -32,8 +48,8 @@ const MonthlyRevenueSection = ({
   const [expenseAmount, setExpenseAmount] = useState('');
   const [revenueType, setRevenueType] = useState('cash');
   const [expenseType, setExpenseType] = useState('operational');
-  const [revenueEntries, setRevenueEntries] = useState<any[]>([]);
-  const [expenseEntries, setExpenseEntries] = useState<any[]>([]);
+  const [revenueEntries, setRevenueEntries] = useState<RevenueEntry[]>([]);
+  const [expenseEntries, setExpenseEntries] = useState<ExpenseEntry[]>([]);
 
   const currencyOptions = [
     { code: 'KE', currency: 'KES', symbol: 'KSh', name: 'Kenya Shilling' },
@@ -170,33 +186,57 @@ const MonthlyRevenueSection = ({
   const t = translations[language] || translations.en;
 
   const addRevenueEntry = () => {
-    if (!revenueAmount || !selectedDate) return;
+    console.log('Adding revenue entry:', { amount: revenueAmount, date: selectedDate, type: revenueType });
     
-    const newEntry = {
+    if (!revenueAmount || !selectedDate) {
+      alert('Please enter an amount and select a date');
+      return;
+    }
+    
+    const amount = parseFloat(revenueAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    
+    const newEntry: RevenueEntry = {
       id: Date.now(),
       date: selectedDate,
-      amount: parseFloat(revenueAmount),
+      amount: amount,
       type: revenueType,
       category: 'revenue'
     };
     
-    setRevenueEntries([...revenueEntries, newEntry]);
+    setRevenueEntries(prev => [...prev, newEntry]);
     setRevenueAmount('');
+    console.log('Revenue entry added successfully');
   };
 
   const addExpenseEntry = () => {
-    if (!expenseAmount || !selectedDate) return;
+    console.log('Adding expense entry:', { amount: expenseAmount, date: selectedDate, type: expenseType });
     
-    const newEntry = {
+    if (!expenseAmount || !selectedDate) {
+      alert('Please enter an amount and select a date');
+      return;
+    }
+    
+    const amount = parseFloat(expenseAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    
+    const newEntry: ExpenseEntry = {
       id: Date.now(),
       date: selectedDate,
-      amount: parseFloat(expenseAmount),
+      amount: amount,
       type: expenseType,
       category: 'expense'
     };
     
-    setExpenseEntries([...expenseEntries, newEntry]);
+    setExpenseEntries(prev => [...prev, newEntry]);
     setExpenseAmount('');
+    console.log('Expense entry added successfully');
   };
 
   const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
@@ -217,21 +257,23 @@ const MonthlyRevenueSection = ({
             </div>
             
             {/* Currency Selector */}
-            <div className="flex items-center space-x-2">
-              <Label className="text-sm font-medium">{t.currency}</Label>
-              <Select value={country} onValueChange={onCountryChange}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencyOptions.map((option) => (
-                    <SelectItem key={option.code} value={option.code}>
-                      {option.symbol} {option.currency}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {onCountryChange && (
+              <div className="flex items-center space-x-2">
+                <Label className="text-sm font-medium">{t.currency}</Label>
+                <Select value={country} onValueChange={onCountryChange}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencyOptions.map((option) => (
+                      <SelectItem key={option.code} value={option.code}>
+                        {option.symbol} {option.currency}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         </CardHeader>
         
@@ -274,6 +316,8 @@ const MonthlyRevenueSection = ({
                     onChange={(e) => setRevenueAmount(e.target.value)}
                     placeholder="0"
                     className="mt-1"
+                    min="0"
+                    step="0.01"
                   />
                 </div>
                 <div>
@@ -290,7 +334,11 @@ const MonthlyRevenueSection = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={addRevenueEntry} className="w-full bg-green-600 hover:bg-green-700">
+                <Button 
+                  onClick={addRevenueEntry} 
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  type="button"
+                >
                   {t.addRevenue}
                 </Button>
               </CardContent>
@@ -313,6 +361,8 @@ const MonthlyRevenueSection = ({
                     onChange={(e) => setExpenseAmount(e.target.value)}
                     placeholder="0"
                     className="mt-1"
+                    min="0"
+                    step="0.01"
                   />
                 </div>
                 <div>
@@ -329,7 +379,11 @@ const MonthlyRevenueSection = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={addExpenseEntry} className="w-full bg-red-600 hover:bg-red-700">
+                <Button 
+                  onClick={addExpenseEntry} 
+                  className="w-full bg-red-600 hover:bg-red-700"
+                  type="button"
+                >
                   {t.addExpense}
                 </Button>
               </CardContent>

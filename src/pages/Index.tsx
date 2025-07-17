@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
-import BusinessStageSelector from '@/components/BusinessStageSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
@@ -14,7 +13,7 @@ import { TemplateData } from '@/data/templateData';
 const Index = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
-  const [selectedStage, setSelectedStage] = useState('');
+  const [selectedStage, setSelectedStage] = useState('ideation'); // Default stage
   const [language, setLanguage] = useState('en');
   const [country, setCountry] = useState('KE');
   const [strategyData, setStrategyData] = useState(null);
@@ -48,9 +47,7 @@ const Index = () => {
       subtitle: 'Build Your Business Strategy for the African Market',
       startFromScratch: 'Start from Scratch',
       useTemplates: 'Use Templates',
-      selectStage: 'Select Business Stage',
       language: 'Language',
-      currency: 'Currency',
       home: 'Home',
       save: 'Save',
       aiSummary: 'AI Summary',
@@ -63,9 +60,7 @@ const Index = () => {
       subtitle: 'Jenga Mkakati wa Biashara Yako kwa Soko la Afrika',
       startFromScratch: 'Anza kutoka Mwanzo',
       useTemplates: 'Tumia Violezo',
-      selectStage: 'Chagua Hatua ya Biashara',
       language: 'Lugha',
-      currency: 'Sarafu',
       home: 'Nyumbani',
       save: 'Hifadhi',
       aiSummary: 'Muhtasari wa AI',
@@ -78,9 +73,7 @@ const Index = () => {
       subtitle: 'اصنع استراتيجية عملك للسوق الأفريقي',
       startFromScratch: 'ابدأ من الصفر',
       useTemplates: 'استخدم القوالب',
-      selectStage: 'اختر مرحلة العمل',
       language: 'اللغة',
-      currency: 'العملة',
       home: 'الرئيسية',
       save: 'حفظ',
       aiSummary: 'ملخص الذكاء الاصطناعي',
@@ -93,9 +86,7 @@ const Index = () => {
       subtitle: 'Construisez votre stratégie d\'entreprise pour le marché africain',
       startFromScratch: 'Commencer de Zéro',
       useTemplates: 'Utiliser des Modèles',
-      selectStage: 'Sélectionner l\'Étape',
       language: 'Langue',
-      currency: 'Devise',
       home: 'Accueil',
       save: 'Sauvegarder',
       aiSummary: 'Résumé IA',
@@ -110,18 +101,12 @@ const Index = () => {
   const handleTemplateSelect = (template: TemplateData) => {
     console.log('Index - Template selected:', template);
     setSelectedTemplate(template);
-    setCurrentView('stage-selector');
+    setCurrentView('builder');
   };
 
   const handleStartFromScratch = () => {
     console.log('Index - Starting from scratch');
     setSelectedTemplate(null);
-    setCurrentView('stage-selector');
-  };
-
-  const handleStageSelect = (stage: string) => {
-    console.log('Index - Stage selected:', stage);
-    setSelectedStage(stage);
     setCurrentView('builder');
   };
 
@@ -133,7 +118,6 @@ const Index = () => {
     console.log('Index - Back to home');
     setCurrentView('home');
     setSelectedTemplate(null);
-    setSelectedStage('');
   };
 
   const handleBackToTemplates = () => {
@@ -142,15 +126,26 @@ const Index = () => {
   };
 
   const handleSave = () => {
-    console.log('Saving strategy data');
+    console.log('Saving strategy data:', strategyData);
+    alert('Strategy saved successfully!');
   };
 
   const generateAISummary = () => {
-    console.log('Generating AI summary');
+    console.log('Generating AI summary for:', strategyData);
+    if (!strategyData) {
+      alert('Please complete your strategy first');
+      return;
+    }
+    alert('AI Summary generated! (This is a demo - real AI integration would go here)');
   };
 
   const downloadSummary = () => {
-    console.log('Downloading summary');
+    console.log('Downloading summary for:', strategyData);
+    if (!strategyData) {
+      alert('Please complete your strategy first');
+      return;
+    }
+    alert('Downloading PDF summary... (This is a demo - real PDF generation would go here)');
   };
 
   // Template Selector View
@@ -165,7 +160,6 @@ const Index = () => {
                 <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Navigation Buttons */}
               <div className="flex items-center space-x-4">
                 <Button 
                   variant="outline" 
@@ -202,8 +196,8 @@ const Index = () => {
     );
   }
 
-  // Business Stage Selector View
-  if (currentView === 'stage-selector') {
+  // Strategy Builder View with Trackers (Single Page)
+  if (currentView === 'builder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         {/* Header */}
@@ -223,65 +217,6 @@ const Index = () => {
                 <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
-              {/* Navigation Buttons */}
-              <div className="flex items-center space-x-4">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center"
-                  onClick={handleBackToHome}
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  <span>{t.home}</span>
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center"
-                  onClick={handleSave}
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  <span>{t.save}</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <BusinessStageSelector
-            selectedStage={selectedStage}
-            onStageSelect={handleStageSelect}
-            language={language}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Strategy Builder View with Trackers (Single Page)
-  if (currentView === 'builder') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-4">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex items-center"
-                  onClick={() => setCurrentView('stage-selector')}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  <span>{t.back}</span>
-                </Button>
-                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
-              </div>
-              
-              {/* Clean Navigation - Only Home and Save */}
               <div className="flex items-center space-x-4">
                 <Button 
                   variant="outline" 
@@ -342,7 +277,7 @@ const Index = () => {
             />
           </div>
 
-          {/* Summary & Actions Section - Clean Horizontal Layout */}
+          {/* Summary & Actions Section */}
           <div className="bg-white p-6 rounded-lg border border-orange-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
