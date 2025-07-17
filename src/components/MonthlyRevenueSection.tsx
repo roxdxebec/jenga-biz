@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -201,7 +200,7 @@ const MonthlyRevenueSection = ({
     
     const newEntry: RevenueEntry = {
       id: Date.now(),
-      date: selectedDate,
+      date: new Date(selectedDate),
       amount: amount,
       type: revenueType,
       category: 'revenue'
@@ -209,7 +208,7 @@ const MonthlyRevenueSection = ({
     
     setRevenueEntries(prev => [...prev, newEntry]);
     setRevenueAmount('');
-    console.log('Revenue entry added successfully');
+    console.log('Revenue entry added successfully:', newEntry);
   };
 
   const addExpenseEntry = () => {
@@ -228,7 +227,7 @@ const MonthlyRevenueSection = ({
     
     const newEntry: ExpenseEntry = {
       id: Date.now(),
-      date: selectedDate,
+      date: new Date(selectedDate),
       amount: amount,
       type: expenseType,
       category: 'expense'
@@ -236,7 +235,7 @@ const MonthlyRevenueSection = ({
     
     setExpenseEntries(prev => [...prev, newEntry]);
     setExpenseAmount('');
-    console.log('Expense entry added successfully');
+    console.log('Expense entry added successfully:', newEntry);
   };
 
   const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount, 0);

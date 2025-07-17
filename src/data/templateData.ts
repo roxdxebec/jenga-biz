@@ -17,37 +17,23 @@ export interface TemplateData {
 }
 
 export const getTemplateData = (language: string = 'en'): TemplateData[] => {
+  console.log('Getting template data for language:', language);
+  
   const templates: TemplateData[] = [
     {
       id: 'mitumba',
       name: language === 'sw' ? 'Biashara ya Mitumba' : language === 'ar' ? 'تجارة الملابس المستعملة' : language === 'fr' ? 'Commerce de Vêtements d\'Occasion' : 'Second-Hand Clothing (Mitumba)',
       description: language === 'sw' ? 'Uuzaji wa nguo za mitumba na bidhaa za mtindo' : language === 'ar' ? 'بيع الملابس المستعملة ومنتجات الأزياء' : language === 'fr' ? 'Vente de vêtements d\'occasion et produits de mode' : 'Selling second-hand clothes and fashion items',
       content: {
-        vision: language === 'sw' ? 'Kuwa duka la kwanza la mitumba linalotoa nguo za ubora wa juu kwa bei nafuu' : 'To be the leading second-hand clothing store providing quality fashion at affordable prices',
-        mission: language === 'sw' ? 'Kutoa nguo za mitumba za ubora wa juu kwa jamii yetu' : 'To provide high-quality second-hand clothing to our community',
-        targetMarket: language === 'sw' ? 'Wanawake na wanaume wa umri wa miaka 18-45 wanaotafuta nguo za bei nafuu' : 'Men and women aged 18-45 looking for affordable fashion',
-        revenueModel: language === 'sw' ? 'Uuzaji wa nguo za mitumba, ubadilishaji wa nguo' : 'Sales of second-hand clothing, clothing alterations',
-        valueProposition: language === 'sw' ? 'Nguo za ubora wa juu kwa bei nafuu kuliko maduka ya kawaida' : 'High-quality clothing at prices 60% lower than retail stores',
-        keyPartners: language === 'sw' ? 'Wauzaji wa mitumba, mafundi wa ushonaji' : 'Wholesale mitumba suppliers, tailors for alterations',
-        marketingApproach: language === 'sw' ? 'Matangazo ya mitandaoni, ushirikiano na wafuasi wa mtindo' : 'Social media marketing, fashion influencer partnerships',
-        operationalNeeds: language === 'sw' ? 'Duka, nguo za mitumba, vifaa vya kuhifadhi, mfanyakazi mmoja' : 'Retail space, inventory of clothing, storage equipment, one staff member',
-        growthGoals: language === 'sw' ? 'Kuongeza duka la pili ndani ya mwaka mmoja' : 'Open second location within 12 months'
-      }
-    },
-    {
-      id: 'agribusiness',
-      name: language === 'sw' ? 'Biashara ya Kilimo' : language === 'ar' ? 'الأعمال الزراعية' : language === 'fr' ? 'Agrobusiness' : 'Agribusiness',
-      description: language === 'sw' ? 'Kilimo, mifugo, na bidhaa za kilimo' : language === 'ar' ? 'الزراعة وتربية المواشي والمنتجات الزراعية' : language === 'fr' ? 'Agriculture, élevage et produits agricoles' : 'Farming, livestock, and agricultural products',
-      content: {
-        vision: 'To become the leading sustainable agriculture business providing fresh produce to local and regional markets',
-        mission: 'To provide fresh, organic produce while supporting local food security and sustainable farming practices',
-        targetMarket: 'Local markets, restaurants, households, and food processing companies seeking fresh produce',
-        revenueModel: 'Direct sales to markets, restaurants, wholesale to distributors, value-added processing',
-        valueProposition: 'Fresh, organic produce grown using sustainable methods with consistent quality and competitive pricing',
-        keyPartners: 'Local markets, restaurants, agricultural cooperatives, seed suppliers, equipment dealers',
-        marketingApproach: 'Farmers markets participation, restaurant partnerships, social media, direct customer relationships',
-        operationalNeeds: 'Agricultural land, seeds, farming equipment, irrigation system, storage facilities, transportation',
-        growthGoals: 'Double production capacity, add 3 new crop varieties, establish processing facility within 18 months'
+        vision: 'To be the leading second-hand clothing store providing quality fashion at affordable prices',
+        mission: 'To provide high-quality second-hand clothing to our community while promoting sustainable fashion',
+        targetMarket: 'Men and women aged 18-45 looking for affordable fashion, students, young professionals',
+        revenueModel: 'Sales of second-hand clothing, clothing alterations, fashion accessories',
+        valueProposition: 'High-quality clothing at prices 60% lower than retail stores with unique fashion finds',
+        keyPartners: 'Wholesale mitumba suppliers, tailors for alterations, fashion influencers',
+        marketingApproach: 'Social media marketing, fashion influencer partnerships, word-of-mouth referrals',
+        operationalNeeds: 'Retail space, inventory of clothing, storage equipment, one staff member, payment system',
+        growthGoals: 'Open second location within 12 months, add online sales platform, expand to accessories'
       }
     },
     {
@@ -289,24 +275,9 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
         operationalNeeds: 'Computer, design software, social media management tools, project management systems',
         growthGoals: 'Build client base to 20 regular accounts, add video content services, hire content creator within 12 months'
       }
-    },
-    {
-      id: 'mobile-money',
-      name: language === 'sw' ? 'Wakala wa Pesa za Simu' : language === 'ar' ? 'وكيل الأموال المحمولة' : language === 'fr' ? 'Agent d\'Argent Mobile' : 'Mobile Money Agent',
-      description: language === 'sw' ? 'Huduma za kifedha za kielektroniki' : language === 'ar' ? 'الخدمات المالية الإلكترونية' : language === 'fr' ? 'Services financiers électroniques' : 'Electronic financial services',
-      content: {
-        vision: 'To be the most trusted mobile money agent providing reliable, secure financial services to our community',
-        mission: 'To bridge the gap between digital and traditional banking while providing essential financial services',
-        targetMarket: 'Community members needing mobile money services, cash deposits/withdrawals, bill payments',
-        revenueModel: 'Transaction commissions (1-3% per transaction), service fees, airtime sales, bill payment commissions',
-        valueProposition: 'Convenient, secure mobile money services with friendly, knowledgeable service and competitive rates',
-        keyPartners: 'Mobile network operators (Safaricom, Airtel), banks, microfinance institutions, utility companies',
-        marketingApproach: 'Community trust building, referrals, local advertising, reliability and security emphasis',
-        operationalNeeds: 'Mobile phones, adequate cash float, secure storage, transaction records, point-of-sale systems',
-        growthGoals: 'Add bill payment services, become super agent for multiple operators, open second location within 18 months'
-      }
     }
   ];
 
+  console.log('Template data generated:', templates.length, 'templates');
   return templates;
 };

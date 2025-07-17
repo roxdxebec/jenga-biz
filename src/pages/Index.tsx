@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
@@ -13,14 +12,13 @@ import { TemplateData } from '@/data/templateData';
 const Index = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
-  const [selectedStage, setSelectedStage] = useState('ideation'); // Default stage
   const [language, setLanguage] = useState('en');
   const [country, setCountry] = useState('KE');
   const [strategyData, setStrategyData] = useState(null);
 
   console.log('Index - Current view:', currentView);
   console.log('Index - Selected template:', selectedTemplate);
-  console.log('Index - Selected stage:', selectedStage);
+  console.log('Index - Strategy data:', strategyData);
 
   const currencyMap = {
     'KE': { currency: 'KES', symbol: 'KSh' },
@@ -111,6 +109,7 @@ const Index = () => {
   };
 
   const handleStrategyChange = (strategy) => {
+    console.log('Index - Strategy data received:', strategy);
     setStrategyData(strategy);
   };
 
@@ -127,7 +126,12 @@ const Index = () => {
 
   const handleSave = () => {
     console.log('Saving strategy data:', strategyData);
-    alert('Strategy saved successfully!');
+    if (strategyData) {
+      localStorage.setItem('jenga-biz-strategy', JSON.stringify(strategyData));
+      alert('Strategy saved successfully!');
+    } else {
+      alert('No strategy data to save');
+    }
   };
 
   const generateAISummary = () => {
@@ -136,7 +140,24 @@ const Index = () => {
       alert('Please complete your strategy first');
       return;
     }
-    alert('AI Summary generated! (This is a demo - real AI integration would go here)');
+    
+    const summary = `
+📈 Business Strategy Summary for ${strategyData.businessName || 'Your Business'}
+
+🎯 Vision: ${strategyData.vision || 'Not defined'}
+🚀 Mission: ${strategyData.mission || 'Not defined'}
+👥 Target Market: ${strategyData.targetMarket || 'Not defined'}
+💰 Revenue Model: ${strategyData.revenueModel || 'Not defined'}
+⭐ Value Proposition: ${strategyData.valueProposition || 'Not defined'}
+🤝 Key Partners: ${strategyData.keyPartners || 'Not defined'}
+📢 Marketing: ${strategyData.marketingApproach || 'Not defined'}
+⚙️ Operations: ${strategyData.operationalNeeds || 'Not defined'}
+📊 Growth Goals: ${strategyData.growthGoals || 'Not defined'}
+
+Created with Jenga Biz Africa ✨
+    `;
+    
+    alert(`AI Summary Generated!\n\n${summary}`);
   };
 
   const downloadSummary = () => {
@@ -145,14 +166,38 @@ const Index = () => {
       alert('Please complete your strategy first');
       return;
     }
-    alert('Downloading PDF summary... (This is a demo - real PDF generation would go here)');
+    
+    const summary = `Jenga Biz Africa - Business Strategy Summary
+    
+Business Name: ${strategyData.businessName || 'Your Business'}
+Vision: ${strategyData.vision || 'Not defined'}
+Mission: ${strategyData.mission || 'Not defined'}
+Target Market: ${strategyData.targetMarket || 'Not defined'}
+Revenue Model: ${strategyData.revenueModel || 'Not defined'}
+Value Proposition: ${strategyData.valueProposition || 'Not defined'}
+Key Partners: ${strategyData.keyPartners || 'Not defined'}
+Marketing Approach: ${strategyData.marketingApproach || 'Not defined'}
+Operational Needs: ${strategyData.operationalNeeds || 'Not defined'}
+Growth Goals: ${strategyData.growthGoals || 'Not defined'}
+
+Generated on: ${new Date().toLocaleDateString()}
+`;
+    
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `jenga-biz-strategy-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   // Template Selector View
   if (currentView === 'templates') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -200,7 +245,6 @@ const Index = () => {
   if (currentView === 'builder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -243,7 +287,6 @@ const Index = () => {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-          {/* Strategy Builder Section */}
           <div>
             <StrategyBuilder
               template={selectedTemplate}
@@ -257,7 +300,6 @@ const Index = () => {
             />
           </div>
           
-          {/* Milestones Tracker Section */}
           <div>
             <BusinessMilestonesSection
               strategyData={strategyData}
@@ -265,7 +307,6 @@ const Index = () => {
             />
           </div>
           
-          {/* Revenue & Expense Tracker Section */}
           <div>
             <MonthlyRevenueSection
               strategyData={strategyData}
@@ -277,7 +318,6 @@ const Index = () => {
             />
           </div>
 
-          {/* Summary & Actions Section */}
           <div className="bg-white p-6 rounded-lg border border-orange-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
@@ -313,7 +353,6 @@ const Index = () => {
   // Home View
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
-      {/* Header with Language Selector Only */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -321,7 +360,6 @@ const Index = () => {
               <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
             </div>
             
-            {/* Language Selector */}
             <div className="flex items-center space-x-2">
               <Globe className="w-4 h-4" />
               <span className="text-sm">{t.language}</span>
@@ -334,7 +372,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent mb-6">
@@ -344,7 +381,6 @@ const Index = () => {
             {t.subtitle}
           </p>
           
-          {/* Two Main Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
             <button
               onClick={handleStartFromScratch}
@@ -363,7 +399,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Features Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
