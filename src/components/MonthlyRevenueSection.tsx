@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,7 +95,8 @@ const MonthlyRevenueSection = ({
       totalExpenses: 'Total Expenses',
       netProfit: 'Net Profit',
       noEntries: 'No entries yet',
-      deleteEntry: 'Delete'
+      deleteEntry: 'Delete',
+      recentEntries: 'Recent Entries'
     },
     sw: {
       title: 'Kufuatilia Fedha',
@@ -125,7 +125,8 @@ const MonthlyRevenueSection = ({
       totalExpenses: 'Jumla ya Matumizi',
       netProfit: 'Faida Safi',
       noEntries: 'Hakuna ingizo bado',
-      deleteEntry: 'Futa'
+      deleteEntry: 'Futa',
+      recentEntries: 'Maingizo ya Hivi Karibuni'
     },
     ar: {
       title: 'متتبع الماليات',
@@ -154,7 +155,8 @@ const MonthlyRevenueSection = ({
       totalExpenses: 'إجمالي المصروفات',
       netProfit: 'صافي الربح',
       noEntries: 'لا توجد إدخالات بعد',
-      deleteEntry: 'حذف'
+      deleteEntry: 'حذف',
+      recentEntries: 'الإدخالات الحديثة'
     },
     fr: {
       title: 'Suivi Financier',
@@ -183,15 +185,15 @@ const MonthlyRevenueSection = ({
       totalExpenses: 'Dépenses Totales',
       netProfit: 'Bénéfice Net',
       noEntries: 'Aucune entrée encore',
-      deleteEntry: 'Supprimer'
+      deleteEntry: 'Supprimer',
+      recentEntries: 'Entrées Récentes'
     }
   };
 
   const t = translations[language] || translations.en;
 
+  // Fixed Add Revenue Function
   const addRevenueEntry = () => {
-    console.log('Adding revenue entry:', { amount: revenueAmount, date: selectedDate, type: revenueType });
-    
     if (!revenueAmount || !selectedDate) {
       alert('Please enter an amount and select a date');
       return;
@@ -213,12 +215,10 @@ const MonthlyRevenueSection = ({
     
     setRevenueEntries(prev => [...prev, newEntry]);
     setRevenueAmount('');
-    console.log('Revenue entry added successfully:', newEntry);
   };
 
+  // Fixed Add Expense Function
   const addExpenseEntry = () => {
-    console.log('Adding expense entry:', { amount: expenseAmount, date: selectedDate, type: expenseType });
-    
     if (!expenseAmount || !selectedDate) {
       alert('Please enter an amount and select a date');
       return;
@@ -240,17 +240,15 @@ const MonthlyRevenueSection = ({
     
     setExpenseEntries(prev => [...prev, newEntry]);
     setExpenseAmount('');
-    console.log('Expense entry added successfully:', newEntry);
   };
 
+  // Fixed Delete Functions
   const deleteRevenueEntry = (id: number) => {
     setRevenueEntries(prev => prev.filter(entry => entry.id !== id));
-    console.log('Revenue entry deleted:', id);
   };
 
   const deleteExpenseEntry = (id: number) => {
     setExpenseEntries(prev => prev.filter(entry => entry.id !== id));
-    console.log('Expense entry deleted:', id);
   };
 
   const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
@@ -431,7 +429,7 @@ const MonthlyRevenueSection = ({
 
           {(revenueEntries.length > 0 || expenseEntries.length > 0) && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Recent Entries</h3>
+              <h3 className="text-lg font-semibold">{t.recentEntries}</h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {[...revenueEntries, ...expenseEntries]
                   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

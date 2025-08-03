@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
@@ -16,10 +15,6 @@ const Index = () => {
   const [language, setLanguage] = useState('en');
   const [country, setCountry] = useState('KE');
   const [strategyData, setStrategyData] = useState(null);
-
-  console.log('Index - Current view:', currentView);
-  console.log('Index - Selected template:', selectedTemplate);
-  console.log('Index - Strategy data:', strategyData);
 
   const currencyMap = {
     'KE': { currency: 'KES', symbol: 'KSh' },
@@ -98,35 +93,29 @@ const Index = () => {
   const t = translations[language] || translations.en;
 
   const handleTemplateSelect = (template: TemplateData) => {
-    console.log('Index - Template selected:', template);
     setSelectedTemplate(template);
     setCurrentView('builder');
   };
 
   const handleStartFromScratch = () => {
-    console.log('Index - Starting from scratch');
     setSelectedTemplate(null);
     setCurrentView('builder');
   };
 
   const handleStrategyChange = (strategy) => {
-    console.log('Index - Strategy data received:', strategy);
     setStrategyData(strategy);
   };
 
   const handleBackToHome = () => {
-    console.log('Index - Back to home');
     setCurrentView('home');
     setSelectedTemplate(null);
   };
 
   const handleBackToTemplates = () => {
-    console.log('Index - Back to templates');
     setCurrentView('templates');
   };
 
   const handleSave = () => {
-    console.log('Saving strategy data:', strategyData);
     if (strategyData) {
       localStorage.setItem('jenga-biz-strategy', JSON.stringify(strategyData));
       alert('Strategy saved successfully!');
@@ -136,7 +125,6 @@ const Index = () => {
   };
 
   const generateAISummary = () => {
-    console.log('Generating AI summary for:', strategyData);
     if (!strategyData) {
       alert('Please complete your strategy first');
       return;
@@ -162,7 +150,6 @@ Created with Jenga Biz Africa ✨
   };
 
   const downloadSummary = () => {
-    console.log('Downloading summary for:', strategyData);
     if (!strategyData) {
       alert('Please complete your strategy first');
       return;
@@ -242,11 +229,11 @@ Generated on: ${new Date().toLocaleDateString()}
     );
   }
 
-  // Strategy Builder View with Trackers (Single Page) - CLEAN UI
+  // Strategy Builder View (Single Page)
   if (currentView === 'builder') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* CLEAN TOP NAV - ONLY HOME AND SAVE */}
+        {/* Clean Top Navigation */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -320,7 +307,7 @@ Generated on: ${new Date().toLocaleDateString()}
             />
           </div>
 
-          {/* FINAL SUMMARY SECTION - CLEAN LAYOUT */}
+          {/* Final Summary Section */}
           <div className="bg-white p-6 rounded-lg border border-blue-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
@@ -406,7 +393,7 @@ Generated on: ${new Date().toLocaleDateString()}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Business Templates</h3>
-            <p className="text-gray-600">Choose from 20+ pre-built templates for popular African businesses</p>
+            <p className="text-gray-600">Choose from 15+ pre-built templates for popular African businesses</p>
           </div>
           <div className="bg-white/60 p-6 rounded-lg shadow-lg">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Milestone Trackers</h3>
