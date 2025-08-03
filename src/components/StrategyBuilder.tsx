@@ -52,158 +52,7 @@ const StrategyBuilder = ({
 
   const { toast } = useToast();
 
-  const templates = {
-    'mitumba': {
-      en: {
-        businessName: 'My Mitumba Store',
-        vision: 'To be the most trusted source of quality second-hand clothing in my community',
-        mission: 'Providing affordable, quality clothing while promoting sustainable fashion choices',
-        targetMarket: 'Price-conscious families, young professionals, students in urban and peri-urban areas',
-        revenueModel: 'Direct sales from physical store and WhatsApp marketing, bulk sales to other retailers',
-        valueProposition: 'Quality second-hand clothes at affordable prices with personalized service',
-        keyPartners: 'Bale suppliers, local tailors for alterations, WhatsApp groups, chama members',
-        marketingApproach: 'Word-of-mouth, WhatsApp business, local community events, referral programs',
-        operationalNeeds: 'Store space, storage for inventory, transportation for bale collection, mobile money account',
-        growthGoals: 'Expand to online sales, add more product categories, establish multiple outlets'
-      },
-      sw: {
-        businessName: 'Duka Langu la Mitumba',
-        vision: 'Kuwa chanzo cha kuaminika zaidi cha nguo za mitumba za ubora katika jamii yangu',
-        mission: 'Kutoa nguo za bei nafuu na za ubora huku nikihimiza uchaguzi wa mtindo endelevu',
-        targetMarket: 'Familia zinazojali bei, wataalamu vijana, wanafunzi katika maeneo ya mijini na karibu na mijini',
-        revenueModel: 'Mauzo ya moja kwa moja kutoka duka la kimwili na uuzaji wa WhatsApp, mauzo makubwa kwa wauzaji wengine',
-        valueProposition: 'Nguo za mitumba za ubora kwa bei nafuu na huduma ya kibinafsi',
-        keyPartners: 'Wasambazaji wa mabanda, mashona wa mitaani wa marekebisho, vikundi vya WhatsApp, wanachama wa chama',
-        marketingApproach: 'Maneno ya mdomo, biashara ya WhatsApp, matukio ya kijamii ya mtaani, programu za marejeleo',
-        operationalNeeds: 'Nafasi ya duka, uhifadhi wa bidhaa, usafiri wa kukusanya mabanda, akaunti ya pesa za simu',
-        growthGoals: 'Panua hadi mauzo ya mtandaoni, ongeza kategoria zaidi za bidhaa, anzisha matawi mengi'
-      },
-      ar: {
-        businessName: 'متجر الملابس المستعملة',
-        vision: 'أن أكون المصدر الأكثر موثوقية للملابس المستعملة عالية الجودة في مجتمعي',
-        mission: 'توفير ملابس عالية الجودة وبأسعار معقولة مع تعزيز خيارات الموضة المستدامة',
-        targetMarket: 'العائلات الواعية بالأسعار، المهنيون الشباب، الطلاب في المناطق الحضرية وشبه الحضرية',
-        revenueModel: 'المبيعات المباشرة من المتجر الفعلي والتسويق عبر واتساب، المبيعات بالجملة لتجار آخرين',
-        valueProposition: 'ملابس مستعملة عالية الجودة بأسعار معقولة مع خدمة شخصية',
-        keyPartners: 'موردو البالات، الخياطون المحليون للتعديلات، مجموعات واتساب، أعضاء الجمعيات',
-        marketingApproach: 'التسويق الشفهي، أعمال واتساب، الأحداث المجتمعية المحلية، برامج الإحالة',
-        operationalNeeds: 'مساحة المتجر، تخزين للمخزون، وسائل نقل لجمع البالات، حساب الأموال المحمولة',
-        growthGoals: 'التوسع في المبيعات عبر الإنترنت، إضافة فئات منتجات أكثر، إنشاء منافذ متعددة'
-      },
-      fr: {
-        businessName: 'Mon Magasin de Vêtements d\'Occasion',
-        vision: 'Être la source la plus fiable de vêtements d\'occasion de qualité dans ma communauté',
-        mission: 'Fournir des vêtements de qualité et abordables tout en promouvant des choix de mode durables',
-        targetMarket: 'Familles soucieuses des prix, jeunes professionnels, étudiants dans les zones urbaines et périurbaines',
-        revenueModel: 'Ventes directes du magasin physique et marketing WhatsApp, ventes en gros à d\'autres détaillants',
-        valueProposition: 'Vêtements d\'occasion de qualité à des prix abordables avec un service personnalisé',
-        keyPartners: 'Fournisseurs de balles, tailleurs locaux pour les retouches, groupes WhatsApp, membres de chama',
-        marketingApproach: 'Bouche-à-oreille, entreprise WhatsApp, événements communautaires locaux, programmes de parrainage',
-        operationalNeeds: 'Espace de magasin, stockage pour l\'inventaire, transport pour la collecte de balles, compte d\'argent mobile',
-        growthGoals: 'Étendre aux ventes en ligne, ajouter plus de catégories de produits, établir plusieurs points de vente'
-      }
-    },
-    'agribusiness': {
-      en: {
-        businessName: 'Green Valley Agribusiness',
-        vision: 'To become the leading provider of fresh, organic produce in our region',
-        mission: 'Connecting farmers with consumers through sustainable agricultural practices and fair trade',
-        targetMarket: 'Health-conscious consumers, restaurants, schools, local markets, organic food enthusiasts',
-        revenueModel: 'Direct farm sales, wholesale to retailers, farmers market stalls, subscription boxes',
-        valueProposition: 'Fresh, organic produce delivered directly from farm to table with complete traceability',
-        keyPartners: 'Local farmers, organic certification bodies, transportation companies, retail stores',
-        marketingApproach: 'Social media marketing, farmers markets, partnerships with restaurants, community events',
-        operationalNeeds: 'Farmland, irrigation systems, storage facilities, transportation, packaging materials',
-        growthGoals: 'Expand cultivation area, add value-added products, establish processing facility'
-      },
-      sw: {
-        businessName: 'Biashara ya Kilimo ya Green Valley',
-        vision: 'Kuwa mtoa mkuu wa mazao safi na ya kiasili katika mkoa wetu',
-        mission: 'Kuunganisha wakulima na wateja kupitia mbinu endelevu za kilimo na biashara ya haki',
-        targetMarket: 'Wateja wanaojali afya, migahawa, shule, masoko ya mitaani, wapenda chakula cha kiasili',
-        revenueModel: 'Mauzo ya moja kwa moja kutoka shambani, jumla kwa wauzaji, vibanda vya soko la wakulima',
-        valueProposition: 'Mazao safi ya kiasili yanayopelekwa moja kwa moja kutoka shambani hadi mezani',
-        keyPartners: 'Wakulima wa mitaani, mashirika ya udhibitisho wa kiasili, makampuni ya usafiri',
-        marketingApproach: 'Uuzaji wa mitandao ya kijamii, masoko ya wakulima, ushirikiano na migahawa',
-        operationalNeeds: 'Ardhi ya kilimo, mifumo ya umwagiliaji, ghala za uhifadhi, usafiri',
-        growthGoals: 'Panua eneo la kilimo, ongeza bidhaa za thamani ya ziada, unda kituo cha uchakataji'
-      },
-      ar: {
-        businessName: 'الأعمال الزراعية للوادي الأخضر',
-        vision: 'أن نصبح المزود الرائد للمنتجات الطازجة والعضوية في منطقتنا',
-        mission: 'ربط المزارعين بالمستهلكين من خلال الممارسات الزراعية المستدامة والتجارة العادلة',
-        targetMarket: 'المستهلكون المهتمون بالصحة، المطاعم، المدارس، الأسواق المحلية، عشاق الطعام العضوي',
-        revenueModel: 'مبيعات مباشرة من المزرعة، بيع بالجملة للتجار، أكشاك أسواق المزارعين',
-        valueProposition: 'منتجات طازجة وعضوية تُسلم مباشرة من المزرعة إلى المائدة مع إمكانية التتبع الكامل',
-        keyPartners: 'المزارعون المحليون، هيئات التصديق العضوي، شركات النقل، المتاجر',
-        marketingApproach: 'التسويق عبر وسائل التواصل الاجتماعي، أسواق المزارعين، الشراكات مع المطاعم',
-        operationalNeeds: 'أراضي زراعية، أنظمة ري، مرافق تخزين، نقل، مواد تعبئة',
-        growthGoals: 'توسيع منطقة الزراعة، إضافة منتجات ذات قيمة مضافة، إنشاء مرفق معالجة'
-      },
-      fr: {
-        businessName: 'Agrobusiness de la Vallée Verte',
-        vision: 'Devenir le principal fournisseur de produits frais et biologiques de notre région',
-        mission: 'Connecter les agriculteurs aux consommateurs grâce à des pratiques agricoles durables et au commerce équitable',
-        targetMarket: 'Consommateurs soucieux de leur santé, restaurants, écoles, marchés locaux, amateurs de produits biologiques',
-        revenueModel: 'Ventes directes de la ferme, vente en gros aux détaillants, stands de marchés fermiers',
-        valueProposition: 'Produits frais et biologiques livrés directement de la ferme à la table avec traçabilité complète',
-        keyPartners: 'Agriculteurs locaux, organismes de certification biologique, entreprises de transport, magasins',
-        marketingApproach: 'Marketing sur les réseaux sociaux, marchés fermiers, partenariats avec restaurants',
-        operationalNeeds: 'Terres agricoles, systèmes d\'irrigation, installations de stockage, transport',
-        growthGoals: 'Étendre la zone de culture, ajouter des produits à valeur ajoutée, établir une installation de traitement'
-      }
-    },
-    'mobile-money': {
-      en: {
-        businessName: 'QuickCash Mobile Money Services',
-        vision: 'To be the most reliable and accessible mobile money service provider in our community',
-        mission: 'Providing convenient, secure, and affordable financial services to underserved communities',
-        targetMarket: 'Rural communities, small business owners, people without bank accounts, urban workers',
-        revenueModel: 'Transaction fees, commission from mobile money operators, value-added services',
-        valueProposition: 'Convenient, secure, and fast mobile money transactions with extended operating hours',
-        keyPartners: 'Mobile network operators, banks, microfinance institutions, local businesses',
-        marketingApproach: 'Community engagement, word-of-mouth, partnerships with local businesses, signage',
-        operationalNeeds: 'Shop space, mobile phone, cash float, security measures, reliable internet connection',
-        growthGoals: 'Add more service lines, expand to multiple locations, introduce bill payment services'
-      },
-      sw: {
-        businessName: 'Huduma za Pesa za Simu za QuickCash',
-        vision: 'Kuwa mtoa huduma wa pesa za simu muaminifu na unaofikiwa zaidi katika jamii yetu',
-        mission: 'Kutoa huduma za kifedha zenye urahisi, usalama na bei nafuu kwa jamii zisizotumikiwa',
-        targetMarket: 'Jamii za vijijini, wamiliki wa biashara ndogo, watu bila akaunti za benki, wafanyakazi wa mijini',
-        revenueModel: 'Ada za muamala, kamisheni kutoka kwa waendeshaji wa pesa za simu, huduma za ziada',
-        valueProposition: 'Miamala ya pesa za simu yenye urahisi, usalama na haraka na masaa ya kazi yaliyoongezwa',
-        keyPartners: 'Waendeshaji wa mitandao ya simu, mabenki, taasisi za mikopo, biashara za mitaani',
-        marketingApproach: 'Ushiriki wa kijamii, maneno ya mdomo, ushirikiano na biashara za mitaani, alama',
-        operationalNeeds: 'Nafasi ya duka, simu ya mkononi, fedha za mzunguko, hatua za usalama, muunganisho wa mtandao',
-        growthGoals: 'Ongeza mistari mingine ya huduma, panua hadi maeneo mengi, anzisha huduma za malipo ya bili'
-      },
-      ar: {
-        businessName: 'خدمات الأموال المحمولة كويك كاش',
-        vision: 'أن نكون مزود خدمات الأموال المحمولة الأكثر موثوقية وإتاحة في مجتمعنا',
-        mission: 'توفير خدمات مالية مريحة وآمنة وبأسعار معقولة للمجتمعات المحرومة من الخدمات',
-        targetMarket: 'المجتمعات الريفية، أصحاب الأعمال الصغيرة، الأشخاص بدون حسابات مصرفية، العمال الحضريون',
-        revenueModel: 'رسوم المعاملات، عمولة من مشغلي الأموال المحمولة، خدمات ذات قيمة مضافة',
-        valueProposition: 'معاملات أموال محمولة مريحة وآمنة وسريعة مع ساعات عمل ممتدة',
-        keyPartners: 'مشغلو الشبكات المحمولة، البنوك، مؤسسات التمويل الأصغر، الأعمال المحلية',
-        marketingApproach: 'المشاركة المجتمعية، التسويق الشفهي، الشراكات مع الأعمال المحلية، اللافتات',
-        operationalNeeds: 'مساحة متجر، هاتف محمول، رصيد نقدي، تدابير أمنية، اتصال إنترنت موثوق',
-        growthGoals: 'إضافة المزيد من خطوط الخدمة، التوسع إلى مواقع متعددة، تقديم خدمات دفع الفواتير'
-      },
-      fr: {
-        businessName: 'Services d\'Argent Mobile QuickCash',
-        vision: 'Être le fournisseur de services d\'argent mobile le plus fiable et accessible de notre communauté',
-        mission: 'Fournir des services financiers pratiques, sécurisés et abordables aux communautés mal desservies',
-        targetMarket: 'Communautés rurales, propriétaires de petites entreprises, personnes sans comptes bancaires, travailleurs urbains',
-        revenueModel: 'Frais de transaction, commission des opérateurs d\'argent mobile, services à valeur ajoutée',
-        valueProposition: 'Transactions d\'argent mobile pratiques, sécurisées et rapides avec des heures d\'ouverture étendues',
-        keyPartners: 'Opérateurs de réseaux mobiles, banques, institutions de microfinance, entreprises locales',
-        marketingApproach: 'Engagement communautaire, bouche-à-oreille, partenariats avec entreprises locales, signalisation',
-        operationalNeeds: 'Espace de magasin, téléphone mobile, fonds de roulement, mesures de sécurité, connexion internet fiable',
-        growthGoals: 'Ajouter plus de lignes de service, étendre à plusieurs emplacements, introduire des services de paiement de factures'
-      }
-    }
-  };
+  // Templates are now loaded from the data file via the template prop
 
   const translations = {
     en: {
@@ -376,24 +225,15 @@ const StrategyBuilder = ({
 
   useEffect(() => {
     console.log('StrategyBuilder - useEffect triggered with template:', template);
-    console.log('StrategyBuilder - Template type:', typeof template);
-    console.log('StrategyBuilder - Template is null?', template === null);
-    console.log('StrategyBuilder - Template has id?', template?.id);
     
-    if (template && template.id) {
-      console.log('StrategyBuilder - Processing template with id:', template.id);
-      const templateContent = templates[template.id]?.[language] || templates[template.id]?.en;
-      
-      if (templateContent) {
-        console.log('StrategyBuilder - Found template content:', templateContent);
-        console.log('StrategyBuilder - Setting strategy with template content');
-        setStrategy(templateContent);
-        console.log('StrategyBuilder - Strategy updated successfully');
-      } else {
-        console.log('StrategyBuilder - Template content not found for:', template.id, 'language:', language);
-      }
+    if (template && template.content) {
+      console.log('StrategyBuilder - Setting strategy with template content:', template.content);
+      setStrategy(prev => ({
+        businessName: template.name || prev.businessName,
+        ...template.content
+      }));
     }
-  }, [template, language]);
+  }, [template]);
 
   const handleInputChange = (field: string, value: string) => {
     const newStrategy = { ...strategy, [field]: value };
@@ -495,71 +335,17 @@ const StrategyBuilder = ({
   console.log('StrategyBuilder - Current strategy state:', strategy);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              {onBack && (
-                <Button
-                  onClick={onBack}
-                  variant="ghost"
-                  size="sm"
-                  className="mr-4"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-              )}
-              <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
-            </div>
-            
-            {/* Utility Buttons - Mobile Stacked, Desktop Horizontal */}
-            <div className="flex flex-col sm:flex-row items-end sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <LanguageSelector 
-                currentLanguage={language} 
-                onLanguageChange={onLanguageChange || (() => {})} 
-              />
-              
-              <CountrySelector
-                currentCountry={country}
-                onCountryChange={onCountryChange || (() => {})}
-              />
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex items-center justify-start w-full sm:w-auto"
-                onClick={onHome || (() => window.location.href = '/')}
-              >
-                <Home className="w-4 h-4 mr-2" />
-                <span>{t.home}</span>
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex items-center justify-start w-full sm:w-auto"
-                onClick={handleSave}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                <span>{t.save}</span>
-              </Button>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          {t.title}
+        </h2>
+        <p className="text-gray-600">
+          {t.subtitle}
+        </p>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <p className="text-gray-600 text-lg">
-            {t.subtitle}
-          </p>
-        </div>
-
-        <div className="space-y-6">
+      <div className="space-y-6">
           {sections.map((section) => {
             const Icon = section.icon;
             console.log('StrategyBuilder - Rendering section:', section.id, 'with value:', strategy[section.id]);
@@ -596,18 +382,6 @@ const StrategyBuilder = ({
             );
           })}
 
-          {/* Generate Summary Button */}
-          <div className="text-center pt-8">
-            <Button
-              onClick={onShowSummary}
-              size="lg"
-              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              <Lightbulb className="w-5 h-5 mr-2" />
-              {t.generateSummary}
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   );
