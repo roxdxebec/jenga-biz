@@ -125,7 +125,7 @@ const Index = () => {
   };
 
   const generateAISummary = () => {
-    if (!strategyData) {
+    if (!strategyData || !strategyData.businessName) {
       alert('Please complete your strategy first');
       return;
     }
@@ -150,7 +150,7 @@ Created with Jenga Biz Africa ✨
   };
 
   const downloadSummary = () => {
-    if (!strategyData) {
+    if (!strategyData || !strategyData.businessName) {
       alert('Please complete your strategy first');
       return;
     }
@@ -308,9 +308,7 @@ Generated on: ${new Date().toLocaleDateString()}
                 {t.downloadSummary}
               </Button>
               
-              {strategyData && (
-                <ShareModal strategy={strategyData} language={language} />
-              )}
+              <ShareModal strategy={strategyData || {}} language={language} />
             </div>
           </div>
         </div>
