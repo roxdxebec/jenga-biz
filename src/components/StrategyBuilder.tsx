@@ -228,12 +228,14 @@ const StrategyBuilder = ({
     
     if (template && template.content) {
       console.log('StrategyBuilder - Setting strategy with template content:', template.content);
-      setStrategy(prev => ({
-        businessName: template.name || prev.businessName,
+      const newStrategy = {
+        businessName: template.name || '',
         ...template.content
-      }));
+      };
+      setStrategy(newStrategy);
+      onStrategyChange?.(newStrategy);
     }
-  }, [template]);
+  }, [template, onStrategyChange]);
 
   const handleInputChange = (field: string, value: string) => {
     const newStrategy = { ...strategy, [field]: value };
