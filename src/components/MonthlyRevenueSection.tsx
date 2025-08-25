@@ -6,9 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Minus, DollarSign, Trash2, Camera, Upload } from 'lucide-react';
+import { CalendarIcon, Plus, Minus, DollarSign, Trash2, Camera, Upload, Download, Share, Bot } from 'lucide-react';
 import { format } from 'date-fns';
 import Tesseract from 'tesseract.js';
+import ShareModal from '@/components/ShareModal';
 
 interface RevenueEntry {
   id: number;
@@ -118,7 +119,11 @@ const MonthlyRevenueSection = ({
       annual: 'Annual',
       custom: 'Custom Range',
       startDate: 'Start Date',
-      endDate: 'End Date'
+      endDate: 'End Date',
+      financialSummary: 'Financial Summary',
+      aiSummary: 'AI Summary',
+      downloadSummary: 'Download Summary',
+      shareFinancials: 'Share Financials'
     },
     sw: {
       title: 'Kufuatilia Fedha',
@@ -161,7 +166,11 @@ const MonthlyRevenueSection = ({
       annual: 'Kila Mwaka',
       custom: 'Mipaka Maalum',
       startDate: 'Tarehe ya Mwanzo',
-      endDate: 'Tarehe ya Mwisho'
+      endDate: 'Tarehe ya Mwisho',
+      financialSummary: 'Muhtasari wa Fedha',
+      aiSummary: 'Muhtasari wa AI',
+      downloadSummary: 'Pakua Muhtasari',
+      shareFinancials: 'Shiriki Fedha'
     },
     ar: {
       title: 'متتبع الماليات',
@@ -204,7 +213,11 @@ const MonthlyRevenueSection = ({
       annual: 'سنوي',
       custom: 'نطاق مخصص',
       startDate: 'تاريخ البداية',
-      endDate: 'تاريخ النهاية'
+      endDate: 'تاريخ النهاية',
+      financialSummary: 'الملخص المالي',
+      aiSummary: 'ملخص الذكاء الاصطناعي',
+      downloadSummary: 'تحميل الملخص',
+      shareFinancials: 'مشاركة الماليات'
     },
     fr: {
       title: 'Suivi Financier',
@@ -247,7 +260,11 @@ const MonthlyRevenueSection = ({
       annual: 'Annuel',
       custom: 'Plage Personnalisée',
       startDate: 'Date de Début',
-      endDate: 'Date de Fin'
+      endDate: 'Date de Fin',
+      financialSummary: 'Résumé Financier',
+      aiSummary: 'Résumé IA',
+      downloadSummary: 'Télécharger Résumé',
+      shareFinancials: 'Partager Finances'
     }
   };
 
@@ -455,6 +472,29 @@ const MonthlyRevenueSection = ({
   const totalRevenue = filteredRevenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
   const totalExpenses = filteredExpenseEntries.reduce((sum, entry) => sum + entry.amount, 0);
   const netProfit = totalRevenue - totalExpenses;
+
+  const handleAISummary = () => {
+    // AI Summary functionality - would analyze financial data and provide insights
+    const insights = `Based on your ${timePeriod} financial data:\n\n• Total Revenue: ${currencySymbol} ${totalRevenue.toFixed(2)}\n• Total Expenses: ${currencySymbol} ${totalExpenses.toFixed(2)}\n• Net Profit: ${currencySymbol} ${netProfit.toFixed(2)}\n• Profit Margin: ${totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0}%\n\nKey Insights:\n• ${netProfit >= 0 ? 'Your business is profitable' : 'Consider reviewing expenses to improve profitability'}\n• ${filteredRevenueEntries.length > 0 ? `Most revenue from: ${filteredRevenueEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No revenue entries recorded'}\n• ${filteredExpenseEntries.length > 0 ? `Highest expense category: ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No expense entries recorded'}`;
+    
+    alert(insights);
+  };
+
+  const handleDownloadSummary = () => {
+    // Download functionality - would generate PDF report
+    console.log('Downloading financial summary...');
+    alert('Financial summary download would be implemented here.');
+  };
+
+  const financialData = {
+    timePeriod,
+    totalRevenue,
+    totalExpenses,
+    netProfit,
+    revenueEntries: filteredRevenueEntries,
+    expenseEntries: filteredExpenseEntries,
+    currency: currencySymbol
+  };
 
   return (
     <div id="financial-section" className="space-y-6">
@@ -766,7 +806,7 @@ const MonthlyRevenueSection = ({
       {/* Financial Summary Card */}
       <Card className="border-blue-200">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
-          <CardTitle className="text-xl font-bold text-gray-800">Financial Summary</CardTitle>
+          <CardTitle className="text-xl font-bold text-gray-800">{t.financialSummary}</CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
           {/* Time Period Selector */}
@@ -833,6 +873,34 @@ const MonthlyRevenueSection = ({
               </div>
             </div>
           )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+            <Button 
+              onClick={handleAISummary}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+            >
+              <Bot className="w-4 h-4 mr-2" />
+              {t.aiSummary}
+            </Button>
+            
+            <Button 
+              onClick={handleDownloadSummary}
+              variant="outline"
+              className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white border-green-500"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {t.downloadSummary}
+            </Button>
+            
+            <ShareModal 
+              strategy={financialData} 
+              language={language}
+              customTitle={t.shareFinancials}
+              customIcon={<Share className="w-4 h-4 mr-2" />}
+              isFinancial={true}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

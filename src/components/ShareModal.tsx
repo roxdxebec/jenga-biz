@@ -8,9 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 interface ShareModalProps {
   strategy: any;
   language?: string;
+  customTitle?: string;
+  customIcon?: React.ReactNode;
+  isFinancial?: boolean;
 }
 
-const ShareModal = ({ strategy, language = 'en' }: ShareModalProps) => {
+const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFinancial = false }: ShareModalProps) => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -72,6 +75,25 @@ const ShareModal = ({ strategy, language = 'en' }: ShareModalProps) => {
   const t = translations[language] || translations.en;
 
   const generateShareText = () => {
+    if (isFinancial) {
+      return `${customTitle || t.shareTitle}
+
+📊 Financial Summary (${strategy.timePeriod})
+
+💰 Total Revenue: ${strategy.currency} ${strategy.totalRevenue?.toFixed(2) || '0.00'}
+
+💸 Total Expenses: ${strategy.currency} ${strategy.totalExpenses?.toFixed(2) || '0.00'}
+
+📈 Net Profit: ${strategy.currency} ${strategy.netProfit?.toFixed(2) || '0.00'}
+
+📋 Revenue Entries: ${strategy.revenueEntries?.length || 0}
+📋 Expense Entries: ${strategy.expenseEntries?.length || 0}
+
+Profit Margin: ${strategy.totalRevenue > 0 ? ((strategy.netProfit / strategy.totalRevenue) * 100).toFixed(1) : 0}%
+
+Generated with Financial Tracker ✨`;
+    }
+    
     return `${t.shareTitle}
 
 📈 ${strategy.businessName || 'My Business'}
@@ -136,8 +158,8 @@ Created with Strategy Grid ✨`;
     <Dialog>
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600">
-          <Share2 className="w-4 h-4 mr-2" />
-          {t.shareStrategy}
+          {customIcon || <Share2 className="w-4 h-4 mr-2" />}
+          {customTitle || t.shareStrategy}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
