@@ -378,9 +378,9 @@ Generated on: ${new Date().toLocaleDateString()}
         </div>
       </div>
 
-      {/* Key Features Section - Above buttons for better context */}
+      {/* Key Features Section with individual buttons */}
       <div className="container mx-auto px-4 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-orange-100 hover:shadow-xl transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg mb-4 flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -388,7 +388,13 @@ Generated on: ${new Date().toLocaleDateString()}
               </svg>
             </div>
             <h3 className="text-lg font-bold mb-3 text-gray-800">Business Templates</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs</p>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs</p>
+            <button
+              onClick={() => setCurrentView('templates')}
+              className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
+            >
+              {t.useTemplates}
+            </button>
           </div>
           
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-purple-100 hover:shadow-xl transition-shadow">
@@ -398,7 +404,16 @@ Generated on: ${new Date().toLocaleDateString()}
               </svg>
             </div>
             <h3 className="text-lg font-bold mb-3 text-gray-800">Milestone Tracking</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">Set and track business milestones based on your current stage and growth goals with deadlines</p>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">Set and track business milestones based on your current stage and growth goals with deadlines</p>
+            <button
+              onClick={() => {
+                handleStartFromScratch();
+                // This will navigate to builder view where milestones section will be visible
+              }}
+              className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
+            >
+              Track Milestones
+            </button>
           </div>
           
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-green-100 hover:shadow-xl transition-shadow">
@@ -408,46 +423,33 @@ Generated on: ${new Date().toLocaleDateString()}
               </svg>
             </div>
             <h3 className="text-lg font-bold mb-3 text-gray-800">Financial Tracking</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">Monitor daily revenue and expenses with calendar-based entries and generate financial reports</p>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">Monitor daily revenue and expenses with calendar-based entries and generate financial reports</p>
+            <button
+              onClick={() => {
+                handleStartFromScratch();
+                // This will navigate to builder view where financial tracking section will be visible
+              }}
+              className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
+            >
+              Track Finances
+            </button>
           </div>
         </div>
         
-        {/* Clear Call to Action */}
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Ready to build your business strategy?</h2>
-          <p className="text-gray-600 mb-8">Choose your preferred starting point:</p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button
-              onClick={() => setCurrentView('templates')}
-              className="group px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 flex-1 max-w-xs relative overflow-hidden"
-            >
-              <span className="relative z-10 flex items-center justify-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                {t.useTemplates}
-              </span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </button>
-            
+        {/* Additional Start from Scratch option */}
+        <div className="text-center max-w-3xl mx-auto mt-12">
+          <div className="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-gray-200">
+            <h3 className="text-xl font-bold text-gray-800 mb-3">Custom Strategy Builder</h3>
+            <p className="text-gray-600 mb-6">Build a completely custom business strategy from scratch with all features included</p>
             <button
               onClick={handleStartFromScratch}
-              className="group px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 flex-1 max-w-xs relative overflow-hidden"
+              className="px-8 py-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              <span className="relative z-10 flex items-center justify-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                {t.startFromScratch}
-              </span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              <svg className="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              {t.startFromScratch}
             </button>
-          </div>
-          
-          <div className="mt-6 text-sm text-gray-500">
-            <p><strong>Templates:</strong> Quick start with proven business models</p>
-            <p><strong>From Scratch:</strong> Build a completely custom strategy</p>
           </div>
         </div>
       </div>
