@@ -304,18 +304,23 @@ const Index = () => {
       return;
     }
     
-    const summary = `Jenga Biz Africa - Business Strategy Summary
+    const createdWithText = language === 'sw' ? 'Imeundwa na Jenga Biz Africa' :
+                           language === 'ar' ? 'تم إنشاؤه بواسطة Jenga Biz Africa' :
+                           language === 'fr' ? 'Créé avec Jenga Biz Africa' :
+                           'Created with Jenga Biz Africa';
+    
+    const summary = `${createdWithText} - ${t.businessStrategySummary}
     
 Business Name: ${strategyData.businessName || 'Your Business'}
-Vision: ${strategyData.vision || 'Not defined'}
-Mission: ${strategyData.mission || 'Not defined'}
-Target Market: ${strategyData.targetMarket || 'Not defined'}
-Revenue Model: ${strategyData.revenueModel || 'Not defined'}
-Value Proposition: ${strategyData.valueProposition || 'Not defined'}
-Key Partners: ${strategyData.keyPartners || 'Not defined'}
-Marketing Approach: ${strategyData.marketingApproach || 'Not defined'}
-Operational Needs: ${strategyData.operationalNeeds || 'Not defined'}
-Growth Goals: ${strategyData.growthGoals || 'Not defined'}
+Vision: ${strategyData.vision || t.notDefined}
+Mission: ${strategyData.mission || t.notDefined}
+Target Market: ${strategyData.targetMarket || t.notDefined}
+Revenue Model: ${strategyData.revenueModel || t.notDefined}
+Value Proposition: ${strategyData.valueProposition || t.notDefined}
+Key Partners: ${strategyData.keyPartners || t.notDefined}
+Marketing Approach: ${strategyData.marketingApproach || t.notDefined}
+Operational Needs: ${strategyData.operationalNeeds || t.notDefined}
+Growth Goals: ${strategyData.growthGoals || t.notDefined}
 
 Generated on: ${new Date().toLocaleDateString()}
 `;
@@ -336,6 +341,11 @@ Generated on: ${new Date().toLocaleDateString()}
   };
 
   const downloadMilestonesSummary = () => {
+    const createdWithText = language === 'sw' ? 'Imeundwa na Jenga Biz Africa' :
+                           language === 'ar' ? 'تم إنشاؤه بواسطة Jenga Biz Africa' :
+                           language === 'fr' ? 'Créé avec Jenga Biz Africa' :
+                           'Created with Jenga Biz Africa';
+    
     // Mock milestone data for demonstration
     const milestones = [
       { title: 'Register business name', status: 'complete', targetDate: '2024-01-15' },
@@ -343,9 +353,9 @@ Generated on: ${new Date().toLocaleDateString()}
       { title: 'Launch minimum viable product', status: 'not-started', targetDate: '2024-03-15' }
     ];
     
-    const summary = `Jenga Biz Africa - Business Milestones Summary
+    const summary = `${createdWithText} - ${t.businessMilestonesSummary}
     
-Business Stage: Growth Stage
+Business Stage: ${t.growthStage}
     
 Milestones Progress:
 ${milestones.map(m => `- ${m.title} (${m.status.replace('-', ' ')}${m.targetDate ? ` - Target: ${m.targetDate}` : ''})`).join('\n')}

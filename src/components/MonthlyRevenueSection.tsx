@@ -1057,6 +1057,15 @@ const MonthlyRevenueSection = ({
                   <li>• {filteredExpenseEntries.length > 0 ? `${t.highestExpenseCategory} ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : t.noExpenseRecorded}</li>
                 </ul>
               </div>
+              
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <p className="text-xs text-gray-500 text-center">
+                  {language === 'sw' ? 'Imeundwa na Jenga Biz Africa ✨' :
+                   language === 'ar' ? 'تم إنشاؤه بواسطة Jenga Biz Africa ✨' :
+                   language === 'fr' ? 'Créé avec Jenga Biz Africa ✨' :
+                   'Created with Jenga Biz Africa ✨'}
+                </p>
+              </div>
             </div>
           </div>
         </DialogContent>
