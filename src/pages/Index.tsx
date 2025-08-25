@@ -188,12 +188,22 @@ Generated on: ${new Date().toLocaleDateString()}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="bg-white shadow-sm border-b sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
+            <div className="py-4 space-y-3">
               <div className="flex items-center">
                 <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
               </div>
               
               <div className="flex items-center space-x-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={() => setCurrentView('home')}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <span>{t.back}</span>
+                </Button>
+                
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -236,7 +246,11 @@ Generated on: ${new Date().toLocaleDateString()}
         {/* Clean Top Navigation */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
+            <div className="py-4 space-y-3">
+              <div className="flex items-center">
+                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
+              </div>
+              
               <div className="flex items-center space-x-4">
                 <Button 
                   variant="outline" 
@@ -247,7 +261,26 @@ Generated on: ${new Date().toLocaleDateString()}
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   <span>{t.back}</span>
                 </Button>
-                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={handleBackToHome}
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  <span>{t.home}</span>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
+                  onClick={handleSave}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  <span>{t.save}</span>
+                </Button>
               </div>
             </div>
           </div>
