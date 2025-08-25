@@ -293,7 +293,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
               >
                 <div className="flex items-start space-x-4">
                   {/* Timeline dot */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mt-3">
                     <div className={cn(
                       "w-3 h-3 rounded-full border-2",
                       milestone.status === 'complete' ? "bg-green-500 border-green-500" :
@@ -301,24 +301,26 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       "bg-gray-300 border-gray-300"
                     )} />
                     {index < Math.min(2, milestones.length) - 1 && (
-                      <div className="w-px h-12 bg-gray-200 mt-2" />
+                      <div className="w-px h-16 bg-gray-200 mt-2" />
                     )}
                   </div>
 
                   {/* Milestone content */}
-                  <div className="flex-1 space-y-3 pr-2">
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        value={milestone.title}
-                        onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
-                        placeholder={t.enterTitle}
-                        className="flex-1"
-                      />
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1">
+                        <Input
+                          value={milestone.title}
+                          onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
+                          placeholder={t.enterTitle}
+                          className="w-full"
+                        />
+                      </div>
                       <Button
                         onClick={() => deleteMilestone(milestone.id)}
                         size="sm"
                         variant="ghost"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 mt-0.5"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -405,7 +407,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
               >
                 <div className="flex items-start space-x-4">
                   {/* Timeline dot */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mt-3">
                     <div className={cn(
                       "w-3 h-3 rounded-full border-2",
                       milestone.status === 'complete' ? "bg-green-500 border-green-500" :
@@ -413,24 +415,26 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       "bg-gray-300 border-gray-300"
                     )} />
                     {(index + 2) < milestones.length - 1 && (
-                      <div className="w-px h-12 bg-gray-200 mt-2" />
+                      <div className="w-px h-16 bg-gray-200 mt-2" />
                     )}
                   </div>
 
                   {/* Milestone content */}
-                  <div className="flex-1 space-y-3 pr-2">
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        value={milestone.title}
-                        onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
-                        placeholder={t.enterTitle}
-                        className="flex-1"
-                      />
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1">
+                        <Input
+                          value={milestone.title}
+                          onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
+                          placeholder={t.enterTitle}
+                          className="w-full"
+                        />
+                      </div>
                       <Button
                         onClick={() => deleteMilestone(milestone.id)}
                         size="sm"
                         variant="ghost"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 mt-0.5"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

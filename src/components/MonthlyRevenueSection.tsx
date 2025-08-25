@@ -48,6 +48,8 @@ const MonthlyRevenueSection = ({
   const [expenseAmount, setExpenseAmount] = useState('');
   const [revenueType, setRevenueType] = useState('cash');
   const [expenseType, setExpenseType] = useState('operational');
+  const [customRevenueType, setCustomRevenueType] = useState('');
+  const [customExpenseType, setCustomExpenseType] = useState('');
   const [revenueEntries, setRevenueEntries] = useState<RevenueEntry[]>([]);
   const [expenseEntries, setExpenseEntries] = useState<ExpenseEntry[]>([]);
   const [isProcessingImage, setIsProcessingImage] = useState(false);
@@ -97,7 +99,6 @@ const MonthlyRevenueSection = ({
         inventory: 'Inventory',
         marketing: 'Marketing',
         utilities: 'Utilities',
-        crypto: 'Cryptocurrency',
         other: 'Other'
       },
       totalRevenue: 'Total Revenue',
@@ -132,7 +133,6 @@ const MonthlyRevenueSection = ({
         inventory: 'Hesabu',
         marketing: 'Uuzaji',
         utilities: 'Huduma',
-        crypto: 'Sarafu za Kidijiti',
         other: 'Nyingine'
       },
       totalRevenue: 'Jumla ya Mapato',
@@ -167,7 +167,6 @@ const MonthlyRevenueSection = ({
         inventory: 'المخزون',
         marketing: 'التسويق',
         utilities: 'المرافق',
-        crypto: 'العملة المشفرة',
         other: 'أخرى'
       },
       totalRevenue: 'إجمالي الإيرادات',
@@ -202,7 +201,6 @@ const MonthlyRevenueSection = ({
         inventory: 'Inventaire',
         marketing: 'Marketing',
         utilities: 'Services Publics',
-        crypto: 'Cryptomonnaie',
         other: 'Autre'
       },
       totalRevenue: 'Revenus Totaux',
@@ -229,11 +227,13 @@ const MonthlyRevenueSection = ({
       return;
     }
     
+    const finalType = revenueType === 'other' ? customRevenueType || 'Other' : revenueType;
+    
     const newEntry: RevenueEntry = {
       id: Date.now(),
       date: new Date(selectedDate),
       amount: amount,
-      type: revenueType,
+      type: finalType,
       category: 'revenue'
     };
     
@@ -254,11 +254,13 @@ const MonthlyRevenueSection = ({
       return;
     }
     
+    const finalType = expenseType === 'other' ? customExpenseType || 'Other' : expenseType;
+    
     const newEntry: ExpenseEntry = {
       id: Date.now(),
       date: new Date(selectedDate),
       amount: amount,
-      type: expenseType,
+      type: finalType,
       category: 'expense'
     };
     
@@ -466,6 +468,14 @@ const MonthlyRevenueSection = ({
                       <SelectItem value="other">{t.revenueTypes.other}</SelectItem>
                     </SelectContent>
                   </Select>
+                  {revenueType === 'other' && (
+                    <Input
+                      value={customRevenueType}
+                      onChange={(e) => setCustomRevenueType(e.target.value)}
+                      placeholder="e.g., Deliveries, Consultation, etc."
+                      className="mt-2"
+                    />
+                  )}
                 </div>
                 <div className="flex space-x-2">
                   <Button 
@@ -531,10 +541,17 @@ const MonthlyRevenueSection = ({
                       <SelectItem value="inventory">{t.expenseTypes.inventory}</SelectItem>
                       <SelectItem value="marketing">{t.expenseTypes.marketing}</SelectItem>
                       <SelectItem value="utilities">{t.expenseTypes.utilities}</SelectItem>
-                      <SelectItem value="crypto">{t.expenseTypes.crypto}</SelectItem>
                       <SelectItem value="other">{t.expenseTypes.other}</SelectItem>
                     </SelectContent>
                   </Select>
+                  {expenseType === 'other' && (
+                    <Input
+                      value={customExpenseType}
+                      onChange={(e) => setCustomExpenseType(e.target.value)}
+                      placeholder="e.g., Transport, Equipment, etc."
+                      className="mt-2"
+                    />
+                  )}
                 </div>
                 <div className="flex space-x-2">
                   <Button 
