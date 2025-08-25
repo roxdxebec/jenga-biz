@@ -334,6 +334,22 @@ const MonthlyRevenueSection = ({
 
   const t = translations[language] || translations.en;
 
+  // Function to format dates in the correct language
+  const formatDateLocalized = (date: Date, lang: string) => {
+    if (lang === 'sw') {
+      const months = ['Januari', 'Februari', 'Machi', 'Aprili', 'Mei', 'Juni', 'Julai', 'Agosti', 'Septemba', 'Oktoba', 'Novemba', 'Desemba'];
+      return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    } else if (lang === 'ar') {
+      const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+      return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    } else if (lang === 'fr') {
+      const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    } else {
+      return format(date, "PPP");
+    }
+  };
+
   // Fixed Add Revenue Function
   const addRevenueEntry = () => {
     if (!revenueAmount || !selectedDate) {
@@ -626,7 +642,7 @@ const MonthlyRevenueSection = ({
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-64">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, 'PPP') : t.selectDate}
+                  {selectedDate ? formatDateLocalized(selectedDate, language) : t.selectDate}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -929,7 +945,7 @@ const MonthlyRevenueSection = ({
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start text-left font-normal">
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {customStartDate ? format(customStartDate, 'MMM dd') : t.startDate}
+                      {customStartDate ? formatDateLocalized(customStartDate, language) : t.startDate}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -951,7 +967,7 @@ const MonthlyRevenueSection = ({
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start text-left font-normal">
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {customEndDate ? format(customEndDate, 'MMM dd') : t.endDate}
+                      {customEndDate ? formatDateLocalized(customEndDate, language) : t.endDate}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">

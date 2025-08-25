@@ -493,7 +493,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                             if (milestone.targetDate && milestone.title.trim()) {
                               const calendarEvent = {
                                 title: `📅 ${milestone.title}`,
-                                description: `Business milestone: ${milestone.title}\n\nStatus: ${milestone.status}\nCreated with Jenga Biz Africa`,
+                                description: `Business milestone: ${milestone.title}\n\nStatus: ${milestone.status}\n${
+                                  language === 'sw' ? 'Imeundwa na Jenga Biz Africa' :
+                                  language === 'ar' ? 'تم إنشاؤه بواسطة Jenga Biz Africa' :
+                                  language === 'fr' ? 'Créé avec Jenga Biz Africa' :
+                                  'Created with Jenga Biz Africa'
+                                }`,
                                 startDate: milestone.targetDate,
                                 endDate: milestone.targetDate,
                                 location: 'Business Milestone'

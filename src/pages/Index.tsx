@@ -594,7 +594,12 @@ Generated on: ${new Date().toLocaleDateString()}
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-500 text-center mt-4">Created with Jenga Biz Africa ✨</p>
+                  <p className="text-xs text-gray-500 text-center mt-4">
+                    {language === 'sw' ? 'Imeundwa na Jenga Biz Africa ✨' :
+                     language === 'ar' ? 'تم إنشاؤه بواسطة Jenga Biz Africa ✨' :
+                     language === 'fr' ? 'Créé avec Jenga Biz Africa ✨' :
+                     'Created with Jenga Biz Africa ✨'}
+                  </p>
                 </div>
               </div>
             </DialogContent>
