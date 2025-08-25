@@ -326,14 +326,10 @@ Generated on: ${new Date().toLocaleDateString()}
               <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm">{t.language}</span>
-              <LanguageSelector 
-                currentLanguage={language} 
-                onLanguageChange={setLanguage} 
-              />
-            </div>
+            <LanguageSelector 
+              currentLanguage={language} 
+              onLanguageChange={setLanguage} 
+            />
           </div>
         </div>
       </div>
@@ -349,17 +345,17 @@ Generated on: ${new Date().toLocaleDateString()}
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
             <button
-              onClick={handleStartFromScratch}
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
-            >
-              {t.startFromScratch}
-            </button>
-            
-            <button
               onClick={() => setCurrentView('templates')}
               className="px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
             >
               {t.useTemplates}
+            </button>
+            
+            <button
+              onClick={handleStartFromScratch}
+              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
+            >
+              {t.startFromScratch}
             </button>
           </div>
         </div>
