@@ -221,7 +221,7 @@ Generated on: ${new Date().toLocaleDateString()}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <TemplateDropdownSelector
             onTemplateSelect={handleTemplateSelect}
-            onStartFromScratch={handleStartFromScratch}
+            onBack={() => setCurrentView('home')}
             language={language}
           />
         </div>

@@ -3,16 +3,16 @@ import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PenTool } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { getTemplateData, TemplateData } from '@/data/templateData';
 
 interface TemplateDropdownSelectorProps {
   onTemplateSelect: (template: TemplateData) => void;
-  onStartFromScratch?: () => void;
+  onBack?: () => void;
   language?: string;
 }
 
-const TemplateDropdownSelector = ({ onTemplateSelect, onStartFromScratch, language = 'en' }: TemplateDropdownSelectorProps) => {
+const TemplateDropdownSelector = ({ onTemplateSelect, onBack, language = 'en' }: TemplateDropdownSelectorProps) => {
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
 
   const translations = {
@@ -20,37 +20,33 @@ const TemplateDropdownSelector = ({ onTemplateSelect, onStartFromScratch, langua
       title: 'Choose Your Business Template',
       subtitle: 'Select a template that matches your business type to get started quickly',
       selectBusinessType: 'Select a Business Type',
-      buildFromScratch: 'Build from Scratch (Custom Business)',
-      buildFromScratchDesc: 'Create a custom strategy from the ground up',
       getStarted: 'Get Started',
-      selectFirst: 'Please select a business type first'
+      selectFirst: 'Please select a business type first',
+      back: 'Back'
     },
     sw: {
       title: 'Chagua Kiolezo cha Biashara Yako',
       subtitle: 'Chagua kiolezo kinacholingana na aina ya biashara yako ili uanze haraka',
       selectBusinessType: 'Chagua Aina ya Biashara',
-      buildFromScratch: 'Jenga kutoka Mwanzo (Biashara ya Kawaida)',
-      buildFromScratchDesc: 'Unda mkakati wa kibinafsi kutoka chini kabisa',
       getStarted: 'Anza',
-      selectFirst: 'Tafadhali chagua aina ya biashara kwanza'
+      selectFirst: 'Tafadhali chagua aina ya biashara kwanza',
+      back: 'Rudi'
     },
     ar: {
       title: 'اختر قالب عملك',
       subtitle: 'حدد قالباً يتناسب مع نوع عملك للبدء بسرعة',
       selectBusinessType: 'اختر نوع العمل',
-      buildFromScratch: 'ابدأ من الصفر (عمل مخصص)',
-      buildFromScratchDesc: 'إنشاء استراتيجية مخصصة من الألف إلى الياء',
       getStarted: 'ابدأ',
-      selectFirst: 'يرجى اختيار نوع العمل أولاً'
+      selectFirst: 'يرجى اختيار نوع العمل أولاً',
+      back: 'رجوع'
     },
     fr: {
       title: 'Choisissez Votre Modèle d\'Entreprise',
       subtitle: 'Sélectionnez un modèle qui correspond à votre type d\'entreprise pour commencer rapidement',
       selectBusinessType: 'Sélectionner un Type d\'Entreprise',
-      buildFromScratch: 'Construire de Zéro (Entreprise Personnalisée)',
-      buildFromScratchDesc: 'Créer une stratégie personnalisée à partir de zéro',
       getStarted: 'Commencer',
-      selectFirst: 'Veuillez d\'abord sélectionner un type d\'entreprise'
+      selectFirst: 'Veuillez d\'abord sélectionner un type d\'entreprise',
+      back: 'Retour'
     }
   };
 
@@ -72,6 +68,20 @@ const TemplateDropdownSelector = ({ onTemplateSelect, onStartFromScratch, langua
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        {onBack && (
+          <div className="mb-6">
+            <Button
+              onClick={onBack}
+              variant="ghost"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t.back}
+            </Button>
+          </div>
+        )}
+
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             {t.title}
@@ -114,31 +124,6 @@ const TemplateDropdownSelector = ({ onTemplateSelect, onStartFromScratch, langua
             </Button>
           </CardContent>
         </Card>
-
-        {/* Build from Scratch Option */}
-        {onStartFromScratch && (
-          <Card className="border-2 border-dashed border-orange-300 hover:border-orange-400 transition-colors">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <PenTool className="w-8 h-8 text-orange-600" />
-              </div>
-              <CardTitle className="text-lg font-semibold text-gray-900">
-                {t.buildFromScratch}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-gray-600 mb-6 text-sm">
-                {t.buildFromScratchDesc}
-              </p>
-              <Button
-                onClick={onStartFromScratch}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-              >
-                {t.getStarted}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );
