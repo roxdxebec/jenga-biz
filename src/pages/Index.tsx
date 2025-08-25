@@ -79,7 +79,12 @@ const Index = () => {
       notStarted: 'Not Started',
       progressSummaryLabel: 'Progress Summary:',
       progressSummaryText: 'You\'re making great progress! 1 milestone completed, 1 in progress. Keep focusing on your bank account setup to maintain momentum.',
-      generatedWith: 'Generated with Jenga Biz Africa ✨'
+      generatedWith: 'Generated with Jenga Biz Africa ✨',
+      aiGeneratedSummary: 'AI-generated summary of your business strategy',
+      visionLabel: 'Vision',
+      missionLabel: 'Mission',
+      targetMarketLabel: 'Target Market',
+      notDefined: 'Not defined'
     },
     sw: {
       title: 'Jenga Biz Africa',
@@ -118,7 +123,12 @@ const Index = () => {
       notStarted: 'Haijuaanza',
       progressSummaryLabel: 'Muhtasari wa Maendeleo:',
       progressSummaryText: 'Unafanya maendeleo mazuri! Lengo 1 limekamilika, 1 linaendelea. Endelea kulenga kuanzisha akaunti ya benki ili kudumisha msukumo.',
-      generatedWith: 'Imetengenezwa na Jenga Biz Africa ✨'
+      generatedWith: 'Imetengenezwa na Jenga Biz Africa ✨',
+      aiGeneratedSummary: 'Muhtasari wa mkakati wa biashara yako uliotengenezwa na AI',
+      visionLabel: 'Maono',
+      missionLabel: 'Dhamira',
+      targetMarketLabel: 'Soko Lengwa',
+      notDefined: 'Haijafafanuliwa'
     },
     ar: {
       title: 'جينجا بيز أفريقيا',
@@ -157,7 +167,12 @@ const Index = () => {
       notStarted: 'لم تبدأ',
       progressSummaryLabel: 'ملخص التقدم:',
       progressSummaryText: 'أنت تحرز تقدمًا رائعًا! معلم واحد مكتمل، واحد قيد التنفيذ. استمر في التركيز على إعداد حسابك المصرفي للحفاظ على الزخم.',
-      generatedWith: 'تم إنشاؤه بواسطة Jenga Biz Africa ✨'
+      generatedWith: 'تم إنشاؤه بواسطة Jenga Biz Africa ✨',
+      aiGeneratedSummary: 'ملخص استراتيجية عملك المُولد بالذكاء الاصطناعي',
+      visionLabel: 'الرؤية',
+      missionLabel: 'المهمة',
+      targetMarketLabel: 'السوق المستهدف',
+      notDefined: 'غير محدد'
     },
     fr: {
       title: 'Jenga Biz Africa',
@@ -196,7 +211,12 @@ const Index = () => {
       notStarted: 'Pas Commencé',
       progressSummaryLabel: 'Résumé des Progrès:',
       progressSummaryText: 'Vous faites d\'excellents progrès! 1 jalon terminé, 1 en cours. Continuez à vous concentrer sur la configuration de votre compte bancaire pour maintenir l\'élan.',
-      generatedWith: 'Généré avec Jenga Biz Africa ✨'
+      generatedWith: 'Généré avec Jenga Biz Africa ✨',
+      aiGeneratedSummary: 'Résumé généré par IA de votre stratégie commerciale',
+      visionLabel: 'Vision',
+      missionLabel: 'Mission',
+      targetMarketLabel: 'Marché Cible',
+      notDefined: 'Non défini'
     }
   };
 
@@ -543,9 +563,9 @@ Generated on: ${new Date().toLocaleDateString()}
                   <Bot className="w-5 h-5 mr-2 text-blue-600" />
                   {t.businessStrategySummary}
                 </DialogTitle>
-                <DialogDescription>
-                  AI-generated summary of your business strategy
-                </DialogDescription>
+              <DialogDescription>
+                {t.aiGeneratedSummary}
+              </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-3">
@@ -553,16 +573,16 @@ Generated on: ${new Date().toLocaleDateString()}
                   
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>🎯 Vision:</span>
-                      <span className="font-medium text-right max-w-64">{strategyData?.vision || 'Not defined'}</span>
+                      <span>🎯 {t.visionLabel}:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.vision || t.notDefined}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>🚀 Mission:</span>
-                      <span className="font-medium text-right max-w-64">{strategyData?.mission || 'Not defined'}</span>
+                      <span>🚀 {t.missionLabel}:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.mission || t.notDefined}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>👥 Target Market:</span>
-                      <span className="font-medium text-right max-w-64">{strategyData?.targetMarket || 'Not defined'}</span>
+                      <span>👥 {t.targetMarketLabel}:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.targetMarket || t.notDefined}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>💰 Revenue Model:</span>

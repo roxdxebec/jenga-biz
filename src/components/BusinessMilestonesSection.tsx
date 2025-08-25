@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,7 +28,24 @@ interface BusinessMilestonesSectionProps {
 
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en' }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>(() => {
+    // Initialize with default milestones based on stage
+    const defaultMilestones = [
+      {
+        id: '1',
+        title: '',
+        targetDate: null,
+        status: 'not-started' as const
+      },
+      {
+        id: '2', 
+        title: '',
+        targetDate: null,
+        status: 'not-started' as const
+      }
+    ];
+    return defaultMilestones;
+  });
 
   const { toast } = useToast();
 
@@ -343,7 +359,15 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
               ))}
             </ul>
             <Button
-              onClick={addMilestone}
+              onClick={() => {
+                const stageMilestones = getStageSpecificMilestones(businessStage);
+                // Prefill first two milestones with stage-specific content
+                setMilestones(prev => prev.map((milestone, index) => 
+                  index < 2 && stageMilestones[index] ? 
+                    { ...milestone, title: stageMilestones[index] } : 
+                    milestone
+                ));
+              }}
               size="sm"
               variant="outline"
               className="text-green-600 border-green-300 hover:bg-green-50 w-full"
@@ -365,7 +389,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {milestones.slice(0, 2).map((milestone, index) => (
+            {milestones.map((milestone, index) => (
               <div
                 key={milestone.id}
                 className="relative p-5 border rounded-xl bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
@@ -380,7 +404,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       milestone.status === 'overdue' ? "bg-red-500 border-red-500" :
                       "bg-gray-300 border-gray-300"
                     )} />
-                    {index < Math.min(2, milestones.length) - 1 && (
+                    {index < milestones.length - 1 && (
                       <div className="w-px h-20 bg-gray-200 mt-3" />
                     )}
                   </div>
@@ -429,9 +453,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                               mode="single"
                               selected={milestone.targetDate}
                               onSelect={(date) => updateMilestone(milestone.id, 'targetDate', date)}
-                              language={language}
                               initialFocus
-                              className="p-3 pointer-events-auto"
+                              className={cn("p-3 pointer-events-auto")}
                             />
                           </PopoverContent>
                         </Popover>
@@ -439,25 +462,23 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
                       {/* Status */}
                       <div>
-                        <Select
-                          value={milestone.status}
+                        <Select 
+                          value={milestone.status} 
                           onValueChange={(value) => updateMilestone(milestone.id, 'status', value)}
                         >
                           <SelectTrigger className="h-10 border-gray-200 hover:border-gray-300">
                             <SelectValue placeholder={t.selectStatus} />
                           </SelectTrigger>
                           <SelectContent>
-                            {statusOptions.map(option => (
+                            {statusOptions.map((option) => (
                               <SelectItem key={option.value} value={option.value}>
-                                <div className="flex items-center space-x-2">
-                                  <div className={cn(
-                                    "w-2 h-2 rounded-full",
-                                    option.value === 'complete' ? "bg-green-500" :
-                                    option.value === 'in-progress' ? "bg-blue-500" :
-                                    option.value === 'overdue' ? "bg-red-500" :
-                                    "bg-gray-400"
-                                  )} />
-                                  <span>{option.label}</span>
+                                <div className="flex items-center">
+                                  <Badge 
+                                    variant="secondary" 
+                                    className={cn("text-xs", option.color)}
+                                  >
+                                    {option.label}
+                                  </Badge>
                                 </div>
                               </SelectItem>
                             ))}
@@ -494,7 +515,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           size="sm"
                           className="w-full h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100 text-blue-700 hover:text-blue-800"
                         >
-                          <CalendarPlus className="w-4 h-4 mr-1" />
+                          <CalendarPlus className="w-4 h-4 mr-2" />
                           {t.addToCalendar}
                         </Button>
                       </div>
@@ -504,175 +525,17 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
               </div>
             ))}
             
-            {/* Add Milestone Button after first 2 milestones */}
-            {milestones.length >= 2 && (
-              <div className="flex justify-start py-4">
-                <Button
-                  onClick={addMilestone}
-                  size="sm"
-                  variant="outline"
-                  className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  {t.addMilestone}
-                </Button>
-              </div>
-            )}
-            
-            {/* Show remaining milestones after the button */}
-            {milestones.slice(2).map((milestone, index) => (
-              <div
-                key={milestone.id}
-                className="relative p-5 border rounded-xl bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+            {/* Add More Button */}
+            <div className="mt-6">
+              <Button
+                onClick={addMilestone}
+                variant="outline"
+                className="w-full border-2 border-dashed border-gray-300 hover:border-orange-300 hover:bg-orange-50 text-gray-600 hover:text-orange-600"
               >
-                <div className="flex items-start space-x-4">
-                  {/* Timeline dot */}
-                  <div className="flex flex-col items-center pt-2">
-                    <div className={cn(
-                      "w-4 h-4 rounded-full border-2 shadow-sm",
-                      milestone.status === 'complete' ? "bg-green-500 border-green-500" :
-                      milestone.status === 'in-progress' ? "bg-blue-500 border-blue-500" :
-                      milestone.status === 'overdue' ? "bg-red-500 border-red-500" :
-                      "bg-gray-300 border-gray-300"
-                    )} />
-                    {(index + 2) < milestones.length - 1 && (
-                      <div className="w-px h-20 bg-gray-200 mt-3" />
-                    )}
-                  </div>
-
-                  {/* Milestone content */}
-                  <div className="flex-1 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <Input
-                        value={milestone.title}
-                        onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
-                        placeholder={t.enterTitle}
-                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200 text-sm"
-                      />
-                      <Button
-                        onClick={() => deleteMilestone(milestone.id)}
-                        size="sm"
-                        variant="outline"
-                        className="text-red-400 hover:text-red-600 hover:bg-red-50 border-red-200 hover:border-red-300 p-2"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      {/* Target Date */}
-                      <div>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal h-10 border-gray-200 hover:border-gray-300",
-                                !milestone.targetDate && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
-                              {milestone.targetDate ? (
-                                format(milestone.targetDate, "MMM dd, yyyy")
-                              ) : (
-                                <span>{t.pickDate}</span>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={milestone.targetDate}
-                              onSelect={(date) => updateMilestone(milestone.id, 'targetDate', date)}
-                              language={language}
-                              initialFocus
-                              className="p-3 pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-
-                      {/* Status */}
-                      <div>
-                        <Select
-                          value={milestone.status}
-                          onValueChange={(value) => updateMilestone(milestone.id, 'status', value)}
-                        >
-                          <SelectTrigger className="h-10 border-gray-200 hover:border-gray-300">
-                            <SelectValue placeholder={t.selectStatus} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {statusOptions.map(option => (
-                              <SelectItem key={option.value} value={option.value}>
-                                <div className="flex items-center space-x-2">
-                                  <div className={cn(
-                                    "w-2 h-2 rounded-full",
-                                    option.value === 'complete' ? "bg-green-500" :
-                                    option.value === 'in-progress' ? "bg-blue-500" :
-                                    option.value === 'overdue' ? "bg-red-500" :
-                                    "bg-gray-400"
-                                  )} />
-                                  <span>{option.label}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Add to Calendar Button */}
-                      <div>
-                        <Button
-                          onClick={() => {
-                            if (milestone.targetDate && milestone.title.trim()) {
-                              const calendarEvent = {
-                                title: `📅 ${milestone.title}`,
-                                description: `Business milestone: ${milestone.title}\n\nStatus: ${milestone.status}\nCreated with Jenga Biz Africa`,
-                                startDate: milestone.targetDate,
-                                endDate: milestone.targetDate,
-                                location: 'Business Milestone'
-                              };
-                              addToCalendar(calendarEvent);
-                              toast({
-                                title: "Calendar Event",
-                                description: "Milestone added to your calendar!",
-                              });
-                            } else {
-                              toast({
-                                title: "Missing Information",
-                                description: "Please add a title and target date first.",
-                                variant: "destructive",
-                              });
-                            }
-                          }}
-                          variant="outline"
-                          size="sm"
-                          className="w-full h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100 text-blue-700 hover:text-blue-800"
-                        >
-                          <CalendarPlus className="w-4 h-4 mr-1" />
-                          {t.addToCalendar}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            {/* Show Add Milestone button if less than 2 milestones */}
-            {milestones.length < 2 && (
-              <div className="flex justify-start py-4">
-                <Button
-                  onClick={addMilestone}
-                  size="sm"
-                  variant="outline"
-                  className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  {t.addMilestone}
-                </Button>
-              </div>
-            )}
+                <Plus className="w-4 h-4 mr-2" />
+                {t.addMilestone}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
