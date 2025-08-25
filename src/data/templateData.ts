@@ -16,25 +16,172 @@ export interface TemplateData {
   };
 }
 
+interface TemplateContent {
+  vision: { [key: string]: string };
+  mission: { [key: string]: string };
+  targetMarket: { [key: string]: string };
+  revenueModel: { [key: string]: string };
+  valueProposition: { [key: string]: string };
+  keyPartners: { [key: string]: string };
+  marketingApproach: { [key: string]: string };
+  operationalNeeds: { [key: string]: string };
+  growthGoals: { [key: string]: string };
+}
+
+const templateContents: { [key: string]: TemplateContent } = {
+  'auto-repair': {
+    vision: {
+      en: 'To be the most trusted source of quality second-hand clothing in our community, promoting sustainable fashion and affordability',
+      sw: 'Kuwa chanzo cha kuaminika zaidi cha nguo za mitumba za ubora katika jamii yetu, kikiimarisha mtindo endelevu na upatikanaji wa bei nafuu',
+      ar: 'أن نكون المصدر الأكثر ثقة للملابس المستعملة عالية الجودة في مجتمعنا، وتعزيز الأزياء المستدامة والأسعار المعقولة',
+      fr: 'Être la source la plus fiable de vêtements d\'occasion de qualité dans notre communauté, promouvant la mode durable et l\'accessibilité'
+    },
+    mission: {
+      en: 'Providing affordable, quality clothing while promoting sustainable fashion choices and supporting local entrepreneurs',
+      sw: 'Kutoa nguo za ubora na bei nafuu huku tukiimarisha uchaguzi wa mtindo endelevu na kuunga mkono wajasiriamali wa mitaani',
+      ar: 'توفير ملابس عالية الجودة وبأسعار معقولة مع تعزيز خيارات الأزياء المستدامة ودعم رجال الأعمال المحليين',
+      fr: 'Fournir des vêtements de qualité et abordables tout en promouvant des choix de mode durables et en soutenant les entrepreneurs locaux'
+    },
+    targetMarket: {
+      en: 'Price-conscious families, young professionals, students, fashion enthusiasts in urban and peri-urban areas aged 18-45',
+      sw: 'Familia zinazojali bei, vijana wanaofanya kazi, wanafunzi, wapenzi wa mtindo katika maeneo ya mijini na karibu na miji wenye umri wa miaka 18-45',
+      ar: 'العائلات المهتمة بالأسعار، الشباب المهنيون، الطلاب، عشاق الأزياء في المناطق الحضرية وشبه الحضرية الذين تتراوح أعمارهم بين 18-45',
+      fr: 'Familles soucieuses des prix, jeunes professionnels, étudiants, passionnés de mode dans les zones urbaines et périurbaines âgés de 18 à 45 ans'
+    },
+    revenueModel: {
+      en: 'Direct sales from physical store, WhatsApp marketing, bulk sales to other retailers, seasonal promotions and discounts',
+      sw: 'Mauzo ya moja kwa moja kutoka duka la kimwili, uuzaji wa WhatsApp, mauzo ya jumla kwa wachuuzi wengine, matangazo ya msimu na punguzo',
+      ar: 'المبيعات المباشرة من المتجر المادي، التسويق عبر واتساب، المبيعات بالجملة لتجار التجزئة الآخرين، العروض الترويجية الموسمية والخصومات',
+      fr: 'Ventes directes du magasin physique, marketing WhatsApp, ventes en gros à d\'autres détaillants, promotions saisonnières et remises'
+    },
+    valueProposition: {
+      en: 'Quality second-hand clothes at prices 60% lower than retail with unique fashion finds and personalized service',
+      sw: 'Nguo za mitumba za ubora kwa bei za chini kwa asilimia 60 kuliko za rejareja pamoja na vipengele vya kipekee vya mtindo na huduma za kibinafsi',
+      ar: 'ملابس مستعملة عالية الجودة بأسعار أقل بنسبة 60% من البيع بالتجزئة مع اكتشافات أزياء فريدة وخدمة شخصية',
+      fr: 'Vêtements d\'occasion de qualité à des prix 60% moins chers que le commerce de détail avec des trouvailles de mode uniques et un service personnalisé'
+    },
+    keyPartners: {
+      en: 'Bale suppliers, local tailors for alterations, WhatsApp business groups, chama members, fashion influencers',
+      sw: 'Wasambazaji wa mabeli, mshonaji wa mitaani kwa marekebisho, vikundi vya biashara vya WhatsApp, wanachama wa chama, watafikiri wa mtindo',
+      ar: 'موردو البالات، الخياطون المحليون للتعديلات، مجموعات الأعمال على واتساب، أعضاء الجماعة، مؤثرو الأزياء',
+      fr: 'Fournisseurs de balles, tailleurs locaux pour les retouches, groupes d\'affaires WhatsApp, membres de chama, influenceurs de mode'
+    },
+    marketingApproach: {
+      en: 'Word-of-mouth referrals, WhatsApp business marketing, local community events, social media showcases, referral programs',
+      sw: 'Mapendekezo ya mdomo kwa mdomo, uuzaji wa biashara ya WhatsApp, matukio ya jamii za mitaani, maonyesho ya mitandao ya kijamii, mipango ya mapendekezo',
+      ar: 'إحالات الكلام الشفهي، التسويق التجاري عبر واتساب، فعاليات المجتمع المحلي، عروض وسائل التواصل الاجتماعي، برامج الإحالة',
+      fr: 'Références de bouche-à-oreille, marketing commercial WhatsApp, événements communautaires locaux, showcases sur les réseaux sociaux, programmes de parrainage'
+    },
+    operationalNeeds: {
+      en: 'Store space, storage for inventory, transportation for bale collection, sorting equipment, mobile money account, cash register',
+      sw: 'Nafasi ya duka, ghala la bidhaa, usafiri wa ukusanyaji wa mabeli, vifaa vya upangaji, akaunti ya pesa za simu, mashine ya fedha',
+      ar: 'مساحة المتجر، تخزين للمخزون، النقل لجمع البالات، معدات الفرز، حساب الأموال المحمولة، ماكينة تسجيل النقد',
+      fr: 'Espace de magasin, stockage pour l\'inventaire، transport pour la collecte des balles, équipement de tri, compte d\'argent mobile, caisse enregistreuse'
+    },
+    growthGoals: {
+      en: 'Expand to online sales platform, add more product categories, establish multiple outlets, create wholesale distribution network',
+      sw: 'Kupanua kwenda mfumo wa mauzo ya mtandaoni, kuongeza aina zaidi za bidhaa, kuanzisha maduka mengi, kuunda mtandao wa usambazaji wa jumla',
+      ar: 'التوسع إلى منصة المبيعات عبر الإنترنت، إضافة المزيد من فئات المنتجات، إنشاء منافذ متعددة، إنشاء شبكة توزيع بالجملة',
+      fr: 'Expansion vers une plateforme de vente en ligne, ajout de plus de catégories de produits, établissement de plusieurs points de vente, création d\'un réseau de distribution en gros'
+    }
+  },
+  'boda-boda': {
+    vision: {
+      en: 'To provide safe, reliable, and affordable transportation while supporting drivers and contributing to community development',
+      sw: 'Kutoa usafiri salama, wa kutegemewa, na wa bei nafuu huku tukiwasaidia dereva na kuchangia maendeleo ya jamii',
+      ar: 'توفير وسائل نقل آمنة وموثوقة ومعقولة التكلفة مع دعم السائقين والمساهمة في تنمية المجتمع',
+      fr: 'Fournir un transport sûr, fiable et abordable tout en soutenant les conducteurs et en contribuant au développement communautaire'
+    },
+    mission: {
+      en: 'Connecting people to their destinations safely while supporting local economy, providing employment, and serving our community',
+      sw: 'Kuunganisha watu na maeneo wanayoelekea kwa usalama huku tukiuunga mkono uchumi wa mitaani, kutoa ajira, na kutumikia jamii yetu',
+      ar: 'ربط الناس بوجهاتهم بأمان مع دعم الاقتصاد المحلي وتوفير فرص العمل وخدمة مجتمعنا',
+      fr: 'Connecter les gens à leurs destinations en toute sécurité tout en soutenant l\'économie locale, en fournissant des emplois et en servant notre communauté'
+    },
+    targetMarket: {
+      en: 'Daily commuters, students, shoppers, business people, delivery services, and anyone needing quick transportation',
+      sw: 'Wasafiri wa kila siku, wanafunzi, wanunuzi, watu wa biashara, huduma za upeperishaji, na mtu yeyote anayehitaji usafiri wa haraka',
+      ar: 'المسافرون اليوميون، الطلاب، المتسوقون، رجال الأعمال، خدمات التوصيل، وأي شخص يحتاج إلى وسائل نقل سريعة',
+      fr: 'Navetteurs quotidiens, étudiants, acheteurs, gens d\'affaires, services de livraison, et toute personne ayant besoin de transport rapide'
+    },
+    revenueModel: {
+      en: 'Per-trip passenger fares, delivery service fees, package transport charges, rental income from drivers, fuel commission',
+      sw: 'Nauli za abiria kwa safari, ada za huduma za upeperishaji, gharama za usafirishaji wa mizigo, mapato ya kukodisha kutoka kwa madereva, komishan ya mafuta',
+      ar: 'أجرة الركاب لكل رحلة، رسوم خدمات التوصيل، رسوم نقل الطرود، دخل الإيجار من السائقين، عمولة الوقود',
+      fr: 'Tarifs passagers par voyage, frais de services de livraison, frais de transport de colis, revenus locatifs des conducteurs, commission carburant'
+    },
+    valueProposition: {
+      en: 'Fast, affordable transportation with experienced, safety-conscious riders, flexible service, and reliable availability',
+      sw: 'Usafiri wa haraka, wa bei nafuu na waendesha mzoefu, wanaojali usalama, huduma ya kubadilika, na upatikanaji wa kutegemewa',
+      ar: 'وسائل نقل سريعة ومعقولة التكلفة مع راكبين ذوي خبرة وواعين بالسلامة، وخدمة مرنة، وتوفر موثوق',
+      fr: 'Transport rapide et abordable avec des conducteurs expérimentés et soucieux de la sécurité, service flexible et disponibilité fiable'
+    },
+    keyPartners: {
+      en: 'Motorcycle dealers, insurance companies, fuel stations, maintenance shops, loading companies, delivery businesses',
+      sw: 'Wachuuzi wa pikipiki, makampuni ya bima, vituo vya mafuta, maduka ya matengenezo, makampuni ya upakiaji, biashara za upeperishaji',
+      ar: 'تجار الدراجات النارية، شركات التأمين، محطات الوقود، ورش الصيانة، شركات التحميل، أعمال التوصيل',
+      fr: 'Concessionnaires de motos, compagnies d\'assurance, stations-service, ateliers de maintenance, entreprises de chargement, entreprises de livraison'
+    },
+    marketingApproach: {
+      en: 'Community presence, customer referrals, mobile app integration, strategic location positioning, safety campaigns',
+      sw: 'Uwepo wa jamii, mapendekezo ya wateja, ujumuishaji wa programu za simu, miweka mikakati ya mahali, mipango ya usalama',
+      ar: 'الحضور المجتمعي، إحالات العملاء، تكامل تطبيقات الهاتف المحمول، تموضع مواقع استراتيجي، حملات السلامة',
+      fr: 'Présence communautaire, références clients, intégration d\'applications mobiles, positionnement stratégique, campagnes de sécurité'
+    },
+    operationalNeeds: {
+      en: 'Motorcycles, safety gear (helmets, reflective vests), licenses, insurance, maintenance tools, communication devices',
+      sw: 'Pikipiki, vifaa vya usalama (kofia za kinga, mikanda ya kuelea), leseni, bima, vifaa vya matengenezo, vifaa vya mawasiliano',
+      ar: 'دراجات نارية، معدات السلامة (خوذات، سترات عاكسة)، تراخيص، تأمين، أدوات الصيانة، أجهزة الاتصال',
+      fr: 'Motos, équipement de sécurité (casques, gilets réfléchissants), licences, assurance, outils de maintenance, dispositifs de communication'
+    },
+    growthGoals: {
+      en: 'Add 5 more motorcycles, establish delivery service partnerships, create driver training program, expand coverage area',
+      sw: 'Kuongeza pikipiki 5 zaidi, kuanzisha ushirikiano wa huduma za upeperishaji, kuunda programu ya mafunzo ya madereva, kupanua eneo la utumikaji',
+      ar: 'إضافة 5 دراجات نارية أخرى، إنشاء شراكات خدمات التوصيل، إنشاء برنامج تدريب السائقين، توسيع منطقة التغطية',
+      fr: 'Ajouter 5 motos supplémentaires, établir des partenariats de services de livraison, créer un programme de formation des conducteurs, étendre la zone de couverture'
+    }
+  }
+};
+
 export const getTemplateData = (language: string = 'en'): TemplateData[] => {
   console.log('Getting template data for language:', language);
+  
+  const getTranslatedContent = (templateId: string, language: string) => {
+    const content = templateContents[templateId];
+    if (!content) {
+      // Fallback for templates not yet translated
+      return {
+        vision: 'Template content not yet available in this language',
+        mission: 'Template content not yet available in this language',
+        targetMarket: 'Template content not yet available in this language',
+        revenueModel: 'Template content not yet available in this language',
+        valueProposition: 'Template content not yet available in this language',
+        keyPartners: 'Template content not yet available in this language',
+        marketingApproach: 'Template content not yet available in this language',
+        operationalNeeds: 'Template content not yet available in this language',
+        growthGoals: 'Template content not yet available in this language'
+      };
+    }
+    
+    return {
+      vision: content.vision[language] || content.vision.en,
+      mission: content.mission[language] || content.mission.en,
+      targetMarket: content.targetMarket[language] || content.targetMarket.en,
+      revenueModel: content.revenueModel[language] || content.revenueModel.en,
+      valueProposition: content.valueProposition[language] || content.valueProposition.en,
+      keyPartners: content.keyPartners[language] || content.keyPartners.en,
+      marketingApproach: content.marketingApproach[language] || content.marketingApproach.en,
+      operationalNeeds: content.operationalNeeds[language] || content.operationalNeeds.en,
+      growthGoals: content.growthGoals[language] || content.growthGoals.en
+    };
+  };
   
   const templates: TemplateData[] = [
     {
       id: 'auto-repair',
       name: language === 'sw' ? 'Biashara ya Mitumba' : language === 'ar' ? 'تجارة الملابس المستعملة' : language === 'fr' ? 'Commerce de Vêtements d\'Occasion' : 'Second-Hand Clothing (Mitumba)',
       description: language === 'sw' ? 'Uuzaji wa nguo za mitumba na bidhaa za mtindo' : language === 'ar' ? 'بيع الملابس المستعملة ومنتجات الأزياء' : language === 'fr' ? 'Vente de vêtements d\'occasion et produits de mode' : 'Selling second-hand clothes and fashion items',
-      content: {
-        vision: 'To be the most trusted source of quality second-hand clothing in our community, promoting sustainable fashion and affordability',
-        mission: 'Providing affordable, quality clothing while promoting sustainable fashion choices and supporting local entrepreneurs',
-        targetMarket: 'Price-conscious families, young professionals, students, fashion enthusiasts in urban and peri-urban areas aged 18-45',
-        revenueModel: 'Direct sales from physical store, WhatsApp marketing, bulk sales to other retailers, seasonal promotions and discounts',
-        valueProposition: 'Quality second-hand clothes at prices 60% lower than retail with unique fashion finds and personalized service',
-        keyPartners: 'Bale suppliers, local tailors for alterations, WhatsApp business groups, chama members, fashion influencers',
-        marketingApproach: 'Word-of-mouth referrals, WhatsApp business marketing, local community events, social media showcases, referral programs',
-        operationalNeeds: 'Store space, storage for inventory, transportation for bale collection, sorting equipment, mobile money account, cash register',
-        growthGoals: 'Expand to online sales platform, add more product categories, establish multiple outlets, create wholesale distribution network'
-      }
+      content: getTranslatedContent('auto-repair', language)
     },
     {
       id: 'cyber-cafe',
@@ -168,17 +315,7 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       id: 'boda-boda',
       name: language === 'sw' ? 'Biashara ya Boda Boda' : language === 'ar' ? 'أعمال الدراجات النارية' : language === 'fr' ? 'Business de Moto-taxi' : 'Boda Boda Business',
       description: language === 'sw' ? 'Usafiri wa boda boda na upeperishaji' : language === 'ar' ? 'نقل الدراجات النارية والتوصيل' : language === 'fr' ? 'Transport et livraison en moto-taxi' : 'Motorcycle transport and delivery',
-      content: {
-        vision: 'To provide safe, reliable, and affordable transportation while supporting drivers and contributing to community development',
-        mission: 'Connecting people to their destinations safely while supporting local economy, providing employment, and serving our community',
-        targetMarket: 'Daily commuters, students, shoppers, business people, delivery services, and anyone needing quick transportation',
-        revenueModel: 'Per-trip passenger fares, delivery service fees, package transport charges, rental income from drivers, fuel commission',
-        valueProposition: 'Fast, affordable transportation with experienced, safety-conscious riders, flexible service, and reliable availability',
-        keyPartners: 'Motorcycle dealers, insurance companies, fuel stations, maintenance shops, loading companies, delivery businesses',
-        marketingApproach: 'Community presence, customer referrals, mobile app integration, strategic location positioning, safety campaigns',
-        operationalNeeds: 'Motorcycles, safety gear (helmets, reflective vests), licenses, insurance, maintenance tools, communication devices',
-        growthGoals: 'Add 5 more motorcycles, establish delivery service partnerships, create driver training program, expand coverage area'
-      }
+      content: getTranslatedContent('boda-boda', language)
     },
     {
       id: 'freelance-writing',
