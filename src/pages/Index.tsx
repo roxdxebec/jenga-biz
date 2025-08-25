@@ -367,46 +367,87 @@ Generated on: ${new Date().toLocaleDateString()}
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent mb-6">
             {t.title}
           </h1>
-          <p className="text-xl text-gray-600 mb-12">
+          <p className="text-xl text-gray-600 mb-8">
             {t.subtitle}
           </p>
+        </div>
+      </div>
+
+      {/* Key Features Section - Above buttons for better context */}
+      <div className="container mx-auto px-4 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-orange-100 hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg mb-4 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">Business Templates</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs</p>
+          </div>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-purple-100 hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg mb-4 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">Milestone Tracking</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">Set and track business milestones based on your current stage and growth goals with deadlines</p>
+          </div>
+          
+          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-green-100 hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">Financial Tracking</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">Monitor daily revenue and expenses with calendar-based entries and generate financial reports</p>
+          </div>
+        </div>
+        
+        {/* Clear Call to Action */}
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Ready to build your business strategy?</h2>
+          <p className="text-gray-600 mb-8">Choose your preferred starting point:</p>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button
               onClick={() => setCurrentView('templates')}
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
+              className="group px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 flex-1 max-w-xs relative overflow-hidden"
             >
-              {t.useTemplates}
+              <span className="relative z-10 flex items-center justify-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {t.useTemplates}
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </button>
             
             <button
               onClick={handleStartFromScratch}
-              className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 flex-1"
+              className="group px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 flex-1 max-w-xs relative overflow-hidden"
             >
-              {t.startFromScratch}
+              <span className="relative z-10 flex items-center justify-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                {t.startFromScratch}
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </button>
           </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white/60 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">Business Templates</h3>
-            <p className="text-gray-600">Choose from 15+ pre-built templates for popular African businesses</p>
-          </div>
-          <div className="bg-white/60 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">Milestone Trackers</h3>
-            <p className="text-gray-600">Track business milestones based on your current stage and goals</p>
-          </div>
-          <div className="bg-white/60 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">Financial Tracking</h3>
-            <p className="text-gray-600">Monitor daily revenue and expenses with calendar-based entries</p>
+          
+          <div className="mt-6 text-sm text-gray-500">
+            <p><strong>Templates:</strong> Quick start with proven business models</p>
+            <p><strong>From Scratch:</strong> Build a completely custom strategy</p>
           </div>
         </div>
       </div>
