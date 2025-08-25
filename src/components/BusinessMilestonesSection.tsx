@@ -17,7 +17,7 @@ interface Milestone {
   id: string;
   title: string;
   targetDate: Date | null;
-  status: 'not-started' | 'in-progress' | 'complete';
+  status: 'not-started' | 'in-progress' | 'complete' | 'overdue';
 }
 
 interface BusinessMilestonesSectionProps {
@@ -65,6 +65,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       notStarted: 'Not Started',
       inProgress: 'In Progress',
       complete: 'Complete',
+      overdue: 'Overdue',
       tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
       coachingTip: 'Break down big goals into smaller, actionable milestones. Each milestone should be specific and have a clear deadline.'
     },
@@ -86,6 +87,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       notStarted: 'Haijuaanza',
       inProgress: 'Inaendelea',
       complete: 'Imekamilika',
+      overdue: 'Umechelewa',
       tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
       coachingTip: 'Gawanya malengo makubwa kuwa malengo madogo yanayoweza kutekelezwa. Kila lengo linapaswa kuwa mahususi na kuwa na tarehe ya mwisho ya wazi.'
     },
@@ -107,6 +109,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       notStarted: 'لم تبدأ',
       inProgress: 'قيد التنفيذ',
       complete: 'مكتمل',
+      overdue: 'متأخر',
       tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
       coachingTip: 'قسم الأهداف الكبيرة إلى معالم أصغر قابلة للتنفيذ. يجب أن يكون كل معلم محددًا وله موعد نهائي واضح.'
     },
@@ -128,6 +131,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       notStarted: 'Pas Commencé',
       inProgress: 'En Cours',
       complete: 'Terminé',
+      overdue: 'En Retard',
       tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
       coachingTip: 'Divisez les grands objectifs en jalons plus petits et réalisables. Chaque jalon doit être spécifique et avoir une échéance claire.'
     }
@@ -138,7 +142,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   const statusOptions = [
     { value: 'not-started', label: t.notStarted, color: 'bg-gray-100 text-gray-700' },
     { value: 'in-progress', label: t.inProgress, color: 'bg-blue-100 text-blue-700' },
-    { value: 'complete', label: t.complete, color: 'bg-green-100 text-green-700' }
+    { value: 'complete', label: t.complete, color: 'bg-green-100 text-green-700' },
+    { value: 'overdue', label: t.overdue, color: 'bg-red-100 text-red-700' }
   ];
 
   const businessStages = [
@@ -298,6 +303,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       "w-4 h-4 rounded-full border-2 shadow-sm",
                       milestone.status === 'complete' ? "bg-green-500 border-green-500" :
                       milestone.status === 'in-progress' ? "bg-blue-500 border-blue-500" :
+                      milestone.status === 'overdue' ? "bg-red-500 border-red-500" :
                       "bg-gray-300 border-gray-300"
                     )} />
                     {index < Math.min(2, milestones.length) - 1 && (
@@ -312,7 +318,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                         value={milestone.title}
                         onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
                         placeholder={t.enterTitle}
-                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200 text-sm"
                       />
                       <Button
                         onClick={() => deleteMilestone(milestone.id)}
@@ -373,6 +379,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                                     "w-2 h-2 rounded-full",
                                     option.value === 'complete' ? "bg-green-500" :
                                     option.value === 'in-progress' ? "bg-blue-500" :
+                                    option.value === 'overdue' ? "bg-red-500" :
                                     "bg-gray-400"
                                   )} />
                                   <span>{option.label}</span>
@@ -416,6 +423,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       "w-4 h-4 rounded-full border-2 shadow-sm",
                       milestone.status === 'complete' ? "bg-green-500 border-green-500" :
                       milestone.status === 'in-progress' ? "bg-blue-500 border-blue-500" :
+                      milestone.status === 'overdue' ? "bg-red-500 border-red-500" :
                       "bg-gray-300 border-gray-300"
                     )} />
                     {(index + 2) < milestones.length - 1 && (
@@ -430,7 +438,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                         value={milestone.title}
                         onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
                         placeholder={t.enterTitle}
-                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200 text-sm"
                       />
                       <Button
                         onClick={() => deleteMilestone(milestone.id)}
@@ -491,6 +499,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                                     "w-2 h-2 rounded-full",
                                     option.value === 'complete' ? "bg-green-500" :
                                     option.value === 'in-progress' ? "bg-blue-500" :
+                                    option.value === 'overdue' ? "bg-red-500" :
                                     "bg-gray-400"
                                   )} />
                                   <span>{option.label}</span>
