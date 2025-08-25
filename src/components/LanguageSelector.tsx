@@ -30,7 +30,7 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelecto
       <SelectTrigger className="w-auto min-w-[120px]">
         <div className="flex items-center space-x-2">
           <Globe className="w-4 h-4" />
-          <span className="hidden sm:inline">{t.language}</span>
+          <span>{t.language}</span>
         </div>
       </SelectTrigger>
       <SelectContent>
