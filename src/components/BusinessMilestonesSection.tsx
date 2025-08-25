@@ -279,9 +279,20 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       {/* Milestones List */}
       <Card className="border-orange-200">
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <Target className="w-5 h-5 mr-2 text-orange-600" />
-            {t.yourMilestones}
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Target className="w-5 h-5 mr-2 text-orange-600" />
+              {t.yourMilestones}
+            </div>
+            <Button
+              onClick={addMilestone}
+              size="sm"
+              variant="outline"
+              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              {t.addMilestone}
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
