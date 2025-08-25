@@ -84,6 +84,8 @@ const Index = () => {
       visionLabel: 'Vision',
       missionLabel: 'Mission',
       targetMarketLabel: 'Target Market',
+      revenueModelLabel: 'Revenue Model',
+      valuePropositionLabel: 'Value Proposition',
       notDefined: 'Not defined'
     },
     sw: {
@@ -128,6 +130,8 @@ const Index = () => {
       visionLabel: 'Maono',
       missionLabel: 'Dhamira',
       targetMarketLabel: 'Soko Lengwa',
+      revenueModelLabel: 'Mfumo wa Mapato',
+      valuePropositionLabel: 'Pendekezo la Thamani',
       notDefined: 'Haijafafanuliwa'
     },
     ar: {
@@ -172,6 +176,8 @@ const Index = () => {
       visionLabel: 'الرؤية',
       missionLabel: 'المهمة',
       targetMarketLabel: 'السوق المستهدف',
+      revenueModelLabel: 'نموذج الإيرادات',
+      valuePropositionLabel: 'عرض القيمة',
       notDefined: 'غير محدد'
     },
     fr: {
@@ -216,6 +222,8 @@ const Index = () => {
       visionLabel: 'Vision',
       missionLabel: 'Mission',
       targetMarketLabel: 'Marché Cible',
+      revenueModelLabel: 'Modèle de Revenus',
+      valuePropositionLabel: 'Proposition de Valeur',
       notDefined: 'Non défini'
     }
   };
@@ -585,12 +593,12 @@ Generated on: ${new Date().toLocaleDateString()}
                       <span className="font-medium text-right max-w-64">{strategyData?.targetMarket || t.notDefined}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>💰 Revenue Model:</span>
-                      <span className="font-medium text-right max-w-64">{strategyData?.revenueModel || 'Not defined'}</span>
+                      <span>💰 {t.revenueModelLabel}:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.revenueModel || t.notDefined}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>⭐ Value Proposition:</span>
-                      <span className="font-medium text-right max-w-64">{strategyData?.valueProposition || 'Not defined'}</span>
+                      <span>⭐ {t.valuePropositionLabel}:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.valueProposition || t.notDefined}</span>
                     </div>
                   </div>
 
