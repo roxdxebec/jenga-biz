@@ -127,7 +127,22 @@ const MonthlyRevenueSection = ({
       financialSummary: 'Financial Summary',
       aiSummary: 'AI Summary',
       downloadSummary: 'Download Summary',
-      shareFinancials: 'Share Financials'
+      shareFinancials: 'Share Financials',
+      financialHealth: 'Financial Health',
+      profitable: 'Profitable',
+      loss: 'Loss',
+      financialInsightsSummary: 'Financial Insights Summary',
+      basedOnYourData: 'Based on your',
+      financialData: 'financial data:',
+      profitMargin: 'Profit Margin',
+      keyInsights: 'Key Insights',
+      businessProfitable: 'Your business is profitable',
+      reviewExpenses: 'Consider reviewing expenses to improve profitability',
+      mostRevenueFrom: 'Most revenue from:',
+      highestExpenseCategory: 'Highest expense category:',
+      noRevenueRecorded: 'No revenue entries recorded',
+      noExpenseRecorded: 'No expense entries recorded',
+      processingImage: 'Processing image... Please wait.'
     },
     sw: {
       title: 'Kufuatilia Fedha',
@@ -174,7 +189,22 @@ const MonthlyRevenueSection = ({
       financialSummary: 'Muhtasari wa Fedha',
       aiSummary: 'Muhtasari wa AI',
       downloadSummary: 'Pakua Muhtasari',
-      shareFinancials: 'Shiriki Fedha'
+      shareFinancials: 'Shiriki Fedha',
+      financialHealth: 'Afya ya Kifedha',
+      profitable: 'Yenye Faida',
+      loss: 'Hasara',
+      financialInsightsSummary: 'Muhtasari wa Maarifa ya Kifedha',
+      basedOnYourData: 'Kulingana na',
+      financialData: 'data yako ya kifedha:',
+      profitMargin: 'Uwiano wa Faida',
+      keyInsights: 'Maarifa Muhimu',
+      businessProfitable: 'Biashara yako ina faida',
+      reviewExpenses: 'Fikiria kukagua matumizi ili kuboresha upatikanaji wa faida',
+      mostRevenueFrom: 'Mapato mengi kutoka:',
+      highestExpenseCategory: 'Jamii kubwa ya matumizi:',
+      noRevenueRecorded: 'Hakuna maingizo ya mapato yaliyorekodiwa',
+      noExpenseRecorded: 'Hakuna maingizo ya matumizi yaliyorekodiwa',
+      processingImage: 'Kuchakata picha... Tafadhali subiri.'
     },
     ar: {
       title: 'متتبع الماليات',
@@ -221,7 +251,22 @@ const MonthlyRevenueSection = ({
       financialSummary: 'الملخص المالي',
       aiSummary: 'ملخص الذكاء الاصطناعي',
       downloadSummary: 'تحميل الملخص',
-      shareFinancials: 'مشاركة الماليات'
+      shareFinancials: 'مشاركة الماليات',
+      financialHealth: 'الصحة المالية',
+      profitable: 'مربح',
+      loss: 'خسارة',
+      financialInsightsSummary: 'ملخص الرؤى المالية',
+      basedOnYourData: 'بناءً على',
+      financialData: 'بياناتك المالية:',
+      profitMargin: 'هامش الربح',
+      keyInsights: 'الرؤى الرئيسية',
+      businessProfitable: 'عملك مربح',
+      reviewExpenses: 'فكر في مراجعة المصروفات لتحسين الربحية',
+      mostRevenueFrom: 'معظم الإيرادات من:',
+      highestExpenseCategory: 'أعلى فئة نفقات:',
+      noRevenueRecorded: 'لم يتم تسجيل إيرادات',
+      noExpenseRecorded: 'لم يتم تسجيل مصروفات',
+      processingImage: 'معالجة الصورة... يرجى الانتظار.'
     },
     fr: {
       title: 'Suivi Financier',
@@ -268,7 +313,22 @@ const MonthlyRevenueSection = ({
       financialSummary: 'Résumé Financier',
       aiSummary: 'Résumé IA',
       downloadSummary: 'Télécharger Résumé',
-      shareFinancials: 'Partager Finances'
+      shareFinancials: 'Partager Finances',
+      financialHealth: 'Santé Financière',
+      profitable: 'Rentable',
+      loss: 'Perte',
+      financialInsightsSummary: 'Résumé des Aperçus Financiers',
+      basedOnYourData: 'Basé sur vos',
+      financialData: 'données financières:',
+      profitMargin: 'Marge Bénéficiaire',
+      keyInsights: 'Aperçus Clés',
+      businessProfitable: 'Votre entreprise est rentable',
+      reviewExpenses: 'Considérez réviser les dépenses pour améliorer la rentabilité',
+      mostRevenueFrom: 'Plus de revenus de:',
+      highestExpenseCategory: 'Catégorie de dépenses la plus élevée:',
+      noRevenueRecorded: 'Aucune entrée de revenus enregistrée',
+      noExpenseRecorded: 'Aucune entrée de dépenses enregistrée',
+      processingImage: 'Traitement de l\'image... Veuillez patienter.'
     }
   };
 
@@ -752,7 +812,7 @@ const MonthlyRevenueSection = ({
 
                 {isProcessingImage && (
                   <div className="text-center text-sm text-gray-600">
-                    Processing image... Please wait.
+                    {t.processingImage}
                   </div>
                 )}
               </CardContent>
@@ -780,9 +840,9 @@ const MonthlyRevenueSection = ({
             
             <Card className={`border-blue-200 ${netProfit >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
               <CardContent className="p-4 text-center">
-                <p className="text-sm text-blue-600">Financial Health</p>
+                <p className="text-sm text-blue-600">{t.financialHealth}</p>
                 <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-800' : 'text-orange-800'}`}>
-                  {netProfit >= 0 ? 'Profitable' : 'Loss'}
+                  {netProfit >= 0 ? t.profitable : t.loss}
                 </p>
                 <p className={`text-lg ${netProfit >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
                   {currencySymbol} {netProfit.toFixed(2)}
@@ -945,40 +1005,40 @@ const MonthlyRevenueSection = ({
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Bot className="w-5 h-5 mr-2 text-blue-600" />
-              Financial Insights Summary
+              {t.financialInsightsSummary}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-3">
-              <h4 className="font-semibold text-gray-800">Based on your {timePeriod} financial data:</h4>
+              <h4 className="font-semibold text-gray-800">{t.basedOnYourData} {timePeriod} {t.financialData}</h4>
               
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>Total Revenue:</span>
+                  <span>{t.totalRevenue}:</span>
                   <span className="font-medium text-green-600">{currencySymbol} {totalRevenue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Total Expenses:</span>
+                  <span>{t.totalExpenses}:</span>
                   <span className="font-medium text-red-600">{currencySymbol} {totalExpenses.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Net Profit:</span>
+                  <span>{t.netProfit}:</span>
                   <span className={`font-medium ${netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
                     {currencySymbol} {netProfit.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Profit Margin:</span>
+                  <span>{t.profitMargin}:</span>
                   <span className="font-medium">{totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0}%</span>
                 </div>
               </div>
 
               <div className="mt-4">
-                <h4 className="font-semibold text-gray-800 mb-2">Key Insights:</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">{t.keyInsights}:</h4>
                 <ul className="space-y-1 text-sm text-gray-600">
-                  <li>• {netProfit >= 0 ? 'Your business is profitable' : 'Consider reviewing expenses to improve profitability'}</li>
-                  <li>• {filteredRevenueEntries.length > 0 ? `Most revenue from: ${filteredRevenueEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No revenue entries recorded'}</li>
-                  <li>• {filteredExpenseEntries.length > 0 ? `Highest expense category: ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No expense entries recorded'}</li>
+                  <li>• {netProfit >= 0 ? t.businessProfitable : t.reviewExpenses}</li>
+                  <li>• {filteredRevenueEntries.length > 0 ? `${t.mostRevenueFrom} ${filteredRevenueEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : t.noRevenueRecorded}</li>
+                  <li>• {filteredExpenseEntries.length > 0 ? `${t.highestExpenseCategory} ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : t.noExpenseRecorded}</li>
                 </ul>
               </div>
             </div>
