@@ -279,25 +279,14 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       {/* Milestones List */}
       <Card className="border-orange-200">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Target className="w-5 h-5 mr-2 text-orange-600" />
-              {t.yourMilestones}
-            </div>
-            <Button
-              onClick={addMilestone}
-              size="sm"
-              variant="outline"
-              className="text-orange-600 border-orange-300 hover:bg-orange-50"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              {t.addMilestone}
-            </Button>
+          <CardTitle className="flex items-center">
+            <Target className="w-5 h-5 mr-2 text-orange-600" />
+            {t.yourMilestones}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {milestones.map((milestone, index) => (
+            {milestones.slice(0, 2).map((milestone, index) => (
               <div
                 key={milestone.id}
                 className="relative p-4 border rounded-lg bg-white border-gray-200"
@@ -392,6 +381,133 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                 </div>
               </div>
             ))}
+            
+            {/* Add Milestone Button after first 2 milestones */}
+            {milestones.length >= 2 && (
+              <div className="flex justify-center py-4">
+                <Button
+                  onClick={addMilestone}
+                  size="sm"
+                  variant="outline"
+                  className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  {t.addMilestone}
+                </Button>
+              </div>
+            )}
+            
+            {/* Show remaining milestones after the button */}
+            {milestones.slice(2).map((milestone, index) => (
+              <div
+                key={milestone.id}
+                className="relative p-4 border rounded-lg bg-white border-gray-200"
+              >
+                <div className="flex items-start space-x-4">
+                  {/* Timeline dot */}
+                  <div className="flex flex-col items-center">
+                    <div className={cn(
+                      "w-3 h-3 rounded-full border-2",
+                      milestone.status === 'complete' ? "bg-green-500 border-green-500" :
+                      milestone.status === 'in-progress' ? "bg-blue-500 border-blue-500" :
+                      "bg-gray-300 border-gray-300"
+                    )} />
+                    {(index + 2) < milestones.length - 1 && (
+                      <div className="w-px h-12 bg-gray-200 mt-2" />
+                    )}
+                  </div>
+
+                  {/* Milestone content */}
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Input
+                        value={milestone.title}
+                        onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
+                        placeholder={t.enterTitle}
+                        className="flex-1 mr-2"
+                      />
+                      <Button
+                        onClick={() => deleteMilestone(milestone.id)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                      {/* Target Date */}
+                      <div className="flex-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !milestone.targetDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {milestone.targetDate ? (
+                                format(milestone.targetDate, "PPP")
+                              ) : (
+                                <span>{t.pickDate}</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={milestone.targetDate}
+                              onSelect={(date) => updateMilestone(milestone.id, 'targetDate', date)}
+                              initialFocus
+                              className="p-3 pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+
+                      {/* Status */}
+                      <div className="flex-1">
+                        <Select
+                          value={milestone.status}
+                          onValueChange={(value) => updateMilestone(milestone.id, 'status', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={t.selectStatus} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {statusOptions.map(option => (
+                              <SelectItem key={option.value} value={option.value}>
+                                <Badge className={option.color} variant="secondary">
+                                  {option.label}
+                                </Badge>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Show Add Milestone button if less than 2 milestones */}
+            {milestones.length < 2 && (
+              <div className="flex justify-center py-4">
+                <Button
+                  onClick={addMilestone}
+                  size="sm"
+                  variant="outline"
+                  className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  {t.addMilestone}
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
