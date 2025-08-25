@@ -255,14 +255,23 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
             <CardTitle className="text-lg text-green-800">Suggested Milestones for {currentStage?.label}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
-              {getStageSpecificMilestones(businessStage).map((milestone, index) => (
+            <ul className="space-y-2 mb-4">
+              {getStageSpecificMilestones(businessStage).slice(0, 2).map((milestone, index) => (
                 <li key={index} className="flex items-center text-sm text-green-700">
                   <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                   {milestone}
                 </li>
               ))}
             </ul>
+            <Button
+              onClick={addMilestone}
+              size="sm"
+              variant="outline"
+              className="text-green-600 border-green-300 hover:bg-green-50 w-full"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              {t.addMilestone}
+            </Button>
           </CardContent>
         </Card>
       )}

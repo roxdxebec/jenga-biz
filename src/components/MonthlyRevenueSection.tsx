@@ -88,13 +88,17 @@ const MonthlyRevenueSection = ({
         cash: 'Cash',
         mobileMoney: 'Mobile Money',
         bankTransfer: 'Bank Transfer',
-        card: 'Card Payment'
+        card: 'Card Payment',
+        crypto: 'Cryptocurrency',
+        other: 'Other'
       },
       expenseTypes: {
         operational: 'Operational',
         inventory: 'Inventory',
         marketing: 'Marketing',
-        utilities: 'Utilities'
+        utilities: 'Utilities',
+        crypto: 'Cryptocurrency',
+        other: 'Other'
       },
       totalRevenue: 'Total Revenue',
       totalExpenses: 'Total Expenses',
@@ -119,13 +123,17 @@ const MonthlyRevenueSection = ({
         cash: 'Pesa Taslimu',
         mobileMoney: 'Pesa za Simu',
         bankTransfer: 'Uhamishaji wa Benki',
-        card: 'Malipo ya Kadi'
+        card: 'Malipo ya Kadi',
+        crypto: 'Sarafu za Kidijiti',
+        other: 'Nyingine'
       },
       expenseTypes: {
         operational: 'Uendeshaji',
         inventory: 'Hesabu',
         marketing: 'Uuzaji',
-        utilities: 'Huduma'
+        utilities: 'Huduma',
+        crypto: 'Sarafu za Kidijiti',
+        other: 'Nyingine'
       },
       totalRevenue: 'Jumla ya Mapato',
       totalExpenses: 'Jumla ya Matumizi',
@@ -150,13 +158,17 @@ const MonthlyRevenueSection = ({
         cash: 'نقداً',
         mobileMoney: 'الأموال المحمولة',
         bankTransfer: 'تحويل بنكي',
-        card: 'دفع بالبطاقة'
+        card: 'دفع بالبطاقة',
+        crypto: 'العملة المشفرة',
+        other: 'أخرى'
       },
       expenseTypes: {
         operational: 'تشغيلي',
         inventory: 'المخزون',
         marketing: 'التسويق',
-        utilities: 'المرافق'
+        utilities: 'المرافق',
+        crypto: 'العملة المشفرة',
+        other: 'أخرى'
       },
       totalRevenue: 'إجمالي الإيرادات',
       totalExpenses: 'إجمالي المصروفات',
@@ -181,13 +193,17 @@ const MonthlyRevenueSection = ({
         cash: 'Espèces',
         mobileMoney: 'Argent Mobile',
         bankTransfer: 'Virement Bancaire',
-        card: 'Paiement Carte'
+        card: 'Paiement Carte',
+        crypto: 'Cryptomonnaie',
+        other: 'Autre'
       },
       expenseTypes: {
         operational: 'Opérationnel',
         inventory: 'Inventaire',
         marketing: 'Marketing',
-        utilities: 'Services Publics'
+        utilities: 'Services Publics',
+        crypto: 'Cryptomonnaie',
+        other: 'Autre'
       },
       totalRevenue: 'Revenus Totaux',
       totalExpenses: 'Dépenses Totales',
@@ -259,27 +275,42 @@ const MonthlyRevenueSection = ({
     setExpenseEntries(prev => prev.filter(entry => entry.id !== id));
   };
 
-  // Extract amount from OCR text
-  const extractAmountFromText = (text: string) => {
+  // Extract amounts from OCR text (multiple amounts)
+  const extractAmountsFromText = (text: string) => {
     // Look for currency symbols and numbers
     const patterns = [
       /(?:KSh|TSh|USh|₦|₵|R|E£|DH|\$|£|€)\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/gi,
       /(\d+(?:,\d{3})*(?:\.\d{2})?)\s*(?:KSh|TSh|USh|₦|₵|R|E£|DH|\$|£|€)/gi,
       /(?:total|amount|price|cost|pay|paid)[\s:]*(?:KSh|TSh|USh|₦|₵|R|E£|DH|\$|£|€)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/gi,
-      /(\d+(?:,\d{3})*(?:\.\d{2})?)/g
     ];
 
+    const amounts = [];
     for (const pattern of patterns) {
-      const matches = text.match(pattern);
-      if (matches) {
-        // Extract the first numeric value found
-        const numericMatch = matches[0].match(/(\d+(?:,\d{3})*(?:\.\d{2})?)/);
+      const matches = [...text.matchAll(pattern)];
+      matches.forEach(match => {
+        const numericMatch = match[0].match(/(\d+(?:,\d{3})*(?:\.\d{2})?)/);
         if (numericMatch) {
-          return numericMatch[1].replace(/,/g, '');
+          const amount = numericMatch[1].replace(/,/g, '');
+          if (!amounts.includes(amount) && parseFloat(amount) > 0) {
+            amounts.push(amount);
+          }
         }
-      }
+      });
     }
-    return '';
+    
+    // If no specific patterns found, look for standalone numbers
+    if (amounts.length === 0) {
+      const numberPattern = /(\d+(?:,\d{3})*(?:\.\d{2})?)/g;
+      const matches = [...text.matchAll(numberPattern)];
+      matches.forEach(match => {
+        const amount = match[1].replace(/,/g, '');
+        if (parseFloat(amount) > 10 && !amounts.includes(amount)) { // Filter out very small numbers
+          amounts.push(amount);
+        }
+      });
+    }
+    
+    return amounts;
   };
 
   // Process image with OCR
@@ -293,10 +324,22 @@ const MonthlyRevenueSection = ({
       const extractedText = result.data.text;
       console.log('Extracted text:', extractedText);
       
-      const amount = extractAmountFromText(extractedText);
-      if (amount) {
-        setExpenseAmount(amount);
-        alert(`Found amount: ${currencySymbol} ${amount}`);
+      const amounts = extractAmountsFromText(extractedText);
+      if (amounts.length > 0) {
+        if (amounts.length === 1) {
+          setExpenseAmount(amounts[0]);
+          alert(`Found amount: ${currencySymbol} ${amounts[0]}`);
+        } else {
+          // Multiple amounts found - let user choose
+          const amountList = amounts.map((amt, idx) => `${idx + 1}. ${currencySymbol} ${amt}`).join('\n');
+          const choice = prompt(`Found multiple amounts:\n${amountList}\n\nEnter the number of the amount you want to use (1-${amounts.length}):`);
+          const choiceIndex = parseInt(choice) - 1;
+          if (choiceIndex >= 0 && choiceIndex < amounts.length) {
+            setExpenseAmount(amounts[choiceIndex]);
+          } else {
+            setExpenseAmount(amounts[0]); // Default to first amount
+          }
+        }
       } else {
         alert('Could not detect amount from image. Please enter manually.');
       }
@@ -419,19 +462,41 @@ const MonthlyRevenueSection = ({
                       <SelectItem value="mobileMoney">{t.revenueTypes.mobileMoney}</SelectItem>
                       <SelectItem value="bankTransfer">{t.revenueTypes.bankTransfer}</SelectItem>
                       <SelectItem value="card">{t.revenueTypes.card}</SelectItem>
+                      <SelectItem value="crypto">{t.revenueTypes.crypto}</SelectItem>
+                      <SelectItem value="other">{t.revenueTypes.other}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <Button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    addRevenueEntry();
-                  }}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                  type="button"
-                >
-                  {t.addRevenue}
-                </Button>
+                <div className="flex space-x-2">
+                  <Button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addRevenueEntry();
+                    }}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                    type="button"
+                  >
+                    {t.addRevenue}
+                  </Button>
+                  
+                  <Button
+                    onClick={triggerCamera}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    type="button"
+                    disabled={isProcessingImage}
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                  
+                  <Button
+                    onClick={triggerFileUpload}
+                    className="bg-purple-600 hover:bg-purple-700"
+                    type="button"
+                    disabled={isProcessingImage}
+                  >
+                    <Upload className="w-4 h-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -466,6 +531,8 @@ const MonthlyRevenueSection = ({
                       <SelectItem value="inventory">{t.expenseTypes.inventory}</SelectItem>
                       <SelectItem value="marketing">{t.expenseTypes.marketing}</SelectItem>
                       <SelectItem value="utilities">{t.expenseTypes.utilities}</SelectItem>
+                      <SelectItem value="crypto">{t.expenseTypes.crypto}</SelectItem>
+                      <SelectItem value="other">{t.expenseTypes.other}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

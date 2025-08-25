@@ -21,7 +21,7 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
   
   const templates: TemplateData[] = [
     {
-      id: 'mitumba',
+      id: 'auto-repair',
       name: language === 'sw' ? 'Biashara ya Mitumba' : language === 'ar' ? 'تجارة الملابس المستعملة' : language === 'fr' ? 'Commerce de Vêtements d\'Occasion' : 'Second-Hand Clothing (Mitumba)',
       description: language === 'sw' ? 'Uuzaji wa nguo za mitumba na bidhaa za mtindo' : language === 'ar' ? 'بيع الملابس المستعملة ومنتجات الأزياء' : language === 'fr' ? 'Vente de vêtements d\'occasion et produits de mode' : 'Selling second-hand clothes and fashion items',
       content: {
@@ -278,6 +278,9 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
     }
   ];
 
-  console.log('Template data generated:', templates.length, 'templates');
-  return templates;
+  // Sort templates alphabetically by name
+  const sortedTemplates = templates.sort((a, b) => a.name.localeCompare(b.name));
+  
+  console.log('Template data generated:', sortedTemplates.length, 'templates');
+  return sortedTemplates;
 };
