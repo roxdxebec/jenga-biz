@@ -6,7 +6,9 @@ import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import LanguageSelector from '@/components/LanguageSelector';
 import ShareModal from '@/components/ShareModal';
 import { Button } from '@/components/ui/button';
-import { Globe, Home, Save, Download, Bot, ArrowLeft } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar } from 'lucide-react';
 import { TemplateData } from '@/data/templateData';
 
 const Index = () => {
@@ -15,6 +17,8 @@ const Index = () => {
   const [language, setLanguage] = useState('en');
   const [country, setCountry] = useState('KE');
   const [strategyData, setStrategyData] = useState(null);
+  const [showStrategySummary, setShowStrategySummary] = useState(false);
+  const [showMilestonesSummary, setShowMilestonesSummary] = useState(false);
 
   const currencyMap = {
     'KE': { currency: 'KES', symbol: 'KSh' },
@@ -142,24 +146,7 @@ const Index = () => {
       alert('Please complete your strategy first');
       return;
     }
-    
-    const summary = `
-📈 Business Strategy Summary for ${strategyData.businessName || 'Your Business'}
-
-🎯 Vision: ${strategyData.vision || 'Not defined'}
-🚀 Mission: ${strategyData.mission || 'Not defined'}
-👥 Target Market: ${strategyData.targetMarket || 'Not defined'}
-💰 Revenue Model: ${strategyData.revenueModel || 'Not defined'}
-⭐ Value Proposition: ${strategyData.valueProposition || 'Not defined'}
-🤝 Key Partners: ${strategyData.keyPartners || 'Not defined'}
-📢 Marketing: ${strategyData.marketingApproach || 'Not defined'}
-⚙️ Operations: ${strategyData.operationalNeeds || 'Not defined'}
-📊 Growth Goals: ${strategyData.growthGoals || 'Not defined'}
-
-Created with Jenga Biz Africa ✨
-    `;
-    
-    alert(`AI Summary Generated!\n\n${summary}`);
+    setShowStrategySummary(true);
   };
 
   const downloadSummary = () => {
@@ -189,6 +176,39 @@ Generated on: ${new Date().toLocaleDateString()}
     const a = document.createElement('a');
     a.href = url;
     a.download = `jenga-biz-strategy-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+  const generateMilestonesSummary = () => {
+    setShowMilestonesSummary(true);
+  };
+
+  const downloadMilestonesSummary = () => {
+    // Mock milestone data for demonstration
+    const milestones = [
+      { title: 'Register business name', status: 'complete', targetDate: '2024-01-15' },
+      { title: 'Open business bank account', status: 'in-progress', targetDate: '2024-02-01' },
+      { title: 'Launch minimum viable product', status: 'not-started', targetDate: '2024-03-15' }
+    ];
+    
+    const summary = `Jenga Biz Africa - Business Milestones Summary
+    
+Business Stage: Growth Stage
+    
+Milestones Progress:
+${milestones.map(m => `- ${m.title} (${m.status.replace('-', ' ')}${m.targetDate ? ` - Target: ${m.targetDate}` : ''})`).join('\n')}
+
+Generated on: ${new Date().toLocaleDateString()}
+`;
+    
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `jenga-biz-milestones-${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -347,6 +367,42 @@ Generated on: ${new Date().toLocaleDateString()}
             />
           </div>
           
+          {/* Business Milestones Summary Card */}
+          <Card className="border-purple-200">
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+              <CardTitle className="text-xl font-bold text-gray-800 flex items-center">
+                <Target className="w-5 h-5 mr-2 text-purple-600" />
+                Business Milestones Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  onClick={generateMilestonesSummary}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                >
+                  <Bot className="w-4 h-4 mr-2" />
+                  AI Summary
+                </Button>
+                
+                <Button
+                  onClick={downloadMilestonesSummary}
+                  className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Summary
+                </Button>
+                
+                <Button
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Share Milestones
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
           <div>
             <MonthlyRevenueSection
               strategyData={strategyData}
@@ -357,6 +413,92 @@ Generated on: ${new Date().toLocaleDateString()}
               onCountryChange={setCountry}
             />
           </div>
+
+          {/* Strategy Summary Modal */}
+          <Dialog open={showStrategySummary} onOpenChange={setShowStrategySummary}>
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="flex items-center">
+                  <Bot className="w-5 h-5 mr-2 text-blue-600" />
+                  Business Strategy Summary
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-800">📈 {strategyData?.businessName || 'Your Business'}</h4>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>🎯 Vision:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.vision || 'Not defined'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>🚀 Mission:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.mission || 'Not defined'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>👥 Target Market:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.targetMarket || 'Not defined'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>💰 Revenue Model:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.revenueModel || 'Not defined'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>⭐ Value Proposition:</span>
+                      <span className="font-medium text-right max-w-64">{strategyData?.valueProposition || 'Not defined'}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-500 text-center mt-4">Created with Jenga Biz Africa ✨</p>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Milestones Summary Modal */}
+          <Dialog open={showMilestonesSummary} onOpenChange={setShowMilestonesSummary}>
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="flex items-center">
+                  <Target className="w-5 h-5 mr-2 text-purple-600" />
+                  Business Milestones Summary
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-800">Business Stage: Growth Stage</h4>
+                  
+                  <div className="space-y-3">
+                    <h5 className="font-medium text-gray-700">Current Milestones:</h5>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                        <span>✅ Register business name</span>
+                        <span className="text-green-600 font-medium">Complete</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                        <span>🔄 Open business bank account</span>
+                        <span className="text-blue-600 font-medium">In Progress</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span>⏳ Launch minimum viable product</span>
+                        <span className="text-gray-600 font-medium">Not Started</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-purple-50 rounded">
+                    <p className="text-sm text-purple-700">
+                      <strong>Progress Summary:</strong> You're making great progress! 1 milestone completed, 1 in progress. 
+                      Keep focusing on your bank account setup to maintain momentum.
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-gray-500 text-center mt-4">Generated with Jenga Biz Africa ✨</p>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
         </div>
       </div>
