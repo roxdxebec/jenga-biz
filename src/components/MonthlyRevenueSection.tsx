@@ -6,11 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CalendarIcon, Plus, Minus, DollarSign, Trash2, Camera, Upload, Download, Share, Bot } from 'lucide-react';
 import { format } from 'date-fns';
 import Tesseract from 'tesseract.js';
 import ShareModal from '@/components/ShareModal';
+import { useToast } from '@/hooks/use-toast';
 
 interface RevenueEntry {
   id: number;
@@ -61,6 +62,7 @@ const MonthlyRevenueSection = ({
   const [showAISummary, setShowAISummary] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const currencyOptions = [
     { code: 'KE', currency: 'KES', symbol: 'KSh', name: 'Kenya Shilling' },
@@ -275,13 +277,21 @@ const MonthlyRevenueSection = ({
   // Fixed Add Revenue Function
   const addRevenueEntry = () => {
     if (!revenueAmount || !selectedDate) {
-      alert('Please enter an amount and select a date');
+      toast({
+        title: "Missing Information",
+        description: "Please enter an amount and select a date",
+        variant: "destructive",
+      });
       return;
     }
     
     const amount = parseFloat(revenueAmount);
     if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid amount');
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
+        variant: "destructive",
+      });
       return;
     }
     
@@ -302,13 +312,21 @@ const MonthlyRevenueSection = ({
   // Fixed Add Expense Function
   const addExpenseEntry = () => {
     if (!expenseAmount || !selectedDate) {
-      alert('Please enter an amount and select a date');
+      toast({
+        title: "Missing Information",
+        description: "Please enter an amount and select a date",
+        variant: "destructive",
+      });
       return;
     }
     
     const amount = parseFloat(expenseAmount);
     if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid amount');
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
+        variant: "destructive",
+      });
       return;
     }
     
@@ -388,7 +406,10 @@ const MonthlyRevenueSection = ({
       if (amounts.length > 0) {
         if (amounts.length === 1) {
           setExpenseAmount(amounts[0]);
-          alert(`Found amount: ${currencySymbol} ${amounts[0]}`);
+          toast({
+            title: "Amount Detected",
+            description: `Found amount: ${currencySymbol} ${amounts[0]}`,
+          });
         } else {
           // Multiple amounts found - let user choose
           const amountList = amounts.map((amt, idx) => `${idx + 1}. ${currencySymbol} ${amt}`).join('\n');
@@ -401,11 +422,19 @@ const MonthlyRevenueSection = ({
           }
         }
       } else {
-        alert('Could not detect amount from image. Please enter manually.');
+        toast({
+          title: "No Amount Found",
+          description: "Could not detect amount from image. Please enter manually.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error('OCR Error:', error);
-      alert('Failed to process image. Please try again or enter manually.');
+      toast({
+        title: "Processing Failed",
+        description: "Failed to process image. Please try again or enter manually.",
+        variant: "destructive",
+      });
     } finally {
       setIsProcessingImage(false);
     }
@@ -480,9 +509,10 @@ const MonthlyRevenueSection = ({
   };
 
   const handleDownloadSummary = () => {
-    // Download functionality - would generate PDF report
-    console.log('Downloading financial summary...');
-    alert('Financial summary download would be implemented here.');
+    toast({
+      title: "Coming Soon",
+      description: "Financial summary download feature will be implemented soon.",
+    });
   };
 
   const financialData = {

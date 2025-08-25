@@ -53,7 +53,12 @@ const Index = () => {
       aiSummary: 'AI Summary',
       downloadSummary: 'Download Summary',
       share: 'Share',
-      back: 'Back'
+      back: 'Back',
+      businessStrategySummary: 'Business Strategy Summary',
+      businessMilestonesSummary: 'Business Milestones Summary',
+      shareMilestones: 'Share Milestones',
+      trackMilestones: 'Track Milestones',
+      trackFinances: 'Track Finances'
     },
     sw: {
       title: 'Jenga Biz Africa',
@@ -66,7 +71,12 @@ const Index = () => {
       aiSummary: 'Muhtasari wa AI',
       downloadSummary: 'Pakua Muhtasari',
       share: 'Shiriki',
-      back: 'Rudi'
+      back: 'Rudi',
+      businessStrategySummary: 'Muhtasari wa Mkakati wa Biashara',
+      businessMilestonesSummary: 'Muhtasari wa Malengo ya Biashara',
+      shareMilestones: 'Shiriki Malengo',
+      trackMilestones: 'Fuatilia Malengo',
+      trackFinances: 'Fuatilia Fedha'
     },
     ar: {
       title: 'جينجا بيز أفريقيا',
@@ -79,7 +89,12 @@ const Index = () => {
       aiSummary: 'ملخص الذكاء الاصطناعي',
       downloadSummary: 'تحميل الملخص',
       share: 'مشاركة',
-      back: 'رجوع'
+      back: 'رجوع',
+      businessStrategySummary: 'ملخص استراتيجية الأعمال',
+      businessMilestonesSummary: 'ملخص معالم الأعمال',
+      shareMilestones: 'مشاركة المعالم',
+      trackMilestones: 'تتبع المعالم',
+      trackFinances: 'تتبع الماليات'
     },
     fr: {
       title: 'Jenga Biz Africa',
@@ -92,7 +107,12 @@ const Index = () => {
       aiSummary: 'Résumé IA',
       downloadSummary: 'Télécharger Résumé',
       share: 'Partager',
-      back: 'Retour'
+      back: 'Retour',
+      businessStrategySummary: 'Résumé de la Stratégie d\'Entreprise',
+      businessMilestonesSummary: 'Résumé des Jalons d\'Entreprise',
+      shareMilestones: 'Partager les Jalons',
+      trackMilestones: 'Suivre les Jalons',
+      trackFinances: 'Suivre les Finances'
     }
   };
 
@@ -353,7 +373,7 @@ Generated on: ${new Date().toLocaleDateString()}
           {/* Business Strategy Summary Section - moved here after Strategy Builder */}
           <div className="bg-white p-6 rounded-lg border border-blue-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
-              Business Strategy Summary
+              {t.businessStrategySummary}
             </h3>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -389,7 +409,7 @@ Generated on: ${new Date().toLocaleDateString()}
             <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
               <CardTitle className="text-xl font-bold text-gray-800 flex items-center">
                 <Target className="w-5 h-5 mr-2 text-purple-600" />
-                Business Milestones Summary
+                {t.businessMilestonesSummary}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
@@ -399,7 +419,7 @@ Generated on: ${new Date().toLocaleDateString()}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 >
                   <Bot className="w-4 h-4 mr-2" />
-                  AI Summary
+                  {t.aiSummary}
                 </Button>
                 
                 <Button
@@ -407,14 +427,14 @@ Generated on: ${new Date().toLocaleDateString()}
                   className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Download Summary
+                  {t.downloadSummary}
                 </Button>
                 
                 <Button
                   className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
-                  Share Milestones
+                  {t.shareMilestones}
                 </Button>
               </div>
             </CardContent>
@@ -437,7 +457,7 @@ Generated on: ${new Date().toLocaleDateString()}
               <DialogHeader>
                 <DialogTitle className="flex items-center">
                   <Bot className="w-5 h-5 mr-2 text-blue-600" />
-                  Business Strategy Summary
+                  {t.businessStrategySummary}
                 </DialogTitle>
                 <DialogDescription>
                   AI-generated summary of your business strategy
@@ -482,7 +502,7 @@ Generated on: ${new Date().toLocaleDateString()}
               <DialogHeader>
                 <DialogTitle className="flex items-center">
                   <Target className="w-5 h-5 mr-2 text-purple-600" />
-                  Business Milestones Summary
+                  {t.businessMilestonesSummary}
                 </DialogTitle>
                 <DialogDescription>
                   Overview of your business milestone progress and insights
@@ -604,7 +624,7 @@ Generated on: ${new Date().toLocaleDateString()}
               onClick={() => scrollToSection('milestones-section')}
               className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
-              Track Milestones
+              {t.trackMilestones}
             </button>
           </div>
           
@@ -620,7 +640,7 @@ Generated on: ${new Date().toLocaleDateString()}
               onClick={() => scrollToSection('financial-section')}
               className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
-              Track Finances
+              {t.trackFinances}
             </button>
           </div>
         </div>
