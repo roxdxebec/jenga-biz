@@ -585,9 +585,77 @@ const MonthlyRevenueSection = ({
   };
 
   const handleDownloadSummary = () => {
+    const createdWithText = language === 'sw' ? 'Imeundwa na Jenga Biz Africa' :
+                           language === 'ar' ? 'تم إنشاؤه بواسطة Jenga Biz Africa' :
+                           language === 'fr' ? 'Créé avec Jenga Biz Africa' :
+                           'Created with Jenga Biz Africa';
+
+    const timePeriodLabel = language === 'sw' ? 'Kipindi cha Wakati' :
+                           language === 'ar' ? 'الفترة الزمنية' :
+                           language === 'fr' ? 'Période' :
+                           'Time Period';
+
+    const revenueEntriesText = filteredRevenueEntries.length > 0 ? 
+      filteredRevenueEntries.map(entry => 
+        `- ${formatDateLocalized(entry.date, language)}: ${currencySymbol} ${entry.amount.toFixed(2)} (${entry.type})`
+      ).join('\n') : t.noRevenueRecorded;
+
+    const expenseEntriesText = filteredExpenseEntries.length > 0 ?
+      filteredExpenseEntries.map(entry => 
+        `- ${formatDateLocalized(entry.date, language)}: ${currencySymbol} ${entry.amount.toFixed(2)} (${entry.type})`
+      ).join('\n') : t.noExpenseRecorded;
+
+    const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0;
+    
+    const summary = `${createdWithText} - ${t.financialSummary}
+
+${timePeriodLabel}: ${t[timePeriod] || timePeriod}
+
+=== ${t.financialSummary} ===
+${t.totalRevenue}: ${currencySymbol} ${totalRevenue.toFixed(2)}
+${t.totalExpenses}: ${currencySymbol} ${totalExpenses.toFixed(2)}
+${t.netProfit}: ${currencySymbol} ${netProfit.toFixed(2)}
+${t.profitMargin}: ${profitMargin}%
+
+=== ${t.financialHealth} ===
+${t.financialHealth}: ${netProfit >= 0 ? t.profitable : t.loss}
+
+=== ${t.keyInsights} ===
+• ${netProfit >= 0 ? t.businessProfitable : t.reviewExpenses}
+• ${filteredRevenueEntries.length > 0 ? `${t.mostRevenueFrom} ${filteredRevenueEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : t.noRevenueRecorded}
+• ${filteredExpenseEntries.length > 0 ? `${t.highestExpenseCategory} ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : t.noExpenseRecorded}
+
+=== ${t.revenue} ${t.recentEntries} ===
+${revenueEntriesText}
+
+=== ${t.expenses} ${t.recentEntries} ===
+${expenseEntriesText}
+
+${language === 'en' ? 'Generated on' : 
+  language === 'sw' ? 'Imetengenezwa mnamo' :
+  language === 'ar' ? 'تم إنشاؤه في' :
+  'Généré le'}: ${new Date().toLocaleDateString()}
+`;
+    
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `jenga-biz-financial-summary-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
     toast({
-      title: "Coming Soon",
-      description: "Financial summary download feature will be implemented soon.",
+      title: language === 'sw' ? 'Muhtasari Umepakuwa' :
+             language === 'ar' ? 'تم تحميل الملخص' :
+             language === 'fr' ? 'Résumé Téléchargé' :
+             'Summary Downloaded',
+      description: language === 'sw' ? 'Muhtasari wa kifedha umehifadhiwa' :
+                   language === 'ar' ? 'تم حفظ الملخص المالي' :
+                   language === 'fr' ? 'Résumé financier sauvegardé' :
+                   'Financial summary has been saved',
     });
   };
 
