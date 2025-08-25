@@ -58,7 +58,11 @@ const Index = () => {
       businessMilestonesSummary: 'Business Milestones Summary',
       shareMilestones: 'Share Milestones',
       trackMilestones: 'Track Milestones',
-      trackFinances: 'Track Finances'
+      trackFinances: 'Track Finances',
+      businessTemplates: 'Business Templates',
+      businessTemplatesDesc: 'Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs',
+      customStrategy: 'Custom Strategy',
+      customStrategyDesc: 'Build a completely custom business strategy from scratch with all features included - perfect for unique business models'
     },
     sw: {
       title: 'Jenga Biz Africa',
@@ -76,7 +80,11 @@ const Index = () => {
       businessMilestonesSummary: 'Muhtasari wa Malengo ya Biashara',
       shareMilestones: 'Shiriki Malengo',
       trackMilestones: 'Fuatilia Malengo',
-      trackFinances: 'Fuatilia Fedha'
+      trackFinances: 'Fuatilia Fedha',
+      businessTemplates: 'Violezo vya Biashara',
+      businessTemplatesDesc: 'Chagua kutoka violezo zaidi ya 15 vilivyoundwa maalum kwa biashara maarufu za Kiafrika na mahitaji ya soko',
+      customStrategy: 'Mkakati wa Kibinafsi',
+      customStrategyDesc: 'Jenga mkakati wa biashara wa kibinafsi kutoka mwanzo ukijumuisha vipengele vyote - kamili kwa miundo ya kibiashara ya kipekee'
     },
     ar: {
       title: 'جينجا بيز أفريقيا',
@@ -94,7 +102,11 @@ const Index = () => {
       businessMilestonesSummary: 'ملخص معالم الأعمال',
       shareMilestones: 'مشاركة المعالم',
       trackMilestones: 'تتبع المعالم',
-      trackFinances: 'تتبع الماليات'
+      trackFinances: 'تتبع الماليات',
+      businessTemplates: 'قوالب الأعمال',
+      businessTemplatesDesc: 'اختر من أكثر من 15 قالبًا مُصممًا خصيصًا للأعمال الأفريقية الشائعة واحتياجات السوق',
+      customStrategy: 'استراتيجية مخصصة',
+      customStrategyDesc: 'ابنِ استراتيجية أعمال مخصصة تمامًا من البداية مع جميع الميزات المدرجة - مثالية للنماذج التجارية الفريدة'
     },
     fr: {
       title: 'Jenga Biz Africa',
@@ -112,7 +124,11 @@ const Index = () => {
       businessMilestonesSummary: 'Résumé des Jalons d\'Entreprise',
       shareMilestones: 'Partager les Jalons',
       trackMilestones: 'Suivre les Jalons',
-      trackFinances: 'Suivre les Finances'
+      trackFinances: 'Suivre les Finances',
+      businessTemplates: 'Modèles d\'Entreprise',
+      businessTemplatesDesc: 'Choisissez parmi plus de 15 modèles pré-construits spécialement conçus pour les entreprises africaines populaires et les besoins du marché',
+      customStrategy: 'Stratégie Personnalisée',
+      customStrategyDesc: 'Construisez une stratégie d\'entreprise entièrement personnalisée à partir de zéro avec toutes les fonctionnalités incluses - parfait pour les modèles d\'entreprise uniques'
     }
   };
 
@@ -586,8 +602,8 @@ Generated on: ${new Date().toLocaleDateString()}
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-3 text-gray-800">Business Templates</h3>
-            <p className="text-gray-600 text-sm leading-relaxed mb-4">Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs</p>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">{t.businessTemplates}</h3>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">{t.businessTemplatesDesc}</p>
             <button
               onClick={() => setCurrentView('templates')}
               className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
@@ -602,8 +618,8 @@ Generated on: ${new Date().toLocaleDateString()}
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-3 text-gray-800">Custom Strategy</h3>
-            <p className="text-gray-600 text-sm leading-relaxed mb-4">Build a completely custom business strategy from scratch with all features included - perfect for unique business models</p>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">{t.customStrategy}</h3>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">{t.customStrategyDesc}</p>
             <button
               onClick={() => scrollToSection('strategy-builder')}
               className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"

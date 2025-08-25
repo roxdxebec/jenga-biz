@@ -68,7 +68,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       complete: 'Complete',
       overdue: 'Overdue',
       tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
-      coachingTip: 'Break down big goals into smaller, actionable milestones. Each milestone should be specific and have a clear deadline.'
+      coachingTip: 'Break down big goals into smaller, actionable milestones. Each milestone should be specific and have a clear deadline.',
+      addToCalendar: 'Add to Calendar'
     },
     sw: {
       title: 'Malengo ya Biashara',
@@ -90,7 +91,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       complete: 'Imekamilika',
       overdue: 'Umechelewa',
       tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
-      coachingTip: 'Gawanya malengo makubwa kuwa malengo madogo yanayoweza kutekelezwa. Kila lengo linapaswa kuwa mahususi na kuwa na tarehe ya mwisho ya wazi.'
+      coachingTip: 'Gawanya malengo makubwa kuwa malengo madogo yanayoweza kutekelezwa. Kila lengo linapaswa kuwa mahususi na kuwa na tarehe ya mwisho ya wazi.',
+      addToCalendar: 'Ongeza kwenye Kalenda'
     },
     ar: {
       title: 'معالم الأعمال',
@@ -112,7 +114,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       complete: 'مكتمل',
       overdue: 'متأخر',
       tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
-      coachingTip: 'قسم الأهداف الكبيرة إلى معالم أصغر قابلة للتنفيذ. يجب أن يكون كل معلم محددًا وله موعد نهائي واضح.'
+      coachingTip: 'قسم الأهداف الكبيرة إلى معالم أصغر قابلة للتنفيذ. يجب أن يكون كل معلم محددًا وله موعد نهائي واضح.',
+      addToCalendar: 'إضافة للتقويم'
     },
     fr: {
       title: 'Jalons d\'Affaires',
@@ -134,7 +137,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       complete: 'Terminé',
       overdue: 'En Retard',
       tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
-      coachingTip: 'Divisez les grands objectifs en jalons plus petits et réalisables. Chaque jalon doit être spécifique et avoir une échéance claire.'
+      coachingTip: 'Divisez les grands objectifs en jalons plus petits et réalisables. Chaque jalon doit être spécifique et avoir une échéance claire.',
+      addToCalendar: 'Ajouter au Calendrier'
     }
   };
 
@@ -421,7 +425,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           className="w-full h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100 text-blue-700 hover:text-blue-800"
                         >
                           <CalendarPlus className="w-4 h-4 mr-1" />
-                          Add to Calendar
+                          {t.addToCalendar}
                         </Button>
                       </div>
                     </div>
@@ -575,7 +579,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           className="w-full h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100 text-blue-700 hover:text-blue-800"
                         >
                           <CalendarPlus className="w-4 h-4 mr-1" />
-                          Add to Calendar
+                          {t.addToCalendar}
                         </Button>
                       </div>
                     </div>
