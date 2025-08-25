@@ -7,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Target, Plus, Calendar as CalendarIcon, Trash2 } from 'lucide-react';
+import { Target, Plus, Calendar as CalendarIcon, Trash2, CalendarPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { addToCalendar } from '@/lib/calendar';
 import CoachingTip from '@/components/CoachingTip';
 
 interface Milestone {
@@ -330,7 +331,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {/* Target Date */}
                       <div>
                         <Popover>
@@ -388,6 +389,40 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                             ))}
                           </SelectContent>
                         </Select>
+                      </div>
+
+                      {/* Add to Calendar Button */}
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (milestone.targetDate && milestone.title.trim()) {
+                              const calendarEvent = {
+                                title: `📅 ${milestone.title}`,
+                                description: `Business milestone: ${milestone.title}\n\nStatus: ${milestone.status}\nCreated with Jenga Biz Africa`,
+                                startDate: milestone.targetDate,
+                                endDate: milestone.targetDate,
+                                location: 'Business Milestone'
+                              };
+                              addToCalendar(calendarEvent);
+                              toast({
+                                title: "Calendar Event",
+                                description: "Milestone added to your calendar!",
+                              });
+                            } else {
+                              toast({
+                                title: "Missing Information",
+                                description: "Please add a title and target date first.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100 text-blue-700 hover:text-blue-800"
+                        >
+                          <CalendarPlus className="w-4 h-4 mr-1" />
+                          Add to Calendar
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -450,7 +485,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {/* Target Date */}
                       <div>
                         <Popover>
@@ -508,6 +543,40 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                             ))}
                           </SelectContent>
                         </Select>
+                      </div>
+
+                      {/* Add to Calendar Button */}
+                      <div>
+                        <Button
+                          onClick={() => {
+                            if (milestone.targetDate && milestone.title.trim()) {
+                              const calendarEvent = {
+                                title: `📅 ${milestone.title}`,
+                                description: `Business milestone: ${milestone.title}\n\nStatus: ${milestone.status}\nCreated with Jenga Biz Africa`,
+                                startDate: milestone.targetDate,
+                                endDate: milestone.targetDate,
+                                location: 'Business Milestone'
+                              };
+                              addToCalendar(calendarEvent);
+                              toast({
+                                title: "Calendar Event",
+                                description: "Milestone added to your calendar!",
+                              });
+                            } else {
+                              toast({
+                                title: "Missing Information",
+                                description: "Please add a title and target date first.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full h-10 text-sm bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200 hover:from-blue-100 hover:to-purple-100 text-blue-700 hover:text-blue-800"
+                        >
+                          <CalendarPlus className="w-4 h-4 mr-1" />
+                          Add to Calendar
+                        </Button>
                       </div>
                     </div>
                   </div>
