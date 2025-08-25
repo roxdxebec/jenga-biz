@@ -53,6 +53,9 @@ const MonthlyRevenueSection = ({
   const [revenueEntries, setRevenueEntries] = useState<RevenueEntry[]>([]);
   const [expenseEntries, setExpenseEntries] = useState<ExpenseEntry[]>([]);
   const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [timePeriod, setTimePeriod] = useState('daily');
+  const [customStartDate, setCustomStartDate] = useState<Date | undefined>(new Date());
+  const [customEndDate, setCustomEndDate] = useState<Date | undefined>(new Date());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -106,7 +109,16 @@ const MonthlyRevenueSection = ({
       netProfit: 'Net Profit',
       noEntries: 'No entries yet',
       deleteEntry: 'Delete',
-      recentEntries: 'Recent Entries'
+      recentEntries: 'Recent Entries',
+      timePeriod: 'Time Period',
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly',
+      quarterly: 'Quarterly',
+      annual: 'Annual',
+      custom: 'Custom Range',
+      startDate: 'Start Date',
+      endDate: 'End Date'
     },
     sw: {
       title: 'Kufuatilia Fedha',
@@ -140,7 +152,16 @@ const MonthlyRevenueSection = ({
       netProfit: 'Faida Safi',
       noEntries: 'Hakuna ingizo bado',
       deleteEntry: 'Futa',
-      recentEntries: 'Maingizo ya Hivi Karibuni'
+      recentEntries: 'Maingizo ya Hivi Karibuni',
+      timePeriod: 'Kipindi cha Wakati',
+      daily: 'Kila Siku',
+      weekly: 'Kila Wiki',
+      monthly: 'Kila Mwezi',
+      quarterly: 'Kila Robo',
+      annual: 'Kila Mwaka',
+      custom: 'Mipaka Maalum',
+      startDate: 'Tarehe ya Mwanzo',
+      endDate: 'Tarehe ya Mwisho'
     },
     ar: {
       title: 'متتبع الماليات',
@@ -174,7 +195,16 @@ const MonthlyRevenueSection = ({
       netProfit: 'صافي الربح',
       noEntries: 'لا توجد إدخالات بعد',
       deleteEntry: 'حذف',
-      recentEntries: 'الإدخالات الحديثة'
+      recentEntries: 'الإدخالات الحديثة',
+      timePeriod: 'الفترة الزمنية',
+      daily: 'يومي',
+      weekly: 'أسبوعي',
+      monthly: 'شهري',
+      quarterly: 'ربع سنوي',
+      annual: 'سنوي',
+      custom: 'نطاق مخصص',
+      startDate: 'تاريخ البداية',
+      endDate: 'تاريخ النهاية'
     },
     fr: {
       title: 'Suivi Financier',
@@ -208,7 +238,16 @@ const MonthlyRevenueSection = ({
       netProfit: 'Bénéfice Net',
       noEntries: 'Aucune entrée encore',
       deleteEntry: 'Supprimer',
-      recentEntries: 'Entrées Récentes'
+      recentEntries: 'Entrées Récentes',
+      timePeriod: 'Période',
+      daily: 'Quotidien',
+      weekly: 'Hebdomadaire',
+      monthly: 'Mensuel',
+      quarterly: 'Trimestriel',
+      annual: 'Annuel',
+      custom: 'Plage Personnalisée',
+      startDate: 'Date de Début',
+      endDate: 'Date de Fin'
     }
   };
 
@@ -375,8 +414,46 @@ const MonthlyRevenueSection = ({
     fileInputRef.current?.click();
   };
 
-  const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
-  const totalExpenses = expenseEntries.reduce((sum, entry) => sum + entry.amount, 0);
+  // Filter entries based on time period
+  const getFilteredEntries = (entries: (RevenueEntry | ExpenseEntry)[]) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
+    switch (timePeriod) {
+      case 'daily':
+        return entries.filter(entry => {
+          const entryDate = new Date(entry.date.getFullYear(), entry.date.getMonth(), entry.date.getDate());
+          return entryDate.getTime() === today.getTime();
+        });
+      case 'weekly':
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay());
+        return entries.filter(entry => entry.date >= weekStart);
+      case 'monthly':
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        return entries.filter(entry => entry.date >= monthStart);
+      case 'quarterly':
+        const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1);
+        return entries.filter(entry => entry.date >= quarterStart);
+      case 'annual':
+        const yearStart = new Date(today.getFullYear(), 0, 1);
+        return entries.filter(entry => entry.date >= yearStart);
+      case 'custom':
+        if (!customStartDate || !customEndDate) return entries;
+        return entries.filter(entry => {
+          const entryDate = new Date(entry.date);
+          return entryDate >= customStartDate && entryDate <= customEndDate;
+        });
+      default:
+        return entries;
+    }
+  };
+
+  const filteredRevenueEntries = getFilteredEntries(revenueEntries);
+  const filteredExpenseEntries = getFilteredEntries(expenseEntries);
+  
+  const totalRevenue = filteredRevenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
+  const totalExpenses = filteredExpenseEntries.reduce((sum, entry) => sum + entry.amount, 0);
   const netProfit = totalRevenue - totalExpenses;
 
   return (
@@ -413,6 +490,71 @@ const MonthlyRevenueSection = ({
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
+          {/* Time Period Selector */}
+          <div className="flex justify-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Label className="text-sm font-medium">{t.timePeriod}</Label>
+              <Select value={timePeriod} onValueChange={setTimePeriod}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">{t.daily}</SelectItem>
+                  <SelectItem value="weekly">{t.weekly}</SelectItem>
+                  <SelectItem value="monthly">{t.monthly}</SelectItem>
+                  <SelectItem value="quarterly">{t.quarterly}</SelectItem>
+                  <SelectItem value="annual">{t.annual}</SelectItem>
+                  <SelectItem value="custom">{t.custom}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Custom Date Range */}
+          {timePeriod === 'custom' && (
+            <div className="flex justify-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Label className="text-sm">{t.startDate}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-40">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {customStartDate ? format(customStartDate, 'MMM dd') : t.startDate}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={customStartDate}
+                      onSelect={setCustomStartDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Label className="text-sm">{t.endDate}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-40">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {customEndDate ? format(customEndDate, 'MMM dd') : t.endDate}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={customEndDate}
+                      onSelect={setCustomEndDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+          )}
+
+          {/* Entry Date Selector (for adding new entries) */}
           <div className="flex justify-center">
             <Popover>
               <PopoverTrigger asChild>
