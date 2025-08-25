@@ -380,7 +380,7 @@ Generated on: ${new Date().toLocaleDateString()}
 
       {/* Key Features Section with individual buttons */}
       <div className="container mx-auto px-4 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-orange-100 hover:shadow-xl transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-lg mb-4 flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,6 +394,22 @@ Generated on: ${new Date().toLocaleDateString()}
               className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
               {t.useTemplates}
+            </button>
+          </div>
+          
+          <div className="bg-gradient-to-br from-indigo-50 to-cyan-50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow">
+            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-lg mb-4 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">Custom Strategy</h3>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">Build a completely custom business strategy from scratch with all features included - perfect for unique business models</p>
+            <button
+              onClick={handleStartFromScratch}
+              className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
+            >
+              {t.startFromScratch}
             </button>
           </div>
           
@@ -432,28 +448,6 @@ Generated on: ${new Date().toLocaleDateString()}
               className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
               Track Finances
-            </button>
-          </div>
-        </div>
-        
-        {/* Custom Strategy Builder - Moved up and with vibrant colors */}
-        <div className="text-center max-w-3xl mx-auto mt-12">
-          <div className="bg-gradient-to-br from-indigo-50 to-cyan-50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl mb-6 flex items-center justify-center mx-auto">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Custom Strategy Builder</h3>
-            <p className="text-gray-600 mb-6 text-lg">Build a completely custom business strategy from scratch with all features included - perfect for unique business models!</p>
-            <button
-              onClick={handleStartFromScratch}
-              className="px-10 py-4 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 text-lg"
-            >
-              <svg className="w-6 h-6 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              {t.startFromScratch}
             </button>
           </div>
         </div>
