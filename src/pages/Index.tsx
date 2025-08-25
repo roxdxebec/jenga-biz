@@ -6,8 +6,9 @@ import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import LanguageSelector from '@/components/LanguageSelector';
 import ShareModal from '@/components/ShareModal';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar } from 'lucide-react';
 import { TemplateData } from '@/data/templateData';
 
@@ -19,6 +20,7 @@ const Index = () => {
   const [strategyData, setStrategyData] = useState(null);
   const [showStrategySummary, setShowStrategySummary] = useState(false);
   const [showMilestonesSummary, setShowMilestonesSummary] = useState(false);
+  const { toast } = useToast();
 
   const currencyMap = {
     'KE': { currency: 'KES', symbol: 'KSh' },
@@ -135,15 +137,26 @@ const Index = () => {
   const handleSave = () => {
     if (strategyData) {
       localStorage.setItem('jenga-biz-strategy', JSON.stringify(strategyData));
-      alert('Strategy saved successfully!');
+      toast({
+        title: "Success!",
+        description: "Strategy saved successfully!",
+      });
     } else {
-      alert('No strategy data to save');
+      toast({
+        title: "No Data",
+        description: "No strategy data to save",
+        variant: "destructive",
+      });
     }
   };
 
   const generateAISummary = () => {
     if (!strategyData || !strategyData.businessName) {
-      alert('Please complete your strategy first');
+      toast({
+        title: "Incomplete Strategy",
+        description: "Please complete your strategy first",
+        variant: "destructive",
+      });
       return;
     }
     setShowStrategySummary(true);
@@ -151,7 +164,11 @@ const Index = () => {
 
   const downloadSummary = () => {
     if (!strategyData || !strategyData.businessName) {
-      alert('Please complete your strategy first');
+      toast({
+        title: "Incomplete Strategy", 
+        description: "Please complete your strategy first",
+        variant: "destructive",
+      });
       return;
     }
     
@@ -422,6 +439,9 @@ Generated on: ${new Date().toLocaleDateString()}
                   <Bot className="w-5 h-5 mr-2 text-blue-600" />
                   Business Strategy Summary
                 </DialogTitle>
+                <DialogDescription>
+                  AI-generated summary of your business strategy
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-3">
@@ -464,6 +484,9 @@ Generated on: ${new Date().toLocaleDateString()}
                   <Target className="w-5 h-5 mr-2 text-purple-600" />
                   Business Milestones Summary
                 </DialogTitle>
+                <DialogDescription>
+                  Overview of your business milestone progress and insights
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-3">
