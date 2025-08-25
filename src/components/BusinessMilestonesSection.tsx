@@ -289,58 +289,56 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
             {milestones.slice(0, 2).map((milestone, index) => (
               <div
                 key={milestone.id}
-                className="relative p-4 border rounded-lg bg-white border-gray-200"
+                className="relative p-5 border rounded-xl bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start space-x-4">
                   {/* Timeline dot */}
-                  <div className="flex flex-col items-center mt-3">
+                  <div className="flex flex-col items-center pt-2">
                     <div className={cn(
-                      "w-3 h-3 rounded-full border-2",
+                      "w-4 h-4 rounded-full border-2 shadow-sm",
                       milestone.status === 'complete' ? "bg-green-500 border-green-500" :
                       milestone.status === 'in-progress' ? "bg-blue-500 border-blue-500" :
                       "bg-gray-300 border-gray-300"
                     )} />
                     {index < Math.min(2, milestones.length) - 1 && (
-                      <div className="w-px h-16 bg-gray-200 mt-2" />
+                      <div className="w-px h-20 bg-gray-200 mt-3" />
                     )}
                   </div>
 
                   {/* Milestone content */}
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-1">
-                        <Input
-                          value={milestone.title}
-                          onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
-                          placeholder={t.enterTitle}
-                          className="w-full"
-                        />
-                      </div>
+                  <div className="flex-1 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        value={milestone.title}
+                        onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
+                        placeholder={t.enterTitle}
+                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                      />
                       <Button
                         onClick={() => deleteMilestone(milestone.id)}
                         size="sm"
-                        variant="ghost"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 mt-0.5"
+                        variant="outline"
+                        className="text-red-400 hover:text-red-600 hover:bg-red-50 border-red-200 hover:border-red-300 p-2"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
 
-                    <div className="flex items-center space-x-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {/* Target Date */}
-                      <div className="flex-1">
+                      <div>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
                               className={cn(
-                                "w-full justify-start text-left font-normal",
+                                "w-full justify-start text-left font-normal h-10 border-gray-200 hover:border-gray-300",
                                 !milestone.targetDate && "text-muted-foreground"
                               )}
                             >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
                               {milestone.targetDate ? (
-                                format(milestone.targetDate, "PPP")
+                                format(milestone.targetDate, "MMM dd, yyyy")
                               ) : (
                                 <span>{t.pickDate}</span>
                               )}
@@ -359,20 +357,26 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       </div>
 
                       {/* Status */}
-                      <div className="flex-1">
+                      <div>
                         <Select
                           value={milestone.status}
                           onValueChange={(value) => updateMilestone(milestone.id, 'status', value)}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="h-10 border-gray-200 hover:border-gray-300">
                             <SelectValue placeholder={t.selectStatus} />
                           </SelectTrigger>
                           <SelectContent>
                             {statusOptions.map(option => (
                               <SelectItem key={option.value} value={option.value}>
-                                <Badge className={option.color} variant="secondary">
-                                  {option.label}
-                                </Badge>
+                                <div className="flex items-center space-x-2">
+                                  <div className={cn(
+                                    "w-2 h-2 rounded-full",
+                                    option.value === 'complete' ? "bg-green-500" :
+                                    option.value === 'in-progress' ? "bg-blue-500" :
+                                    "bg-gray-400"
+                                  )} />
+                                  <span>{option.label}</span>
+                                </div>
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -403,58 +407,56 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
             {milestones.slice(2).map((milestone, index) => (
               <div
                 key={milestone.id}
-                className="relative p-4 border rounded-lg bg-white border-gray-200"
+                className="relative p-5 border rounded-xl bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start space-x-4">
                   {/* Timeline dot */}
-                  <div className="flex flex-col items-center mt-3">
+                  <div className="flex flex-col items-center pt-2">
                     <div className={cn(
-                      "w-3 h-3 rounded-full border-2",
+                      "w-4 h-4 rounded-full border-2 shadow-sm",
                       milestone.status === 'complete' ? "bg-green-500 border-green-500" :
                       milestone.status === 'in-progress' ? "bg-blue-500 border-blue-500" :
                       "bg-gray-300 border-gray-300"
                     )} />
                     {(index + 2) < milestones.length - 1 && (
-                      <div className="w-px h-16 bg-gray-200 mt-2" />
+                      <div className="w-px h-20 bg-gray-200 mt-3" />
                     )}
                   </div>
 
                   {/* Milestone content */}
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-1">
-                        <Input
-                          value={milestone.title}
-                          onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
-                          placeholder={t.enterTitle}
-                          className="w-full"
-                        />
-                      </div>
+                  <div className="flex-1 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Input
+                        value={milestone.title}
+                        onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
+                        placeholder={t.enterTitle}
+                        className="flex-1 border-gray-200 focus:border-orange-300 focus:ring-orange-200"
+                      />
                       <Button
                         onClick={() => deleteMilestone(milestone.id)}
                         size="sm"
-                        variant="ghost"
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0 mt-0.5"
+                        variant="outline"
+                        className="text-red-400 hover:text-red-600 hover:bg-red-50 border-red-200 hover:border-red-300 p-2"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
 
-                    <div className="flex items-center space-x-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {/* Target Date */}
-                      <div className="flex-1">
+                      <div>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
                               className={cn(
-                                "w-full justify-start text-left font-normal",
+                                "w-full justify-start text-left font-normal h-10 border-gray-200 hover:border-gray-300",
                                 !milestone.targetDate && "text-muted-foreground"
                               )}
                             >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
                               {milestone.targetDate ? (
-                                format(milestone.targetDate, "PPP")
+                                format(milestone.targetDate, "MMM dd, yyyy")
                               ) : (
                                 <span>{t.pickDate}</span>
                               )}
@@ -473,20 +475,26 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       </div>
 
                       {/* Status */}
-                      <div className="flex-1">
+                      <div>
                         <Select
                           value={milestone.status}
                           onValueChange={(value) => updateMilestone(milestone.id, 'status', value)}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="h-10 border-gray-200 hover:border-gray-300">
                             <SelectValue placeholder={t.selectStatus} />
                           </SelectTrigger>
                           <SelectContent>
                             {statusOptions.map(option => (
                               <SelectItem key={option.value} value={option.value}>
-                                <Badge className={option.color} variant="secondary">
-                                  {option.label}
-                                </Badge>
+                                <div className="flex items-center space-x-2">
+                                  <div className={cn(
+                                    "w-2 h-2 rounded-full",
+                                    option.value === 'complete' ? "bg-green-500" :
+                                    option.value === 'in-progress' ? "bg-blue-500" :
+                                    "bg-gray-400"
+                                  )} />
+                                  <span>{option.label}</span>
+                                </div>
                               </SelectItem>
                             ))}
                           </SelectContent>
