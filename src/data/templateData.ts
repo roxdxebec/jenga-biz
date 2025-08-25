@@ -140,6 +140,118 @@ const templateContents: { [key: string]: TemplateContent } = {
       ar: 'إضافة 5 دراجات نارية أخرى، إنشاء شراكات خدمات التوصيل، إنشاء برنامج تدريب السائقين، توسيع منطقة التغطية',
       fr: 'Ajouter 5 motos supplémentaires, établir des partenariats de services de livraison, créer un programme de formation des conducteurs, étendre la zone de couverture'
     }
+  },
+  'daycare': {
+    vision: {
+      en: 'To provide a safe, nurturing environment where children can learn, grow, and develop to their fullest potential',
+      sw: 'Kutoa mazingira salama, ya ulea ambayo watoto wanaweza kujifunza, kukua, na kuendeleza kwa uwezo wao kamili',
+      ar: 'توفير بيئة آمنة ومغذية حيث يمكن للأطفال التعلم والنمو والتطوير إلى أقصى إمكاناتهم',
+      fr: 'Fournir un environnement sûr et nourrissant où les enfants peuvent apprendre, grandir et se développer à leur plein potentiel'
+    },
+    mission: {
+      en: 'Supporting working families by providing quality childcare with educational activities, loving care, and developmental support',
+      sw: 'Kusaidia familia zinazofanya kazi kwa kutoa huduma za malezi ya watoto za ubora pamoja na shughuli za elimu, malezi ya upendo, na msaada wa maendeleo',
+      ar: 'دعم العائلات العاملة من خلال توفير رعاية أطفال عالية الجودة مع الأنشطة التعليمية والرعاية المحبة والدعم التنموي',
+      fr: 'Soutenir les familles qui travaillent en fournissant des services de garde d\'enfants de qualité avec des activités éducatives, des soins aimants et un soutien au développement'
+    },
+    targetMarket: {
+      en: 'Working parents with children aged 6 months to 5 years, single parents, shift workers, families needing flexible care',
+      sw: 'Wazazi wanaofanya kazi wenye watoto wa umri wa miezi 6 hadi miaka 5, wazazi wa kipeke, wafanyakazi wa mzunguko, familia zinazohitaji huduma za kubadilika',
+      ar: 'الآباء العاملون الذين لديهم أطفال تتراوح أعمارهم بين 6 أشهر إلى 5 سنوات، والآباء المنفردون، وعمال النوبات، والعائلات التي تحتاج إلى رعاية مرنة',
+      fr: 'Parents qui travaillent avec des enfants âgés de 6 mois à 5 ans, parents célibataires, travailleurs postés, familles ayant besoin de soins flexibles'
+    },
+    revenueModel: {
+      en: 'Daily/weekly childcare fees, registration fees, after-school care, summer programs, meals, educational activities',
+      sw: 'Ada za malezi ya watoto za kila siku/wiki, ada za usajili, malezi baada ya shule, mipango ya majira ya joto, chakula, shughuli za elimu',
+      ar: 'رسوم رعاية الأطفال اليومية/الأسبوعية، رسوم التسجيل، الرعاية بعد المدرسة، البرامج الصيفية، الوجبات، الأنشطة التعليمية',
+      fr: 'Frais de garde quotidiens/hebdomadaires, frais d\'inscription, garde après l\'école, programmes d\'été, repas, activités éducatives'
+    },
+    valueProposition: {
+      en: 'Safe, educational childcare with flexible scheduling, caring qualified staff, developmental activities, and nutritious meals',
+      sw: 'Malezi salama ya kielimu ya watoto yenye ratiba za kubadilika, wafanyakazi wenye sifa wa kujali, shughuli za maendeleo, na chakula chenye lishe',
+      ar: 'رعاية أطفال آمنة وتعليمية مع جدولة مرنة وموظفين مؤهلين ومهتمين وأنشطة تنموية ووجبات مغذية',
+      fr: 'Garde d\'enfants sûre et éducative avec horaires flexibles, personnel qualifié et attentionné, activités de développement et repas nutritifs'
+    },
+    keyPartners: {
+      en: 'Educational toy suppliers, child development specialists, local schools, health clinics, food suppliers',
+      sw: 'Wasambazaji wa vinyago vya kielimu, wataalamu wa maendeleo ya watoto, shule za mitaani, kliniki za afya, wasambazaji wa chakula',
+      ar: 'موردو الألعاب التعليمية، أخصائيو تنمية الطفل، المدارس المحلية، العيادات الصحية، موردو الطعام',
+      fr: 'Fournisseurs de jouets éducatifs, spécialistes du développement de l\'enfant, écoles locales, cliniques de santé, fournisseurs alimentaires'
+    },
+    marketingApproach: {
+      en: 'Parent referrals, community bulletin boards, social media, open houses, partnerships with employers, pediatrician referrals',
+      sw: 'Mapendekezo ya wazazi, mabao ya jamii, mitandao ya kijamii, nyumba za uwazi, ushirikiano na waajiri, mapendekezo ya madaktari wa watoto',
+      ar: 'إحالات الآباء، لوحات الإعلانات المجتمعية، وسائل التواصل الاجتماعي، البيوت المفتوحة، الشراكات مع أصحاب العمل، إحالات أطباء الأطفال',
+      fr: 'Références de parents, tableaux d\'affichage communautaires, médias sociaux, portes ouvertes, partenariats avec employeurs, références de pédiatres'
+    },
+    operationalNeeds: {
+      en: 'Child-safe facility, toys and educational materials, security system, licenses, insurance, kitchen facilities',
+      sw: 'Kituo salama cha watoto, vinyago na vifaa vya kielimu, mfumo wa usalama, leseni, bima, vifaa vya jikoni',
+      ar: 'مرفق آمن للأطفال، ألعاب ومواد تعليمية، نظام أمني، تراخيص، تأمين، مرافق مطبخ',
+      fr: 'Installation sécurisée pour enfants, jouets et matériels éducatifs, système de sécurité, licences, assurance, installations de cuisine'
+    },
+    growthGoals: {
+      en: 'Add after-school program, increase capacity to 30 children, hire 2 teachers, establish pre-school curriculum',
+      sw: 'Kuongeza mpango wa baada ya shule, kuongeza uwezo hadi watoto 30, kuajiri walimu 2, kuanzisha mtaala wa kabla ya shule',
+      ar: 'إضافة برنامج ما بعد المدرسة، زيادة السعة إلى 30 طفلاً، توظيف 2 من المعلمين، وضع منهج ما قبل المدرسة',
+      fr: 'Ajouter un programme après l\'école, augmenter la capacité à 30 enfants, embaucher 2 enseignants, établir un programme préscolaire'
+    }
+  },
+  'cyber-cafe': {
+    vision: {
+      en: 'To be the premier digital services hub providing reliable internet access and digital literacy to bridge the digital divide',
+      sw: 'Kuwa kituo kikuu cha huduma za kidijiti kinachotoa muunganisho wa mtandao wa kutegemewa na ujuzi wa kidijiti ili kuziba pengo la kidijiti',
+      ar: 'أن نكون المركز الرئيسي للخدمات الرقمية الذي يوفر وصولاً موثوقاً للإنترنت ومحو الأمية الرقمية لسد الفجوة الرقمية',
+      fr: 'Être le centre principal de services numériques fournissant un accès Internet fiable et une alphabétisation numérique pour combler la fracture numérique'
+    },
+    mission: {
+      en: 'Providing reliable internet access and comprehensive digital services while empowering our community through technology',
+      sw: 'Kutoa muunganisho wa mtandao wa kutegemewa na huduma kamili za kidijiti huku tukiwawezesha jamii yetu kupitia teknolojia',
+      ar: 'توفير وصول موثوق للإنترنت وخدمات رقمية شاملة مع تمكين مجتمعنا من خلال التكنولوجيا',
+      fr: 'Fournir un accès Internet fiable et des services numériques complets tout en autonomisant notre communauté grâce à la technologie'
+    },
+    targetMarket: {
+      en: 'Students, small business owners, job seekers, remote workers, and community members needing internet access and digital services',
+      sw: 'Wanafunzi, wamiliki wa biashara ndogo, watafutaji kazi, wafanyakazi wa mbali, na wanajamii wanaohitaji muunganisho wa mtandao na huduma za kidijiti',
+      ar: 'الطلاب، أصحاب الأعمال الصغيرة، الباحثون عن العمل، العاملون عن بُعد، وأعضاء المجتمع الذين يحتاجون إلى الوصول إلى الإنترنت والخدمات الرقمية',
+      fr: 'Étudiants, propriétaires de petites entreprises, demandeurs d\'emploi, travailleurs à distance et membres de la communauté ayant besoin d\'accès Internet et de services numériques'
+    },
+    revenueModel: {
+      en: 'Hourly internet usage fees, printing and scanning services, document typing, computer training courses, phone charging, mobile money',
+      sw: 'Ada za matumizi ya mtandao kwa saa, huduma za kuchapisha na kuchanganua, kuandika hati, kozi za mafunzo ya kompyuta, kuchaji simu, pesa za simu',
+      ar: 'رسوم استخدام الإنترنت بالساعة، خدمات الطباعة والمسح الضوئي، كتابة المستندات، دورات تدريبية للكمبيوتر، شحن الهاتف، الأموال المحمولة',
+      fr: 'Frais d\'utilisation Internet horaires, services d\'impression et de numérisation, saisie de documents, cours de formation informatique, charge de téléphone, argent mobile'
+    },
+    valueProposition: {
+      en: 'Affordable, reliable internet access with comprehensive business services, technical support, and digital literacy training',
+      sw: 'Muunganisho wa mtandao wa bei nafuu, wa kutegemewa na huduma kamili za biashara, msaada wa kifundi, na mafunzo ya ujuzi wa kidijiti',
+      ar: 'وصول إنترنت موثوق ومعقول التكلفة مع خدمات أعمال شاملة ودعم فني وتدريب على محو الأمية الرقمية',
+      fr: 'Accès Internet abordable et fiable avec services commerciaux complets, support technique et formation en alphabétisation numérique'
+    },
+    keyPartners: {
+      en: 'Internet service providers, computer suppliers, local schools, government agencies, training institutes, mobile money agents',
+      sw: 'Watoa huduma za mtandao, wasambazaji wa kompyuta, shule za mitaani, mashirika ya serikali, taasisi za mafunzo, mawakala wa pesa za simu',
+      ar: 'مقدمو خدمات الإنترنت، موردو الكمبيوتر، المدارس المحلية، الوكالات الحكومية، معاهد التدريب، وكلاء الأموال المحمولة',
+      fr: 'Fournisseurs de services Internet, fournisseurs d\'ordinateurs, écoles locales, agences gouvernementales, instituts de formation, agents d\'argent mobile'
+    },
+    marketingApproach: {
+      en: 'Community outreach programs, student discounts, business partnerships, word-of-mouth referrals, local advertising',
+      sw: 'Mipango ya kufikia jamii, punguzo za wanafunzi, ushirikiano wa kibiashara, mapendekezo ya mdomo kwa mdomo, matangazo ya mitaani',
+      ar: 'برامج التوعية المجتمعية، خصومات الطلاب، الشراكات التجارية، الإحالات الشفهية، الإعلان المحلي',
+      fr: 'Programmes de sensibilisation communautaire, remises étudiants, partenariats commerciaux, références de bouche-à-oreille, publicité locale'
+    },
+    operationalNeeds: {
+      en: '15-20 computers, high-speed internet connection, printer, scanner, comfortable seating, security system, backup power',
+      sw: 'Kompyuta 15-20, muunganisho wa mtandao wa kasi ya juu, kichapishi, kichanganuzi, viti vizuri, mfumo wa usalama, umeme wa hifadhi',
+      ar: '15-20 كمبيوتر، اتصال إنترنت عالي السرعة، طابعة، ماسح ضوئي، مقاعد مريحة، نظام أمني، طاقة احتياطية',
+      fr: '15-20 ordinateurs, connexion Internet haut débit, imprimante, scanner, sièges confortables, système de sécurité, alimentation de secours'
+    },
+    growthGoals: {
+      en: 'Add computer training classes, expand to 24/7 operations, introduce mobile money services, establish satellite locations',
+      sw: 'Kuongeza madarasa ya mafunzo ya kompyuta, kupanua hadi utendaji wa saa 24/7, kuanzisha huduma za pesa za simu, kuanzisha mahali pa anga',
+      ar: 'إضافة فصول تدريب الكمبيوتر، التوسع إلى عمليات 24/7، تقديم خدمات الأموال المحمولة، إنشاء مواقع فرعية',
+      fr: 'Ajouter des cours de formation informatique, étendre aux opérations 24/7, introduire des services d\'argent mobile, établir des emplacements satellites'
+    }
   }
 };
 
@@ -318,20 +430,16 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       content: getTranslatedContent('boda-boda', language)
     },
     {
-      id: 'freelance-writing',
-      name: language === 'sw' ? 'Uandishi wa Kujitegemea' : language === 'ar' ? 'الكتابة المستقلة' : language === 'fr' ? 'Rédaction Freelance' : 'Freelance Writing & Content Creation',
-      description: language === 'sw' ? 'Uandishi na utengenezaji maudhui' : language === 'ar' ? 'الكتابة وإنشاء المحتوى' : language === 'fr' ? 'Rédaction et création de contenu' : 'Writing and content creation services',
-      content: {
-        vision: 'To become the go-to content creator for businesses needing compelling, high-quality written materials that drive results',
-        mission: 'Helping businesses communicate effectively through high-quality written content that engages audiences and converts readers',
-        targetMarket: 'Small businesses, startups, marketing agencies, online publications, e-commerce companies, personal brands',
-        revenueModel: 'Per-project fees, monthly retainer agreements, hourly rates, blog management packages, content strategy consulting',
-        valueProposition: 'High-quality, engaging content delivered on time with quick revisions, SEO optimization, and industry expertise',
-        keyPartners: 'Marketing agencies, web developers, graphic designers, SEO specialists, business consultants, online platforms',
-        marketingApproach: 'Professional portfolio website, LinkedIn networking, content marketing, client referrals, guest posting',
-        operationalNeeds: 'Computer, reliable internet, writing software, home office setup, project management tools, research resources',
-        growthGoals: 'Establish 8 regular clients, expand into video script writing, hire virtual assistant, create online course'
-      }
+      id: 'cyber-cafe',
+      name: language === 'sw' ? 'Cyber Café' : language === 'ar' ? 'مقهى إنترنت' : language === 'fr' ? 'Cybercafé' : 'Cyber Café',
+      description: language === 'sw' ? 'Huduma za intaneti na kielektroniki' : language === 'ar' ? 'خدمات الإنترنت والإلكترونيات' : language === 'fr' ? 'Services internet et électroniques' : 'Internet and computer services',
+      content: getTranslatedContent('cyber-cafe', language)
+    },
+    {
+      id: 'daycare',
+      name: language === 'sw' ? 'Huduma za Malezi ya Watoto' : language === 'ar' ? 'خدمات رعاية الأطفال' : language === 'fr' ? 'Services de Garde d\'Enfants' : 'Daycare Services',
+      description: language === 'sw' ? 'Malezi na uangalizi wa watoto' : language === 'ar' ? 'رعاية ومراقبة الأطفال' : language === 'fr' ? 'Garde et surveillance d\'enfants' : 'Child care and supervision',
+      content: getTranslatedContent('daycare', language)
     },
     {
       id: 'bakery',
