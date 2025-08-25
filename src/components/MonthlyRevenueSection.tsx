@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Minus, DollarSign, Trash2 } from 'lucide-react';
+import { CalendarIcon, Plus, Minus, DollarSign, Trash2, Camera, Upload } from 'lucide-react';
 import { format } from 'date-fns';
+import Tesseract from 'tesseract.js';
 
 interface RevenueEntry {
   id: number;
@@ -49,6 +50,9 @@ const MonthlyRevenueSection = ({
   const [expenseType, setExpenseType] = useState('operational');
   const [revenueEntries, setRevenueEntries] = useState<RevenueEntry[]>([]);
   const [expenseEntries, setExpenseEntries] = useState<ExpenseEntry[]>([]);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const currencyOptions = [
     { code: 'KE', currency: 'KES', symbol: 'KSh', name: 'Kenya Shilling' },
@@ -77,8 +81,9 @@ const MonthlyRevenueSection = ({
       expenses: 'Expenses',
       amount: 'Amount',
       type: 'Type',
-      addRevenue: 'Add Revenue',
-      addExpense: 'Add Expense',
+      addRevenue: 'Record New Payment',
+      addExpense: 'Record New Expense',
+      scanReceipt: 'Scan Receipt',
       revenueTypes: {
         cash: 'Cash',
         mobileMoney: 'Mobile Money',
@@ -107,8 +112,9 @@ const MonthlyRevenueSection = ({
       expenses: 'Matumizi',
       amount: 'Kiasi',
       type: 'Aina',
-      addRevenue: 'Ongeza Mapato',
-      addExpense: 'Ongeza Matumizi',
+      addRevenue: 'Rekodi Malipo Mapya',
+      addExpense: 'Rekodi Matumizi Mapya',
+      scanReceipt: 'Changanua Risiti',
       revenueTypes: {
         cash: 'Pesa Taslimu',
         mobileMoney: 'Pesa za Simu',
@@ -137,8 +143,9 @@ const MonthlyRevenueSection = ({
       expenses: 'المصروفات',
       amount: 'المبلغ',
       type: 'النوع',
-      addRevenue: 'إضافة إيراد',
-      addExpense: 'إضافة مصروف',
+      addRevenue: 'تسجيل دفعة جديدة',
+      addExpense: 'تسجيل مصروف جديد',
+      scanReceipt: 'مسح الإيصال',
       revenueTypes: {
         cash: 'نقداً',
         mobileMoney: 'الأموال المحمولة',
@@ -167,8 +174,9 @@ const MonthlyRevenueSection = ({
       expenses: 'Dépenses',
       amount: 'Montant',
       type: 'Type',
-      addRevenue: 'Ajouter Revenu',
-      addExpense: 'Ajouter Dépense',
+      addRevenue: 'Enregistrer Nouveau Paiement',
+      addExpense: 'Enregistrer Nouvelle Dépense',
+      scanReceipt: 'Scanner Reçu',
       revenueTypes: {
         cash: 'Espèces',
         mobileMoney: 'Argent Mobile',
@@ -249,6 +257,77 @@ const MonthlyRevenueSection = ({
 
   const deleteExpenseEntry = (id: number) => {
     setExpenseEntries(prev => prev.filter(entry => entry.id !== id));
+  };
+
+  // Extract amount from OCR text
+  const extractAmountFromText = (text: string) => {
+    // Look for currency symbols and numbers
+    const patterns = [
+      /(?:KSh|TSh|USh|₦|₵|R|E£|DH|\$|£|€)\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/gi,
+      /(\d+(?:,\d{3})*(?:\.\d{2})?)\s*(?:KSh|TSh|USh|₦|₵|R|E£|DH|\$|£|€)/gi,
+      /(?:total|amount|price|cost|pay|paid)[\s:]*(?:KSh|TSh|USh|₦|₵|R|E£|DH|\$|£|€)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)/gi,
+      /(\d+(?:,\d{3})*(?:\.\d{2})?)/g
+    ];
+
+    for (const pattern of patterns) {
+      const matches = text.match(pattern);
+      if (matches) {
+        // Extract the first numeric value found
+        const numericMatch = matches[0].match(/(\d+(?:,\d{3})*(?:\.\d{2})?)/);
+        if (numericMatch) {
+          return numericMatch[1].replace(/,/g, '');
+        }
+      }
+    }
+    return '';
+  };
+
+  // Process image with OCR
+  const processReceiptImage = async (file: File) => {
+    setIsProcessingImage(true);
+    try {
+      const result = await Tesseract.recognize(file, 'eng', {
+        logger: m => console.log(m)
+      });
+      
+      const extractedText = result.data.text;
+      console.log('Extracted text:', extractedText);
+      
+      const amount = extractAmountFromText(extractedText);
+      if (amount) {
+        setExpenseAmount(amount);
+        alert(`Found amount: ${currencySymbol} ${amount}`);
+      } else {
+        alert('Could not detect amount from image. Please enter manually.');
+      }
+    } catch (error) {
+      console.error('OCR Error:', error);
+      alert('Failed to process image. Please try again or enter manually.');
+    } finally {
+      setIsProcessingImage(false);
+    }
+  };
+
+  // Handle file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processReceiptImage(file);
+    }
+    // Reset input
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
+  // Trigger camera capture
+  const triggerCamera = () => {
+    cameraInputRef.current?.click();
+  };
+
+  // Trigger file upload
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   const totalRevenue = revenueEntries.reduce((sum, entry) => sum + entry.amount, 0);
@@ -390,16 +469,59 @@ const MonthlyRevenueSection = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <Button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    addExpenseEntry();
-                  }}
-                  className="w-full bg-red-600 hover:bg-red-700"
-                  type="button"
-                >
-                  {t.addExpense}
-                </Button>
+                <div className="flex space-x-2">
+                  <Button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addExpenseEntry();
+                    }}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                    type="button"
+                  >
+                    {t.addExpense}
+                  </Button>
+                  
+                  <Button
+                    onClick={triggerCamera}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    type="button"
+                    disabled={isProcessingImage}
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                  
+                  <Button
+                    onClick={triggerFileUpload}
+                    className="bg-purple-600 hover:bg-purple-700"
+                    type="button"
+                    disabled={isProcessingImage}
+                  >
+                    <Upload className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Hidden file inputs */}
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+
+                {isProcessingImage && (
+                  <div className="text-center text-sm text-gray-600">
+                    Processing image... Please wait.
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
