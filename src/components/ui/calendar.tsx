@@ -5,18 +5,53 @@ import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  language?: string;
+};
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  language = 'en',
   ...props
 }: CalendarProps) {
+  // Month translations
+  const monthTranslations = {
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    sw: ['Januari', 'Februari', 'Machi', 'Aprili', 'Mei', 'Juni', 'Julai', 'Agosti', 'Septemba', 'Oktoba', 'Novemba', 'Desemba'],
+    ar: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+    fr: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+  };
+
+  // Day of week translations
+  const dayTranslations = {
+    en: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    sw: ['Jpi', 'Jtt', 'Jnn', 'Jtn', 'Alh', 'Iju', 'Jmo'],
+    ar: ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
+    fr: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa']
+  };
+
+  const months = monthTranslations[language] || monthTranslations.en;
+  const weekdays = dayTranslations[language] || dayTranslations.en;
+
+  const formatCaption = React.useCallback((date: Date) => {
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  }, [months]);
+
+  const formatWeekdayName = React.useCallback((date: Date) => {
+    return weekdays[date.getDay()];
+  }, [weekdays]);
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn("p-3 pointer-events-auto", className)}
+      formatters={{
+        formatCaption,
+        formatWeekdayName,
+      }}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",

@@ -360,6 +360,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                               mode="single"
                               selected={milestone.targetDate}
                               onSelect={(date) => updateMilestone(milestone.id, 'targetDate', date)}
+                              language={language}
                               initialFocus
                               className="p-3 pointer-events-auto"
                             />
@@ -514,6 +515,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                               mode="single"
                               selected={milestone.targetDate}
                               onSelect={(date) => updateMilestone(milestone.id, 'targetDate', date)}
+                              language={language}
                               initialFocus
                               className="p-3 pointer-events-auto"
                             />

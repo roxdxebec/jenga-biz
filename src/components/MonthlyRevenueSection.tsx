@@ -574,6 +574,7 @@ const MonthlyRevenueSection = ({
                   mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}
+                  language={language}
                   initialFocus
                 />
               </PopoverContent>
@@ -876,6 +877,7 @@ const MonthlyRevenueSection = ({
                       mode="single"
                       selected={customStartDate}
                       onSelect={setCustomStartDate}
+                      language={language}
                       initialFocus
                       className="pointer-events-auto"
                     />
@@ -897,6 +899,7 @@ const MonthlyRevenueSection = ({
                       mode="single"
                       selected={customEndDate}
                       onSelect={setCustomEndDate}
+                      language={language}
                       initialFocus
                       className="pointer-events-auto"
                     />
