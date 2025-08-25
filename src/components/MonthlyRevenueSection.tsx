@@ -193,8 +193,7 @@ const MonthlyRevenueSection = ({
   const t = translations[language] || translations.en;
 
   // Fixed Add Revenue Function
-  const addRevenueEntry = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const addRevenueEntry = () => {
     if (!revenueAmount || !selectedDate) {
       alert('Please enter an amount and select a date');
       return;
@@ -219,8 +218,7 @@ const MonthlyRevenueSection = ({
   };
 
   // Fixed Add Expense Function
-  const addExpenseEntry = (e?: React.FormEvent) => {
-    e?.preventDefault();
+  const addExpenseEntry = () => {
     if (!expenseAmount || !selectedDate) {
       alert('Please enter an amount and select a date');
       return;
@@ -346,7 +344,10 @@ const MonthlyRevenueSection = ({
                   </Select>
                 </div>
                 <Button 
-                  onClick={addRevenueEntry} 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addRevenueEntry();
+                  }}
                   className="w-full bg-green-600 hover:bg-green-700"
                   type="button"
                 >
@@ -390,7 +391,10 @@ const MonthlyRevenueSection = ({
                   </Select>
                 </div>
                 <Button 
-                  onClick={addExpenseEntry} 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addExpenseEntry();
+                  }}
                   className="w-full bg-red-600 hover:bg-red-700"
                   type="button"
                 >
