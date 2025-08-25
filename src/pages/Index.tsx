@@ -62,7 +62,11 @@ const Index = () => {
       businessTemplates: 'Business Templates',
       businessTemplatesDesc: 'Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs',
       customStrategy: 'Custom Strategy',
-      customStrategyDesc: 'Build a completely custom business strategy from scratch with all features included - perfect for unique business models'
+      customStrategyDesc: 'Build a completely custom business strategy from scratch with all features included - perfect for unique business models',
+      milestoneTracking: 'Milestone Tracking',
+      milestoneTrackingDesc: 'Set and track business milestones based on your current stage and growth goals with deadlines',
+      financialTracking: 'Financial Tracking',
+      financialTrackingDesc: 'Monitor daily revenue and expenses with calendar-based entries and generate financial reports'
     },
     sw: {
       title: 'Jenga Biz Africa',
@@ -84,7 +88,11 @@ const Index = () => {
       businessTemplates: 'Violezo vya Biashara',
       businessTemplatesDesc: 'Chagua kutoka violezo zaidi ya 15 vilivyoundwa maalum kwa biashara maarufu za Kiafrika na mahitaji ya soko',
       customStrategy: 'Mkakati wa Kibinafsi',
-      customStrategyDesc: 'Jenga mkakati wa biashara wa kibinafsi kutoka mwanzo ukijumuisha vipengele vyote - kamili kwa miundo ya kibiashara ya kipekee'
+      customStrategyDesc: 'Jenga mkakati wa biashara wa kibinafsi kutoka mwanzo ukijumuisha vipengele vyote - kamili kwa miundo ya kibiashara ya kipekee',
+      milestoneTracking: 'Ufuatiliaji wa Malengo',
+      milestoneTrackingDesc: 'Weka na fuatilia malengo ya biashara kulingana na hatua yako ya sasa na malengo ya ukuaji pamoja na tarehe za mwisho',
+      financialTracking: 'Ufuatiliaji wa Kifedha',
+      financialTrackingDesc: 'Fuatilia mapato na matumizi ya kila siku pamoja na maingizo ya kalenda na kutengeneza ripoti za kifedha'
     },
     ar: {
       title: 'جينجا بيز أفريقيا',
@@ -106,7 +114,11 @@ const Index = () => {
       businessTemplates: 'قوالب الأعمال',
       businessTemplatesDesc: 'اختر من أكثر من 15 قالبًا مُصممًا خصيصًا للأعمال الأفريقية الشائعة واحتياجات السوق',
       customStrategy: 'استراتيجية مخصصة',
-      customStrategyDesc: 'ابنِ استراتيجية أعمال مخصصة تمامًا من البداية مع جميع الميزات المدرجة - مثالية للنماذج التجارية الفريدة'
+      customStrategyDesc: 'ابنِ استراتيجية أعمال مخصصة تمامًا من البداية مع جميع الميزات المدرجة - مثالية للنماذج التجارية الفريدة',
+      milestoneTracking: 'تتبع المعالم',
+      milestoneTrackingDesc: 'حدد وتتبع معالم الأعمال بناءً على مرحلتك الحالية وأهداف النمو مع المواعيد النهائية',
+      financialTracking: 'التتبع المالي',
+      financialTrackingDesc: 'راقب الإيرادات والمصروفات اليومية مع إدخالات التقويم وإنتاج التقارير المالية'
     },
     fr: {
       title: 'Jenga Biz Africa',
@@ -128,7 +140,11 @@ const Index = () => {
       businessTemplates: 'Modèles d\'Entreprise',
       businessTemplatesDesc: 'Choisissez parmi plus de 15 modèles pré-construits spécialement conçus pour les entreprises africaines populaires et les besoins du marché',
       customStrategy: 'Stratégie Personnalisée',
-      customStrategyDesc: 'Construisez une stratégie d\'entreprise entièrement personnalisée à partir de zéro avec toutes les fonctionnalités incluses - parfait pour les modèles d\'entreprise uniques'
+      customStrategyDesc: 'Construisez une stratégie d\'entreprise entièrement personnalisée à partir de zéro avec toutes les fonctionnalités incluses - parfait pour les modèles d\'entreprise uniques',
+      milestoneTracking: 'Suivi des Jalons',
+      milestoneTrackingDesc: 'Définissez et suivez les jalons commerciaux en fonction de votre étape actuelle et de vos objectifs de croissance avec des échéances',
+      financialTracking: 'Suivi Financier',
+      financialTrackingDesc: 'Surveillez les revenus et dépenses quotidiens avec des entrées de calendrier et générez des rapports financiers'
     }
   };
 
@@ -634,8 +650,8 @@ Generated on: ${new Date().toLocaleDateString()}
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-3 text-gray-800">Milestone Tracking</h3>
-            <p className="text-gray-600 text-sm leading-relaxed mb-4">Set and track business milestones based on your current stage and growth goals with deadlines</p>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">{t.milestoneTracking}</h3>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">{t.milestoneTrackingDesc}</p>
             <button
               onClick={() => scrollToSection('milestones-section')}
               className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
@@ -650,8 +666,8 @@ Generated on: ${new Date().toLocaleDateString()}
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold mb-3 text-gray-800">Financial Tracking</h3>
-            <p className="text-gray-600 text-sm leading-relaxed mb-4">Monitor daily revenue and expenses with calendar-based entries and generate financial reports</p>
+            <h3 className="text-lg font-bold mb-3 text-gray-800">{t.financialTracking}</h3>
+            <p className="text-gray-600 text-sm leading-relaxed mb-4">{t.financialTrackingDesc}</p>
             <button
               onClick={() => scrollToSection('financial-section')}
               className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
