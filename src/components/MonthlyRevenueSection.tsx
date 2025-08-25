@@ -490,69 +490,6 @@ const MonthlyRevenueSection = ({
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
-          {/* Time Period Selector */}
-          <div className="flex justify-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Label className="text-sm font-medium">{t.timePeriod}</Label>
-              <Select value={timePeriod} onValueChange={setTimePeriod}>
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t.daily}</SelectItem>
-                  <SelectItem value="weekly">{t.weekly}</SelectItem>
-                  <SelectItem value="monthly">{t.monthly}</SelectItem>
-                  <SelectItem value="quarterly">{t.quarterly}</SelectItem>
-                  <SelectItem value="annual">{t.annual}</SelectItem>
-                  <SelectItem value="custom">{t.custom}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Custom Date Range */}
-          {timePeriod === 'custom' && (
-            <div className="flex justify-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Label className="text-sm">{t.startDate}</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-40">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {customStartDate ? format(customStartDate, 'MMM dd') : t.startDate}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={customStartDate}
-                      onSelect={setCustomStartDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Label className="text-sm">{t.endDate}</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-40">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {customEndDate ? format(customEndDate, 'MMM dd') : t.endDate}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={customEndDate}
-                      onSelect={setCustomEndDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          )}
 
           {/* Entry Date Selector (for adding new entries) */}
           <div className="flex justify-center">
@@ -821,6 +758,79 @@ const MonthlyRevenueSection = ({
           {revenueEntries.length === 0 && expenseEntries.length === 0 && (
             <div className="text-center py-8 text-gray-500">
               <p>{t.noEntries}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Financial Summary Card */}
+      <Card className="border-blue-200">
+        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardTitle className="text-xl font-bold text-gray-800">Financial Summary</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6 space-y-4">
+          {/* Time Period Selector */}
+          <div className="flex items-center justify-center space-x-4">
+            <Label className="text-sm font-medium">{t.timePeriod}</Label>
+            <Select value={timePeriod} onValueChange={setTimePeriod}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="daily">{t.daily}</SelectItem>
+                <SelectItem value="weekly">{t.weekly}</SelectItem>
+                <SelectItem value="monthly">{t.monthly}</SelectItem>
+                <SelectItem value="quarterly">{t.quarterly}</SelectItem>
+                <SelectItem value="annual">{t.annual}</SelectItem>
+                <SelectItem value="custom">{t.custom}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Custom Date Range */}
+          {timePeriod === 'custom' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">{t.startDate}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {customStartDate ? format(customStartDate, 'MMM dd') : t.startDate}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={customStartDate}
+                      onSelect={setCustomStartDate}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">{t.endDate}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {customEndDate ? format(customEndDate, 'MMM dd') : t.endDate}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={customEndDate}
+                      onSelect={setCustomEndDate}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           )}
         </CardContent>
