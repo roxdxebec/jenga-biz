@@ -380,7 +380,7 @@ const MonthlyRevenueSection = ({
   const netProfit = totalRevenue - totalExpenses;
 
   return (
-    <div className="space-y-6">
+    <div id="financial-section" className="space-y-6">
       <Card className="border-green-200">
         <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
           <div className="flex justify-between items-center">

@@ -205,7 +205,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   const currentStage = businessStages.find(stage => stage.value === businessStage);
 
   return (
-    <div className="space-y-6">
+    <div id="milestones-section" className="space-y-6">
       {/* Section Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">

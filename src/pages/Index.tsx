@@ -102,6 +102,19 @@ const Index = () => {
     setCurrentView('builder');
   };
 
+  const scrollToSection = (sectionId: string) => {
+    // First navigate to builder view, then scroll
+    setSelectedTemplate(null);
+    setCurrentView('builder');
+    // Use setTimeout to ensure the component is rendered before scrolling
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
+
   const handleStrategyChange = (strategy) => {
     setStrategyData(strategy);
   };
@@ -406,7 +419,7 @@ Generated on: ${new Date().toLocaleDateString()}
             <h3 className="text-lg font-bold mb-3 text-gray-800">Custom Strategy</h3>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">Build a completely custom business strategy from scratch with all features included - perfect for unique business models</p>
             <button
-              onClick={handleStartFromScratch}
+              onClick={() => scrollToSection('strategy-builder')}
               className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
               {t.startFromScratch}
@@ -422,10 +435,7 @@ Generated on: ${new Date().toLocaleDateString()}
             <h3 className="text-lg font-bold mb-3 text-gray-800">Milestone Tracking</h3>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">Set and track business milestones based on your current stage and growth goals with deadlines</p>
             <button
-              onClick={() => {
-                handleStartFromScratch();
-                // This will navigate to builder view where milestones section will be visible
-              }}
+              onClick={() => scrollToSection('milestones-section')}
               className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
               Track Milestones
@@ -441,10 +451,7 @@ Generated on: ${new Date().toLocaleDateString()}
             <h3 className="text-lg font-bold mb-3 text-gray-800">Financial Tracking</h3>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">Monitor daily revenue and expenses with calendar-based entries and generate financial reports</p>
             <button
-              onClick={() => {
-                handleStartFromScratch();
-                // This will navigate to builder view where financial tracking section will be visible
-              }}
+              onClick={() => scrollToSection('financial-section')}
               className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-md transform hover:scale-105 transition-all duration-200"
             >
               Track Finances

@@ -337,7 +337,7 @@ const StrategyBuilder = ({
   console.log('StrategyBuilder - Current strategy state:', strategy);
 
   return (
-    <div className="space-y-6">
+    <div id="strategy-builder" className="space-y-6">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
           {t.title}
