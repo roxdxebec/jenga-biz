@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { CalendarIcon, Plus, Minus, DollarSign, Trash2, Camera, Upload, Download, Share, Bot } from 'lucide-react';
 import { format } from 'date-fns';
 import Tesseract from 'tesseract.js';
@@ -57,6 +58,7 @@ const MonthlyRevenueSection = ({
   const [timePeriod, setTimePeriod] = useState('daily');
   const [customStartDate, setCustomStartDate] = useState<Date | undefined>(new Date());
   const [customEndDate, setCustomEndDate] = useState<Date | undefined>(new Date());
+  const [showAISummary, setShowAISummary] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -474,10 +476,7 @@ const MonthlyRevenueSection = ({
   const netProfit = totalRevenue - totalExpenses;
 
   const handleAISummary = () => {
-    // AI Summary functionality - would analyze financial data and provide insights
-    const insights = `Based on your ${timePeriod} financial data:\n\n• Total Revenue: ${currencySymbol} ${totalRevenue.toFixed(2)}\n• Total Expenses: ${currencySymbol} ${totalExpenses.toFixed(2)}\n• Net Profit: ${currencySymbol} ${netProfit.toFixed(2)}\n• Profit Margin: ${totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0}%\n\nKey Insights:\n• ${netProfit >= 0 ? 'Your business is profitable' : 'Consider reviewing expenses to improve profitability'}\n• ${filteredRevenueEntries.length > 0 ? `Most revenue from: ${filteredRevenueEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No revenue entries recorded'}\n• ${filteredExpenseEntries.length > 0 ? `Highest expense category: ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No expense entries recorded'}`;
-    
-    alert(insights);
+    setShowAISummary(true);
   };
 
   const handleDownloadSummary = () => {
@@ -906,6 +905,53 @@ const MonthlyRevenueSection = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Summary Modal */}
+      <Dialog open={showAISummary} onOpenChange={setShowAISummary}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <Bot className="w-5 h-5 mr-2 text-blue-600" />
+              Financial Insights Summary
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <h4 className="font-semibold text-gray-800">Based on your {timePeriod} financial data:</h4>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Total Revenue:</span>
+                  <span className="font-medium text-green-600">{currencySymbol} {totalRevenue.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Expenses:</span>
+                  <span className="font-medium text-red-600">{currencySymbol} {totalExpenses.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Net Profit:</span>
+                  <span className={`font-medium ${netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
+                    {currencySymbol} {netProfit.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Profit Margin:</span>
+                  <span className="font-medium">{totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : 0}%</span>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <h4 className="font-semibold text-gray-800 mb-2">Key Insights:</h4>
+                <ul className="space-y-1 text-sm text-gray-600">
+                  <li>• {netProfit >= 0 ? 'Your business is profitable' : 'Consider reviewing expenses to improve profitability'}</li>
+                  <li>• {filteredRevenueEntries.length > 0 ? `Most revenue from: ${filteredRevenueEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No revenue entries recorded'}</li>
+                  <li>• {filteredExpenseEntries.length > 0 ? `Highest expense category: ${filteredExpenseEntries.reduce((prev, current) => (prev.amount > current.amount) ? prev : current)?.type || 'N/A'}` : 'No expense entries recorded'}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
