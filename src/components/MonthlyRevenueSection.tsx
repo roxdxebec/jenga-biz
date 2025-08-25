@@ -193,7 +193,8 @@ const MonthlyRevenueSection = ({
   const t = translations[language] || translations.en;
 
   // Fixed Add Revenue Function
-  const addRevenueEntry = () => {
+  const addRevenueEntry = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!revenueAmount || !selectedDate) {
       alert('Please enter an amount and select a date');
       return;
@@ -218,7 +219,8 @@ const MonthlyRevenueSection = ({
   };
 
   // Fixed Add Expense Function
-  const addExpenseEntry = () => {
+  const addExpenseEntry = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!expenseAmount || !selectedDate) {
       alert('Please enter an amount and select a date');
       return;

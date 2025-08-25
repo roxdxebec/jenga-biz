@@ -256,7 +256,7 @@ Generated on: ${new Date().toLocaleDateString()}
                   variant="outline" 
                   size="sm"
                   className="flex items-center"
-                  onClick={handleBackToTemplates}
+                  onClick={() => selectedTemplate ? handleBackToTemplates() : handleBackToHome()}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   <span>{t.back}</span>

@@ -175,7 +175,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     return statusOptions.find(opt => opt.value === status)?.color || 'bg-gray-100 text-gray-700';
   };
 
-  const addMilestone = () => {
+  const addMilestone = (e?: React.FormEvent) => {
+    e?.preventDefault();
     const newMilestone: Milestone = {
       id: Date.now().toString(),
       title: '',

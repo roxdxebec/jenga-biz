@@ -68,19 +68,6 @@ const TemplateDropdownSelector = ({ onTemplateSelect, onBack, language = 'en' }:
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Back Button */}
-        {onBack && (
-          <div className="mb-6">
-            <Button
-              onClick={onBack}
-              variant="ghost"
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              {t.back}
-            </Button>
-          </div>
-        )}
 
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
