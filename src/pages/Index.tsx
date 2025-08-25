@@ -66,7 +66,20 @@ const Index = () => {
       milestoneTracking: 'Milestone Tracking',
       milestoneTrackingDesc: 'Set and track business milestones based on your current stage and growth goals with deadlines',
       financialTracking: 'Financial Tracking',
-      financialTrackingDesc: 'Monitor daily revenue and expenses with calendar-based entries and generate financial reports'
+      financialTrackingDesc: 'Monitor daily revenue and expenses with calendar-based entries and generate financial reports',
+      milestoneOverview: 'Overview of your business milestone progress and insights',
+      businessStage: 'Business Stage',
+      growthStage: 'Growth Stage',
+      currentMilestones: 'Current Milestones',
+      registerBusinessName: 'Register business name',
+      openBankAccount: 'Open business bank account',
+      launchMVP: 'Launch minimum viable product',
+      complete: 'Complete',
+      inProgress: 'In Progress',
+      notStarted: 'Not Started',
+      progressSummaryLabel: 'Progress Summary:',
+      progressSummaryText: 'You\'re making great progress! 1 milestone completed, 1 in progress. Keep focusing on your bank account setup to maintain momentum.',
+      generatedWith: 'Generated with Jenga Biz Africa ✨'
     },
     sw: {
       title: 'Jenga Biz Africa',
@@ -92,7 +105,20 @@ const Index = () => {
       milestoneTracking: 'Ufuatiliaji wa Malengo',
       milestoneTrackingDesc: 'Weka na fuatilia malengo ya biashara kulingana na hatua yako ya sasa na malengo ya ukuaji pamoja na tarehe za mwisho',
       financialTracking: 'Ufuatiliaji wa Kifedha',
-      financialTrackingDesc: 'Fuatilia mapato na matumizi ya kila siku pamoja na maingizo ya kalenda na kutengeneza ripoti za kifedha'
+      financialTrackingDesc: 'Fuatilia mapato na matumizi ya kila siku pamoja na maingizo ya kalenda na kutengeneza ripoti za kifedha',
+      milestoneOverview: 'Muhtasari wa maendeleo ya malengo ya biashara yako na maarifa',
+      businessStage: 'Hatua ya Biashara',
+      growthStage: 'Hatua ya Ukuaji',
+      currentMilestones: 'Malengo ya Sasa',
+      registerBusinessName: 'Sajili jina la biashara',
+      openBankAccount: 'Fungua akaunti ya benki ya biashara',
+      launchMVP: 'Zindua bidhaa ya kimsingi',
+      complete: 'Imekamilika',
+      inProgress: 'Inaendelea',
+      notStarted: 'Haijuaanza',
+      progressSummaryLabel: 'Muhtasari wa Maendeleo:',
+      progressSummaryText: 'Unafanya maendeleo mazuri! Lengo 1 limekamilika, 1 linaendelea. Endelea kulenga kuanzisha akaunti ya benki ili kudumisha msukumo.',
+      generatedWith: 'Imetengenezwa na Jenga Biz Africa ✨'
     },
     ar: {
       title: 'جينجا بيز أفريقيا',
@@ -118,7 +144,20 @@ const Index = () => {
       milestoneTracking: 'تتبع المعالم',
       milestoneTrackingDesc: 'حدد وتتبع معالم الأعمال بناءً على مرحلتك الحالية وأهداف النمو مع المواعيد النهائية',
       financialTracking: 'التتبع المالي',
-      financialTrackingDesc: 'راقب الإيرادات والمصروفات اليومية مع إدخالات التقويم وإنتاج التقارير المالية'
+      financialTrackingDesc: 'راقب الإيرادات والمصروفات اليومية مع إدخالات التقويم وإنتاج التقارير المالية',
+      milestoneOverview: 'نظرة عامة على تقدم معالم أعمالك ورؤى',
+      businessStage: 'مرحلة الأعمال',
+      growthStage: 'مرحلة النمو',
+      currentMilestones: 'المعالم الحالية',
+      registerBusinessName: 'تسجيل اسم الشركة',
+      openBankAccount: 'فتح حساب مصرفي تجاري',
+      launchMVP: 'إطلاق المنتج الأساسي',
+      complete: 'مكتمل',
+      inProgress: 'قيد التنفيذ',
+      notStarted: 'لم تبدأ',
+      progressSummaryLabel: 'ملخص التقدم:',
+      progressSummaryText: 'أنت تحرز تقدمًا رائعًا! معلم واحد مكتمل، واحد قيد التنفيذ. استمر في التركيز على إعداد حسابك المصرفي للحفاظ على الزخم.',
+      generatedWith: 'تم إنشاؤه بواسطة Jenga Biz Africa ✨'
     },
     fr: {
       title: 'Jenga Biz Africa',
@@ -144,7 +183,20 @@ const Index = () => {
       milestoneTracking: 'Suivi des Jalons',
       milestoneTrackingDesc: 'Définissez et suivez les jalons commerciaux en fonction de votre étape actuelle et de vos objectifs de croissance avec des échéances',
       financialTracking: 'Suivi Financier',
-      financialTrackingDesc: 'Surveillez les revenus et dépenses quotidiens avec des entrées de calendrier et générez des rapports financiers'
+      financialTrackingDesc: 'Surveillez les revenus et dépenses quotidiens avec des entrées de calendrier et générez des rapports financiers',
+      milestoneOverview: 'Aperçu de vos progrès de jalons d\'entreprise et insights',
+      businessStage: 'Étape d\'Affaires',
+      growthStage: 'Étape de Croissance',
+      currentMilestones: 'Jalons Actuels',
+      registerBusinessName: 'Enregistrer le nom de l\'entreprise',
+      openBankAccount: 'Ouvrir un compte bancaire professionnel',
+      launchMVP: 'Lancer le produit minimal viable',
+      complete: 'Terminé',
+      inProgress: 'En Cours',
+      notStarted: 'Pas Commencé',
+      progressSummaryLabel: 'Résumé des Progrès:',
+      progressSummaryText: 'Vous faites d\'excellents progrès! 1 jalon terminé, 1 en cours. Continuez à vous concentrer sur la configuration de votre compte bancaire pour maintenir l\'élan.',
+      generatedWith: 'Généré avec Jenga Biz Africa ✨'
     }
   };
 
@@ -537,39 +589,38 @@ Generated on: ${new Date().toLocaleDateString()}
                   {t.businessMilestonesSummary}
                 </DialogTitle>
                 <DialogDescription>
-                  Overview of your business milestone progress and insights
+                  {t.milestoneOverview}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-800">Business Stage: Growth Stage</h4>
+                  <h4 className="font-semibold text-gray-800">{t.businessStage}: {t.growthStage}</h4>
                   
                   <div className="space-y-3">
-                    <h5 className="font-medium text-gray-700">Current Milestones:</h5>
+                    <h5 className="font-medium text-gray-700">{t.currentMilestones}:</h5>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                        <span>✅ Register business name</span>
-                        <span className="text-green-600 font-medium">Complete</span>
+                        <span>✅ {t.registerBusinessName}</span>
+                        <span className="text-green-600 font-medium">{t.complete}</span>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                        <span>🔄 Open business bank account</span>
-                        <span className="text-blue-600 font-medium">In Progress</span>
+                        <span>🔄 {t.openBankAccount}</span>
+                        <span className="text-blue-600 font-medium">{t.inProgress}</span>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span>⏳ Launch minimum viable product</span>
-                        <span className="text-gray-600 font-medium">Not Started</span>
+                        <span>⏳ {t.launchMVP}</span>
+                        <span className="text-gray-600 font-medium">{t.notStarted}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-4 p-3 bg-purple-50 rounded">
                     <p className="text-sm text-purple-700">
-                      <strong>Progress Summary:</strong> You're making great progress! 1 milestone completed, 1 in progress. 
-                      Keep focusing on your bank account setup to maintain momentum.
+                      <strong>{t.progressSummaryLabel}</strong> {t.progressSummaryText}
                     </p>
                   </div>
 
-                  <p className="text-xs text-gray-500 text-center mt-4">Generated with Jenga Biz Africa ✨</p>
+                  <p className="text-xs text-gray-500 text-center mt-4">{t.generatedWith}</p>
                 </div>
               </div>
             </DialogContent>

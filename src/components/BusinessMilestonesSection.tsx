@@ -29,20 +29,7 @@ interface BusinessMilestonesSectionProps {
 
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en' }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
-  const [milestones, setMilestones] = useState<Milestone[]>([
-    {
-      id: '1',
-      title: 'Register business name',
-      targetDate: null,
-      status: 'not-started'
-    },
-    {
-      id: '2',
-      title: 'Open business bank account',
-      targetDate: null,
-      status: 'not-started'
-    }
-  ]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
 
   const { toast } = useToast();
 
@@ -69,7 +56,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       overdue: 'Overdue',
       tier3Note: 'Enjoy full access to Strategy Grid Pro (Tier 3 features) while testing.',
       coachingTip: 'Break down big goals into smaller, actionable milestones. Each milestone should be specific and have a clear deadline.',
-      addToCalendar: 'Add to Calendar'
+      addToCalendar: 'Add to Calendar',
+      suggestedMilestonesFor: 'Suggested Milestones for',
+      defaultMilestones: {
+        registerBusiness: 'Register business name',
+        openBankAccount: 'Open business bank account'
+      }
     },
     sw: {
       title: 'Malengo ya Biashara',
@@ -92,7 +84,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       overdue: 'Umechelewa',
       tier3Note: 'Furahia ufikiaji kamili wa Strategy Grid Pro (vipengele vya Daraja la 3) wakati wa upimaji.',
       coachingTip: 'Gawanya malengo makubwa kuwa malengo madogo yanayoweza kutekelezwa. Kila lengo linapaswa kuwa mahususi na kuwa na tarehe ya mwisho ya wazi.',
-      addToCalendar: 'Ongeza kwenye Kalenda'
+      addToCalendar: 'Ongeza kwenye Kalenda',
+      suggestedMilestonesFor: 'Malengo Yaliyopendekezwa kwa',
+      defaultMilestones: {
+        registerBusiness: 'Sajili jina la biashara',
+        openBankAccount: 'Fungua akaunti ya benki ya biashara'
+      }
     },
     ar: {
       title: 'معالم الأعمال',
@@ -115,7 +112,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       overdue: 'متأخر',
       tier3Note: 'استمتع بالوصول الكامل إلى Strategy Grid Pro (ميزات المستوى 3) أثناء الاختبار.',
       coachingTip: 'قسم الأهداف الكبيرة إلى معالم أصغر قابلة للتنفيذ. يجب أن يكون كل معلم محددًا وله موعد نهائي واضح.',
-      addToCalendar: 'إضافة للتقويم'
+      addToCalendar: 'إضافة للتقويم',
+      suggestedMilestonesFor: 'المعالم المقترحة لـ',
+      defaultMilestones: {
+        registerBusiness: 'تسجيل اسم الشركة',
+        openBankAccount: 'فتح حساب مصرفي تجاري'
+      }
     },
     fr: {
       title: 'Jalons d\'Affaires',
@@ -138,7 +140,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       overdue: 'En Retard',
       tier3Note: 'Profitez d\'un accès complet à Strategy Grid Pro (fonctionnalités de niveau 3) pendant les tests.',
       coachingTip: 'Divisez les grands objectifs en jalons plus petits et réalisables. Chaque jalon doit être spécifique et avoir une échéance claire.',
-      addToCalendar: 'Ajouter au Calendrier'
+      addToCalendar: 'Ajouter au Calendrier',
+      suggestedMilestonesFor: 'Jalons Suggérés pour',
+      defaultMilestones: {
+        registerBusiness: 'Enregistrer le nom de l\'entreprise',
+        openBankAccount: 'Ouvrir un compte bancaire professionnel'
+      }
     }
   };
 
@@ -159,26 +166,88 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
   const getStageSpecificMilestones = (stage: string) => {
     const stageMilestones = {
-      ideation: [
-        'Validate business idea with potential customers',
-        'Research target market and competition',
-        'Create basic business plan',
-        'Secure initial funding or savings'
-      ],
-      early: [
-        'Register business name',
-        'Open business bank account',
-        'Launch minimum viable product/service',
-        'Get first 10 customers'
-      ],
-      growth: [
-        'Expand product/service offerings',
-        'Hire first employees',
-        'Establish partnerships',
-        'Scale marketing efforts'
-      ]
+      en: {
+        ideation: [
+          'Validate business idea with potential customers',
+          'Research target market and competition',
+          'Create basic business plan',
+          'Secure initial funding or savings'
+        ],
+        early: [
+          'Register business name',
+          'Open business bank account',
+          'Launch minimum viable product/service',
+          'Get first 10 customers'
+        ],
+        growth: [
+          'Expand product/service offerings',
+          'Hire first employees',
+          'Establish partnerships',
+          'Scale marketing efforts'
+        ]
+      },
+      sw: {
+        ideation: [
+          'Thibitisha wazo la biashara na wateja watarajiwa',
+          'Fanya utafiti wa soko lengwa na ushindani',
+          'Unda mpango wa msingi wa biashara',
+          'Pata fedha za awali au akiba'
+        ],
+        early: [
+          'Sajili jina la biashara',
+          'Fungua akaunti ya benki ya biashara',
+          'Zindua bidhaa/huduma ya kimsingi',
+          'Pata wateja 10 wa kwanza'
+        ],
+        growth: [
+          'Panua matoleo ya bidhaa/huduma',
+          'Ajiri wafanyakazi wa kwanza',
+          'Unda ushirikiano',
+          'Ongeza juhudi za masoko'
+        ]
+      },
+      ar: {
+        ideation: [
+          'التحقق من فكرة العمل مع العملاء المحتملين',
+          'بحث السوق المستهدف والمنافسة',
+          'إنشاء خطة عمل أساسية',
+          'تأمين التمويل الأولي أو المدخرات'
+        ],
+        early: [
+          'تسجيل اسم الشركة',
+          'فتح حساب مصرفي تجاري',
+          'إطلاق المنتج/الخدمة الأساسية',
+          'الحصول على أول 10 عملاء'
+        ],
+        growth: [
+          'توسيع عروض المنتجات/الخدمات',
+          'توظيف أول موظفين',
+          'إقامة شراكات',
+          'توسيع جهود التسويق'
+        ]
+      },
+      fr: {
+        ideation: [
+          'Valider l\'idée d\'entreprise avec des clients potentiels',
+          'Rechercher le marché cible et la concurrence',
+          'Créer un plan d\'affaires de base',
+          'Sécuriser le financement initial ou les économies'
+        ],
+        early: [
+          'Enregistrer le nom de l\'entreprise',
+          'Ouvrir un compte bancaire professionnel',
+          'Lancer le produit/service minimal viable',
+          'Obtenir les 10 premiers clients'
+        ],
+        growth: [
+          'Élargir les offres de produits/services',
+          'Embaucher les premiers employés',
+          'Établir des partenariats',
+          'Intensifier les efforts marketing'
+        ]
+      }
     };
-    return stageMilestones[stage] || [];
+    return stageMilestones[language]?.[stage] || stageMilestones.en[stage] || [];
   };
 
   const getStatusColor = (status: string) => {
@@ -262,7 +331,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       {getStageSpecificMilestones(businessStage).length > 0 && (
         <Card className="border-green-200 bg-green-50">
           <CardHeader>
-            <CardTitle className="text-lg text-green-800">Suggested Milestones for {currentStage?.label}</CardTitle>
+            <CardTitle className="text-lg text-green-800">{t.suggestedMilestonesFor} {currentStage?.label}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 mb-4">
