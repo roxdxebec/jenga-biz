@@ -750,8 +750,11 @@ const MonthlyRevenueSection = ({
             
             <Card className={`border-blue-200 ${netProfit >= 0 ? 'bg-blue-50' : 'bg-orange-50'}`}>
               <CardContent className="p-4 text-center">
-                <p className="text-sm text-blue-600">{t.netProfit}</p>
+                <p className="text-sm text-blue-600">Financial Health</p>
                 <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-800' : 'text-orange-800'}`}>
+                  {netProfit >= 0 ? 'Profitable' : 'Loss'}
+                </p>
+                <p className={`text-lg ${netProfit >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
                   {currencySymbol} {netProfit.toFixed(2)}
                 </p>
               </CardContent>
