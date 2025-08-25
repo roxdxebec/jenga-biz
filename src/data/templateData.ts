@@ -588,6 +588,286 @@ const templateContents: { [key: string]: TemplateContent } = {
       ar: 'إضافة خدمات الأظافر والمنتجع الصحي، توظيف 3 مصففين إضافيين، تقديم خط العناية للرجال، إنشاء موقع ثانٍ',
       fr: 'Ajouter des services d\'ongles et de spa, embaucher 3 stylistes supplémentaires, introduire une ligne de toilettage pour hommes, établir un second emplacement'
     }
+  },
+  'auto-repair-service': {
+    vision: {
+      en: 'To be the most trusted auto repair shop known for honest service, quality work, fair pricing, and customer satisfaction',
+      sw: 'Kuwa duka la ukarabati wa magari la kuaminika zaidi linalolijulikana kwa huduma ya uaminifu, kazi ya ubora, bei za haki, na ridhaa ya wateja',
+      ar: 'أن نكون ورشة إصلاح السيارات الأكثر ثقة المعروفة بالخدمة الصادقة والعمل عالي الجودة والتسعير العادل ورضا العملاء',
+      fr: 'Être l\'atelier de réparation automobile le plus fiable connu pour son service honnête, son travail de qualité, ses prix équitables et la satisfaction des clients'
+    },
+    mission: {
+      en: 'Keeping our community\'s vehicles safe and reliable through expert repair services, preventive maintenance, and honest advice',
+      sw: 'Kuweka magari ya jamii yetu kuwa salama na ya kutegemewa kupitia huduma za ukarabati wa kitaalamu, matengenezo ya kuzuia, na ushauri wa uaminifu',
+      ar: 'الحفاظ على سلامة وموثوقية مركبات مجتمعنا من خلال خدمات الإصلاح الخبيرة والصيانة الوقائية والمشورة الصادقة',
+      fr: 'Maintenir les véhicules de notre communauté sûrs et fiables grâce à des services de réparation experts, une maintenance préventive et des conseils honnêtes'
+    },
+    targetMarket: {
+      en: 'Vehicle owners seeking reliable, affordable auto repair, maintenance services, and emergency roadside assistance',
+      sw: 'Wamiliki wa magari wanaotafuta ukarabati wa magari wa kutegemewa, wa bei nafuu, huduma za matengenezo, na msaada wa dharura wa barabarani',
+      ar: 'أصحاب المركبات الذين يسعون لإصلاح السيارات الموثوق والميسور التكلفة وخدمات الصيانة والمساعدة الطارئة على الطريق',
+      fr: 'Propriétaires de véhicules recherchant une réparation automobile fiable et abordable, des services de maintenance et une assistance routière d\'urgence'
+    },
+    revenueModel: {
+      en: 'Labor charges for repairs, parts markup (20-30%), maintenance packages, emergency roadside assistance, diagnostic services',
+      sw: 'Malipo ya kazi za ukarabati, ongezeko la bei za vipengele (20-30%), vifurushi vya matengenezo, msaada wa dharura wa barabarani, huduma za utambuzi',
+      ar: 'رسوم العمالة للإصلاحات، ترميز قطع الغيار (20-30%)، حزم الصيانة، المساعدة الطارئة على الطريق، خدمات التشخيص',
+      fr: 'Frais de main-d\'œuvre pour les réparations, majoration des pièces (20-30%), forfaits de maintenance, assistance routière d\'urgence, services de diagnostic'
+    },
+    valueProposition: {
+      en: 'Honest diagnostics, quality repairs with warranty, fair pricing, excellent customer service, and quick turnaround',
+      sw: 'Utambuzi wa uaminifu, ukarabati wa ubora na dhamana, bei za haki, huduma bora za wateja, na mzunguko wa haraka',
+      ar: 'تشخيص صادق، إصلاحات عالية الجودة مع الضمان، تسعير عادل، خدمة عملاء ممتازة، ووقت تسليم سريع',
+      fr: 'Diagnostics honnêtes, réparations de qualité avec garantie, prix équitables, excellent service client et délai d\'exécution rapide'
+    },
+    keyPartners: {
+      en: 'Auto parts suppliers, towing services, insurance companies, car dealerships, tire suppliers, equipment manufacturers',
+      sw: 'Wasambazaji wa vipengele vya magari, huduma za buruta, makampuni ya bima, maduka ya kuuza magari, wasambazaji wa matairi, watengenezaji wa vifaa',
+      ar: 'موردو قطع غيار السيارات، خدمات القطر، شركات التأمين، وكلاء السيارات، موردو الإطارات، مصنعو المعدات',
+      fr: 'Fournisseurs de pièces automobiles, services de remorquage, compagnies d\'assurance, concessionnaires automobiles, fournisseurs de pneus, fabricants d\'équipement'
+    },
+    marketingApproach: {
+      en: 'Word-of-mouth referrals, online reviews, local advertising, partnerships with car dealers, community involvement',
+      sw: 'Mapendekezo ya mdomo kwa mdomo, hakiki za mtandaoni, matangazo ya mitaani, ushirikiano na wachuuzi wa magari, ushiriki wa jamii',
+      ar: 'الإحالات الشفهية، المراجعات عبر الإنترنت، الإعلان المحلي، الشراكات مع تجار السيارات، المشاركة المجتمعية',
+      fr: 'Références de bouche-à-oreille, avis en ligne, publicité locale, partenariats avec les concessionnaires automobiles, implication communautaire'
+    },
+    operationalNeeds: {
+      en: 'Garage space with lifts, diagnostic equipment, hand tools, parts inventory, waiting area, safety equipment',
+      sw: 'Nafasi ya garej yenye vilazi, vifaa vya utambuzi, vifaa vya mikono, orodha ya vipengele, eneo la kusubiri, vifaa vya usalama',
+      ar: 'مساحة مرآب مع المصاعد، معدات التشخيص، الأدوات اليدوية، مخزون قطع الغيار، منطقة الانتظار، معدات السلامة',
+      fr: 'Espace de garage avec élévateurs, équipement de diagnostic, outils à main, inventaire de pièces, zone d\'attente, équipement de sécurité'
+    },
+    growthGoals: {
+      en: 'Add tire services, expand to include motorcycles, hire 2 additional mechanics, establish mobile repair service',
+      sw: 'Kuongeza huduma za matairi, kupanua kujumuisha pikipiki, kuajiri mafundi 2 wa ziada, kuanzisha huduma ya ukarabati wa kutembea',
+      ar: 'إضافة خدمات الإطارات، التوسع لتشمل الدراجات النارية، توظيف 2 من الميكانيكيين الإضافيين، إنشاء خدمة الإصلاح المتنقلة',
+      fr: 'Ajouter des services de pneus, s\'étendre aux motos, embaucher 2 mécaniciens supplémentaires, établir un service de réparation mobile'
+    }
+  },
+  'bakery': {
+    vision: {
+      en: 'To be the neighborhood\'s favorite bakery known for fresh, delicious baked goods, quality ingredients, and exceptional service',
+      sw: 'Kuwa duka la mkate linalopendwa zaidi katika mtaa linalolijulikana kwa bidhaa za mkate mpya, za ladha, viungo vya ubora, na huduma ya kipekee',
+      ar: 'أن نكون المخبز المفضل في الحي المعروف بالمخبوزات الطازجة واللذيذة والمكونات عالية الجودة والخدمة الاستثنائية',
+      fr: 'Être la boulangerie préférée du quartier connue pour ses produits de boulangerie frais et délicieux, ses ingrédients de qualité et son service exceptionnel'
+    },
+    mission: {
+      en: 'Bringing joy to our community through freshly baked breads, cakes, and pastries made with love and quality ingredients',
+      sw: 'Kuleta furaha kwa jamii yetu kupitia mikate, keki, na maandazi yaliyookwa mapya yaliyotengenezwa kwa upendo na viungo vya ubora',
+      ar: 'جلب الفرح إلى مجتمعنا من خلال الخبز والكعك والمعجنات المخبوزة حديثًا المصنوعة بحب ومكونات عالية الجودة',
+      fr: 'Apporter de la joie à notre communauté grâce à des pains, gâteaux et pâtisseries fraîchement cuits faits avec amour et des ingrédients de qualité'
+    },
+    targetMarket: {
+      en: 'Local families, offices, restaurants, schools, customers needing custom cakes for special events, breakfast commuters',
+      sw: 'Familia za mitaani, ofisi, migahawa, shule, wateja wanaohitaji keki maalum kwa matukio maalum, wasafiri wa chakula cha asubuhi',
+      ar: 'العائلات المحلية، المكاتب، المطاعم، المدارس، العملاء الذين يحتاجون كعك مخصص للمناسبات الخاصة، المسافرون لتناول الإفطار',
+      fr: 'Familles locales, bureaux, restaurants, écoles, clients ayant besoin de gâteaux personnalisés pour événements spéciaux, navetteurs du petit-déjeuner'
+    },
+    revenueModel: {
+      en: 'Daily sales of bread and pastries, custom cake orders, catering services, wholesale to cafes, special occasion items',
+      sw: 'Mauzo ya kila siku ya mkate na maandazi, maagizo ya keki maalum, huduma za chakula, jumla kwa vikahawa, vitu vya sherehe maalum',
+      ar: 'المبيعات اليومية للخبز والمعجنات، طلبات الكعك المخصص، خدمات التموين، البيع بالجملة للمقاهي، أصناف المناسبات الخاصة',
+      fr: 'Ventes quotidiennes de pain et pâtisseries, commandes de gâteaux personnalisés, services de restauration, vente en gros aux cafés, articles d\'occasions spéciales'
+    },
+    valueProposition: {
+      en: 'Fresh, homemade baked goods using quality ingredients at competitive prices with custom options and consistent quality',
+      sw: 'Bidhaa za mkate mpya, za nyumbani zinazotumia viungo vya ubora kwa bei za ushindani pamoja na chaguzi maalum na ubora thabiti',
+      ar: 'المخبوزات الطازجة المنزلية باستخدام مكونات عالية الجودة بأسعار تنافسية مع خيارات مخصصة وجودة ثابتة',
+      fr: 'Produits de boulangerie frais et faits maison utilisant des ingrédients de qualité à des prix compétitifs avec des options personnalisées et une qualité constante'
+    },
+    keyPartners: {
+      en: 'Flour and ingredient suppliers, local cafes, event planners, grocery stores, schools, wedding planners',
+      sw: 'Wasambazaji wa unga na viungo, vikahawa vya mitaani, wapanga matukio, maduka ya vyakula, shule, wapanga harusi',
+      ar: 'موردو الدقيق والمكونات، المقاهي المحلية، منظمو الفعاليات، محلات البقالة، المدارس، مخططو الزفاف',
+      fr: 'Fournisseurs de farine et d\'ingrédients, cafés locaux, organisateurs d\'événements, épiceries, écoles, planificateurs de mariage'
+    },
+    marketingApproach: {
+      en: 'Social media photos of daily offerings, word-of-mouth, local events, loyalty cards, seasonal promotions',
+      sw: 'Picha za mitandao ya kijamii za matoleo ya kila siku, mdomo kwa mdomo, matukio ya mitaani, kadi za uaminifu, matangazo ya msimu',
+      ar: 'صور وسائل التواصل الاجتماعي للعروض اليومية، الكلام الشفهي، الفعاليات المحلية، بطاقات الولاء، العروض الترويجية الموسمية',
+      fr: 'Photos sur les réseaux sociaux des offres quotidiennes, bouche-à-oreille, événements locaux, cartes de fidélité, promotions saisonnières'
+    },
+    operationalNeeds: {
+      en: 'Commercial ovens, baking equipment, ingredients inventory, retail display cases, packaging materials, cash register',
+      sw: 'Tanuru za kibiashara, vifaa vya kuoka, orodha ya viungo, makasha ya kuonyesha rejareja, vifaa vya kufunga, mashine ya fedha',
+      ar: 'أفران تجارية، معدات الخبز، مخزون المكونات، خزائن عرض التجزئة، مواد التعبئة والتغليف، ماكينة تسجيل النقد',
+      fr: 'Fours commerciaux, équipement de boulangerie, inventaire d\'ingrédients, vitrines de vente au détail, matériaux d\'emballage, caisse enregistreuse'
+    },
+    growthGoals: {
+      en: 'Add coffee service, expand custom cake decorating, hire 2 bakers, open second location, establish wholesale division',
+      sw: 'Kuongeza huduma ya kahawa, kupanua upambaji wa keki maalum, kuajiri waokaji 2, kufungua eneo la pili, kuanzisha idara ya jumla',
+      ar: 'إضافة خدمة القهوة، توسيع تزيين الكعك المخصص، توظيف 2 من الخبازين، فتح موقع ثانٍ، إنشاء قسم البيع بالجملة',
+      fr: 'Ajouter un service de café, élargir la décoration de gâteaux personnalisés, embaucher 2 boulangers, ouvrir un second emplacement, établir une division de gros'
+    }
+  },
+  'tutoring': {
+    vision: {
+      en: 'To help every student reach their full academic potential and develop confidence, critical thinking, and love for learning',
+      sw: 'Kusaidia kila mwanafunzi kufikia uwezo wake kamili wa kitaaluma na kuendeleza kujiamini, fikira za msingi, na upendo wa kujifunza',
+      ar: 'مساعدة كل طالب على تحقيق إمكاناته الأكاديمية الكاملة وتطوير الثقة والتفكير النقدي وحب التعلم',
+      fr: 'Aider chaque étudiant à atteindre son plein potentiel académique et développer la confiance, la pensée critique et l\'amour de l\'apprentissage'
+    },
+    mission: {
+      en: 'Providing personalized tutoring that builds confidence, improves academic performance, and fosters lifelong learning skills',
+      sw: 'Kutoa mafunzo ya kibinafsi yanayojenga kujiamini, kuboresha utendaji wa kitaaluma, na kukuza ujuzi wa kujifunza wa maisha yote',
+      ar: 'توفير تدريس شخصي يبني الثقة ويحسن الأداء الأكاديمي ويعزز مهارات التعلم مدى الحياة',
+      fr: 'Fournir un tutorat personnalisé qui renforce la confiance, améliore les performances académiques et favorise les compétences d\'apprentissage tout au long de la vie'
+    },
+    targetMarket: {
+      en: 'Students from primary through university level, adult learners, parents seeking academic support for children',
+      sw: 'Wanafunzi kutoka shule ya msingi hadi chuo kikuu, wajifunzaji wakubwa, wazazi wanaotafuta msaada wa kitaaluma kwa watoto',
+      ar: 'الطلاب من المرحلة الابتدائية إلى الجامعة، المتعلمون البالغون، الآباء الذين يسعون للحصول على دعم أكاديمي لأطفالهم',
+      fr: 'Étudiants du primaire à l\'université, apprenants adultes, parents recherchant un soutien académique pour leurs enfants'
+    },
+    revenueModel: {
+      en: 'Hourly tutoring rates, group class fees, exam preparation packages, online tutoring sessions, educational consulting',
+      sw: 'Viwango vya mafunzo ya kila saa, ada za darasa la kundi, vifurushi vya maandalio ya mitihani, vipindi vya mafunzo ya mtandaoni, ushauri wa kielimu',
+      ar: 'أسعار التدريس بالساعة، رسوم الفصول الجماعية، حزم التحضير للامتحانات، جلسات التدريس عبر الإنترنت، الاستشارات التعليمية',
+      fr: 'Tarifs de tutorat horaires, frais de cours de groupe, forfaits de préparation aux examens, séances de tutorat en ligne, conseil éducatif'
+    },
+    valueProposition: {
+      en: 'Personalized instruction that adapts to each student\'s learning style with proven results and flexible scheduling',
+      sw: 'Mafundisho ya kibinafsi yanayojisaidia na mtindo wa kujifunza wa kila mwanafunzi na matokeo yaliyothibitishwa na ratiba za kubadilika',
+      ar: 'تعليم شخصي يتكيف مع أسلوب تعلم كل طالب مع نتائج مثبتة وجدولة مرنة',
+      fr: 'Instruction personnalisée qui s\'adapte au style d\'apprentissage de chaque étudiant avec des résultats prouvés et une planification flexible'
+    },
+    keyPartners: {
+      en: 'Schools, parents, educational supply companies, online learning platforms, testing centers, academic institutions',
+      sw: 'Shule, wazazi, makampuni ya vifaa vya kielimu, majukwaa ya kujifunza ya mtandaoni, vituo vya mitihani, taasisi za kitaaluma',
+      ar: 'المدارس، الآباء، شركات التوريد التعليمي، منصات التعلم عبر الإنترنت، مراكز الاختبار، المؤسسات الأكاديمية',
+      fr: 'Écoles, parents, entreprises de fournitures éducatives, plateformes d\'apprentissage en ligne, centres de test, institutions académiques'
+    },
+    marketingApproach: {
+      en: 'Parent referrals, school partnerships, online testimonials, social media success stories, community outreach',
+      sw: 'Mapendekezo ya wazazi, ushirikiano wa shule, ushahidi wa mtandaoni, hadithi za mafanikio za mitandao ya kijamii, kufikia jamii',
+      ar: 'إحالات الآباء، شراكات المدارس، الشهادات عبر الإنترنت، قصص النجاح على وسائل التواصل الاجتماعي، التوعية المجتمعية',
+      fr: 'Références de parents, partenariats scolaires, témoignages en ligne, histoires de réussite sur les réseaux sociaux, sensibilisation communautaire'
+    },
+    operationalNeeds: {
+      en: 'Teaching materials, comfortable learning space, educational resources, whiteboard, computer, assessment tools',
+      sw: 'Vifaa vya kufundishia, nafasi ya kujifunza ya starehe, rasilimali za kielimu, ubao mweupe, kompyuta, vifaa vya tathmini',
+      ar: 'مواد التدريس، مساحة تعلم مريحة، موارد تعليمية، سبورة بيضاء، كمبيوتر، أدوات التقييم',
+      fr: 'Matériel pédagogique, espace d\'apprentissage confortable, ressources éducatives, tableau blanc, ordinateur, outils d\'évaluation'
+    },
+    growthGoals: {
+      en: 'Hire 3 additional tutors, offer online tutoring services, establish test prep center, create learning app',
+      sw: 'Kuajiri wakufunzi 3 wa ziada, kutoa huduma za mafunzo ya mtandaoni, kuanzisha kituo cha maandalio ya mitihani, kuunda programu ya kujifunza',
+      ar: 'توظيف 3 مدرسين إضافيين، تقديم خدمات التدريس عبر الإنترنت، إنشاء مركز التحضير للاختبارات، إنشاء تطبيق تعلم',
+      fr: 'Embaucher 3 tuteurs supplémentaires, offrir des services de tutorat en ligne, établir un centre de préparation aux tests, créer une application d\'apprentissage'
+    }
+  },
+  'fitness-training': {
+    vision: {
+      en: 'To help people achieve their fitness goals and live healthier, stronger, more confident lives through personalized training',
+      sw: 'Kusaidia watu kufikia malengo yao ya mazoezi na kuishi maisha ya afya zaidi, makuu zaidi, ya kujiamini kupitia mafunzo ya kibinafsi',
+      ar: 'مساعدة الناس على تحقيق أهدافهم في اللياقة البدنية وعيش حياة أكثر صحة وقوة وثقة من خلال التدريب الشخصي',
+      fr: 'Aider les gens à atteindre leurs objectifs de fitness et vivre des vies plus saines, plus fortes et plus confiantes grâce à un entraînement personnalisé'
+    },
+    mission: {
+      en: 'Providing expert fitness guidance that transforms lives through sustainable health practices, motivation, and results-driven training',
+      sw: 'Kutoa mwongozo wa kitaalamu wa mazoezi unaobadilisha maisha kupitia mazoea ya afya endelevu, motisha, na mafunzo yanayoongozwa na matokeo',
+      ar: 'توفير إرشادات لياقة بدنية خبيرة تغير الحياة من خلال ممارسات صحية مستدامة والتحفيز والتدريب المدفوع بالنتائج',
+      fr: 'Fournir des conseils de fitness experts qui transforment les vies grâce à des pratiques de santé durables, de la motivation et un entraînement axé sur les résultats'
+    },
+    targetMarket: {
+      en: 'Adults seeking weight loss, strength building, overall fitness improvement, athletes, busy professionals, seniors',
+      sw: 'Watu wazima wanaotafuta kupunguza uzito, kujenga nguvu, kuboresha mazoezi kwa ujumla, wanariadha, wataalamu wa haraka, wazee',
+      ar: 'البالغون الذين يسعون لفقدان الوزن، بناء القوة، تحسين اللياقة البدنية بشكل عام، الرياضيون، المهنيون المشغولون، كبار السن',
+      fr: 'Adultes recherchant la perte de poids, le renforcement musculaire, l\'amélioration de la condition physique générale, athlètes, professionnels occupés, seniors'
+    },
+    revenueModel: {
+      en: 'Personal training sessions, group fitness classes, fitness program packages, nutritional consultation, online coaching',
+      sw: 'Vipindi vya mafunzo ya kibinafsi, madarasa ya mazoezi ya kundi, vifurushi vya mipango ya mazoezi, ushauri wa lishe, mchungaji wa mtandaoni',
+      ar: 'جلسات التدريب الشخصي، فصول اللياقة البدنية الجماعية، حزم برامج اللياقة البدنية، الاستشارة الغذائية، التدريب عبر الإنترنت',
+      fr: 'Séances d\'entraînement personnel, cours de fitness en groupe, forfaits de programmes de fitness, consultation nutritionnelle, coaching en ligne'
+    },
+    valueProposition: {
+      en: 'Customized fitness programs with ongoing support, motivation, proven results, flexible scheduling, and holistic approach',
+      sw: 'Mipango ya mazoezi iliyobinafsishwa na msaada unaoendelea, motisha, matokeo yaliyothibitishwa, ratiba za kubadilika, na mbinu ya jumla',
+      ar: 'برامج لياقة بدنية مخصصة مع دعم مستمر، تحفيز، نتائج مثبتة، جدولة مرنة، ونهج شامل',
+      fr: 'Programmes de fitness personnalisés avec soutien continu, motivation, résultats prouvés, planification flexible et approche holistique'
+    },
+    keyPartners: {
+      en: 'Gyms, nutritionists, sports equipment suppliers, health practitioners, supplement stores, wellness centers',
+      sw: 'Mazoezi, wataalamu wa lishe, wasambazaji wa vifaa vya michezo, wataalamu wa afya, maduka ya nyongeza, vituo vya ustawi',
+      ar: 'الصالات الرياضية، أخصائيو التغذية، موردو المعدات الرياضية، ممارسو الصحة، متاجر المكملات الغذائية، مراكز العافية',
+      fr: 'Salles de sport, nutritionnistes, fournisseurs d\'équipements sportifs, praticiens de santé, magasins de suppléments, centres de bien-être'
+    },
+    marketingApproach: {
+      en: 'Client transformation showcases on social media, referrals, fitness challenges, free consultations, community events',
+      sw: 'Maonyesho ya mabadiliko ya wateja kwenye mitandao ya kijamii, mapendekezo, changamoto za mazoezi, mashauri ya bure, matukio ya jamii',
+      ar: 'عروض تحولات العملاء على وسائل التواصل الاجتماعي، الإحالات، تحديات اللياقة البدنية، الاستشارات المجانية، الفعاليات المجتمعية',
+      fr: 'Présentations de transformations de clients sur les réseaux sociaux, références, défis de fitness, consultations gratuites, événements communautaires'
+    },
+    operationalNeeds: {
+      en: 'Fitness equipment, training space rental, certification maintenance, liability insurance, assessment tools',
+      sw: 'Vifaa vya mazoezi, ukodishaji wa nafasi ya mafunzo, matengenezo ya cheti, bima ya uwajibikaji, vifaa vya tathmini',
+      ar: 'معدات اللياقة البدنية، إيجار مساحة التدريب، صيانة الشهادات، تأمين المسؤولية، أدوات التقييم',
+      fr: 'Équipement de fitness, location d\'espace d\'entraînement, maintenance de certification, assurance responsabilité, outils d\'évaluation'
+    },
+    growthGoals: {
+      en: 'Open small gym facility, add nutrition counseling services, hire 2 trainers, launch online coaching platform',
+      sw: 'Kufungua kituo kidogo cha mazoezi, kuongeza huduma za ushauri wa lishe, kuajiri wakufunzi 2, kuzindua jukwaa la mchungaji wa mtandaoni',
+      ar: 'فتح منشأة صالة ألعاب رياضية صغيرة، إضافة خدمات الاستشارة الغذائية، توظيف 2 من المدربين، إطلاق منصة التدريب عبر الإنترنت',
+      fr: 'Ouvrir une petite installation de gym, ajouter des services de conseil nutritionnel, embaucher 2 entraîneurs, lancer une plateforme de coaching en ligne'
+    }
+  },
+  'social-media': {
+    vision: {
+      en: 'To help businesses build strong online communities and grow their digital presence effectively through strategic social media',
+      sw: 'Kusaidia biashara kujenga jamii imara za mtandaoni na kukuza uwepo wao wa kidijiti kwa ufanisi kupitia mitandao ya kijamii ya kimkakati',
+      ar: 'مساعدة الشركات على بناء مجتمعات قوية عبر الإنترنت وتنمية حضورها الرقمي بفعالية من خلال وسائل التواصل الاجتماعي الاستراتيجية',
+      fr: 'Aider les entreprises à construire de fortes communautés en ligne et développer leur présence numérique efficacement grâce aux médias sociaux stratégiques'
+    },
+    mission: {
+      en: 'Creating engaging social media strategies that connect businesses with their customers, drive growth, and build brand loyalty',
+      sw: 'Kuunda mikakati ya mitandao ya kijamii inayovutia inayounganisha biashara na wateja wao, kuendesha ukuaji, na kujenga uaminifu wa chapa',
+      ar: 'إنشاء استراتيجيات وسائل تواصل اجتماعي جذابة تربط الشركات بعملائها وتدفع النمو وتبني ولاء العلامة التجارية',
+      fr: 'Créer des stratégies de médias sociaux engageantes qui connectent les entreprises avec leurs clients, stimulent la croissance et construisent la fidélité à la marque'
+    },
+    targetMarket: {
+      en: 'Small to medium businesses, entrepreneurs, personal brands, restaurants, retail stores, service providers',
+      sw: 'Biashara ndogo hadi za kati, wajasiriamali, chapa za kibinafsi, migahawa, maduka ya rejareja, watoa huduma',
+      ar: 'الشركات الصغيرة إلى المتوسطة، رجال الأعمال، العلامات التجارية الشخصية، المطاعم، متاجر التجزئة، مقدمو الخدمات',
+      fr: 'Petites et moyennes entreprises, entrepreneurs, marques personnelles, restaurants, magasins de détail, fournisseurs de services'
+    },
+    revenueModel: {
+      en: 'Monthly management retainers, content creation packages, advertising management fees, strategy consultations, training workshops',
+      sw: 'Wahifadhi wa usimamizi wa kila mwezi, vifurushi vya kuunda maudhui, ada za usimamizi wa matangazo, mashauri ya kimkakati, warsha za mafunzo',
+      ar: 'أتعاب الإدارة الشهرية، حزم إنشاء المحتوى، رسوم إدارة الإعلانات، استشارات الاستراتيجية، ورش التدريب',
+      fr: 'Honoraires de gestion mensuels, forfaits de création de contenu, frais de gestion publicitaire, consultations stratégiques, ateliers de formation'
+    },
+    valueProposition: {
+      en: 'Professional social media management that increases engagement, followers, brand awareness, and drives measurable sales',
+      sw: 'Usimamizi wa kitaalamu wa mitandao ya kijamii unaoongeza ushiriki, wafuasi, ufahamu wa chapa, na kuendesha mauzo yanayoweza kupimwa',
+      ar: 'إدارة وسائل التواصل الاجتماعي المهنية التي تزيد من المشاركة والمتابعين والوعي بالعلامة التجارية وتحقق مبيعات قابلة للقياس',
+      fr: 'Gestion professionnelle des médias sociaux qui augmente l\'engagement, les abonnés, la notoriété de la marque et génère des ventes mesurables'
+    },
+    keyPartners: {
+      en: 'Graphic designers, photographers, web developers, advertising platforms, content creators, influencers',
+      sw: 'Wabunifu wa michoro, wapiga picha, waendelezaji wa tovuti, majukwaa ya matangazo, waundaji wa maudhui, wataathiri',
+      ar: 'مصممو الجرافيك، المصورون، مطورو الويب، منصات الإعلان، منشئو المحتوى، المؤثرون',
+      fr: 'Graphistes, photographes, développeurs web, plateformes publicitaires, créateurs de contenu, influenceurs'
+    },
+    marketingApproach: {
+      en: 'Case studies showcasing client success, free consultations, networking events, online content, referral programs',
+      sw: 'Utafiti wa kesi unaonyesha mafanikio ya wateja, mashauri ya bure, matukio ya mitandao, maudhui ya mtandaoni, mipango ya mapendekezo',
+      ar: 'دراسات حالة تعرض نجاح العملاء، استشارات مجانية، فعاليات التواصل، المحتوى عبر الإنترنت، برامج الإحالة',
+      fr: 'Études de cas présentant le succès des clients, consultations gratuites, événements de réseautage, contenu en ligne, programmes de parrainage'
+    },
+    operationalNeeds: {
+      en: 'Computer, design software, social media management tools, project management systems, analytics tools',
+      sw: 'Kompyuta, programu za kubuni, vifaa vya usimamizi wa mitandao ya kijamii, mifumo ya usimamizi wa miradi, vifaa vya uchanganuzi',
+      ar: 'كمبيوتر، برنامج التصميم، أدوات إدارة وسائل التواصل الاجتماعي، أنظمة إدارة المشاريع، أدوات التحليلات',
+      fr: 'Ordinateur, logiciel de conception, outils de gestion des médias sociaux, systèmes de gestion de projet, outils d\'analyse'
+    },
+    growthGoals: {
+      en: 'Build client base to 20 regular accounts, add video content services, hire content creator, develop training courses',
+      sw: 'Kujenga msingi wa wateja hadi akaunti 20 za kawaida, kuongeza huduma za maudhui ya video, kuajiri mwundaji wa maudhui, kuendeleza kozi za mafunzo',
+      ar: 'بناء قاعدة عملاء إلى 20 حسابًا منتظمًا، إضافة خدمات محتوى الفيديو، توظيف منشئ محتوى، تطوير دورات تدريبية',
+      fr: 'Construire une base de clients à 20 comptes réguliers, ajouter des services de contenu vidéo, embaucher un créateur de contenu, développer des cours de formation'
+    }
   }
 };
 
@@ -687,17 +967,7 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       id: 'auto-repair',
       name: language === 'sw' ? 'Huduma za Ukarabati wa Magari' : language === 'ar' ? 'خدمات إصلاح السيارات' : language === 'fr' ? 'Services de Réparation Auto' : 'Auto Repair Services',
       description: language === 'sw' ? 'Ukarabati na matengenezo ya magari' : language === 'ar' ? 'إصلاح وصيانة السيارات' : language === 'fr' ? 'Réparation et entretien automobile' : 'Vehicle repair and maintenance',
-      content: {
-        vision: 'To be the most trusted auto repair shop known for honest service, quality work, fair pricing, and customer satisfaction',
-        mission: 'Keeping our community\'s vehicles safe and reliable through expert repair services, preventive maintenance, and honest advice',
-        targetMarket: 'Vehicle owners seeking reliable, affordable auto repair, maintenance services, and emergency roadside assistance',
-        revenueModel: 'Labor charges for repairs, parts markup (20-30%), maintenance packages, emergency roadside assistance, diagnostic services',
-        valueProposition: 'Honest diagnostics, quality repairs with warranty, fair pricing, excellent customer service, and quick turnaround',
-        keyPartners: 'Auto parts suppliers, towing services, insurance companies, car dealerships, tire suppliers, equipment manufacturers',
-        marketingApproach: 'Word-of-mouth referrals, online reviews, local advertising, partnerships with car dealers, community involvement',
-        operationalNeeds: 'Garage space with lifts, diagnostic equipment, hand tools, parts inventory, waiting area, safety equipment',
-        growthGoals: 'Add tire services, expand to include motorcycles, hire 2 additional mechanics, establish mobile repair service'
-      }
+      content: getTranslatedContent('auto-repair-service', language)
     },
     {
       id: 'boda-boda',
@@ -721,49 +991,19 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       id: 'bakery',
       name: language === 'sw' ? 'Biashara ya Mkate' : language === 'ar' ? 'مخبز' : language === 'fr' ? 'Boulangerie' : 'Bakery',
       description: language === 'sw' ? 'Kuoka mkate na keki' : language === 'ar' ? 'خبز الخبز والكعك' : language === 'fr' ? 'Cuisson de pain et gâteaux' : 'Baking bread, cakes, and pastries',
-      content: {
-        vision: 'To be the neighborhood\'s favorite bakery known for fresh, delicious baked goods, quality ingredients, and exceptional service',
-        mission: 'Bringing joy to our community through freshly baked breads, cakes, and pastries made with love and quality ingredients',
-        targetMarket: 'Local families, offices, restaurants, schools, customers needing custom cakes for special events, breakfast commuters',
-        revenueModel: 'Daily sales of bread and pastries, custom cake orders, catering services, wholesale to cafes, special occasion items',
-        valueProposition: 'Fresh, homemade baked goods using quality ingredients at competitive prices with custom options and consistent quality',
-        keyPartners: 'Flour and ingredient suppliers, local cafes, event planners, grocery stores, schools, wedding planners',
-        marketingApproach: 'Social media photos of daily offerings, word-of-mouth, local events, loyalty cards, seasonal promotions',
-        operationalNeeds: 'Commercial ovens, baking equipment, ingredients inventory, retail display cases, packaging materials, cash register',
-        growthGoals: 'Add coffee service, expand custom cake decorating, hire 2 bakers, open second location, establish wholesale division'
-      }
+      content: getTranslatedContent('bakery', language)
     },
     {
       id: 'tutoring',
       name: language === 'sw' ? 'Huduma za Ufundishaji' : language === 'ar' ? 'خدمات التدريس' : language === 'fr' ? 'Services de Tutorat' : 'Tutoring Services',
       description: language === 'sw' ? 'Mafunzo ya kibinafsi na darasa' : language === 'ar' ? 'التعليم الخاص والفصول الدراسية' : language === 'fr' ? 'Enseignement privé et cours' : 'Private lessons and academic support',
-      content: {
-        vision: 'To help every student reach their full academic potential and develop confidence, critical thinking, and love for learning',
-        mission: 'Providing personalized tutoring that builds confidence, improves academic performance, and fosters lifelong learning skills',
-        targetMarket: 'Students from primary through university level, adult learners, parents seeking academic support for children',
-        revenueModel: 'Hourly tutoring rates, group class fees, exam preparation packages, online tutoring sessions, educational consulting',
-        valueProposition: 'Personalized instruction that adapts to each student\'s learning style with proven results and flexible scheduling',
-        keyPartners: 'Schools, parents, educational supply companies, online learning platforms, testing centers, academic institutions',
-        marketingApproach: 'Parent referrals, school partnerships, online testimonials, social media success stories, community outreach',
-        operationalNeeds: 'Teaching materials, comfortable learning space, educational resources, whiteboard, computer, assessment tools',
-        growthGoals: 'Hire 3 additional tutors, offer online tutoring services, establish test prep center, create learning app'
-      }
+      content: getTranslatedContent('tutoring', language)
     },
     {
       id: 'fitness-training',
       name: language === 'sw' ? 'Mazoezi ya Mwili' : language === 'ar' ? 'التدريب البدني' : language === 'fr' ? 'Entraînement Fitness' : 'Fitness Training',
       description: language === 'sw' ? 'Mafunzo ya mazoezi na afya' : language === 'ar' ? 'تدريب اللياقة البدنية والصحة' : language === 'fr' ? 'Entraînement de fitness et santé' : 'Personal training and fitness coaching',
-      content: {
-        vision: 'To help people achieve their fitness goals and live healthier, stronger, more confident lives through personalized training',
-        mission: 'Providing expert fitness guidance that transforms lives through sustainable health practices, motivation, and results-driven training',
-        targetMarket: 'Adults seeking weight loss, strength building, overall fitness improvement, athletes, busy professionals, seniors',
-        revenueModel: 'Personal training sessions, group fitness classes, fitness program packages, nutritional consultation, online coaching',
-        valueProposition: 'Customized fitness programs with ongoing support, motivation, proven results, flexible scheduling, and holistic approach',
-        keyPartners: 'Gyms, nutritionists, sports equipment suppliers, health practitioners, supplement stores, wellness centers',
-        marketingApproach: 'Client transformation showcases on social media, referrals, fitness challenges, free consultations, community events',
-        operationalNeeds: 'Fitness equipment, training space rental, certification maintenance, liability insurance, assessment tools',
-        growthGoals: 'Open small gym facility, add nutrition counseling services, hire 2 trainers, launch online coaching platform'
-      }
+      content: getTranslatedContent('fitness-training', language)
     },
     {
       id: 'daycare',
@@ -785,17 +1025,7 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       id: 'social-media',
       name: language === 'sw' ? 'Huduma za Mitandao ya Kijamii' : language === 'ar' ? 'خدمات وسائل التواصل الاجتماعي' : language === 'fr' ? 'Services de Médias Sociaux' : 'Social Media Management',
       description: language === 'sw' ? 'Usimamizi wa mitandao ya kijamii' : language === 'ar' ? 'إدارة وسائل التواصل الاجتماعي' : language === 'fr' ? 'Gestion des médias sociaux' : 'Social media management and marketing',
-      content: {
-        vision: 'To help businesses build strong online communities and grow their digital presence effectively through strategic social media',
-        mission: 'Creating engaging social media strategies that connect businesses with their customers, drive growth, and build brand loyalty',
-        targetMarket: 'Small to medium businesses, entrepreneurs, personal brands, restaurants, retail stores, service providers',
-        revenueModel: 'Monthly management retainers, content creation packages, advertising management fees, strategy consultations, training workshops',
-        valueProposition: 'Professional social media management that increases engagement, followers, brand awareness, and drives measurable sales',
-        keyPartners: 'Graphic designers, photographers, web developers, advertising platforms, content creators, influencers',
-        marketingApproach: 'Case studies showcasing client success, free consultations, networking events, online content, referral programs',
-        operationalNeeds: 'Computer, design software, social media management tools, project management systems, analytics tools',
-        growthGoals: 'Build client base to 20 regular accounts, add video content services, hire content creator, develop training courses'
-      }
+      content: getTranslatedContent('social-media', language)
     }
   ];
 
