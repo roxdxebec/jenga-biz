@@ -313,25 +313,7 @@ Generated on: ${new Date().toLocaleDateString()}
             />
           </div>
           
-          <div>
-            <BusinessMilestonesSection
-              strategyData={strategyData}
-              language={language}
-            />
-          </div>
-          
-          <div>
-            <MonthlyRevenueSection
-              strategyData={strategyData}
-              language={language}
-              currency={currency}
-              currencySymbol={currencySymbol}
-              country={country}
-              onCountryChange={setCountry}
-            />
-          </div>
-
-          {/* Final Summary Section */}
+          {/* Business Strategy Summary Section - moved here after Strategy Builder */}
           <div className="bg-white p-6 rounded-lg border border-blue-200 space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 text-center">
               Business Strategy Summary
@@ -357,6 +339,25 @@ Generated on: ${new Date().toLocaleDateString()}
               <ShareModal strategy={strategyData || {}} language={language} />
             </div>
           </div>
+          
+          <div>
+            <BusinessMilestonesSection
+              strategyData={strategyData}
+              language={language}
+            />
+          </div>
+          
+          <div>
+            <MonthlyRevenueSection
+              strategyData={strategyData}
+              language={language}
+              currency={currency}
+              currencySymbol={currencySymbol}
+              country={country}
+              onCountryChange={setCountry}
+            />
+          </div>
+
         </div>
       </div>
     );
