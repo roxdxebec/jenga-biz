@@ -270,16 +270,39 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     return statusOptions.find(opt => opt.value === status)?.color || 'bg-gray-100 text-gray-700';
   };
 
-  const addMilestone = (e?: React.FormEvent) => {
+  const addMilestone = (e?: React.FormEvent, title?: string) => {
     e?.preventDefault();
     const newMilestone: Milestone = {
       id: Date.now().toString(),
-      title: '',
+      title: title || '',
       targetDate: null,
       status: 'not-started'
     };
 
     setMilestones([...milestones, newMilestone]);
+  };
+
+  const addSuggestedMilestones = () => {
+    const stageMilestones = getStageSpecificMilestones(businessStage);
+    const newMilestones = stageMilestones.map(title => ({
+      id: Date.now().toString() + Math.random().toString(),
+      title,
+      targetDate: null,
+      status: 'not-started' as const
+    }));
+    
+    setMilestones([...milestones, ...newMilestones]);
+    
+    toast({
+      title: language === 'sw' ? 'Malengo Yameongezwa' :
+             language === 'ar' ? 'تم إضافة المعالم' :
+             language === 'fr' ? 'Jalons Ajoutés' :
+             'Milestones Added',
+      description: language === 'sw' ? `${stageMilestones.length} malengo yaliyopendekezwa yameongezwa` :
+                   language === 'ar' ? `تم إضافة ${stageMilestones.length} معالم مقترحة` :
+                   language === 'fr' ? `${stageMilestones.length} jalons suggérés ajoutés` :
+                   `${stageMilestones.length} suggested milestones added`,
+    });
   };
 
   const updateMilestone = (id: string, field: keyof Milestone, value: any) => {
@@ -350,30 +373,38 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
             <CardTitle className="text-lg text-green-800">{t.suggestedMilestonesFor} {currentStage?.label}</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 mb-4">
-              {getStageSpecificMilestones(businessStage).slice(0, 2).map((milestone, index) => (
-                <li key={index} className="flex items-center text-sm text-green-700">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                  {milestone}
-                </li>
+            <div className="space-y-3 mb-4">
+              {getStageSpecificMilestones(businessStage).map((milestone, index) => (
+                <div key={index} className="flex items-center justify-between bg-white/50 rounded-lg p-3 border border-green-200">
+                  <div className="flex items-center text-sm text-green-700">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
+                    <span className="flex-1">{milestone}</span>
+                  </div>
+                  <Button
+                    onClick={() => addMilestone(undefined, milestone)}
+                    size="sm"
+                    variant="outline"
+                    className="ml-3 text-green-600 border-green-300 hover:bg-green-100 px-3 py-1 text-xs"
+                  >
+                    <Plus className="w-3 h-3 mr-1" />
+                    {language === 'sw' ? 'Ongeza' :
+                     language === 'ar' ? 'إضافة' :
+                     language === 'fr' ? 'Ajouter' :
+                     'Add'}
+                  </Button>
+                </div>
               ))}
-            </ul>
+            </div>
             <Button
-              onClick={() => {
-                const stageMilestones = getStageSpecificMilestones(businessStage);
-                // Prefill first two milestones with stage-specific content
-                setMilestones(prev => prev.map((milestone, index) => 
-                  index < 2 && stageMilestones[index] ? 
-                    { ...milestone, title: stageMilestones[index] } : 
-                    milestone
-                ));
-              }}
+              onClick={addSuggestedMilestones}
               size="sm"
-              variant="outline"
-              className="text-green-600 border-green-300 hover:bg-green-50 w-full"
+              className="bg-green-600 hover:bg-green-700 text-white w-full"
             >
               <Plus className="w-4 h-4 mr-1" />
-              {t.addMilestone}
+              {language === 'sw' ? 'Ongeza Yote' :
+               language === 'ar' ? 'إضافة الكل' :
+               language === 'fr' ? 'Ajouter Tout' :
+               'Add All Suggested'}
             </Button>
           </CardContent>
         </Card>
