@@ -682,36 +682,61 @@ Generated on: ${new Date().toLocaleDateString()}
                 <div className="space-y-3">
                   <h4 className="font-semibold text-gray-800">{t.businessStage}: {t.growthStage}</h4>
                   
-                  <div className="space-y-3">
-                    <h5 className="font-medium text-gray-700">{t.currentMilestones}:</h5>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                        <span>📝 {
-                          language === 'sw' ? 'Thibitisha wazo la biashara na wateja watarajiwa' :
-                          language === 'ar' ? 'التحقق من فكرة العمل مع العملاء المحتملين' :
-                          language === 'fr' ? 'Valider l\'idée d\'entreprise avec des clients potentiels' :
-                          'Validate business idea with potential customers'
-                        }</span>
-                        <span className="text-gray-600 font-medium">{t.notStarted}</span>
-                      </div>
-                    </div>
-                  </div>
+                   <div className="space-y-3">
+                     <h5 className="font-medium text-gray-700">{t.currentMilestones}:</h5>
+                     <div className="space-y-2 text-sm">
+                       {strategyData?.businessMilestones && strategyData.businessMilestones.length > 0 ? 
+                         strategyData.businessMilestones.map((milestone, index) => (
+                           <div key={index} className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                             <span>📝 {milestone.title}</span>
+                             <span className="text-gray-600 font-medium capitalize">{milestone.status.replace('-', ' ')}</span>
+                           </div>
+                         )) : (
+                           <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                             <span className="text-gray-500">
+                               {language === 'sw' ? 'Hakuna malengo yaliyoongezwa bado' :
+                                language === 'ar' ? 'لم يتم إضافة معالم بعد' :
+                                language === 'fr' ? 'Aucun jalon ajouté encore' :
+                                'No milestones added yet'}
+                             </span>
+                           </div>
+                         )
+                       }
+                     </div>
+                   </div>
 
-                  <div className="mt-4 p-3 bg-purple-50 rounded">
-                    <p className="text-sm text-purple-700">
-                      <strong>
-                        {language === 'sw' ? 'Muhtasari wa Maendeleo:' :
-                         language === 'ar' ? 'ملخص التقدم:' :
-                         language === 'fr' ? 'Résumé des Progrès:' :
-                         'Progress Summary:'}
-                      </strong> {
-                        language === 'sw' ? 'Mwanzo mzuri! Una lengo 1 tayari kuanza. Weka tarehe za lengo na uanze kufanya kazi kwenye lengo lako la kwanza kujenga kasi.' :
-                        language === 'ar' ? 'بداية رائعة! لديك معلم واحد جاهز للبدء. حدد التواريخ المستهدفة وابدأ العمل على معلمك الأول لبناء الزخم.' :
-                        language === 'fr' ? 'Bon départ! Vous avez 1 jalon prêt à commencer. Définissez des dates cibles et commencez à travailler sur votre premier jalon pour créer de l\'élan.' :
-                        'Great start! You have 1 milestone ready to begin. Set target dates and start working on your first milestone to build momentum.'
-                      }
-                    </p>
-                  </div>
+                   <div className="mt-4 p-3 bg-purple-50 rounded">
+                     <p className="text-sm text-purple-700">
+                       <strong>
+                         {language === 'sw' ? 'Muhtasari wa Maendeleo:' :
+                          language === 'ar' ? 'ملخص التقدم:' :
+                          language === 'fr' ? 'Résumé des Progrès:' :
+                          'Progress Summary:'}
+                       </strong> {
+                         (() => {
+                           const milestoneCount = strategyData?.businessMilestones?.length || 0;
+                           const completedCount = strategyData?.businessMilestones?.filter(m => m.status === 'complete').length || 0;
+                           
+                           if (milestoneCount === 0) {
+                             return language === 'sw' ? 'Anza na kuongeza baadhi ya malengo ya biashara yako kuanza safari yako.' :
+                                    language === 'ar' ? 'ابدأ بإضافة بعض معالم الأعمال لبدء رحلتك.' :
+                                    language === 'fr' ? 'Commencez par ajouter quelques jalons d\'affaires pour commencer votre voyage.' :
+                                    'Start by adding some business milestones to begin your journey.';
+                           } else if (completedCount === 0) {
+                             return language === 'sw' ? `Mwanzo mzuri! Una lengo ${milestoneCount} tayari kuanza. Weka tarehe za lengo na uanze kufanya kazi kwenye lengo lako la kwanza kujenga kasi.` :
+                                    language === 'ar' ? `بداية رائعة! لديك ${milestoneCount} معلم جاهز للبدء. حدد التواريخ المستهدفة وابدأ العمل على معلمك الأول لبناء الزخم.` :
+                                    language === 'fr' ? `Bon départ! Vous avez ${milestoneCount} jalon prêt à commencer. Définissez des dates cibles et commencez à travailler sur votre premier jalon pour créer de l'élan.` :
+                                    `Great start! You have ${milestoneCount} milestone${milestoneCount > 1 ? 's' : ''} ready to begin. Set target dates and start working on your milestones to build momentum.`;
+                           } else {
+                             return language === 'sw' ? `Hongera! Umekamilisha lengo ${completedCount} kati ya ${milestoneCount}. Endelea na malengo mengine ili kufikia malengo yako ya biashara.` :
+                                    language === 'ar' ? `تهانينا! لقد أكملت ${completedCount} من ${milestoneCount} معلم. تابع مع المعالم الأخرى لتحقيق أهداف عملك.` :
+                                    language === 'fr' ? `Félicitations! Vous avez terminé ${completedCount} sur ${milestoneCount} jalons. Continuez avec les autres jalons pour atteindre vos objectifs commerciaux.` :
+                                    `Congratulations! You've completed ${completedCount} out of ${milestoneCount} milestones. Continue with the others to achieve your business goals.`;
+                           }
+                         })()
+                       }
+                     </p>
+                   </div>
 
                   <p className="text-xs text-gray-500 text-center mt-4">{t.generatedWith}</p>
                 </div>
