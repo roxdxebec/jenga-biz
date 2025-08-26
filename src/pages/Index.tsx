@@ -566,6 +566,9 @@ Generated on: ${new Date().toLocaleDateString()}
             <BusinessMilestonesSection
               strategyData={strategyData}
               language={language}
+              onMilestonesChange={(milestones) => {
+                setStrategyData(prev => ({ ...prev, businessMilestones: milestones }));
+              }}
             />
           </div>
           

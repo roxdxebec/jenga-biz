@@ -680,21 +680,6 @@ ${language === 'en' ? 'Generated on' :
                 {t.title}
               </CardTitle>
               <p className="text-gray-600 mt-2">{t.subtitle}</p>
-              
-            </div>
-            
-            {/* How it works section - compact and better positioned */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mt-3 max-w-sm">
-              <p className="text-xs text-blue-700">
-                💡 <strong>{language === 'sw' ? 'Jinsi inavyofanya kazi:' :
-                           language === 'ar' ? 'كيف يعمل:' :
-                           language === 'fr' ? 'Comment ça marche:' :
-                           'How it works:'}</strong> {' '}
-                {language === 'sw' ? 'Rekodi mapato na matumizi. Changanya risiti au weka kwa mkono.' :
-                 language === 'ar' ? 'سجل الإيرادات والمصروفات. امسح الإيصالات أو أدخل يدوياً.' :
-                 language === 'fr' ? 'Enregistrez revenus et dépenses. Scannez reçus ou saisissez manuellement.' :
-                 'Record revenue and expenses. Scan receipts or enter manually.'}
-              </p>
             </div>
             
             {onCountryChange && (
@@ -718,6 +703,20 @@ ${language === 'en' ? 'Generated on' :
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
+        
+        {/* How it works section - compact and well positioned */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-blue-700">
+            💡 <strong>{language === 'sw' ? 'Jinsi inavyofanya kazi:' :
+                       language === 'ar' ? 'كيف يعمل:' :
+                       language === 'fr' ? 'Comment ça marche:' :
+                       'How it works:'}</strong> {' '}
+            {language === 'sw' ? 'Rekodi mapato na matumizi. Changanya risiti au weka kwa mkono.' :
+             language === 'ar' ? 'سجل الإيرادات والمصروفات. امسح الإيصالات أو أدخل يدوياً.' :
+             language === 'fr' ? 'Enregistrez revenus et dépenses. Scannez reçus ou saisissez manuellement.' :
+             'Record revenue and expenses. Scan receipts or enter manually.'}
+          </p>
+        </div>
 
           {/* Entry Date Selector (for adding new entries) */}
           <div className="flex justify-center">

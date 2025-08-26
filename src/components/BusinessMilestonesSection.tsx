@@ -24,9 +24,10 @@ interface BusinessMilestonesSectionProps {
   isPro?: boolean;
   strategyData?: any;
   language?: string;
+  onMilestonesChange?: (milestones: Milestone[]) => void;
 }
 
-const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en' }: BusinessMilestonesSectionProps) => {
+const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en', onMilestonesChange }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
   const [customMilestone, setCustomMilestone] = useState('');
   
@@ -118,7 +119,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const [milestones, setMilestones] = useState<Milestone[]>(() => {
-    // Initialize with only the first suggested milestone
+    // Initialize from strategyData if available
+    if (strategyData?.businessMilestones) {
+      return strategyData.businessMilestones;
+    }
+    
+    // Otherwise initialize with only the first suggested milestone
     const suggestedMilestones = getStageSpecificMilestones('ideation');
     const defaultMilestones = [
       {
@@ -295,7 +301,13 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       status: 'not-started'
     };
 
-    setMilestones([...milestones, newMilestone]);
+    const updatedMilestones = [...milestones, newMilestone];
+    setMilestones(updatedMilestones);
+    
+    // Update parent component
+    if (onMilestonesChange) {
+      onMilestonesChange(updatedMilestones);
+    }
     
     // Clear the custom milestone input if it was used
     if (!title) {
@@ -323,7 +335,13 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       status: 'not-started' as const
     }));
     
-    setMilestones([...milestones, ...newMilestones]);
+    const updatedMilestones = [...milestones, ...newMilestones];
+    setMilestones(updatedMilestones);
+    
+    // Update parent component
+    if (onMilestonesChange) {
+      onMilestonesChange(updatedMilestones);
+    }
     
     toast({
       title: language === 'sw' ? 'Malengo Yameongezwa' :
@@ -338,13 +356,25 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const updateMilestone = (id: string, field: keyof Milestone, value: any) => {
-    setMilestones(milestones.map(milestone => 
+    const updatedMilestones = milestones.map(milestone => 
       milestone.id === id ? { ...milestone, [field]: value } : milestone
-    ));
+    );
+    setMilestones(updatedMilestones);
+    
+    // Update parent component
+    if (onMilestonesChange) {
+      onMilestonesChange(updatedMilestones);
+    }
   };
 
   const deleteMilestone = (id: string) => {
-    setMilestones(milestones.filter(milestone => milestone.id !== id));
+    const updatedMilestones = milestones.filter(milestone => milestone.id !== id);
+    setMilestones(updatedMilestones);
+    
+    // Update parent component
+    if (onMilestonesChange) {
+      onMilestonesChange(updatedMilestones);
+    }
   };
 
   const currentStage = businessStages.find(stage => stage.value === businessStage);
