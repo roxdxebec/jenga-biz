@@ -674,12 +674,12 @@ ${language === 'en' ? 'Generated on' :
       <Card className="border-green-200">
         <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
           <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
-                <DollarSign className="w-6 h-6 mr-2 text-green-600" />
-                {t.title}
+            <div className="flex-1">
+              <CardTitle className="text-3xl font-bold text-gray-900 flex items-center mb-2">
+                <DollarSign className="w-8 h-8 mr-3 text-green-600" />
+                Financial Tracker
               </CardTitle>
-              <p className="text-gray-600 mt-2">{t.subtitle}</p>
+              <p className="text-lg text-gray-800 font-medium">Track your daily revenue and expenses with ease</p>
             </div>
             
             {onCountryChange && (
@@ -711,10 +711,10 @@ ${language === 'en' ? 'Generated on' :
                        language === 'ar' ? 'كيف يعمل:' :
                        language === 'fr' ? 'Comment ça marche:' :
                        'How it works:'}</strong> {' '}
-            {language === 'sw' ? 'Rekodi mapato na matumizi. Changanya risiti au weka kwa mkono.' :
-             language === 'ar' ? 'سجل الإيرادات والمصروفات. امسح الإيصالات أو أدخل يدوياً.' :
-             language === 'fr' ? 'Enregistrez revenus et dépenses. Scannez reçus ou saisissez manuellement.' :
-             'Record revenue and expenses. Scan receipts or enter manually.'}
+            {language === 'sw' ? 'Rekodi mapato na matumizi. Piga picha ya risiti au pakia picha/screenshot kutoka mkanda wako, au weka taarifa kwa mkono.' :
+             language === 'ar' ? 'سجل الإيرادات والمصروفات. التقط صورة للإيصال أو ارفع صورة/لقطة شاشة من مخزونك، أو أدخل التفاصيل يدوياً.' :
+             language === 'fr' ? 'Enregistrez revenus et dépenses. Prenez une photo du reçu ou téléchargez une image/capture d\'écran de votre stockage, ou saisissez les détails manuellement.' :
+             'Record revenue and expenses. Take a photo of receipt or upload image/screenshot from your storage, or enter details manually.'}
           </p>
         </div>
 
