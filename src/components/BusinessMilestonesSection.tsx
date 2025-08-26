@@ -28,6 +28,7 @@ interface BusinessMilestonesSectionProps {
 
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en' }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
+  const [customMilestone, setCustomMilestone] = useState('');
   const [milestones, setMilestones] = useState<Milestone[]>(() => {
     // Initialize with default milestones based on stage
     const defaultMilestones = [
@@ -272,14 +273,47 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
   const addMilestone = (e?: React.FormEvent, title?: string) => {
     e?.preventDefault();
+    const milestoneTitle = title || customMilestone.trim();
+    
+    if (!milestoneTitle) {
+      toast({
+        title: language === 'sw' ? 'Kosa' :
+               language === 'ar' ? 'خطأ' :
+               language === 'fr' ? 'Erreur' :
+               'Error',
+        description: language === 'sw' ? 'Tafadhali andika jina la lengo' :
+                     language === 'ar' ? 'يرجى إدخال عنوان المعلم' :
+                     language === 'fr' ? 'Veuillez entrer un titre de jalon' :
+                     'Please enter a milestone title',
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newMilestone: Milestone = {
       id: Date.now().toString(),
-      title: title || '',
+      title: milestoneTitle,
       targetDate: null,
       status: 'not-started'
     };
 
     setMilestones([...milestones, newMilestone]);
+    
+    // Clear the custom milestone input if it was used
+    if (!title) {
+      setCustomMilestone('');
+    }
+
+    toast({
+      title: language === 'sw' ? 'Lengo Limeongezwa' :
+             language === 'ar' ? 'تم إضافة المعلم' :
+             language === 'fr' ? 'Jalon Ajouté' :
+             'Milestone Added',
+      description: language === 'sw' ? 'Lengo jipya limeongezwa kwenye orodha yako' :
+                   language === 'ar' ? 'تم إضافة معلم جديد إلى قائمتك' :
+                   language === 'fr' ? 'Un nouveau jalon a été ajouté à votre liste' :
+                   'New milestone added to your list',
+    });
   };
 
   const addSuggestedMilestones = () => {
@@ -395,15 +429,28 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                 </div>
               ))}
             </div>
-            <Button
-              onClick={addMilestone}
-              size="sm"
-              variant="outline"
-              className="text-green-600 border-green-300 hover:bg-green-50 w-full"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              {t.addMilestone}
-            </Button>
+            <div className="space-y-3">
+              <Input
+                value={customMilestone}
+                onChange={(e) => setCustomMilestone(e.target.value)}
+                placeholder={t.enterTitle}
+                className="w-full border-green-300 focus:border-green-400 focus:ring-green-200"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    addMilestone();
+                  }
+                }}
+              />
+              <Button
+                onClick={addMilestone}
+                size="sm"
+                variant="outline"
+                className="text-green-600 border-green-300 hover:bg-green-50 w-full"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                {t.addMilestone}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
