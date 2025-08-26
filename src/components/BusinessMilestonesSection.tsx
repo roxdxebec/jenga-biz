@@ -118,23 +118,11 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const [milestones, setMilestones] = useState<Milestone[]>(() => {
-    // Initialize with 2 empty milestones plus first suggested milestone
+    // Initialize with only the first suggested milestone
     const suggestedMilestones = getStageSpecificMilestones('ideation');
     const defaultMilestones = [
       {
         id: '1',
-        title: '',
-        targetDate: null,
-        status: 'not-started' as const
-      },
-      {
-        id: '2', 
-        title: '',
-        targetDate: null,
-        status: 'not-started' as const
-      },
-      {
-        id: '3',
         title: suggestedMilestones[0] || 'Validate business idea with potential customers',
         targetDate: null,
         status: 'not-started' as const
@@ -615,18 +603,6 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                 </div>
               </div>
             ))}
-            
-            {/* Add More Button */}
-            <div className="mt-6">
-              <Button
-                onClick={addMilestone}
-                variant="outline"
-                className="w-full border-2 border-dashed border-gray-300 hover:border-orange-300 hover:bg-orange-50 text-gray-600 hover:text-orange-600"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t.addMilestone}
-              </Button>
-            </div>
           </div>
         </CardContent>
       </Card>
