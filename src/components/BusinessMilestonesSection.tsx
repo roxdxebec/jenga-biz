@@ -406,6 +406,18 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
           </CardHeader>
           <CardContent>
             <div className="space-y-3 mb-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-700">
+                  💡 <strong>{language === 'sw' ? 'Jinsi inavyofanya kazi:' :
+                             language === 'ar' ? 'كيف يعمل:' :
+                             language === 'fr' ? 'Comment ça marche:' :
+                             'How it works:'}</strong> {' '}
+                  {language === 'sw' ? 'Chagua lengo kutoka orodha au andika lengo lako binafsi. Lengo litaongezwa moja kwa moja kwenye "Malengo Yako" ambapo unaweza kuweka tarehe na kuongeza kwenye kalenda.' :
+                   language === 'ar' ? 'اختر معلمًا من القائمة أو اكتب معلمك المخصص. سيتم إضافة المعلم مباشرة إلى "معالمك" حيث يمكنك تعيين التواريخ وإضافته إلى التقويم.' :
+                   language === 'fr' ? 'Choisissez un jalon dans la liste ou écrivez votre jalon personnalisé. Le jalon sera ajouté directement à "Vos Jalons" où vous pourrez définir des dates et l\'ajouter au calendrier.' :
+                   'Select a milestone from the list or write your custom milestone. The milestone will be added directly to "Your Milestones" where you can set dates and add to calendar.'}
+                </p>
+              </div>
               {getStageSpecificMilestones(businessStage).map((milestone, index) => (
                 <div key={index} className="flex items-center justify-between bg-white/50 rounded-lg p-3 border border-green-200">
                   <div className="flex items-center text-sm text-green-700">

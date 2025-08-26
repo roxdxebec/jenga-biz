@@ -78,7 +78,19 @@ const Index = () => {
       inProgress: 'In Progress',
       notStarted: 'Not Started',
       progressSummaryLabel: 'Progress Summary:',
-      progressSummaryText: 'You\'re making great progress! 1 milestone completed, 1 in progress. Keep focusing on your bank account setup to maintain momentum.',
+      getProgressSummary: (milestones: any[]) => {
+        const completed = milestones.filter(m => m.status === 'complete').length;
+        const inProgress = milestones.filter(m => m.status === 'in-progress').length;
+        const notStarted = milestones.filter(m => m.status === 'not-started').length;
+        
+        if (completed === 0 && inProgress === 0) {
+          return `Great start! You have ${milestones.length} milestone${milestones.length > 1 ? 's' : ''} ready to begin. Set target dates and start working on your first milestone to build momentum.`;
+        } else if (completed > 0) {
+          return `Excellent progress! ${completed} milestone${completed > 1 ? 's' : ''} completed, ${inProgress} in progress, ${notStarted} not started. Keep the momentum going!`;
+        } else {
+          return `You're on track! ${inProgress} milestone${inProgress > 1 ? 's' : ''} in progress, ${notStarted} ready to start. Focus on completing your current tasks.`;
+        }
+      },
       generatedWith: 'Generated with Jenga Biz Africa ✨',
       aiGeneratedSummary: 'AI-generated summary of your business strategy',
       visionLabel: 'Vision',
@@ -124,7 +136,19 @@ const Index = () => {
       inProgress: 'Inaendelea',
       notStarted: 'Haijuaanza',
       progressSummaryLabel: 'Muhtasari wa Maendeleo:',
-      progressSummaryText: 'Unafanya maendeleo mazuri! Lengo 1 limekamilika, 1 linaendelea. Endelea kulenga kuanzisha akaunti ya benki ili kudumisha msukumo.',
+      getProgressSummary: (milestones: any[]) => {
+        const completed = milestones.filter(m => m.status === 'complete').length;
+        const inProgress = milestones.filter(m => m.status === 'in-progress').length;
+        const notStarted = milestones.filter(m => m.status === 'not-started').length;
+        
+        if (completed === 0 && inProgress === 0) {
+          return `Mwanzo mzuri! Una malengo ${milestones.length} tayari kuanza. Weka tarehe za lengo na uanze kufanya kazi kwenye lengo lako la kwanza ili kujenga msukumo.`;
+        } else if (completed > 0) {
+          return `Maendeleo bora! Malengo ${completed} yamekamilika, ${inProgress} yanaendelea, ${notStarted} hayajaanza. Endelea na msukumo!`;
+        } else {
+          return `Uko njiani! Malengo ${inProgress} yanaendelea, ${notStarted} tayari kuanza. Lenga kukamilisha kazi zako za sasa.`;
+        }
+      },
       generatedWith: 'Imetengenezwa na Jenga Biz Africa ✨',
       aiGeneratedSummary: 'Muhtasari wa mkakati wa biashara yako uliotengenezwa na AI',
       visionLabel: 'Maono',
@@ -170,7 +194,19 @@ const Index = () => {
       inProgress: 'قيد التنفيذ',
       notStarted: 'لم تبدأ',
       progressSummaryLabel: 'ملخص التقدم:',
-      progressSummaryText: 'أنت تحرز تقدمًا رائعًا! معلم واحد مكتمل، واحد قيد التنفيذ. استمر في التركيز على إعداد حسابك المصرفي للحفاظ على الزخم.',
+      getProgressSummary: (milestones: any[]) => {
+        const completed = milestones.filter(m => m.status === 'complete').length;
+        const inProgress = milestones.filter(m => m.status === 'in-progress').length;
+        const notStarted = milestones.filter(m => m.status === 'not-started').length;
+        
+        if (completed === 0 && inProgress === 0) {
+          return `بداية رائعة! لديك ${milestones.length} معلم جاهز للبدء. حدد التواريخ المستهدفة وابدأ العمل على معلمك الأول لبناء الزخم.`;
+        } else if (completed > 0) {
+          return `تقدم ممتاز! ${completed} معلم مكتمل، ${inProgress} قيد التنفيذ، ${notStarted} لم تبدأ. استمر في الزخم!`;
+        } else {
+          return `أنت على الطريق الصحيح! ${inProgress} معلم قيد التنفيذ، ${notStarted} جاهز للبدء. ركز على إكمال مهامك الحالية.`;
+        }
+      },
       generatedWith: 'تم إنشاؤه بواسطة Jenga Biz Africa ✨',
       aiGeneratedSummary: 'ملخص استراتيجية عملك المُولد بالذكاء الاصطناعي',
       visionLabel: 'الرؤية',
@@ -216,7 +252,19 @@ const Index = () => {
       inProgress: 'En Cours',
       notStarted: 'Pas Commencé',
       progressSummaryLabel: 'Résumé des Progrès:',
-      progressSummaryText: 'Vous faites d\'excellents progrès! 1 jalon terminé, 1 en cours. Continuez à vous concentrer sur la configuration de votre compte bancaire pour maintenir l\'élan.',
+      getProgressSummary: (milestones: any[]) => {
+        const completed = milestones.filter(m => m.status === 'complete').length;
+        const inProgress = milestones.filter(m => m.status === 'in-progress').length;
+        const notStarted = milestones.filter(m => m.status === 'not-started').length;
+        
+        if (completed === 0 && inProgress === 0) {
+          return `Excellent début! Vous avez ${milestones.length} jalon${milestones.length > 1 ? 's' : ''} prêt${milestones.length > 1 ? 's' : ''} à commencer. Définissez des dates cibles et commencez à travailler sur votre premier jalon pour créer de l'élan.`;
+        } else if (completed > 0) {
+          return `Excellent progrès! ${completed} jalon${completed > 1 ? 's' : ''} terminé${completed > 1 ? 's' : ''}, ${inProgress} en cours, ${notStarted} pas commencé${notStarted > 1 ? 's' : ''}. Continuez sur votre lancée!`;
+        } else {
+          return `Vous êtes sur la bonne voie! ${inProgress} jalon${inProgress > 1 ? 's' : ''} en cours, ${notStarted} prêt${notStarted > 1 ? 's' : ''} à commencer. Concentrez-vous sur l'achèvement de vos tâches actuelles.`;
+        }
+      },
       generatedWith: 'Généré avec Jenga Biz Africa ✨',
       aiGeneratedSummary: 'Résumé généré par IA de votre stratégie commerciale',
       visionLabel: 'Vision',
@@ -659,7 +707,9 @@ Generated on: ${new Date().toLocaleDateString()}
 
                   <div className="mt-4 p-3 bg-purple-50 rounded">
                     <p className="text-sm text-purple-700">
-                      <strong>{t.progressSummaryLabel}</strong> {t.progressSummaryText}
+                      <strong>{t.progressSummaryLabel}</strong> {typeof t.getProgressSummary === 'function' ? t.getProgressSummary([
+                        { title: 'Validate business idea with potential customers', status: 'not-started' }
+                      ]) : 'Great start! You have 1 milestone ready to begin. Set target dates and start working on your first milestone to build momentum.'}
                     </p>
                   </div>
 
