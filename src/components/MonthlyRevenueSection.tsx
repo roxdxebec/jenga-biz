@@ -673,23 +673,25 @@ ${language === 'en' ? 'Generated on' :
     <div id="financial-section" className="space-y-6">
       <Card className="border-green-200">
         <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
             <div className="flex-1">
-              <CardTitle className="text-3xl font-bold text-black mb-2">
+              <CardTitle className="text-3xl font-bold text-black mb-2 flex items-center">
                 <DollarSign className="w-8 h-8 mr-3 text-green-600" />
                 <span>Financial Tracker</span>
               </CardTitle>
-              <p className="text-lg text-black font-medium whitespace-nowrap">Track your daily revenue and expenses with ease</p>
+              <p className="text-lg text-black font-medium leading-relaxed">
+                Track your daily revenue and<br />expenses with ease
+              </p>
             </div>
             
             {onCountryChange && (
-              <div className="flex items-center space-x-2">
-                <Label className="text-sm font-medium">{t.currency}</Label>
+              <div className="flex items-center space-x-2 lg:mt-2">
+                <Label className="text-sm font-medium text-gray-700">{t.currency}</Label>
                 <Select value={country} onValueChange={onCountryChange}>
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger className="w-32 bg-white border-gray-300 z-50">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
                     {currencyOptions.map((option) => (
                       <SelectItem key={option.code} value={option.code}>
                         {option.symbol} {option.currency}
