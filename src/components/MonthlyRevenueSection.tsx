@@ -680,6 +680,20 @@ ${language === 'en' ? 'Generated on' :
                 {t.title}
               </CardTitle>
               <p className="text-gray-600 mt-2">{t.subtitle}</p>
+              
+              {/* How it works section */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                <p className="text-sm text-blue-700">
+                  💡 <strong>{language === 'sw' ? 'Jinsi inavyofanya kazi:' :
+                             language === 'ar' ? 'كيف يعمل:' :
+                             language === 'fr' ? 'Comment ça marche:' :
+                             'How it works:'}</strong> {' '}
+                  {language === 'sw' ? 'Rekodi mapato na matumizi yako ya kila siku. Unaweza kuchanganua risiti kwa kutumia kamera au kupakia picha. Data yote itahifadhiwa na kukupa muhtasari wa kifedha.' :
+                   language === 'ar' ? 'سجل إيراداتك ومصروفاتك اليومية. يمكنك مسح الإيصالات باستخدام الكاميرا أو رفع الصور. سيتم حفظ جميع البيانات وإعطاؤك ملخصاً مالياً.' :
+                   language === 'fr' ? 'Enregistrez vos revenus et dépenses quotidiens. Vous pouvez scanner les reçus avec l\'appareil photo ou télécharger des images. Toutes les données seront sauvegardées et vous fourniront un résumé financier.' :
+                   'Record your daily revenue and expenses. You can scan receipts using your camera or upload images. All data will be saved and provide you with financial summaries.'}
+                </p>
+              </div>
             </div>
             
             {onCountryChange && (

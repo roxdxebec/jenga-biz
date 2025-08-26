@@ -394,19 +394,14 @@ Generated on: ${new Date().toLocaleDateString()}
                            language === 'fr' ? 'Créé avec Jenga Biz Africa' :
                            'Created with Jenga Biz Africa';
     
-    // Mock milestone data for demonstration
-    const milestones = [
-      { title: 'Register business name', status: 'complete', targetDate: '2024-01-15' },
-      { title: 'Open business bank account', status: 'in-progress', targetDate: '2024-02-01' },
-      { title: 'Launch minimum viable product', status: 'not-started', targetDate: '2024-03-15' }
-    ];
+    // Note: Currently no milestone data is available from the BusinessMilestonesSection component
+    // This would ideally be passed as props from the parent component containing actual milestone data
     
     const summary = `${createdWithText} - ${t.businessMilestonesSummary}
     
-Business Stage: ${t.growthStage}
+Business Stage: Growth Stage
     
-Milestones Progress:
-${milestones.map(m => `- ${m.title} (${m.status.replace('-', ' ')}${m.targetDate ? ` - Target: ${m.targetDate}` : ''})`).join('\n')}
+Current Status: Start by adding milestones to track your business progress
 
 Generated on: ${new Date().toLocaleDateString()}
 `;
@@ -690,16 +685,13 @@ Generated on: ${new Date().toLocaleDateString()}
                   <div className="space-y-3">
                     <h5 className="font-medium text-gray-700">{t.currentMilestones}:</h5>
                     <div className="space-y-2 text-sm">
-                      <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                        <span>✅ {t.registerBusinessName}</span>
-                        <span className="text-green-600 font-medium">{t.complete}</span>
-                      </div>
                       <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                        <span>🔄 {t.openBankAccount}</span>
-                        <span className="text-blue-600 font-medium">{t.inProgress}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span>⏳ {t.launchMVP}</span>
+                        <span>📝 {
+                          language === 'sw' ? 'Thibitisha wazo la biashara na wateja watarajiwa' :
+                          language === 'ar' ? 'التحقق من فكرة العمل مع العملاء المحتملين' :
+                          language === 'fr' ? 'Valider l\'idée d\'entreprise avec des clients potentiels' :
+                          'Validate business idea with potential customers'
+                        }</span>
                         <span className="text-gray-600 font-medium">{t.notStarted}</span>
                       </div>
                     </div>
@@ -707,9 +699,17 @@ Generated on: ${new Date().toLocaleDateString()}
 
                   <div className="mt-4 p-3 bg-purple-50 rounded">
                     <p className="text-sm text-purple-700">
-                      <strong>{t.progressSummaryLabel}</strong> {typeof t.getProgressSummary === 'function' ? t.getProgressSummary([
-                        { title: 'Validate business idea with potential customers', status: 'not-started' }
-                      ]) : 'Great start! You have 1 milestone ready to begin. Set target dates and start working on your first milestone to build momentum.'}
+                      <strong>
+                        {language === 'sw' ? 'Muhtasari wa Maendeleo:' :
+                         language === 'ar' ? 'ملخص التقدم:' :
+                         language === 'fr' ? 'Résumé des Progrès:' :
+                         'Progress Summary:'}
+                      </strong> {
+                        language === 'sw' ? 'Mwanzo mzuri! Una lengo 1 tayari kuanza. Weka tarehe za lengo na uanze kufanya kazi kwenye lengo lako la kwanza kujenga kasi.' :
+                        language === 'ar' ? 'بداية رائعة! لديك معلم واحد جاهز للبدء. حدد التواريخ المستهدفة وابدأ العمل على معلمك الأول لبناء الزخم.' :
+                        language === 'fr' ? 'Bon départ! Vous avez 1 jalon prêt à commencer. Définissez des dates cibles et commencez à travailler sur votre premier jalon pour créer de l\'élan.' :
+                        'Great start! You have 1 milestone ready to begin. Set target dates and start working on your first milestone to build momentum.'
+                      }
                     </p>
                   </div>
 
