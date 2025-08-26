@@ -396,15 +396,13 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
               ))}
             </div>
             <Button
-              onClick={addSuggestedMilestones}
+              onClick={addMilestone}
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white w-full"
+              variant="outline"
+              className="text-green-600 border-green-300 hover:bg-green-50 w-full"
             >
               <Plus className="w-4 h-4 mr-1" />
-              {language === 'sw' ? 'Ongeza Yote' :
-               language === 'ar' ? 'إضافة الكل' :
-               language === 'fr' ? 'Ajouter Tout' :
-               'Add All Suggested'}
+              {t.addMilestone}
             </Button>
           </CardContent>
         </Card>
