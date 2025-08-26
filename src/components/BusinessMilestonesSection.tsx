@@ -558,7 +558,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                         <Button
                           onClick={() => addToCalendar({
                             title: milestone.title,
-                            startTime: milestone.targetDate!,
+                            startDate: milestone.targetDate!,
                             description: `Business milestone: ${milestone.title}`
                           })}
                           size="sm"
