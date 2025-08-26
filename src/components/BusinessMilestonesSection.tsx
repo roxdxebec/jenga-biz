@@ -29,8 +29,97 @@ interface BusinessMilestonesSectionProps {
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en' }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
   const [customMilestone, setCustomMilestone] = useState('');
+  
+  // Helper function to get stage-specific milestones
+  const getStageSpecificMilestones = (stage: string) => {
+    const stageMilestones = {
+      en: {
+        ideation: [
+          'Validate business idea with potential customers',
+          'Research target market and competition',
+          'Create basic business plan',
+          'Secure initial funding or savings'
+        ],
+        early: [
+          'Register business name',
+          'Open business bank account',
+          'Launch minimum viable product/service',
+          'Get first 10 customers'
+        ],
+        growth: [
+          'Expand product/service offerings',
+          'Hire first employees',
+          'Establish partnerships',
+          'Scale marketing efforts'
+        ]
+      },
+      sw: {
+        ideation: [
+          'Thibitisha wazo la biashara na wateja watarajiwa',
+          'Fanya utafiti wa soko lengwa na ushindani',
+          'Unda mpango wa msingi wa biashara',
+          'Pata fedha za awali au akiba'
+        ],
+        early: [
+          'Sajili jina la biashara',
+          'Fungua akaunti ya benki ya biashara',
+          'Zindua bidhaa/huduma ya kimsingi',
+          'Pata wateja 10 wa kwanza'
+        ],
+        growth: [
+          'Panua matoleo ya bidhaa/huduma',
+          'Ajiri wafanyakazi wa kwanza',
+          'Unda ushirikiano',
+          'Ongeza juhudi za masoko'
+        ]
+      },
+      ar: {
+        ideation: [
+          'التحقق من فكرة العمل مع العملاء المحتملين',
+          'بحث السوق المستهدف والمنافسة',
+          'إنشاء خطة عمل أساسية',
+          'تأمين التمويل الأولي أو المدخرات'
+        ],
+        early: [
+          'تسجيل اسم الشركة',
+          'فتح حساب مصرفي تجاري',
+          'إطلاق المنتج/الخدمة الأساسية',
+          'الحصول على أول 10 عملاء'
+        ],
+        growth: [
+          'توسيع عروض المنتجات/الخدمات',
+          'توظيف أول موظفين',
+          'إقامة شراكات',
+          'توسيع جهود التسويق'
+        ]
+      },
+      fr: {
+        ideation: [
+          'Valider l\'idée d\'entreprise avec des clients potentiels',
+          'Rechercher le marché cible et la concurrence',
+          'Créer un plan d\'affaires de base',
+          'Sécuriser le financement initial ou les économies'
+        ],
+        early: [
+          'Enregistrer le nom de l\'entreprise',
+          'Ouvrir un compte bancaire professionnel',
+          'Lancer le produit/service minimal viable',
+          'Obtenir les 10 premiers clients'
+        ],
+        growth: [
+          'Élargir les offres de produits/services',
+          'Embaucher les premiers employés',
+          'Établir des partenariats',
+          'Intensifier les efforts marketing'
+        ]
+      }
+    };
+    return stageMilestones[language]?.[stage] || stageMilestones.en[stage] || [];
+  };
+
   const [milestones, setMilestones] = useState<Milestone[]>(() => {
-    // Initialize with default milestones based on stage
+    // Initialize with 2 empty milestones plus first suggested milestone
+    const suggestedMilestones = getStageSpecificMilestones('ideation');
     const defaultMilestones = [
       {
         id: '1',
@@ -41,6 +130,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       {
         id: '2', 
         title: '',
+        targetDate: null,
+        status: 'not-started' as const
+      },
+      {
+        id: '3',
+        title: suggestedMilestones[0] || 'Validate business idea with potential customers',
         targetDate: null,
         status: 'not-started' as const
       }
@@ -181,91 +276,6 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     { value: 'growth', label: t.growth, description: t.growthDesc }
   ];
 
-  const getStageSpecificMilestones = (stage: string) => {
-    const stageMilestones = {
-      en: {
-        ideation: [
-          'Validate business idea with potential customers',
-          'Research target market and competition',
-          'Create basic business plan',
-          'Secure initial funding or savings'
-        ],
-        early: [
-          'Register business name',
-          'Open business bank account',
-          'Launch minimum viable product/service',
-          'Get first 10 customers'
-        ],
-        growth: [
-          'Expand product/service offerings',
-          'Hire first employees',
-          'Establish partnerships',
-          'Scale marketing efforts'
-        ]
-      },
-      sw: {
-        ideation: [
-          'Thibitisha wazo la biashara na wateja watarajiwa',
-          'Fanya utafiti wa soko lengwa na ushindani',
-          'Unda mpango wa msingi wa biashara',
-          'Pata fedha za awali au akiba'
-        ],
-        early: [
-          'Sajili jina la biashara',
-          'Fungua akaunti ya benki ya biashara',
-          'Zindua bidhaa/huduma ya kimsingi',
-          'Pata wateja 10 wa kwanza'
-        ],
-        growth: [
-          'Panua matoleo ya bidhaa/huduma',
-          'Ajiri wafanyakazi wa kwanza',
-          'Unda ushirikiano',
-          'Ongeza juhudi za masoko'
-        ]
-      },
-      ar: {
-        ideation: [
-          'التحقق من فكرة العمل مع العملاء المحتملين',
-          'بحث السوق المستهدف والمنافسة',
-          'إنشاء خطة عمل أساسية',
-          'تأمين التمويل الأولي أو المدخرات'
-        ],
-        early: [
-          'تسجيل اسم الشركة',
-          'فتح حساب مصرفي تجاري',
-          'إطلاق المنتج/الخدمة الأساسية',
-          'الحصول على أول 10 عملاء'
-        ],
-        growth: [
-          'توسيع عروض المنتجات/الخدمات',
-          'توظيف أول موظفين',
-          'إقامة شراكات',
-          'توسيع جهود التسويق'
-        ]
-      },
-      fr: {
-        ideation: [
-          'Valider l\'idée d\'entreprise avec des clients potentiels',
-          'Rechercher le marché cible et la concurrence',
-          'Créer un plan d\'affaires de base',
-          'Sécuriser le financement initial ou les économies'
-        ],
-        early: [
-          'Enregistrer le nom de l\'entreprise',
-          'Ouvrir un compte bancaire professionnel',
-          'Lancer le produit/service minimal viable',
-          'Obtenir les 10 premiers clients'
-        ],
-        growth: [
-          'Élargir les offres de produits/services',
-          'Embaucher les premiers employés',
-          'Établir des partenariats',
-          'Intensifier les efforts marketing'
-        ]
-      }
-    };
-    return stageMilestones[language]?.[stage] || stageMilestones.en[stage] || [];
-  };
 
   const getStatusColor = (status: string) => {
     return statusOptions.find(opt => opt.value === status)?.color || 'bg-gray-100 text-gray-700';
