@@ -675,11 +675,11 @@ ${language === 'en' ? 'Generated on' :
         <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50">
           <div className="flex justify-between items-center">
             <div className="flex-1">
-              <CardTitle className="text-3xl font-bold text-black flex items-center mb-2">
+              <CardTitle className="text-3xl font-bold text-black mb-2">
                 <DollarSign className="w-8 h-8 mr-3 text-green-600" />
-                Financial Tracker
+                <span>Financial Tracker</span>
               </CardTitle>
-              <p className="text-lg text-black font-medium">Track your daily revenue and expenses with ease</p>
+              <p className="text-lg text-black font-medium whitespace-nowrap">Track your daily revenue and expenses with ease</p>
             </div>
             
             {onCountryChange && (
