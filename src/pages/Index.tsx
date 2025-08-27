@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
@@ -9,10 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar } from 'lucide-react';
+import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar, LogOut } from 'lucide-react';
 import { TemplateData } from '@/data/templateData';
+import { AuthDialog } from '@/components/auth/AuthDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
+  const { user, loading, signOut } = useAuth();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [currentView, setCurrentView] = useState('home');
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
   const [language, setLanguage] = useState('en');
@@ -21,6 +25,19 @@ const Index = () => {
   const [showStrategySummary, setShowStrategySummary] = useState(false);
   const [showMilestonesSummary, setShowMilestonesSummary] = useState(false);
   const { toast } = useToast();
+
+  // Show auth dialog if user is not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      setShowAuthDialog(true);
+    }
+  }, [user, loading]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setShowAuthDialog(true);
+    setCurrentView('home');
+  };
 
   const currencyMap = {
     'KE': { currency: 'KES', symbol: 'KSh' },
@@ -762,10 +779,24 @@ Generated on: ${new Date().toLocaleDateString()}
               <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
             </div>
             
-            <LanguageSelector 
-              currentLanguage={language} 
-              onLanguageChange={setLanguage} 
-            />
+            <div className="flex items-center space-x-4">
+              <LanguageSelector 
+                currentLanguage={language} 
+                onLanguageChange={setLanguage} 
+              />
+              
+              {user && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="flex items-center"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -849,6 +880,12 @@ Generated on: ${new Date().toLocaleDateString()}
           </div>
         </div>
       </div>
+
+      {/* Auth Dialog */}
+      <AuthDialog 
+        open={showAuthDialog} 
+        onOpenChange={setShowAuthDialog}
+      />
     </div>
   );
 };
