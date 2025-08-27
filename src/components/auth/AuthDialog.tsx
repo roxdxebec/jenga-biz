@@ -18,7 +18,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ email: "", password: "", fullName: "" });
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -69,7 +69,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className={`sm:max-w-md ${!user ? '[&>button]:hidden' : ''}`}>
         <DialogHeader>
           <DialogTitle className="text-center text-foreground">Welcome to Jenga Biz Africa</DialogTitle>
         </DialogHeader>

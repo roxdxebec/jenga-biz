@@ -33,6 +33,14 @@ const Index = () => {
     }
   }, [user, loading]);
 
+  // Don't allow dialog to be closed if user is not authenticated
+  const handleAuthDialogChange = (open: boolean) => {
+    if (user) {
+      setShowAuthDialog(open);
+    }
+    // If no user, keep dialog open
+  };
+
   const handleSignOut = async () => {
     await signOut();
     setShowAuthDialog(true);
@@ -884,7 +892,7 @@ Generated on: ${new Date().toLocaleDateString()}
       {/* Auth Dialog */}
       <AuthDialog 
         open={showAuthDialog} 
-        onOpenChange={setShowAuthDialog}
+        onOpenChange={handleAuthDialogChange}
       />
     </div>
   );
