@@ -782,15 +782,13 @@ Generated on: ${new Date().toLocaleDateString()}
               />
               
               {user && (
-                <Button
-                  variant="outline"
-                  size="sm"
+                <button 
                   onClick={handleSignOut}
-                  className="flex items-center"
+                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
-                </Button>
+                </button>
               )}
             </div>
           </div>

@@ -27,7 +27,7 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelecto
 
   return (
     <Select value={currentLanguage} onValueChange={onLanguageChange}>
-      <SelectTrigger className="w-auto min-w-[120px]">
+      <SelectTrigger className="w-auto min-w-[120px] bg-gray-700 hover:bg-gray-600 text-white border-gray-600 transition-colors">
         <div className="flex items-center space-x-2">
           <Globe className="w-4 h-4" />
           <span>{t.language}</span>
