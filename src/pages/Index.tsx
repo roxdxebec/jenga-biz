@@ -454,29 +454,35 @@ Generated on: ${new Date().toLocaleDateString()}
               </div>
               
               <div className="flex items-center space-x-4">
-                <button 
-                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
                   onClick={() => setCurrentView('home')}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   <span>{t.back}</span>
-                </button>
+                </Button>
                 
-                <button 
-                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
                   onClick={handleBackToHome}
                 >
                   <Home className="w-4 h-4 mr-2" />
                   <span>{t.home}</span>
-                </button>
+                </Button>
                 
-                <button 
-                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
                   onClick={handleSave}
                 >
                   <Save className="w-4 h-4 mr-2" />
                   <span>{t.save}</span>
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -506,29 +512,35 @@ Generated on: ${new Date().toLocaleDateString()}
               </div>
               
               <div className="flex items-center space-x-4">
-                <button 
-                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
                   onClick={() => selectedTemplate ? handleBackToTemplates() : handleBackToHome()}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   <span>{t.back}</span>
-                </button>
+                </Button>
                 
-                <button 
-                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
                   onClick={handleBackToHome}
                 >
                   <Home className="w-4 h-4 mr-2" />
                   <span>{t.home}</span>
-                </button>
+                </Button>
                 
-                <button 
-                  className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center"
                   onClick={handleSave}
                 >
                   <Save className="w-4 h-4 mr-2" />
                   <span>{t.save}</span>
-                </button>
+                </Button>
               </div>
             </div>
           </div>
