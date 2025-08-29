@@ -14,6 +14,200 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_milestones: {
+        Row: {
+          business_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          milestone_type: Database["public"]["Enums"]["milestone_type"]
+          notes: string | null
+        }
+        Insert: {
+          business_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          milestone_type: Database["public"]["Enums"]["milestone_type"]
+          notes?: string | null
+        }
+        Update: {
+          business_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          milestone_type?: Database["public"]["Enums"]["milestone_type"]
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_milestones_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          business_type: string | null
+          created_at: string
+          description: string | null
+          hub_id: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          registration_number: string | null
+          stage: Database["public"]["Enums"]["business_stage"] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_type?: string | null
+          created_at?: string
+          description?: string | null
+          hub_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          registration_number?: string | null
+          stage?: Database["public"]["Enums"]["business_stage"] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_type?: string | null
+          created_at?: string
+          description?: string | null
+          hub_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          registration_number?: string | null
+          stage?: Database["public"]["Enums"]["business_stage"] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_hub_id_fkey"
+            columns: ["hub_id"]
+            isOneToOne: false
+            referencedRelation: "hubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_records: {
+        Row: {
+          business_id: string
+          created_at: string
+          currency: string | null
+          expenses: number | null
+          id: string
+          notes: string | null
+          record_date: string
+          revenue: number | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          currency?: string | null
+          expenses?: number | null
+          id?: string
+          notes?: string | null
+          record_date: string
+          revenue?: number | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          currency?: string | null
+          expenses?: number | null
+          id?: string
+          notes?: string | null
+          record_date?: string
+          revenue?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_records_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hubs: {
+        Row: {
+          contact_email: string | null
+          country: string
+          created_at: string
+          id: string
+          name: string
+          region: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          country: string
+          created_at?: string
+          id?: string
+          name: string
+          region?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          country?: string
+          created_at?: string
+          id?: string
+          name?: string
+          region?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      job_creation_records: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          job_type: string | null
+          jobs_created: number
+          recorded_date: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          job_type?: string | null
+          jobs_created?: number
+          recorded_date?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          job_type?: string | null
+          jobs_created?: number
+          recorded_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_creation_records_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           business_type: string | null
@@ -41,15 +235,65 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          hub_id: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hub_id?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hub_id?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_hub_id_fkey"
+            columns: ["hub_id"]
+            isOneToOne: false
+            referencedRelation: "hubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["user_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin_or_hub_manager: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      business_stage: "idea" | "launch" | "growth" | "scale"
+      milestone_type:
+        | "business_registration"
+        | "first_customer"
+        | "first_hire"
+        | "break_even"
+        | "loan_application"
+        | "investment_ready"
+      user_role: "entrepreneur" | "hub_manager" | "admin" | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -176,6 +420,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      business_stage: ["idea", "launch", "growth", "scale"],
+      milestone_type: [
+        "business_registration",
+        "first_customer",
+        "first_hire",
+        "break_even",
+        "loan_application",
+        "investment_ready",
+      ],
+      user_role: ["entrepreneur", "hub_manager", "admin", "super_admin"],
+    },
   },
 } as const
