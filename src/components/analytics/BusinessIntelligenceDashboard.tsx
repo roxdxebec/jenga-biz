@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useBusinessIntelligence } from '@/hooks/useBusinessIntelligence';
 import { MetricsCard } from './MetricsCard';
+import { FinancialInsightsDashboard } from './FinancialInsightsDashboard';
 
 export const BusinessIntelligenceDashboard = () => {
   const {
@@ -93,11 +94,12 @@ export const BusinessIntelligenceDashboard = () => {
 
       {/* Detailed Analytics Tabs */}
       <Tabs defaultValue="milestones" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="milestones">Milestone Tracking</TabsTrigger>
-          <TabsTrigger value="stages">Stage Completion</TabsTrigger>
-          <TabsTrigger value="templates">Template Analytics</TabsTrigger>
-          <TabsTrigger value="dropoffs">Drop-off Analysis</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-1">
+          <TabsTrigger value="milestones" className="text-xs sm:text-sm">Milestone Tracking</TabsTrigger>
+          <TabsTrigger value="financial" className="text-xs sm:text-sm">Financial Insights</TabsTrigger>
+          <TabsTrigger value="stages" className="text-xs sm:text-sm">Stage Completion</TabsTrigger>
+          <TabsTrigger value="templates" className="text-xs sm:text-sm">Template Analytics</TabsTrigger>
+          <TabsTrigger value="dropoffs" className="text-xs sm:text-sm">Drop-off Analysis</TabsTrigger>
         </TabsList>
         
         <TabsContent value="milestones" className="space-y-4">
@@ -181,6 +183,10 @@ export const BusinessIntelligenceDashboard = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+        
+        <TabsContent value="financial" className="space-y-4">
+          <FinancialInsightsDashboard />
         </TabsContent>
         
         <TabsContent value="stages" className="space-y-4">

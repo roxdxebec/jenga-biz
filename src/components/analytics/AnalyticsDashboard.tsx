@@ -155,9 +155,8 @@ export const AnalyticsDashboard = () => {
 
       {/* Detailed Analytics */}
       <Tabs defaultValue="business-intelligence" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 h-auto gap-1">
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto gap-1">
           <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm">Business Intelligence</TabsTrigger>
-          <TabsTrigger value="financial" className="text-xs sm:text-sm">Financial Insights</TabsTrigger>
           <TabsTrigger value="geographic" className="text-xs sm:text-sm">Geographic Analytics</TabsTrigger>
           <TabsTrigger value="activity" className="text-xs sm:text-sm">User Activity</TabsTrigger>
           <TabsTrigger value="engagement" className="text-xs sm:text-sm">Engagement Metrics</TabsTrigger>
@@ -165,10 +164,6 @@ export const AnalyticsDashboard = () => {
         
         <TabsContent value="business-intelligence" className="space-y-4">
           <BusinessIntelligenceDashboard />
-        </TabsContent>
-        
-        <TabsContent value="financial" className="space-y-4">
-          <FinancialInsightsDashboard />
         </TabsContent>
         
         <TabsContent value="geographic" className="space-y-4">
