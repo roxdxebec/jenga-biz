@@ -156,8 +156,9 @@ export const AnalyticsDashboard = () => {
 
       {/* Detailed Analytics */}
       <Tabs defaultValue="business-intelligence" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto gap-1">
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-1">
           <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm">Business Intelligence</TabsTrigger>
+          <TabsTrigger value="impact" className="text-xs sm:text-sm">Impact Measurement</TabsTrigger>
           <TabsTrigger value="geographic" className="text-xs sm:text-sm">Geographic Analytics</TabsTrigger>
           <TabsTrigger value="activity" className="text-xs sm:text-sm">User Activity</TabsTrigger>
           <TabsTrigger value="engagement" className="text-xs sm:text-sm">Engagement Metrics</TabsTrigger>
