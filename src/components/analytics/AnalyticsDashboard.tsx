@@ -173,6 +173,10 @@ export const AnalyticsDashboard = () => {
         <TabsContent value="impact" className="space-y-4">
           <ImpactMeasurementDashboard />
         </TabsContent>
+
+        <TabsContent value="reporting" className="space-y-4">
+          <ReportingDashboard />
+        </TabsContent>
         
         <TabsContent value="geographic" className="space-y-4">
           <GeographicChart />
