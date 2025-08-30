@@ -9,13 +9,16 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar, LogOut } from 'lucide-react';
+import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar, LogOut, BarChart3 } from 'lucide-react';
 import { TemplateData } from '@/data/templateData';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { useAuth } from '@/hooks/useAuth';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
+  const { trackPageView, trackAction, getGeographicInfo } = useAnalytics();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [currentView, setCurrentView] = useState('home');
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
@@ -26,12 +29,23 @@ const Index = () => {
   const [showMilestonesSummary, setShowMilestonesSummary] = useState(false);
   const { toast } = useToast();
 
-  // Show auth dialog if user is not authenticated
+  // Show auth dialog if user is not authenticated and track page views
   useEffect(() => {
     if (!loading && !user) {
       setShowAuthDialog(true);
     }
   }, [user, loading]);
+
+  // Track page views when view changes
+  useEffect(() => {
+    const trackPage = async () => {
+      if (user) {
+        const geo = await getGeographicInfo();
+        trackPageView(currentView, geo);
+      }
+    };
+    trackPage();
+  }, [currentView, user]);
 
   // Don't allow dialog to be closed if user is not authenticated
   const handleAuthDialogChange = (open: boolean) => {
@@ -303,9 +317,11 @@ const Index = () => {
 
   const t = translations[language] || translations.en;
 
-  const handleTemplateSelect = (template: TemplateData) => {
+  const handleTemplateSelect = async (template: TemplateData) => {
     setSelectedTemplate(template);
     setCurrentView('builder');
+    const geo = await getGeographicInfo();
+    trackAction('select_template', { templateName: template.name }, geo);
   };
 
   const handleStartFromScratch = () => {
@@ -339,9 +355,11 @@ const Index = () => {
     setCurrentView('templates');
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (strategyData) {
       localStorage.setItem('jenga-biz-strategy', JSON.stringify(strategyData));
+      const geo = await getGeographicInfo();
+      trackAction('save_strategy', { strategyName: strategyData.businessName }, geo);
       toast({
         title: "Success!",
         description: "Strategy saved successfully!",
@@ -355,7 +373,7 @@ const Index = () => {
     }
   };
 
-  const generateAISummary = () => {
+  const generateAISummary = async () => {
     if (!strategyData || !strategyData.businessName) {
       toast({
         title: "Incomplete Strategy",
@@ -364,6 +382,8 @@ const Index = () => {
       });
       return;
     }
+    const geo = await getGeographicInfo();
+    trackAction('generate_ai_summary', { strategyName: strategyData.businessName }, geo);
     setShowStrategySummary(true);
   };
 
@@ -777,6 +797,55 @@ Generated on: ${new Date().toLocaleDateString()}
     );
   }
 
+  // Analytics Dashboard View
+  if (currentView === 'analytics') {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="bg-card shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView('home')}
+                  className="flex items-center"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Home
+                </Button>
+                <h1 className="text-xl font-bold text-foreground">{t.title} - Analytics</h1>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <LanguageSelector 
+                  currentLanguage={language} 
+                  onLanguageChange={setLanguage} 
+                />
+                
+                {user && (
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="flex items-center"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <AnalyticsDashboard />
+        </div>
+      </div>
+    );
+  }
+
   // Home View
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -794,15 +863,26 @@ Generated on: ${new Date().toLocaleDateString()}
               />
               
               {user && (
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="flex items-center"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
+                <>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentView('analytics')}
+                    className="flex items-center"
+                  >
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Analytics
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="flex items-center"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
               )}
             </div>
           </div>
