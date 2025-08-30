@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
 import CoachingTip from '@/components/CoachingTip';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface StrategyBuilderProps {
   template?: any;
@@ -51,6 +52,9 @@ const StrategyBuilder = ({
   });
 
   const { toast } = useToast();
+  const { trackStrategyStage, trackJourney } = useAnalytics();
+  const stageStartTime = useRef<number>(Date.now());
+  const completedFields = useRef<Set<string>>(new Set());
 
   // Templates are now loaded from the data file via the template prop
 
@@ -226,6 +230,16 @@ const StrategyBuilder = ({
   useEffect(() => {
     console.log('StrategyBuilder - useEffect triggered with template:', template);
     
+    // Track strategy building stage start
+    trackStrategyStage('strategy_building', 'started', { 
+      templateId: template?.id,
+      templateName: template?.name 
+    });
+    trackJourney('/strategy-builder', 'page_view', { 
+      templateId: template?.id,
+      language 
+    });
+    
     if (template && template.content) {
       console.log('StrategyBuilder - Setting strategy with template content:', template.content);
       const newStrategy = {
@@ -234,13 +248,49 @@ const StrategyBuilder = ({
       };
       setStrategy(newStrategy);
       onStrategyChange?.(newStrategy);
+      
+      // Track template completion if content is pre-filled
+      const filledFields = Object.values(template.content).filter(v => v && typeof v === 'string' && v.trim().length > 0).length;
+      if (filledFields > 0) {
+        setTimeout(() => {
+          trackStrategyStage('strategy_building', 'completed', {
+            timeSpentSeconds: Math.floor((Date.now() - stageStartTime.current) / 1000),
+            fieldsCompleted: filledFields,
+            totalFields: 10,
+            templateId: template.id
+          });
+        }, 2000); // Give time for user to see the pre-filled content
+      }
     }
-  }, [template, onStrategyChange]);
+  }, [template, onStrategyChange, trackStrategyStage, trackJourney, language]);
 
   const handleInputChange = (field: string, value: string) => {
     const newStrategy = { ...strategy, [field]: value };
     setStrategy(newStrategy);
     onStrategyChange?.(newStrategy);
+    
+    // Track field completion
+    if (value && value.trim().length > 0) {
+      completedFields.current.add(field);
+    } else {
+      completedFields.current.delete(field);
+    }
+    
+    // Track form interaction
+    trackJourney('/strategy-builder', 'form_interaction', {
+      field,
+      hasValue: value && value.trim().length > 0,
+      totalCompleted: completedFields.current.size
+    });
+    
+    // Track stage completion when most fields are filled
+    if (completedFields.current.size >= 7) { // 70% completion threshold
+      trackStrategyStage('strategy_building', 'completed', {
+        timeSpentSeconds: Math.floor((Date.now() - stageStartTime.current) / 1000),
+        fieldsCompleted: completedFields.current.size,
+        totalFields: 10
+      });
+    }
   };
 
   const handleSave = () => {

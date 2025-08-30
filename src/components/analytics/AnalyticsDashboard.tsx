@@ -8,6 +8,7 @@ import { MetricsCard } from './MetricsCard';
 import { GeographicChart } from './GeographicChart';
 import { ActivityChart } from './ActivityChart';
 import { EngagementMetrics } from './EngagementMetrics';
+import { BusinessIntelligenceDashboard } from './BusinessIntelligenceDashboard';
 
 interface DashboardMetrics {
   totalUsers: number;
@@ -152,12 +153,17 @@ export const AnalyticsDashboard = () => {
       </div>
 
       {/* Detailed Analytics */}
-      <Tabs defaultValue="geographic" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="business-intelligence" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="business-intelligence">Business Intelligence</TabsTrigger>
           <TabsTrigger value="geographic">Geographic Analytics</TabsTrigger>
           <TabsTrigger value="activity">User Activity</TabsTrigger>
           <TabsTrigger value="engagement">Engagement Metrics</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="business-intelligence" className="space-y-4">
+          <BusinessIntelligenceDashboard />
+        </TabsContent>
         
         <TabsContent value="geographic" className="space-y-4">
           <GeographicChart />

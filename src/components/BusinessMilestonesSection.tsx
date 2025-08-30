@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { addToCalendar } from '@/lib/calendar';
 import CoachingTip from '@/components/CoachingTip';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface Milestone {
   id: string;
@@ -138,6 +139,15 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   });
 
   const { toast } = useToast();
+  const { trackBusinessMilestone, trackJourney } = useAnalytics();
+
+  useEffect(() => {
+    // Track milestone section page view
+    trackJourney('/milestones', 'page_view', { 
+      businessStage: businessStage,
+      totalMilestones: milestones.length 
+    });
+  }, [trackJourney, businessStage, milestones.length]);
 
   // Translation object
   const translations = {
@@ -303,6 +313,14 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     const updatedMilestones = [...milestones, newMilestone];
     setMilestones(updatedMilestones);
     
+    // Track milestone creation
+    trackBusinessMilestone('created', {
+      title: milestoneTitle,
+      category: 'business_goal',
+      targetDate: null,
+      businessStage: businessStage
+    });
+    
     // Update parent component
     if (onMilestonesChange) {
       onMilestonesChange(updatedMilestones);
@@ -330,6 +348,26 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       milestone.id === id ? { ...milestone, [field]: value } : milestone
     );
     setMilestones(updatedMilestones);
+    
+    // Track milestone status changes
+    if (field === 'status' && value === 'complete') {
+      const milestone = milestones.find(m => m.id === id);
+      if (milestone) {
+        trackBusinessMilestone('completed', {
+          title: milestone.title,
+          category: 'business_goal',
+          businessStage: businessStage
+        });
+      }
+    }
+    
+    // Track user interaction
+    trackJourney('/milestones', 'form_interaction', {
+      action: 'milestone_updated',
+      field,
+      milestoneId: id,
+      newValue: value
+    });
     
     // Update parent component
     if (onMilestonesChange) {

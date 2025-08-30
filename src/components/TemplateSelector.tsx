@@ -1,9 +1,10 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Shirt, Tractor, Smartphone, Monitor, Sparkles, Calendar, Camera, Truck, Scissors, Car, PenTool, ChefHat, GraduationCap, Dumbbell, Baby, Share2, Search } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface Template {
   id: string;
@@ -21,6 +22,12 @@ interface TemplateSelectorProps {
 
 const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack, language = 'en' }: TemplateSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { trackTemplateUsage, trackJourney } = useAnalytics();
+
+  useEffect(() => {
+    // Track page view for template selector
+    trackJourney('/template-selector', 'page_view', { language });
+  }, [language, trackJourney]);
 
   const translations = {
     en: {
@@ -214,7 +221,12 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack, langua
                    'Create a custom strategy from scratch'}
                 </p>
                 <Button
-                  onClick={onStartFromScratch}
+                  onClick={() => {
+                    trackJourney('/template-selector', 'button_click', { 
+                      action: 'start_from_scratch' 
+                    });
+                    onStartFromScratch?.();
+                  }}
                   className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
                 >
                   {t.getStarted}
@@ -245,7 +257,15 @@ const TemplateSelector = ({ onTemplateSelect, onStartFromScratch, onBack, langua
                     {template.description}
                   </p>
                   <Button
-                    onClick={() => onTemplateSelect(template)}
+                    onClick={() => {
+                      trackTemplateUsage(template.id, template.name, 'selected');
+                      trackJourney('/template-selector', 'button_click', { 
+                        action: 'template_selected',
+                        templateId: template.id,
+                        templateName: template.name 
+                      });
+                      onTemplateSelect(template);
+                    }}
                     className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
                   >
                     {t.getStarted}
