@@ -118,6 +118,57 @@ export type Database = {
         }
         Relationships: []
       }
+      business_survival_records: {
+        Row: {
+          assessment_date: string
+          business_id: string
+          closure_date: string | null
+          closure_reason: string | null
+          created_at: string
+          employee_count: number | null
+          id: string
+          is_active: boolean
+          months_in_operation: number
+          revenue_trend: string | null
+          risk_factors: string[] | null
+          support_interventions: string[] | null
+          survival_risk_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          assessment_date?: string
+          business_id: string
+          closure_date?: string | null
+          closure_reason?: string | null
+          created_at?: string
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean
+          months_in_operation?: number
+          revenue_trend?: string | null
+          risk_factors?: string[] | null
+          support_interventions?: string[] | null
+          survival_risk_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          assessment_date?: string
+          business_id?: string
+          closure_date?: string | null
+          closure_reason?: string | null
+          created_at?: string
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean
+          months_in_operation?: number
+          revenue_trend?: string | null
+          risk_factors?: string[] | null
+          support_interventions?: string[] | null
+          survival_risk_score?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       businesses: {
         Row: {
           business_type: string | null
@@ -167,6 +218,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      finance_access_records: {
+        Row: {
+          amount_approved: number | null
+          amount_disbursed: number | null
+          amount_requested: number | null
+          application_status: string | null
+          business_id: string
+          created_at: string
+          funding_source: string
+          funding_type: string
+          id: string
+          interest_rate: number | null
+          loan_term_months: number | null
+          notes: string | null
+          purpose: string | null
+          record_date: string
+          rejection_reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_approved?: number | null
+          amount_disbursed?: number | null
+          amount_requested?: number | null
+          application_status?: string | null
+          business_id: string
+          created_at?: string
+          funding_source: string
+          funding_type: string
+          id?: string
+          interest_rate?: number | null
+          loan_term_months?: number | null
+          notes?: string | null
+          purpose?: string | null
+          record_date?: string
+          rejection_reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_approved?: number | null
+          amount_disbursed?: number | null
+          amount_requested?: number | null
+          application_status?: string | null
+          business_id?: string
+          created_at?: string
+          funding_source?: string
+          funding_type?: string
+          id?: string
+          interest_rate?: number | null
+          loan_term_months?: number | null
+          notes?: string | null
+          purpose?: string | null
+          record_date?: string
+          rejection_reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       financial_records: {
         Row: {
@@ -277,28 +385,52 @@ export type Database = {
       }
       job_creation_records: {
         Row: {
+          age_breakdown: Json | null
+          average_wage: number | null
+          benefits_provided: boolean | null
           business_id: string
           created_at: string
+          employment_type: string | null
+          gender_breakdown: Json | null
           id: string
           job_type: string | null
           jobs_created: number
           recorded_date: string
+          retention_rate: number | null
+          skill_level: string | null
+          updated_at: string | null
         }
         Insert: {
+          age_breakdown?: Json | null
+          average_wage?: number | null
+          benefits_provided?: boolean | null
           business_id: string
           created_at?: string
+          employment_type?: string | null
+          gender_breakdown?: Json | null
           id?: string
           job_type?: string | null
           jobs_created?: number
           recorded_date?: string
+          retention_rate?: number | null
+          skill_level?: string | null
+          updated_at?: string | null
         }
         Update: {
+          age_breakdown?: Json | null
+          average_wage?: number | null
+          benefits_provided?: boolean | null
           business_id?: string
           created_at?: string
+          employment_type?: string | null
+          gender_breakdown?: Json | null
           id?: string
           job_type?: string | null
           jobs_created?: number
           recorded_date?: string
+          retention_rate?: number | null
+          skill_level?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -309,6 +441,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      loan_readiness_assessments: {
+        Row: {
+          assessed_by: string | null
+          assessment_date: string
+          business_id: string
+          business_plan_score: number | null
+          cash_flow_score: number | null
+          collateral_value: number | null
+          created_at: string
+          credit_score: number | null
+          debt_to_income_ratio: number | null
+          financial_documentation_score: number | null
+          id: string
+          overall_readiness_score: number | null
+          readiness_level: string | null
+          recommendations: string[] | null
+          revenue_stability_score: number | null
+          updated_at: string
+        }
+        Insert: {
+          assessed_by?: string | null
+          assessment_date?: string
+          business_id: string
+          business_plan_score?: number | null
+          cash_flow_score?: number | null
+          collateral_value?: number | null
+          created_at?: string
+          credit_score?: number | null
+          debt_to_income_ratio?: number | null
+          financial_documentation_score?: number | null
+          id?: string
+          overall_readiness_score?: number | null
+          readiness_level?: string | null
+          recommendations?: string[] | null
+          revenue_stability_score?: number | null
+          updated_at?: string
+        }
+        Update: {
+          assessed_by?: string | null
+          assessment_date?: string
+          business_id?: string
+          business_plan_score?: number | null
+          cash_flow_score?: number | null
+          collateral_value?: number | null
+          created_at?: string
+          credit_score?: number | null
+          debt_to_income_ratio?: number | null
+          financial_documentation_score?: number | null
+          id?: string
+          overall_readiness_score?: number | null
+          readiness_level?: string | null
+          recommendations?: string[] | null
+          revenue_stability_score?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       milestone_completion_analytics: {
         Row: {

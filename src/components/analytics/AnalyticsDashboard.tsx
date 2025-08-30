@@ -9,6 +9,7 @@ import { GeographicChart } from './GeographicChart';
 import { ActivityChart } from './ActivityChart';
 import { EngagementMetrics } from './EngagementMetrics';
 import { BusinessIntelligenceDashboard } from './BusinessIntelligenceDashboard';
+import { ImpactMeasurementDashboard } from './ImpactMeasurementDashboard';
 import { FinancialInsightsDashboard } from './FinancialInsightsDashboard';
 
 interface DashboardMetrics {
@@ -164,6 +165,10 @@ export const AnalyticsDashboard = () => {
         
         <TabsContent value="business-intelligence" className="space-y-4">
           <BusinessIntelligenceDashboard />
+        </TabsContent>
+
+        <TabsContent value="impact" className="space-y-4">
+          <ImpactMeasurementDashboard />
         </TabsContent>
         
         <TabsContent value="geographic" className="space-y-4">
