@@ -9,6 +9,10 @@ import { useFinancialInsights } from '@/hooks/useFinancialInsights';
 import { FinancialHealthIndicators } from './FinancialHealthIndicators';
 import { CashflowMonitor } from './CashflowMonitor';
 import { SustainabilityWarnings } from './SustainabilityWarnings';
+import { RevenueExpenseChart } from './RevenueExpenseChart';
+import { FinancialHealthGauge } from './FinancialHealthGauge';
+import { EnhancedCashflowMonitor } from './EnhancedCashflowMonitor';
+import { SustainabilityProjections } from './SustainabilityProjections';
 import { useToast } from '@/hooks/use-toast';
 
 interface FinancialInsightsDashboardProps {
@@ -108,29 +112,36 @@ export const FinancialInsightsDashboard = ({
     );
   }
 
-  if (financialRecords.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Financial Insights
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center py-8">
-          <DollarSign className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="font-semibold mb-2">No Financial Data Available</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Start tracking your revenue and expenses to generate financial insights.
-          </p>
-          <Button onClick={handleRefresh} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Check for Data
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Transform data for new visualizations even when no financial records
+  const transformedRevenueExpenseData = financialRecords.length > 0 
+    ? getAggregatedData(aggregationPeriod).map(item => ({
+        period: item.period,
+        revenue: item.revenue,
+        expenses: item.expenses,
+        balance: item.revenue - item.expenses
+      }))
+    : [];
+
+  const transformedCashflowData = cashflowData.map(item => ({
+    date: item.date,
+    inflows: item.revenue,
+    outflows: item.expenses,
+    netCashflow: item.netCashflow,
+    cumulativeCashflow: item.cumulativeCashflow
+  }));
+
+  // Calculate current balance and monthly metrics
+  const currentBalance = cashflowData.length > 0 
+    ? cashflowData[cashflowData.length - 1].cumulativeCashflow 
+    : 0;
+  
+  const recentData = cashflowData.slice(-3);
+  const avgMonthlyRevenue = recentData.length > 0 
+    ? recentData.reduce((sum, item) => sum + item.revenue, 0) / recentData.length 
+    : 0;
+  const avgMonthlyExpenses = recentData.length > 0 
+    ? recentData.reduce((sum, item) => sum + item.expenses, 0) / recentData.length 
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -203,11 +214,12 @@ export const FinancialInsightsDashboard = ({
 
       {/* Main Content */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="health">Health Metrics</TabsTrigger>
-          <TabsTrigger value="cashflow">Cashflow</TabsTrigger>
-          <TabsTrigger value="warnings">Alerts</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-1">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+          <TabsTrigger value="revenue" className="text-xs sm:text-sm">Revenue/Expenses</TabsTrigger>
+          <TabsTrigger value="health" className="text-xs sm:text-sm">Health Gauge</TabsTrigger>
+          <TabsTrigger value="cashflow" className="text-xs sm:text-sm">Cashflow Monitor</TabsTrigger>
+          <TabsTrigger value="projections" className="text-xs sm:text-sm">Sustainability</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -267,6 +279,23 @@ export const FinancialInsightsDashboard = ({
             </Card>
           </div>
 
+          {/* Demo Notice */}
+          {financialRecords.length === 0 && (
+            <Card className="border-dashed border-2">
+              <CardContent className="text-center py-8">
+                <DollarSign className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="font-semibold mb-2">Financial Insights Demo Mode</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  All visualizations are ready with placeholder data. Start adding financial records to see real insights.
+                </p>
+                <Button onClick={handleRefresh} variant="outline">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Check for Data
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Quick Warnings */}
           {sustainabilityWarnings.length > 0 && (
             <SustainabilityWarnings 
@@ -276,7 +305,26 @@ export const FinancialInsightsDashboard = ({
           )}
         </TabsContent>
 
-        <TabsContent value="health">
+        <TabsContent value="revenue" className="space-y-6">
+          <div className="grid grid-cols-1 gap-4">
+            <RevenueExpenseChart 
+              data={transformedRevenueExpenseData}
+              currency={currency}
+              currencySymbol={currencySymbol}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="health" className="space-y-6">
+          <FinancialHealthGauge 
+            healthScore={financialHealthMetrics.healthScore}
+            riskLevel={financialHealthMetrics.riskLevel as 'low' | 'medium' | 'high'}
+            profitMargin={financialHealthMetrics.profitMargin}
+            burnRate={financialHealthMetrics.burnRate}
+            growthRate={financialHealthMetrics.revenueGrowthRate}
+          />
+          
+          {/* Legacy Health Indicators */}
           <FinancialHealthIndicators 
             metrics={financialHealthMetrics}
             currency={currency}
@@ -284,7 +332,14 @@ export const FinancialInsightsDashboard = ({
           />
         </TabsContent>
 
-        <TabsContent value="cashflow">
+        <TabsContent value="cashflow" className="space-y-6">
+          <EnhancedCashflowMonitor 
+            data={transformedCashflowData}
+            currency={currency}
+            currencySymbol={currencySymbol}
+          />
+          
+          {/* Legacy Cashflow Monitor */}
           <CashflowMonitor 
             cashflowData={cashflowData}
             currency={currency}
@@ -292,7 +347,26 @@ export const FinancialInsightsDashboard = ({
           />
         </TabsContent>
 
-        <TabsContent value="warnings">
+        <TabsContent value="projections" className="space-y-6">
+          <SustainabilityProjections 
+            currentBalance={currentBalance}
+            monthlyBurnRate={avgMonthlyExpenses}
+            monthlyRevenue={avgMonthlyRevenue}
+            projectionMonths={12}
+            currency={currency}
+            currencySymbol={currencySymbol}
+            warnings={sustainabilityWarnings.map((warning, index) => ({
+              id: `warning-${index}`,
+              type: warning.type,
+              severity: warning.severity,
+              message: warning.message,
+              threshold: 0,
+              currentValue: 0,
+              recommendation: warning.recommendation
+            }))}
+          />
+          
+          {/* Legacy Warnings */}
           <SustainabilityWarnings 
             warnings={sustainabilityWarnings}
             onActionClick={handleWarningAction}
