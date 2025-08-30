@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_summaries: {
+        Row: {
+          additional_data: Json | null
+          created_at: string
+          id: string
+          metric_date: string
+          metric_type: string
+          metric_value: number
+          updated_at: string
+        }
+        Insert: {
+          additional_data?: Json | null
+          created_at?: string
+          id?: string
+          metric_date: string
+          metric_type: string
+          metric_value?: number
+          updated_at?: string
+        }
+        Update: {
+          additional_data?: Json | null
+          created_at?: string
+          id?: string
+          metric_date?: string
+          metric_type?: string
+          metric_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       business_milestones: {
         Row: {
           business_id: string
@@ -143,6 +173,39 @@ export type Database = {
           },
         ]
       }
+      geographic_analytics: {
+        Row: {
+          active_businesses: number
+          country_code: string
+          country_name: string
+          id: string
+          last_updated: string
+          region: string | null
+          total_revenue: number | null
+          user_count: number
+        }
+        Insert: {
+          active_businesses?: number
+          country_code: string
+          country_name: string
+          id?: string
+          last_updated?: string
+          region?: string | null
+          total_revenue?: number | null
+          user_count?: number
+        }
+        Update: {
+          active_businesses?: number
+          country_code?: string
+          country_name?: string
+          id?: string
+          last_updated?: string
+          region?: string | null
+          total_revenue?: number | null
+          user_count?: number
+        }
+        Relationships: []
+      }
       hubs: {
         Row: {
           contact_email: string | null
@@ -235,6 +298,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activities: {
+        Row: {
+          activity_data: Json | null
+          activity_type: string
+          city: string | null
+          country_code: string | null
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          region: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_type: string
+          city?: string | null
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          region?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_type?: string
+          city?: string | null
+          country_code?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          region?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -282,6 +384,10 @@ export type Database = {
       is_admin_or_hub_manager: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      update_geographic_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
