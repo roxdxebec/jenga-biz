@@ -79,6 +79,45 @@ export type Database = {
           },
         ]
       }
+      business_progress_stages: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          form_fields_completed: number | null
+          id: string
+          stage_name: string
+          started_at: string
+          strategy_id: string | null
+          time_spent_seconds: number | null
+          total_form_fields: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          form_fields_completed?: number | null
+          id?: string
+          stage_name: string
+          started_at?: string
+          strategy_id?: string | null
+          time_spent_seconds?: number | null
+          total_form_fields?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          form_fields_completed?: number | null
+          id?: string
+          stage_name?: string
+          started_at?: string
+          strategy_id?: string | null
+          time_spent_seconds?: number | null
+          total_form_fields?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       businesses: {
         Row: {
           business_type: string | null
@@ -271,6 +310,51 @@ export type Database = {
           },
         ]
       }
+      milestone_completion_analytics: {
+        Row: {
+          business_id: string | null
+          business_stage: string | null
+          completed_at: string | null
+          created_at: string
+          days_to_complete: number | null
+          id: string
+          milestone_category: string | null
+          milestone_title: string
+          status: string
+          target_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id?: string | null
+          business_stage?: string | null
+          completed_at?: string | null
+          created_at?: string
+          days_to_complete?: number | null
+          id?: string
+          milestone_category?: string | null
+          milestone_title: string
+          status?: string
+          target_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string | null
+          business_stage?: string | null
+          completed_at?: string | null
+          created_at?: string
+          days_to_complete?: number | null
+          id?: string
+          milestone_category?: string | null
+          milestone_title?: string
+          status?: string
+          target_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           business_type: string | null
@@ -295,6 +379,48 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      template_usage_analytics: {
+        Row: {
+          abandoned_at_stage: string | null
+          completed_at: string | null
+          completion_percentage: number | null
+          conversion_type: string | null
+          created_at: string
+          id: string
+          selected_at: string
+          template_id: string
+          template_name: string
+          time_to_complete_minutes: number | null
+          user_id: string
+        }
+        Insert: {
+          abandoned_at_stage?: string | null
+          completed_at?: string | null
+          completion_percentage?: number | null
+          conversion_type?: string | null
+          created_at?: string
+          id?: string
+          selected_at?: string
+          template_id: string
+          template_name: string
+          time_to_complete_minutes?: number | null
+          user_id: string
+        }
+        Update: {
+          abandoned_at_stage?: string | null
+          completed_at?: string | null
+          completion_percentage?: number | null
+          conversion_type?: string | null
+          created_at?: string
+          id?: string
+          selected_at?: string
+          template_id?: string
+          template_name?: string
+          time_to_complete_minutes?: number | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -337,6 +463,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_journey_analytics: {
+        Row: {
+          action_data: Json | null
+          action_type: string
+          created_at: string
+          id: string
+          page_path: string
+          referrer: string | null
+          session_id: string
+          timestamp: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action_data?: Json | null
+          action_type: string
+          created_at?: string
+          id?: string
+          page_path: string
+          referrer?: string | null
+          session_id: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action_data?: Json | null
+          action_type?: string
+          created_at?: string
+          id?: string
+          page_path?: string
+          referrer?: string | null
+          session_id?: string
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -374,6 +539,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      analyze_drop_off_points: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_time_on_page: number
+          drop_off_rate: number
+          page_path: string
+          total_entries: number
+          total_exits: number
+        }[]
+      }
+      calculate_stage_completion_rates: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_time_to_complete: number
+          completion_rate: number
+          stage_name: string
+          total_completions: number
+          total_starts: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["user_role"]
