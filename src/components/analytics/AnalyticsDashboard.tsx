@@ -9,6 +9,7 @@ import { GeographicChart } from './GeographicChart';
 import { ActivityChart } from './ActivityChart';
 import { EngagementMetrics } from './EngagementMetrics';
 import { BusinessIntelligenceDashboard } from './BusinessIntelligenceDashboard';
+import { FinancialInsightsDashboard } from './FinancialInsightsDashboard';
 
 interface DashboardMetrics {
   totalUsers: number;
@@ -154,8 +155,9 @@ export const AnalyticsDashboard = () => {
 
       {/* Detailed Analytics */}
       <Tabs defaultValue="business-intelligence" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="business-intelligence">Business Intelligence</TabsTrigger>
+          <TabsTrigger value="financial">Financial Insights</TabsTrigger>
           <TabsTrigger value="geographic">Geographic Analytics</TabsTrigger>
           <TabsTrigger value="activity">User Activity</TabsTrigger>
           <TabsTrigger value="engagement">Engagement Metrics</TabsTrigger>
@@ -163,6 +165,10 @@ export const AnalyticsDashboard = () => {
         
         <TabsContent value="business-intelligence" className="space-y-4">
           <BusinessIntelligenceDashboard />
+        </TabsContent>
+        
+        <TabsContent value="financial" className="space-y-4">
+          <FinancialInsightsDashboard />
         </TabsContent>
         
         <TabsContent value="geographic" className="space-y-4">
