@@ -15,6 +15,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
+import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -653,7 +654,7 @@ Generated on: ${new Date().toLocaleDateString()}
             </CardContent>
           </Card>
           
-          <div>
+          <div id="financial-section">
             <MonthlyRevenueSection
               strategyData={strategyData}
               language={language}
@@ -661,6 +662,14 @@ Generated on: ${new Date().toLocaleDateString()}
               currencySymbol={currencySymbol}
               country={country}
               onCountryChange={setCountry}
+            />
+          </div>
+          
+          {/* Phase 4 Financial Insights */}
+          <div>
+            <FinancialInsightsDashboard 
+              currency={currency}
+              currencySymbol={currencySymbol}
             />
           </div>
 
