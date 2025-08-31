@@ -49,11 +49,11 @@ const Index = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', user.id)
-        .in('role', ['admin', 'super_admin']);
+        .in('role', ['admin', 'super_admin', 'hub_manager']);
 
       if (error) throw error;
       
-      const adminRole = data.find(role => ['admin', 'super_admin'].includes(role.role));
+      const adminRole = data.find(role => ['admin', 'super_admin', 'hub_manager'].includes(role.role));
       setIsAdmin(!!adminRole);
     } catch (error) {
       console.error('Error checking user role:', error);
