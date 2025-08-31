@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import Tesseract from 'tesseract.js';
 import ShareModal from '@/components/ShareModal';
 import { useToast } from '@/hooks/use-toast';
+import { africanCountries } from '@/data/africanCountries';
 
 interface RevenueEntry {
   id: number;
@@ -64,22 +65,18 @@ const MonthlyRevenueSection = ({
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const currencyOptions = [
-    { code: 'KE', currency: 'KES', symbol: 'KSh', name: 'Kenya Shilling' },
-    { code: 'TZ', currency: 'TZS', symbol: 'TSh', name: 'Tanzania Shilling' },
-    { code: 'UG', currency: 'UGX', symbol: 'USh', name: 'Uganda Shilling' },
-    { code: 'RW', currency: 'RWF', symbol: 'RWF', name: 'Rwanda Franc' },
-    { code: 'ET', currency: 'ETB', symbol: 'Br', name: 'Ethiopian Birr' },
-    { code: 'GH', currency: 'GHS', symbol: '₵', name: 'Ghana Cedi' },
-    { code: 'NG', currency: 'NGN', symbol: '₦', name: 'Nigerian Naira' },
-    { code: 'ZA', currency: 'ZAR', symbol: 'R', name: 'South African Rand' },
-    { code: 'EG', currency: 'EGP', symbol: 'E£', name: 'Egyptian Pound' },
-    { code: 'MA', currency: 'MAD', symbol: 'DH', name: 'Moroccan Dirham' },
-    { code: 'US', currency: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'GB', currency: 'GBP', symbol: '£', name: 'British Pound' },
-    { code: 'FR', currency: 'EUR', symbol: '€', name: 'Euro' },
-    { code: 'DE', currency: 'EUR', symbol: '€', name: 'Euro' }
-  ];
+  const currencyOptions = africanCountries.concat([
+    // Add some global currencies for reference
+    { code: 'US', name: 'United States', currency: 'USD', symbol: '$', region: 'Global', flag: '🇺🇸' },
+    { code: 'GB', name: 'United Kingdom', currency: 'GBP', symbol: '£', region: 'Global', flag: '🇬🇧' },
+    { code: 'EU', name: 'European Union', currency: 'EUR', symbol: '€', region: 'Global', flag: '🇪🇺' }
+  ]).map(country => ({
+    code: country.code,
+    currency: country.currency,
+    symbol: country.symbol,
+    name: `${country.name} ${country.currency}`,
+    flag: country.flag || '🏳️'
+  }));
 
   const translations = {
     en: {
@@ -694,7 +691,10 @@ ${language === 'en' ? 'Generated on' :
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
                     {currencyOptions.map((option) => (
                       <SelectItem key={option.code} value={option.code}>
-                        {option.symbol} {option.currency}
+                        <div className="flex items-center space-x-2">
+                          <span>{option.flag}</span>
+                          <span>{option.symbol} {option.currency}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
