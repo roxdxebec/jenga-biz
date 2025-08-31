@@ -12,10 +12,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar, LogOut, BarChart3 } from 'lucide-react';
 import { TemplateData } from '@/data/templateData';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
+import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -28,7 +30,36 @@ const Index = () => {
   const [strategyData, setStrategyData] = useState(null);
   const [showStrategySummary, setShowStrategySummary] = useState(false);
   const [showMilestonesSummary, setShowMilestonesSummary] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const { toast } = useToast();
+
+  // Check if user has admin role
+  useEffect(() => {
+    checkUserRole();
+  }, [user]);
+
+  const checkUserRole = async () => {
+    if (!user) {
+      setIsAdmin(null);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .in('role', ['admin', 'super_admin']);
+
+      if (error) throw error;
+      
+      const adminRole = data.find(role => ['admin', 'super_admin'].includes(role.role));
+      setIsAdmin(!!adminRole);
+    } catch (error) {
+      console.error('Error checking user role:', error);
+      setIsAdmin(false);
+    }
+  };
 
   // Show auth dialog if user is not authenticated and track page views
   useEffect(() => {
@@ -462,6 +493,11 @@ Generated on: ${new Date().toLocaleDateString()}
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   };
+
+  // Show admin dashboard for admin users
+  if (user && isAdmin === true) {
+    return <AdminDashboard />;
+  }
 
   // Template Selector View
   if (currentView === 'templates') {

@@ -801,6 +801,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      setup_super_admin: {
+        Args: { admin_email: string }
+        Returns: string
+      }
       update_geographic_analytics: {
         Args: Record<PropertyKey, never>
         Returns: undefined
