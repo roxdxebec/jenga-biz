@@ -383,6 +383,42 @@ export type Database = {
         }
         Relationships: []
       }
+      invite_codes: {
+        Row: {
+          account_type: string
+          code: string
+          created_at: string
+          created_by: string
+          expires_at: string
+          id: string
+          invited_email: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          account_type: string
+          code: string
+          created_at?: string
+          created_by: string
+          expires_at?: string
+          id?: string
+          invited_email: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          account_type?: string
+          code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          id?: string
+          invited_email?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       job_creation_records: {
         Row: {
           age_breakdown: Json | null
@@ -546,27 +582,33 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string | null
           business_type: string | null
           created_at: string
           email: string | null
           full_name: string | null
           id: string
+          organization_id: string | null
           updated_at: string
         }
         Insert: {
+          account_type?: string | null
           business_type?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
           id: string
+          organization_id?: string | null
           updated_at?: string
         }
         Update: {
+          account_type?: string | null
           business_type?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
+          organization_id?: string | null
           updated_at?: string
         }
         Relationships: []
