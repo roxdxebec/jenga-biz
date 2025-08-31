@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar, LogOut, BarChart3 } from 'lucide-react';
 import { TemplateData } from '@/data/templateData';
-import { AuthDialog } from '@/components/auth/AuthDialog';
+import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
@@ -978,8 +978,8 @@ Generated on: ${new Date().toLocaleDateString()}
         </div>
       </div>
 
-      {/* Auth Dialog */}
-      <AuthDialog 
+      {/* Enhanced Auth Dialog */}
+      <EnhancedAuthDialog 
         open={showAuthDialog} 
         onOpenChange={handleAuthDialogChange}
       />
