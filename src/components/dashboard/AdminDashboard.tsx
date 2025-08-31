@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { InviteCodeManager } from "../auth/InviteCodeManager";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
+import { UserManagement } from "./UserManagement";
 
 interface UserRole {
   role: string;
@@ -242,19 +243,7 @@ export function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>
-                  Manage user roles and permissions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  User management features coming soon...
-                </p>
-              </CardContent>
-            </Card>
+            <UserManagement />
           </TabsContent>
 
           <TabsContent value="invites" className="space-y-6">
