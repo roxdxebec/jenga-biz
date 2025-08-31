@@ -121,15 +121,8 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
       return;
     }
 
-    // Validate invite code for organizations
-    if (signupData.accountType === 'organization' && !signupData.inviteCode) {
-      toast({
-        title: "Invite Code Required",
-        description: "Organization accounts require a valid invite code.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Invite code validation is now optional for organizations
+    // Users can sign up without invite codes and get permissions later
 
     setIsLoading(true);
 
@@ -165,7 +158,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`sm:max-w-md ${!user ? '[&>button]:hidden' : ''}`}>
+      <DialogContent className="sm:max-w-md max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-foreground">Welcome to Jenga Biz Africa</DialogTitle>
         </DialogHeader>
@@ -310,28 +303,35 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
 
                   {signupData.accountType === 'organization' && (
                     <div className="space-y-2">
-                      <Label htmlFor="invite-code">Invite Code *</Label>
+                      <Label htmlFor="invite-code">Invite Code (Optional for now)</Label>
                       <Input
                         id="invite-code"
                         type="text"
-                        placeholder="Enter your organization invite code"
+                        placeholder="Enter your organization invite code (optional)"
                         value={signupData.inviteCode}
                         onChange={(e) => {
                           setSignupData({ ...signupData, inviteCode: e.target.value });
-                          validateInviteCode(e.target.value);
+                          if (e.target.value) {
+                            validateInviteCode(e.target.value);
+                          }
                         }}
-                        required
                       />
-                      {inviteCodeValid === false && (
-                        <Alert variant="destructive">
+                      {inviteCodeValid === false && signupData.inviteCode && (
+                        <Alert>
                           <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>Invalid or expired invite code</AlertDescription>
+                          <AlertDescription>Invalid invite code, but you can still proceed</AlertDescription>
                         </Alert>
                       )}
                       {inviteCodeValid === true && (
                         <Alert>
                           <Info className="h-4 w-4" />
                           <AlertDescription>Valid invite code!</AlertDescription>
+                        </Alert>
+                      )}
+                      {!signupData.inviteCode && (
+                        <Alert>
+                          <Info className="h-4 w-4" />
+                          <AlertDescription>💡 No invite code? You can sign up now and get admin permissions later.</AlertDescription>
                         </Alert>
                       )}
                     </div>
@@ -394,7 +394,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                   <Button 
                     type="submit" 
                     className="w-full" 
-                    disabled={isLoading || (signupData.accountType === 'organization' && !inviteCodeValid)}
+                    disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
