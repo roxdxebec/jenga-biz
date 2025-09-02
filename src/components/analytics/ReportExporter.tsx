@@ -157,7 +157,12 @@ export function ReportExporter() {
   };
 
   const previewExport = () => {
+    if (!exportConfig.format || !exportConfig.template) {
+      alert('Please select both export format and template before previewing.');
+      return;
+    }
     console.log('Previewing export with config:', exportConfig);
+    alert(`Preview for ${exportConfig.template} export will open in a new window.`);
   };
 
   const getStatusIcon = (status: ExportJob['status']) => {

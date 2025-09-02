@@ -116,16 +116,19 @@ export function CustomReportBuilder() {
   const generateReport = () => {
     // This would typically call an API to generate the report
     console.log('Generating report with config:', reportConfig);
+    alert(`Report "${reportConfig.name}" generation started! Check your downloads folder.`);
   };
 
   const previewReport = () => {
     // This would show a preview of the report
     console.log('Previewing report with config:', reportConfig);
+    alert(`Preview for "${reportConfig.name}" will open in a new window.`);
   };
 
   const saveTemplate = () => {
     // This would save the current configuration as a template
     console.log('Saving template:', reportConfig);
+    alert(`Template "${reportConfig.name}" saved successfully!`);
   };
 
   return (

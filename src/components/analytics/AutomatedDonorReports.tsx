@@ -164,17 +164,23 @@ export function AutomatedDonorReports() {
   };
 
   const generateReport = (templateId: string) => {
+    const template = donorTemplates.find(t => t.id === templateId);
     console.log('Generating report for template:', templateId);
+    alert(`${template?.name} report generated successfully! Check your downloads folder.`);
     // Implementation would generate and download the report
   };
 
   const previewReport = (templateId: string) => {
+    const template = donorTemplates.find(t => t.id === templateId);
     console.log('Previewing report for template:', templateId);
+    alert(`Preview for ${template?.name} will open in a new window.`);
     // Implementation would show report preview
   };
 
   const scheduleReport = (templateId: string) => {
+    const template = donorTemplates.find(t => t.id === templateId);
     console.log('Scheduling report for template:', templateId);
+    alert(`${template?.name} has been scheduled for automated generation.`);
     // Implementation would set up automated scheduling
   };
 

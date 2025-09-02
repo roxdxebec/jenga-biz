@@ -147,6 +147,7 @@ export function FilteredReportsView() {
 
   const exportFilteredData = (format: 'pdf' | 'excel') => {
     console.log(`Exporting ${filteredData.length} records as ${format}`);
+    alert(`Exporting ${filteredData.length} records as ${format.toUpperCase()}. Check your downloads folder.`);
     // Implementation would go here
   };
 

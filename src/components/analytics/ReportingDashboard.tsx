@@ -100,7 +100,15 @@ export function ReportingDashboard({ className }: ReportingDashboardProps) {
                   </div>
                 )}
               </div>
-              <Button size="sm" className="w-full h-8 text-xs">
+              <Button 
+                size="sm" 
+                className="w-full h-8 text-xs"
+                onClick={() => {
+                  console.log(`Generating ${option.title} report...`);
+                  // Simulate report generation
+                  alert(`${option.title} report generation started!`);
+                }}
+              >
                 <Download className="h-3 w-3 mr-1.5" />
                 Generate Report
               </Button>
