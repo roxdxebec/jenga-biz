@@ -94,12 +94,12 @@ export const BusinessIntelligenceDashboard = () => {
 
       {/* Detailed Analytics Tabs */}
       <Tabs defaultValue="milestones" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-1">
-          <TabsTrigger value="milestones" className="text-xs sm:text-sm">Milestone Tracking</TabsTrigger>
-          <TabsTrigger value="financial" className="text-xs sm:text-sm">Financial Insights</TabsTrigger>
-          <TabsTrigger value="stages" className="text-xs sm:text-sm">Stage Completion</TabsTrigger>
-          <TabsTrigger value="templates" className="text-xs sm:text-sm">Template Analytics</TabsTrigger>
-          <TabsTrigger value="dropoffs" className="text-xs sm:text-sm">Drop-off Analysis</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 h-auto gap-1 p-1">
+          <TabsTrigger value="milestones" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">Milestone Tracking</TabsTrigger>
+          <TabsTrigger value="financial" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">Financial Insights</TabsTrigger>
+          <TabsTrigger value="stages" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">Stage Completion</TabsTrigger>
+          <TabsTrigger value="templates" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">Template Analytics</TabsTrigger>
+          <TabsTrigger value="dropoffs" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">Drop-off Analysis</TabsTrigger>
         </TabsList>
         
         <TabsContent value="milestones" className="space-y-4">

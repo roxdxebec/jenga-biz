@@ -157,13 +157,25 @@ export const AnalyticsDashboard = () => {
 
       {/* Detailed Analytics */}
       <Tabs defaultValue="business-intelligence" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6 h-auto gap-1 p-1">
-          <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm px-2 py-1.5">Business Intelligence</TabsTrigger>
-          <TabsTrigger value="impact" className="text-xs sm:text-sm px-2 py-1.5">Impact Measurement</TabsTrigger>
-          <TabsTrigger value="reporting" className="text-xs sm:text-sm px-2 py-1.5">Reports & Export</TabsTrigger>
-          <TabsTrigger value="geographic" className="text-xs sm:text-sm px-2 py-1.5">Geographic Analytics</TabsTrigger>
-          <TabsTrigger value="activity" className="text-xs sm:text-sm px-2 py-1.5">User Activity</TabsTrigger>
-          <TabsTrigger value="engagement" className="text-xs sm:text-sm px-2 py-1.5">Engagement Metrics</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 h-auto gap-1 p-1">
+          <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
+            Business Intelligence
+          </TabsTrigger>
+          <TabsTrigger value="impact" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
+            Impact Measurement
+          </TabsTrigger>
+          <TabsTrigger value="reporting" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
+            Reports & Export
+          </TabsTrigger>
+          <TabsTrigger value="geographic" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
+            Geographic Analytics
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
+            User Activity
+          </TabsTrigger>
+          <TabsTrigger value="engagement" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
+            Engagement Metrics
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="business-intelligence" className="space-y-4">

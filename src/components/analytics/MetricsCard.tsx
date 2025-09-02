@@ -28,22 +28,22 @@ export const MetricsCard = ({
   };
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-sm font-medium text-muted-foreground truncate">
           {title}
         </CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-foreground">
+      <CardContent className="pb-4">
+        <div className="text-xl sm:text-2xl font-bold text-foreground">
           {formatValue(value)}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
           {description}
         </p>
         {change !== undefined && (
-          <div className={`text-xs ${change >= 0 ? 'text-green-600' : 'text-red-600'} mt-1`}>
+          <div className={`text-xs ${change >= 0 ? 'text-green-600' : 'text-red-600'} mt-2`}>
             {change >= 0 ? '+' : ''}{change.toFixed(1)}% {changeLabel}
           </div>
         )}
