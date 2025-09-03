@@ -74,19 +74,37 @@ export function UserManagement() {
   const updateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
     try {
       if (action === 'add') {
-        const { error } = await supabase
-          .from('user_roles')
-          .insert({ user_id: userId, role: newRole as any });
+        const { data, error } = await supabase.rpc('add_user_role_with_audit', {
+          target_user_id: userId,
+          new_role: newRole,
+          requester_ip: null,
+          requester_user_agent: navigator.userAgent
+        });
         
         if (error) throw error;
+        if (!data) {
+          toast({
+            title: "Info",
+            description: "User already has this role",
+          });
+          return;
+        }
       } else {
-        const { error } = await supabase
-          .from('user_roles')
-          .delete()
-          .eq('user_id', userId)
-          .eq('role', newRole);
+        const { data, error } = await supabase.rpc('remove_user_role_with_audit', {
+          target_user_id: userId,
+          old_role: newRole,
+          requester_ip: null,
+          requester_user_agent: navigator.userAgent
+        });
         
         if (error) throw error;
+        if (!data) {
+          toast({
+            title: "Info",
+            description: "User doesn't have this role",
+          });
+          return;
+        }
       }
 
       await fetchUsers();
@@ -94,11 +112,11 @@ export function UserManagement() {
         title: "Success",
         description: `User role ${action === 'add' ? 'added' : 'removed'} successfully`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating user role:', error);
       toast({
         title: "Error",
-        description: "Failed to update user role",
+        description: error.message || "Failed to update user role",
         variant: "destructive",
       });
     }

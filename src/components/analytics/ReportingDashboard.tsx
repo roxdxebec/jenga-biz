@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { FileText, Download, Filter, Calendar, Users, Building2, TrendingUp } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { CustomReportBuilder } from './CustomReportBuilder';
 import { FilteredReportsView } from './FilteredReportsView';
 import { AutomatedDonorReports } from './AutomatedDonorReports';
