@@ -613,6 +613,42 @@ export type Database = {
         }
         Relationships: []
       }
+      role_change_audit: {
+        Row: {
+          action_type: string
+          changed_by_user_id: string
+          id: string
+          ip_address: unknown | null
+          new_role: Database["public"]["Enums"]["user_role"]
+          old_role: Database["public"]["Enums"]["user_role"] | null
+          target_user_id: string
+          timestamp: string
+          user_agent: string | null
+        }
+        Insert: {
+          action_type: string
+          changed_by_user_id: string
+          id?: string
+          ip_address?: unknown | null
+          new_role: Database["public"]["Enums"]["user_role"]
+          old_role?: Database["public"]["Enums"]["user_role"] | null
+          target_user_id: string
+          timestamp?: string
+          user_agent?: string | null
+        }
+        Update: {
+          action_type?: string
+          changed_by_user_id?: string
+          id?: string
+          ip_address?: unknown | null
+          new_role?: Database["public"]["Enums"]["user_role"]
+          old_role?: Database["public"]["Enums"]["user_role"] | null
+          target_user_id?: string
+          timestamp?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       template_usage_analytics: {
         Row: {
           abandoned_at_stage: string | null
@@ -770,6 +806,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_user_role_with_audit: {
+        Args: {
+          new_role: Database["public"]["Enums"]["user_role"]
+          requester_ip?: unknown
+          requester_user_agent?: string
+          target_user_id: string
+        }
+        Returns: boolean
+      }
       analyze_drop_off_points: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -799,6 +844,15 @@ export type Database = {
       }
       is_admin_or_hub_manager: {
         Args: { _user_id: string }
+        Returns: boolean
+      }
+      remove_user_role_with_audit: {
+        Args: {
+          old_role: Database["public"]["Enums"]["user_role"]
+          requester_ip?: unknown
+          requester_user_agent?: string
+          target_user_id: string
+        }
         Returns: boolean
       }
       setup_super_admin: {
