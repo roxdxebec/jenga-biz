@@ -176,7 +176,7 @@ const Index = () => {
     if (strategy) {
       setCurrentStrategy(strategy);
       setStrategyData(strategy);
-      setCurrentView('strategyBuilder');
+      setCurrentView('builder');
       
       trackAction('template_selected', {
         templateId: template.id,
