@@ -131,18 +131,68 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    setShowAuthDialog(true);
-    setCurrentView('home');
+    try {
+      toast({
+        title: "Logging out...",
+        description: "Please wait while we log you out.",
+      });
+      
+      await signOut();
+      
+      // Clear local state
+      setCurrentStrategy(null);
+      setStrategyData(null);
+      setSelectedTemplate(null);
+      setCurrentView('home');
+      setNeedsProfileSetup(false);
+      setProfileCheckComplete(false);
+      setIsAdmin(null);
+      
+      // Force redirect to auth dialog
+      setShowAuthDialog(true);
+      
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout Error",
+        description: "There was an error logging out. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleTemplateSelectFromHome = async (template: TemplateData) => {
+    console.log('Template selected:', template);
     setSelectedTemplate(template);
+    
+    // Create strategy from template
     const strategy = await createFromTemplate(template);
+    console.log('Created strategy:', strategy);
+    
     if (strategy) {
       setCurrentStrategy(strategy);
       setStrategyData(strategy);
       setCurrentView('strategyBuilder');
+      
+      trackAction('template_selected', {
+        templateId: template.id,
+        templateName: template.name
+      });
+      
+      toast({
+        title: "Template Loaded",
+        description: `${template.name} template has been loaded and is ready for editing.`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to create strategy from template. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
