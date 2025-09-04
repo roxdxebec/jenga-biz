@@ -168,32 +168,18 @@ const Index = () => {
   const handleTemplateSelectFromHome = async (template: TemplateData) => {
     console.log('Template selected:', template);
     setSelectedTemplate(template);
+    setStrategyData(template);
+    setCurrentView('builder');
     
-    // Create strategy from template
-    const strategy = await createFromTemplate(template);
-    console.log('Created strategy:', strategy);
+    trackAction('template_selected', {
+      templateId: template.id,
+      templateName: template.name
+    });
     
-    if (strategy) {
-      setCurrentStrategy(strategy);
-      setStrategyData(strategy);
-      setCurrentView('builder');
-      
-      trackAction('template_selected', {
-        templateId: template.id,
-        templateName: template.name
-      });
-      
-      toast({
-        title: "Template Loaded",
-        description: `${template.name} template has been loaded and is ready for editing.`,
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to create strategy from template. Please try again.",
-        variant: "destructive"
-      });
-    }
+    toast({
+      title: "Template Loaded",
+      description: `${template.name} template has been loaded and is ready for editing.`,
+    });
   };
 
   const handleStrategyChangeWithSave = async (strategy: any) => {

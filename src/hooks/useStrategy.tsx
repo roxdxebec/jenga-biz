@@ -248,7 +248,14 @@ export const useStrategy = () => {
 
   // Create strategy from template
   const createFromTemplate = async (template: any) => {
-    if (!user) return null;
+    console.log('=== CREATE FROM TEMPLATE DEBUG ===');
+    console.log('User:', !!user);
+    console.log('Template received:', template);
+    
+    if (!user) {
+      console.log('No user for createFromTemplate');
+      return null;
+    }
 
     const strategyData = {
       template_id: template.id,
@@ -268,7 +275,10 @@ export const useStrategy = () => {
       currency: 'KES'
     };
 
-    return await saveStrategy(strategyData);
+    console.log('Strategy data to save:', strategyData);
+    const result = await saveStrategy(strategyData);
+    console.log('Save strategy result:', result);
+    return result;
   };
 
   // Load strategies when user changes
