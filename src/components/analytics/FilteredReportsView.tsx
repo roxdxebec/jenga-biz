@@ -29,6 +29,7 @@ interface FilteredReportData {
 }
 
 export function FilteredReportsView() {
+  const { toast } = useToast();
   const [activeFilters, setActiveFilters] = useState<FilterOption[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<string>('businessName');
@@ -147,9 +148,20 @@ export function FilteredReportsView() {
   });
 
   const exportFilteredData = (format: 'pdf' | 'excel') => {
+    if (filteredData.length === 0) {
+      toast({
+        title: "No Data to Export",
+        description: "Please adjust your filters to include some data before exporting.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     console.log(`Exporting ${filteredData.length} records as ${format}`);
-    alert(`Exporting ${filteredData.length} records as ${format.toUpperCase()}. Check your downloads folder.`);
-    // Implementation would go here
+    toast({
+      title: "Export Started",
+      description: `Exporting ${filteredData.length} records as ${format.toUpperCase()}. Check your downloads folder.`,
+    });
   };
 
   return (
@@ -292,9 +304,9 @@ export function FilteredReportsView() {
                 Showing {filteredData.length} of {mockData.length} businesses
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-32 sm:w-40">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -313,13 +325,19 @@ export function FilteredReportsView() {
               >
                 {sortOrder === 'asc' ? '↑' : '↓'}
               </Button>
-              <Button variant="outline" size="sm" onClick={() => exportFilteredData('pdf')}>
+              <Button variant="outline" size="sm" onClick={() => exportFilteredData('pdf')} className="hidden sm:flex">
                 <Download className="h-4 w-4 mr-2" />
                 Export PDF
               </Button>
-              <Button variant="outline" size="sm" onClick={() => exportFilteredData('excel')}>
+              <Button variant="outline" size="sm" onClick={() => exportFilteredData('excel')} className="hidden sm:flex">
                 <Download className="h-4 w-4 mr-2" />
                 Export Excel
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => exportFilteredData('pdf')} className="sm:hidden">
+                <Download className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => exportFilteredData('excel')} className="sm:hidden">
+                <Download className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -335,18 +353,18 @@ export function FilteredReportsView() {
               </Button>
             </div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Business Name</TableHead>
-                    <TableHead>Region</TableHead>
-                    <TableHead>Stage</TableHead>
-                    <TableHead>Months Active</TableHead>
-                    <TableHead>Revenue</TableHead>
-                    <TableHead>Employees</TableHead>
-                    <TableHead>Loan Status</TableHead>
-                    <TableHead>Demographics</TableHead>
+                    <TableHead className="min-w-[150px]">Business Name</TableHead>
+                    <TableHead className="min-w-[100px]">Region</TableHead>
+                    <TableHead className="min-w-[100px]">Stage</TableHead>
+                    <TableHead className="min-w-[120px]">Months Active</TableHead>
+                    <TableHead className="min-w-[120px]">Revenue</TableHead>
+                    <TableHead className="min-w-[100px]">Employees</TableHead>
+                    <TableHead className="min-w-[120px]">Loan Status</TableHead>
+                    <TableHead className="min-w-[150px]">Demographics</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

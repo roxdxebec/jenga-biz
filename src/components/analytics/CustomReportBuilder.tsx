@@ -34,6 +34,7 @@ interface ReportConfig {
 }
 
 export function CustomReportBuilder() {
+  const { toast } = useToast();
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
     name: '',
     description: '',
@@ -115,21 +116,63 @@ export function CustomReportBuilder() {
   };
 
   const generateReport = () => {
-    // This would typically call an API to generate the report
+    if (!reportConfig.name) {
+      toast({
+        title: "Report Name Required",
+        description: "Please enter a name for your report.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (reportConfig.metrics.length === 0) {
+      toast({
+        title: "No Metrics Selected",
+        description: "Please select at least one metric to include in your report.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     console.log('Generating report with config:', reportConfig);
-    alert(`Report "${reportConfig.name}" generation started! Check your downloads folder.`);
+    toast({
+      title: "Report Generation Started",
+      description: `Report "${reportConfig.name}" is being generated. Check your downloads folder.`,
+    });
   };
 
   const previewReport = () => {
-    // This would show a preview of the report
+    if (reportConfig.metrics.length === 0) {
+      toast({
+        title: "No Metrics Selected",
+        description: "Please select at least one metric to preview the report.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     console.log('Previewing report with config:', reportConfig);
-    alert(`Preview for "${reportConfig.name}" will open in a new window.`);
+    toast({
+      title: "Loading Preview",
+      description: `Preview for "${reportConfig.name || 'Custom Report'}" will open in a new window.`,
+    });
   };
 
   const saveTemplate = () => {
-    // This would save the current configuration as a template
+    if (!reportConfig.name) {
+      toast({
+        title: "Template Name Required",
+        description: "Please enter a name for your template.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     console.log('Saving template:', reportConfig);
-    alert(`Template "${reportConfig.name}" saved successfully!`);
+    toast({
+      title: "Template Saved",
+      description: `Template "${reportConfig.name}" saved successfully!`,
+    });
   };
 
   return (

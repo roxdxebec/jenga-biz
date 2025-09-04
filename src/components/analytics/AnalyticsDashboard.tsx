@@ -99,7 +99,7 @@ export const AnalyticsDashboard = () => {
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => (
             <Card key={i}>
@@ -157,24 +157,24 @@ export const AnalyticsDashboard = () => {
 
       {/* Detailed Analytics */}
       <Tabs defaultValue="business-intelligence" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 h-auto gap-1 p-1">
-          <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
-            Business Intelligence
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 h-auto gap-1 p-1">
+          <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
+            BI Dashboard
           </TabsTrigger>
-          <TabsTrigger value="impact" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
-            Impact Measurement
+          <TabsTrigger value="impact" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
+            Impact
           </TabsTrigger>
-          <TabsTrigger value="reporting" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
-            Reports & Export
+          <TabsTrigger value="reporting" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
+            Reports
           </TabsTrigger>
-          <TabsTrigger value="geographic" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
-            Geographic Analytics
+          <TabsTrigger value="geographic" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
+            Geographic
           </TabsTrigger>
-          <TabsTrigger value="activity" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
-            User Activity
+          <TabsTrigger value="activity" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
+            Activity
           </TabsTrigger>
-          <TabsTrigger value="engagement" className="text-xs sm:text-sm px-1.5 py-2 whitespace-nowrap">
-            Engagement Metrics
+          <TabsTrigger value="engagement" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
+            Engagement
           </TabsTrigger>
         </TabsList>
         

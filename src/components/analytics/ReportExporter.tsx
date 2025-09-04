@@ -51,6 +51,7 @@ interface ExportJob {
 }
 
 export function ReportExporter() {
+  const { toast } = useToast();
   const [exportConfig, setExportConfig] = useState<ExportConfig>({
     format: 'pdf',
     template: 'standard',
@@ -104,6 +105,15 @@ export function ReportExporter() {
   ];
 
   const startExport = () => {
+    if (!exportConfig.template) {
+      toast({
+        title: "Template Required",
+        description: "Please select a report template before exporting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newJob: ExportJob = {
       id: Date.now().toString(),
       name: `Export - ${new Date().toLocaleDateString()}`,
@@ -114,6 +124,11 @@ export function ReportExporter() {
     };
 
     setExportJobs(prev => [newJob, ...prev]);
+    
+    toast({
+      title: "Export Started",
+      description: `${exportConfig.format.toUpperCase()} export has been queued for processing.`,
+    });
 
     // Simulate export process
     setTimeout(() => {
@@ -154,16 +169,30 @@ export function ReportExporter() {
             : job
         )
       );
+      toast({
+        title: "Export Complete",
+        description: "Your report is ready for download.",
+      });
     }, 4000);
   };
 
   const previewExport = () => {
     if (!exportConfig.format || !exportConfig.template) {
-      alert('Please select both export format and template before previewing.');
+      toast({
+        title: "Configuration Incomplete",
+        description: "Please select both export format and template before previewing.",
+        variant: "destructive",
+      });
       return;
     }
+    
+    toast({
+      title: "Preview Loading",
+      description: `Opening ${exportConfig.template} preview in a new window.`,
+    });
+    
     console.log('Previewing export with config:', exportConfig);
-    alert(`Preview for ${exportConfig.template} export will open in a new window.`);
+    // In a real app, this would open a new window with the preview
   };
 
   const getStatusIcon = (status: ExportJob['status']) => {

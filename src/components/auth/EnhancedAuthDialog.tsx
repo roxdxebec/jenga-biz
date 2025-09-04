@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,9 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
   const [rememberMe, setRememberMe] = useState(false);
   const [inviteCodeValid, setInviteCodeValid] = useState<boolean | null>(null);
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, feedback: "" });
-  const { signIn, signUp, user } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const { signIn, signUp, resetPassword, user } = useAuth();
   const { toast } = useToast();
 
   // Password strength checker
@@ -151,6 +153,30 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
     setIsLoading(false);
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const { error } = await resetPassword(forgotPasswordEmail);
+    
+    if (error) {
+      toast({
+        title: "Reset Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Reset Email Sent!",
+        description: "Check your email for password reset instructions.",
+      });
+      setShowForgotPassword(false);
+      setForgotPasswordEmail("");
+    }
+    
+    setIsLoading(false);
+  };
+
   // Auto-close dialog when user is authenticated
   if (user && open) {
     onOpenChange(false);
@@ -216,29 +242,39 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="remember-me" 
-                      checked={rememberMe}
-                      onCheckedChange={(checked) => setRememberMe(checked === true)}
-                    />
-                    <Label htmlFor="remember-me" className="text-sm">Remember me</Label>
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing in...
-                      </>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </Button>
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center space-x-2">
+                       <Checkbox 
+                         id="remember-me" 
+                         checked={rememberMe}
+                         onCheckedChange={(checked) => setRememberMe(checked === true)}
+                       />
+                       <Label htmlFor="remember-me" className="text-sm">Remember me</Label>
+                     </div>
+                     <Button
+                       type="button"
+                       variant="link"
+                       className="px-0 text-sm"
+                       onClick={() => setShowForgotPassword(true)}
+                     >
+                       Forgot Password?
+                     </Button>
+                   </div>
+                   
+                   <Button 
+                     type="submit" 
+                     className="w-full" 
+                     disabled={isLoading}
+                   >
+                     {isLoading ? (
+                       <>
+                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                         Signing in...
+                       </>
+                     ) : (
+                       "Sign In"
+                     )}
+                   </Button>
                 </form>
               </CardContent>
             </Card>
@@ -411,6 +447,55 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
           </TabsContent>
         </Tabs>
       </DialogContent>
+      
+      {/* Forgot Password Dialog */}
+      <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Enter your email address and we'll send you a link to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="forgot-email">Email</Label>
+              <Input
+                id="forgot-email"
+                type="email"
+                placeholder="your.email@example.com"
+                value={forgotPasswordEmail}
+                onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowForgotPassword(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1" 
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send Reset Link"
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
