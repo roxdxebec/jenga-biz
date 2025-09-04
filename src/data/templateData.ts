@@ -906,7 +906,7 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
   
   const templates: TemplateData[] = [
     {
-      id: 'auto-repair',
+      id: 'mitumba',
       name: language === 'sw' ? 'Biashara ya Mitumba' : language === 'ar' ? 'تجارة الملابس المستعملة' : language === 'fr' ? 'Commerce de Vêtements d\'Occasion' : 'Second-Hand Clothing (Mitumba)',
       description: language === 'sw' ? 'Uuzaji wa nguo za mitumba na bidhaa za mtindo' : language === 'ar' ? 'بيع الملابس المستعملة ومنتجات الأزياء' : language === 'fr' ? 'Vente de vêtements d\'occasion et produits de mode' : 'Selling second-hand clothes and fashion items',
       content: getTranslatedContent('auto-repair', language)
@@ -976,12 +976,6 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       content: getTranslatedContent('boda-boda', language)
     },
     {
-      id: 'cyber-cafe',
-      name: language === 'sw' ? 'Cyber Café' : language === 'ar' ? 'مقهى إنترنت' : language === 'fr' ? 'Cybercafé' : 'Cyber Café',
-      description: language === 'sw' ? 'Huduma za intaneti na kielektroniki' : language === 'ar' ? 'خدمات الإنترنت والإلكترونيات' : language === 'fr' ? 'Services internet et électroniques' : 'Internet and computer services',
-      content: getTranslatedContent('cyber-cafe', language)
-    },
-    {
       id: 'daycare',
       name: language === 'sw' ? 'Huduma za Malezi ya Watoto' : language === 'ar' ? 'خدمات رعاية الأطفال' : language === 'fr' ? 'Services de Garde d\'Enfants' : 'Daycare Services',
       description: language === 'sw' ? 'Malezi na uangalizi wa watoto' : language === 'ar' ? 'رعاية ومراقبة الأطفال' : language === 'fr' ? 'Garde et surveillance d\'enfants' : 'Child care and supervision',
@@ -1004,22 +998,6 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
       name: language === 'sw' ? 'Mazoezi ya Mwili' : language === 'ar' ? 'التدريب البدني' : language === 'fr' ? 'Entraînement Fitness' : 'Fitness Training',
       description: language === 'sw' ? 'Mafunzo ya mazoezi na afya' : language === 'ar' ? 'تدريب اللياقة البدنية والصحة' : language === 'fr' ? 'Entraînement de fitness et santé' : 'Personal training and fitness coaching',
       content: getTranslatedContent('fitness-training', language)
-    },
-    {
-      id: 'daycare',
-      name: language === 'sw' ? 'Huduma za Malezi ya Watoto' : language === 'ar' ? 'خدمات رعاية الأطفال' : language === 'fr' ? 'Services de Garde d\'Enfants' : 'Daycare Services',
-      description: language === 'sw' ? 'Malezi na uangalizi wa watoto' : language === 'ar' ? 'رعاية ومراقبة الأطفال' : language === 'fr' ? 'Garde et surveillance d\'enfants' : 'Child care and supervision',
-      content: {
-        vision: 'To provide a safe, nurturing environment where children can learn, grow, and develop to their fullest potential',
-        mission: 'Supporting working families by providing quality childcare with educational activities, loving care, and developmental support',
-        targetMarket: 'Working parents with children aged 6 months to 5 years, single parents, shift workers, families needing flexible care',
-        revenueModel: 'Daily/weekly childcare fees, registration fees, after-school care, summer programs, meals, educational activities',
-        valueProposition: 'Safe, educational childcare with flexible scheduling, caring qualified staff, developmental activities, and nutritious meals',
-        keyPartners: 'Educational toy suppliers, child development specialists, local schools, health clinics, food suppliers',
-        marketingApproach: 'Parent referrals, community bulletin boards, social media, open houses, partnerships with employers, pediatrician referrals',
-        operationalNeeds: 'Child-safe facility, toys and educational materials, security system, licenses, insurance, kitchen facilities',
-        growthGoals: 'Add after-school program, increase capacity to 30 children, hire 2 teachers, establish pre-school curriculum'
-      }
     },
     {
       id: 'social-media',

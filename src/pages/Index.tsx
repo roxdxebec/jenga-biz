@@ -908,26 +908,15 @@ Generated on: ${new Date().toLocaleDateString()}
               />
               
               {user && (
-                <>
-                  <Button 
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentView('analytics')}
-                    className="flex items-center"
-                  >
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Analytics
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSignOut}
-                    className="flex items-center"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="flex items-center"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
               )}
             </div>
           </div>

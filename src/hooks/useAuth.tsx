@@ -70,11 +70,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/reset-password`;
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
     });
+    
+    // Send custom password reset email via edge function
+    if (!error) {
+      try {
+        await fetch('/functions/v1/send-password-reset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: email,
+            resetUrl: redirectUrl,
+          }),
+        });
+      } catch (emailError) {
+        console.error('Error sending custom password reset email:', emailError);
+        // Don't return error for email sending failure, as the reset still works
+      }
+    }
+    
     return { error };
   };
 
