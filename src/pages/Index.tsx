@@ -5,6 +5,8 @@ import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import LanguageSelector from '@/components/LanguageSelector';
 import ShareModal from '@/components/ShareModal';
+import ProfileSetup from '@/components/ProfileSetup';
+import UserDashboard from '@/components/UserDashboard';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +16,7 @@ import { TemplateData } from '@/data/templateData';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { useAuth } from '@/hooks/useAuth';
+import { useStrategy } from '@/hooks/useStrategy';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
@@ -21,6 +24,13 @@ import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
+  const { 
+    strategies, 
+    currentStrategy, 
+    saveStrategy, 
+    createFromTemplate, 
+    setCurrentStrategy 
+  } = useStrategy();
   const { trackPageView, trackAction, getGeographicInfo } = useAnalytics();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [currentView, setCurrentView] = useState('home');
@@ -31,11 +41,20 @@ const Index = () => {
   const [showStrategySummary, setShowStrategySummary] = useState(false);
   const [showMilestonesSummary, setShowMilestonesSummary] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [needsProfileSetup, setNeedsProfileSetup] = useState(false);
+  const [profileCheckComplete, setProfileCheckComplete] = useState(false);
   const { toast } = useToast();
 
-  // Check if user has admin role
+  // Check if user has admin role and needs profile setup
   useEffect(() => {
-    checkUserRole();
+    if (user) {
+      checkUserRole();
+      checkProfileSetup();
+    } else {
+      setIsAdmin(null);
+      setNeedsProfileSetup(false);
+      setProfileCheckComplete(false);
+    }
   }, [user]);
 
   const checkUserRole = async () => {
@@ -58,6 +77,30 @@ const Index = () => {
     } catch (error) {
       console.error('Error checking user role:', error);
       setIsAdmin(false);
+    }
+  };
+
+  const checkProfileSetup = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_profile_complete, account_type')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        // Profile doesn't exist, needs setup
+        setNeedsProfileSetup(true);
+      } else {
+        setNeedsProfileSetup(!data.is_profile_complete);
+      }
+    } catch (error) {
+      console.error('Error checking profile setup:', error);
+      setNeedsProfileSetup(true);
+    } finally {
+      setProfileCheckComplete(true);
     }
   };
 
@@ -91,6 +134,35 @@ const Index = () => {
     await signOut();
     setShowAuthDialog(true);
     setCurrentView('home');
+  };
+
+  const handleTemplateSelectFromHome = async (template: TemplateData) => {
+    setSelectedTemplate(template);
+    const strategy = await createFromTemplate(template);
+    if (strategy) {
+      setCurrentStrategy(strategy);
+      setStrategyData(strategy);
+      setCurrentView('strategyBuilder');
+    }
+  };
+
+  const handleStrategyChangeWithSave = async (strategy: any) => {
+    setStrategyData(strategy);
+    // Auto-save strategy changes
+    if (user) {
+      await saveStrategy(strategy);
+    }
+  };
+
+  const handleViewStrategy = (strategy: any) => {
+    setCurrentStrategy(strategy);
+    setStrategyData(strategy);
+    setCurrentView('strategyBuilder');
+  };
+
+  const handleProfileSetupComplete = () => {
+    setNeedsProfileSetup(false);
+    setCurrentView('dashboard');
   };
 
   const currencyMap = {
@@ -494,6 +566,23 @@ Generated on: ${new Date().toLocaleDateString()}
     document.body.removeChild(a);
   };
 
+  // Show profile setup if needed
+  if (user && profileCheckComplete && needsProfileSetup) {
+    return <ProfileSetup onComplete={handleProfileSetupComplete} />;
+  }
+
+  // Show user dashboard if authenticated and profile is complete
+  if (user && profileCheckComplete && !needsProfileSetup && currentView === 'dashboard') {
+    return (
+      <UserDashboard
+        onBackToHome={() => setCurrentView('home')}
+        onNewStrategy={() => setCurrentView('templates')}
+        onViewStrategy={handleViewStrategy}
+        onEditProfile={() => setNeedsProfileSetup(true)}
+      />
+    );
+  }
+
   // Show admin dashboard for admin users
   if (user && isAdmin === true) {
     return <AdminDashboard />;
@@ -547,7 +636,7 @@ Generated on: ${new Date().toLocaleDateString()}
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <TemplateDropdownSelector
-            onTemplateSelect={handleTemplateSelect}
+            onTemplateSelect={handleTemplateSelectFromHome}
             onBack={() => setCurrentView('home')}
             language={language}
           />

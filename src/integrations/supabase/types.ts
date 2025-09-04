@@ -580,36 +580,116 @@ export type Database = {
         }
         Relationships: []
       }
+      milestones: {
+        Row: {
+          business_stage: string | null
+          created_at: string
+          id: string
+          status: string | null
+          strategy_id: string | null
+          target_date: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_stage?: string | null
+          created_at?: string
+          id?: string
+          status?: string | null
+          strategy_id?: string | null
+          target_date?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_stage?: string | null
+          created_at?: string
+          id?: string
+          status?: string | null
+          strategy_id?: string | null
+          target_date?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "strategies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_type: string | null
           business_type: string | null
+          contact_person_name: string | null
+          contact_person_title: string | null
+          contact_phone: string | null
+          country: string | null
           created_at: string
           email: string | null
+          first_name: string | null
           full_name: string | null
           id: string
+          industry: string | null
+          is_profile_complete: boolean | null
+          last_name: string | null
+          logo_url: string | null
           organization_id: string | null
+          organization_name: string | null
+          profile_picture_url: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           account_type?: string | null
           business_type?: string | null
+          contact_person_name?: string | null
+          contact_person_title?: string | null
+          contact_phone?: string | null
+          country?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string | null
           id: string
+          industry?: string | null
+          is_profile_complete?: boolean | null
+          last_name?: string | null
+          logo_url?: string | null
           organization_id?: string | null
+          organization_name?: string | null
+          profile_picture_url?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           account_type?: string | null
           business_type?: string | null
+          contact_person_name?: string | null
+          contact_person_title?: string | null
+          contact_phone?: string | null
+          country?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           full_name?: string | null
           id?: string
+          industry?: string | null
+          is_profile_complete?: boolean | null
+          last_name?: string | null
+          logo_url?: string | null
           organization_id?: string | null
+          organization_name?: string | null
+          profile_picture_url?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
@@ -646,6 +726,75 @@ export type Database = {
           target_user_id?: string
           timestamp?: string
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      strategies: {
+        Row: {
+          business_name: string | null
+          country: string | null
+          created_at: string
+          currency: string | null
+          growth_goals: string | null
+          id: string
+          is_active: boolean | null
+          key_partners: string | null
+          language: string | null
+          marketing_approach: string | null
+          mission: string | null
+          operational_needs: string | null
+          revenue_model: string | null
+          target_market: string | null
+          template_id: string | null
+          template_name: string | null
+          updated_at: string
+          user_id: string
+          value_proposition: string | null
+          vision: string | null
+        }
+        Insert: {
+          business_name?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          growth_goals?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_partners?: string | null
+          language?: string | null
+          marketing_approach?: string | null
+          mission?: string | null
+          operational_needs?: string | null
+          revenue_model?: string | null
+          target_market?: string | null
+          template_id?: string | null
+          template_name?: string | null
+          updated_at?: string
+          user_id: string
+          value_proposition?: string | null
+          vision?: string | null
+        }
+        Update: {
+          business_name?: string | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          growth_goals?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_partners?: string | null
+          language?: string | null
+          marketing_approach?: string | null
+          mission?: string | null
+          operational_needs?: string | null
+          revenue_model?: string | null
+          target_market?: string | null
+          template_id?: string | null
+          template_name?: string | null
+          updated_at?: string
+          user_id?: string
+          value_proposition?: string | null
+          vision?: string | null
         }
         Relationships: []
       }
