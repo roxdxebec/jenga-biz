@@ -240,17 +240,46 @@ const StrategyBuilder = ({
       language 
     });
     
-    if (template && template.content) {
-      console.log('StrategyBuilder - Setting strategy with template content:', template.content);
-      const newStrategy = {
-        businessName: template.name || '',
-        ...template.content
-      };
+    if (template) {
+      console.log('StrategyBuilder - Setting strategy with template:', template);
+      
+      // Handle both template.content structure and direct template structure
+      let newStrategy;
+      if (template.content) {
+        // This is a template with content structure
+        newStrategy = {
+          businessName: template.name || '',
+          vision: template.content.vision || '',
+          mission: template.content.mission || '',
+          targetMarket: template.content.targetMarket || '',
+          revenueModel: template.content.revenueModel || '',
+          valueProposition: template.content.valueProposition || '',
+          keyPartners: template.content.keyPartners || '',
+          marketingApproach: template.content.marketingApproach || '',
+          operationalNeeds: template.content.operationalNeeds || '',
+          growthGoals: template.content.growthGoals || ''
+        };
+      } else {
+        // This is a saved strategy with direct fields
+        newStrategy = {
+          businessName: template.business_name || template.name || '',
+          vision: template.vision || '',
+          mission: template.mission || '',
+          targetMarket: template.target_market || '',
+          revenueModel: template.revenue_model || '',
+          valueProposition: template.value_proposition || '',
+          keyPartners: template.key_partners || '',
+          marketingApproach: template.marketing_approach || '',
+          operationalNeeds: template.operational_needs || '',
+          growthGoals: template.growth_goals || ''
+        };
+      }
+      
       setStrategy(newStrategy);
       onStrategyChange?.(newStrategy);
       
       // Track template completion if content is pre-filled
-      const filledFields = Object.values(template.content).filter(v => v && typeof v === 'string' && v.trim().length > 0).length;
+      const filledFields = Object.values(newStrategy).filter(v => v && typeof v === 'string' && v.trim().length > 0).length;
       if (filledFields > 0) {
         setTimeout(() => {
           trackStrategyStage('strategy_building', 'completed', {

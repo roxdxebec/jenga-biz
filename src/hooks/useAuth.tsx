@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, fullName: string, accountType?: string, inviteCode?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/auth?verified=true`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -62,6 +62,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       },
     });
+
+    // Send custom confirmation email
+    if (!error) {
+      try {
+        await supabase.functions.invoke('send-signup-confirmation', {
+          body: {
+            email,
+            confirmationUrl: redirectUrl
+          }
+        });
+      } catch (emailError) {
+        console.error('Error sending custom signup confirmation email:', emailError);
+        // Don't return error for email sending failure, as the signup still works
+      }
+    }
+    
     return { error };
   };
 
