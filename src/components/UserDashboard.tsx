@@ -124,7 +124,10 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             <Button
               variant="ghost"
               size="sm"
-              onClick={onBackToHome}
+              onClick={() => {
+                console.log('Back to Home clicked');
+                onBackToHome();
+              }}
               className="text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -164,12 +167,15 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={onEditProfile}
-              className="border-orange-200 text-orange-700 hover:bg-orange-50"
+              onClick={() => {
+                console.log('Settings clicked');
+                onEditProfile();
+              }}
+              className="border-orange-200 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
             >
               <Settings className="w-4 h-4 mr-2" />
               Settings
@@ -179,10 +185,11 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
               variant="outline"
               size="sm"
               onClick={async () => {
+                console.log('Sign out clicked');
                 await signOut();
                 window.location.href = '/auth';
               }}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50"
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 w-full sm:w-auto"
             >
               Sign Out
             </Button>
@@ -198,7 +205,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card 
               className="border-orange-200 hover:border-orange-300 cursor-pointer transition-colors"
               onClick={onNewStrategy}
@@ -216,7 +223,10 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
               </CardContent>
             </Card>
 
-            <Card className="border-blue-200 hover:border-blue-300 cursor-pointer transition-colors">
+            <Card 
+              className="border-blue-200 hover:border-blue-300 cursor-pointer transition-colors"
+              onClick={() => window.location.href = '#milestones-section'}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
@@ -230,15 +240,18 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
               </CardContent>
             </Card>
 
-            <Card className="border-green-200 hover:border-green-300 cursor-pointer transition-colors">
+            <Card 
+              className="border-green-200 hover:border-green-300 cursor-pointer transition-colors"
+              onClick={() => window.location.href = '/financial-tracker'}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-green-100 rounded-lg">
                     <BarChart3 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">View Analytics</h3>
-                    <p className="text-sm text-gray-600">Track your progress</p>
+                    <h3 className="font-medium text-gray-900">Financial Tracker</h3>
+                    <p className="text-sm text-gray-600">Monitor your finances</p>
                   </div>
                 </div>
               </CardContent>

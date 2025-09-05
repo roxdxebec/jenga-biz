@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import TemplateSelector from '@/components/TemplateSelector';
+import DropdownTemplateSelector from '@/components/DropdownTemplateSelector';
+import FinancialTracker from '@/components/FinancialTracker';
+import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import TemplateDataLoader from '@/components/TemplateDataLoader';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import UserDashboard from '@/components/UserDashboard';
@@ -225,6 +227,85 @@ const Index = () => {
     return <AdminDashboard />;
   }
 
+  // Show Financial Tracker
+  if (user && currentView === 'financialTracker') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="py-4 flex items-center justify-between">
+              <h1 className="text-xl font-bold text-gray-900">Financial Tracker</h1>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Dashboard
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <FinancialTracker 
+          language={language}
+          currency="KES"
+          currencySymbol="KSh"
+        />
+      </div>
+    );
+  }
+
+  // Show Milestones
+  if (user && currentView === 'milestones') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="py-4 flex items-center justify-between">
+              <h1 className="text-xl font-bold text-gray-900">Business Milestones</h1>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentView('dashboard')}
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Dashboard
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <BusinessMilestonesSection 
+            language={language}
+            isPro={true}
+          />
+        </div>
+      </div>
+    );
+  }
+
   // Show SaaS features for organization account types
   if (user && currentView === 'saas') {
     return <SaaSFeatures onSignOut={handleSignOut} />;
@@ -261,7 +342,7 @@ const Index = () => {
           </div>
         </div>
 
-        <TemplateSelector
+        <DropdownTemplateSelector
           onTemplateSelect={handleTemplateSelectFromHome}
           onStartFromScratch={() => {
             setSelectedTemplate(null);
@@ -327,12 +408,26 @@ const Index = () => {
 
   // Default: User Dashboard
   return (
-    <UserDashboard
-      onBackToHome={() => setCurrentView('home')}
-      onNewStrategy={() => setCurrentView('templates')}
-      onViewStrategy={handleViewStrategy}
-      onEditProfile={() => setCurrentView('profile')}
-    />
+    <>
+      <UserDashboard
+        onBackToHome={() => {
+          console.log('Navigating to home');
+          setCurrentView('home');
+        }}
+        onNewStrategy={() => setCurrentView('templates')}
+        onViewStrategy={handleViewStrategy}
+        onEditProfile={() => {
+          console.log('Opening profile editor');
+          setCurrentView('profile');
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <BusinessMilestonesSection 
+          language={language}
+          isPro={true}
+        />
+      </div>
+    </>
   );
 };
 
