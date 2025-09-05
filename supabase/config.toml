@@ -3,7 +3,7 @@ project_id = "diclwatocrixibjpajuf"
 [auth]
 enabled = true
 site_url = "https://jengabiz.africa"
-additional_redirect_urls = ["https://2d5d3ba5-84e9-4b37-ba00-6b7d536851cd.lovableproject.com", "https://jengabiz.africa/auth"]
+additional_redirect_urls = ["https://2d5d3ba5-84e9-4b37-ba00-6b7d536851cd.lovableproject.com", "https://jengabiz.africa/auth", "https://jengabiz.africa/reset-password"]
 email_double_confirm_changes_enabled = false
 
 [auth.email]

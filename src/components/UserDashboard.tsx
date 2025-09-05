@@ -178,7 +178,10 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             <Button
               variant="outline"
               size="sm"
-              onClick={() => signOut()}
+              onClick={async () => {
+                await signOut();
+                window.location.href = '/auth';
+              }}
               className="border-gray-200 text-gray-700 hover:bg-gray-50"
             >
               Sign Out

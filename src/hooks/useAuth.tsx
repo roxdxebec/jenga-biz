@@ -95,15 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Send custom password reset email via edge function
     if (!error) {
       try {
-        await fetch('/functions/v1/send-password-reset', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        await supabase.functions.invoke('send-password-reset', {
+          body: {
             to: email,
             resetUrl: redirectUrl,
-          }),
+          }
         });
       } catch (emailError) {
         console.error('Error sending custom password reset email:', emailError);

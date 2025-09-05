@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
@@ -79,11 +79,12 @@ export const useStrategy = () => {
     }
   };
 
-  // Save or update strategy
-  const saveStrategy = async (strategyData: Partial<Strategy>) => {
+  // Auto-save with debouncing
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const saveStrategy = async (strategyData: Partial<Strategy>, showToast = false) => {
     if (!user) return null;
 
-    setLoading(true);
     try {
       const dataToSave = {
         ...strategyData,
@@ -125,18 +126,40 @@ export const useStrategy = () => {
         setStrategies(prev => [result, ...prev]);
       }
 
+      if (showToast) {
+        toast({
+          title: 'Strategy Saved',
+          description: 'Your changes have been saved automatically.',
+        });
+      }
+
       return result;
     } catch (error) {
       console.error('Error saving strategy:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to save strategy',
-        variant: 'destructive'
-      });
+      if (showToast) {
+        toast({
+          title: 'Error',
+          description: 'Failed to save strategy',
+          variant: 'destructive'
+        });
+      }
       return null;
-    } finally {
-      setLoading(false);
     }
+  };
+
+  // Auto-save strategy with debouncing
+  const autoSaveStrategy = async (strategyData: Partial<Strategy>) => {
+    if (!user) return;
+
+    // Clear existing timeout
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Set new timeout for auto-save
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      saveStrategy(strategyData, false); // Don't show toast for auto-save
+    }, 1000); // 1 second debounce
   };
 
   // Load milestones for current strategy
@@ -309,6 +332,7 @@ export const useStrategy = () => {
     setCurrentStrategy,
     loadStrategies,
     saveStrategy,
+    autoSaveStrategy,
     loadMilestones,
     saveMilestone,
     deleteMilestone,

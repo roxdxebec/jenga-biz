@@ -281,6 +281,8 @@ const StrategyBuilder = ({
   const handleInputChange = (field: string, value: string) => {
     const newStrategy = { ...strategy, [field]: value };
     setStrategy(newStrategy);
+    
+    // Auto-save with debounce - trigger onStrategyChange immediately for real-time updates
     onStrategyChange?.(newStrategy);
     
     // Track field completion

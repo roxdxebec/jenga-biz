@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import TemplateDropdownSelector from '@/components/TemplateDropdownSelector';
+import TemplateSelector from '@/components/TemplateSelector';
+import TemplateDataLoader from '@/components/TemplateDataLoader';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import MonthlyRevenueSection from '@/components/MonthlyRevenueSection';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
@@ -12,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Globe, Home, Save, Download, Bot, ArrowLeft, Target, Calendar, LogOut, BarChart3 } from 'lucide-react';
-import { TemplateData } from '@/data/templateData';
+import { TemplateData, getTemplateData } from '@/data/templateData';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { useAuth } from '@/hooks/useAuth';
@@ -28,6 +30,7 @@ const Index = () => {
     strategies, 
     currentStrategy, 
     saveStrategy, 
+    autoSaveStrategy,
     createFromTemplate, 
     setCurrentStrategy 
   } = useStrategy();
@@ -148,13 +151,9 @@ const Index = () => {
       setProfileCheckComplete(false);
       setIsAdmin(null);
       
-      // Force redirect to auth dialog
-      setShowAuthDialog(true);
+      // Navigate to auth page instead of showing dialog
+      window.location.href = '/auth';
       
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
     } catch (error) {
       console.error('Logout error:', error);
       toast({
@@ -165,28 +164,40 @@ const Index = () => {
     }
   };
 
-  const handleTemplateSelectFromHome = async (template: TemplateData) => {
+  const handleTemplateSelectFromHome = async (template: any) => {
     console.log('Template selected:', template);
-    setSelectedTemplate(template);
-    setStrategyData(template);
-    setCurrentView('builder');
     
-    trackAction('template_selected', {
-      templateId: template.id,
-      templateName: template.name
-    });
-    
-    toast({
-      title: "Template Loaded",
-      description: `${template.name} template has been loaded and is ready for editing.`,
-    });
+    // Load template data with content
+    const templates = getTemplateData(language);
+    const templateData = templates.find(t => t.id === template.id);
+    if (templateData) {
+      setSelectedTemplate(templateData);
+      setStrategyData(templateData);
+      setCurrentView('strategyBuilder');
+      
+      trackAction('template_selected', {
+        templateId: template.id,
+        templateName: template.name
+      });
+      
+      toast({
+        title: "Template Loaded",
+        description: `${template.name} template has been loaded and is ready for editing.`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to load template data. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleStrategyChangeWithSave = async (strategy: any) => {
     setStrategyData(strategy);
-    // Auto-save strategy changes
+    // Auto-save strategy changes with debouncing
     if (user) {
-      await saveStrategy(strategy);
+      await autoSaveStrategy(strategy);
     }
   };
 
