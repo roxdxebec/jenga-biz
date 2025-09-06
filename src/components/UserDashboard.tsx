@@ -26,6 +26,8 @@ interface UserDashboardProps {
   onNewStrategy: () => void;
   onViewStrategy: (strategy: any) => void;
   onEditProfile: () => void;
+  onNavigateToFinancialTracker?: () => void;
+  onNavigateToMilestones?: () => void;
 }
 
 interface UserProfile {
@@ -41,7 +43,7 @@ interface UserProfile {
   country?: string;
 }
 
-const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile }: UserDashboardProps) => {
+const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile, onNavigateToFinancialTracker, onNavigateToMilestones }: UserDashboardProps) => {
   const { user, signOut } = useAuth();
   const { strategies, loading, loadStrategies } = useStrategy();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -225,7 +227,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
 
             <Card 
               className="border-blue-200 hover:border-blue-300 cursor-pointer transition-colors"
-              onClick={() => window.location.href = '#milestones-section'}
+              onClick={() => onNavigateToMilestones?.()}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
@@ -242,7 +244,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
 
             <Card 
               className="border-green-200 hover:border-green-300 cursor-pointer transition-colors"
-              onClick={() => window.location.href = '/financial-tracker'}
+              onClick={() => onNavigateToFinancialTracker?.()}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">

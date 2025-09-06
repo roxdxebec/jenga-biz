@@ -424,8 +424,16 @@ const Index = () => {
           console.log('Opening profile editor');
           setCurrentView('profile');
         }}
+        onNavigateToFinancialTracker={() => {
+          console.log('Navigating to financial tracker');
+          setCurrentView('financialTracker');
+        }}
+        onNavigateToMilestones={() => {
+          console.log('Navigating to milestones');
+          setCurrentView('milestones');
+        }}
       />
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div id="milestones-section" className="max-w-7xl mx-auto px-6 py-8">
         <BusinessMilestonesSection 
           language={language}
           isPro={true}
