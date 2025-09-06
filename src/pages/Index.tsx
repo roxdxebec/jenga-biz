@@ -274,25 +274,29 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="py-4 flex items-center justify-between">
               <h1 className="text-xl font-bold text-gray-900">Business Milestones</h1>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentView('dashboard')}
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            console.log('Back to Home clicked');
+            console.log('Navigating to home');
+            setCurrentView('dashboard');
+          }}
+        >
+          <Home className="w-4 h-4 mr-2" />
+          Dashboard
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSignOut}
+          className="border-gray-200 text-gray-700 hover:bg-gray-50"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Sign Out
+        </Button>
+      </div>
             </div>
           </div>
         </div>

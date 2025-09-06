@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,8 +14,14 @@ import {
   Wallet,
   PiggyBank,
   CreditCard,
-  Target
+  Target,
+  Camera,
+  Upload,
+  Download,
+  Share,
+  Bot
 } from 'lucide-react';
+import { createWorker } from 'tesseract.js';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow, format } from 'date-fns';
 
@@ -62,8 +68,11 @@ const FinancialTracker = ({
     deadline: '',
     category: ''
   });
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
 
   const { toast } = useToast();
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const translations = {
     en: {
@@ -98,7 +107,10 @@ const FinancialTracker = ({
         utilities: 'Utilities',
         transport: 'Transport',
         other: 'Other'
-      }
+      },
+      processingImage: 'Processing image... Please wait.',
+      photoCapture: 'Take Photo',
+      uploadFile: 'Upload File'
     },
     sw: {
       title: 'Kifuatiliaji cha Kifedha',
@@ -132,7 +144,10 @@ const FinancialTracker = ({
         utilities: 'Huduma za Msingi',
         transport: 'Usafiri',
         other: 'Nyingine'
-      }
+      },
+      processingImage: 'Kuchakata picha... Tafadhali subiri.',
+      photoCapture: 'Piga Picha',
+      uploadFile: 'Pakia Faili'
     }
   };
 
@@ -210,6 +225,81 @@ const FinancialTracker = ({
       title: "Goal Added",
       description: "Your financial goal has been set"
     });
+  };
+
+  // Process image with OCR
+  const processReceiptImage = async (file: File) => {
+    setIsProcessingImage(true);
+    try {
+      const worker = await createWorker('eng');
+      
+      const { data: { text } } = await worker.recognize(file);
+      await worker.terminate();
+      
+      console.log('OCR Result:', text);
+      
+      // Extract amount using regex
+      const amountRegex = /(?:total|amount|sum|cost|price|pay|$|KSh|USD|EUR|GBP)\s*:?\s*([0-9,]+\.?[0-9]*)/gi;
+      const matches = text.match(amountRegex);
+      
+      if (matches && matches.length > 0) {
+        const extractedAmount = matches[0].replace(/[^0-9.]/g, '');
+        
+        if (extractedAmount && !isNaN(parseFloat(extractedAmount))) {
+          setNewTransaction({
+            ...newTransaction,
+            amount: extractedAmount,
+            description: 'Receipt scan - ' + new Date().toLocaleDateString()
+          });
+          
+          toast({
+            title: "Amount detected!",
+            description: `Found amount: ${currencySymbol}${extractedAmount}. Please verify and add category.`,
+          });
+        } else {
+          throw new Error('Could not extract amount');
+        }
+      } else {
+        toast({
+          title: "No amount found",
+          description: "Could not detect amount from image. Please enter manually.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('OCR Error:', error);
+      toast({
+        title: "Processing failed",
+        description: "Failed to process image. Please try again or enter manually.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessingImage(false);
+    }
+  };
+
+  // Handle file upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processReceiptImage(file);
+    } else {
+      toast({
+        title: "Invalid file",
+        description: "Please select an image file",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Trigger camera capture
+  const triggerCamera = () => {
+    cameraInputRef.current?.click();
+  };
+
+  // Trigger file upload
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   const totalIncome = transactions
@@ -368,10 +458,54 @@ const FinancialTracker = ({
                   onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
                 />
 
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={triggerCamera}
+                    className="flex-1"
+                    disabled={isProcessingImage}
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    {t.photoCapture}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={triggerFileUpload}
+                    className="flex-1"
+                    disabled={isProcessingImage}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {t.uploadFile}
+                  </Button>
+                </div>
+
                 <Button onClick={addTransaction} className="w-full">
                   <Plus className="w-4 h-4 mr-2" />
                   {t.addTransaction}
                 </Button>
+
+                {/* Hidden file inputs */}
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+
+                {isProcessingImage && (
+                  <div className="text-center text-sm text-gray-600 animate-pulse">
+                    {t.processingImage}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
