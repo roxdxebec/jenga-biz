@@ -575,54 +575,53 @@ const FinancialTracker = ({
             </Card>
 
             {/* Goals List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {goals.map((goal) => {
-                const progress = (goal.currentAmount / goal.targetAmount) * 100;
-                return (
-                  <Card key={goal.id}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Target className="w-5 h-5" />
-                        {goal.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span>Progress:</span>
-                          <span className="font-bold">{progress.toFixed(0)}%</span>
+            {goals.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {goals.map((goal) => {
+                  const progress = (goal.currentAmount / goal.targetAmount) * 100;
+                  return (
+                    <Card key={goal.id}>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Target className="w-5 h-5" />
+                          {goal.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span>Progress:</span>
+                            <span className="font-bold">{progress.toFixed(0)}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${Math.min(progress, 100)}%` }}
+                            />
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span>{currencySymbol}{goal.currentAmount.toLocaleString()}</span>
+                            <span>{currencySymbol}{goal.targetAmount.toLocaleString()}</span>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Deadline: {format(goal.deadline, 'MMM dd, yyyy')}
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min(progress, 100)}%` }}
-                          />
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span>{currencySymbol}{goal.currentAmount.toLocaleString()}</span>
-                          <span>{currencySymbol}{goal.targetAmount.toLocaleString()}</span>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Deadline: {format(goal.deadline, 'MMM dd, yyyy')}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No financial goals set yet. Create your first goal above.</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">No financial goals set yet. Create your first goal above.</p>
+              </div>
+            )}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-);
+  );
 };
 
 export default FinancialTracker;

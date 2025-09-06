@@ -9,6 +9,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import ProfileSetup from '@/components/ProfileSetup';
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { LogOut, Home as HomeIcon } from 'lucide-react';
+import FinancialTracker from '@/components/FinancialTracker';
+import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
+import DropdownTemplateSelector from '@/components/DropdownTemplateSelector';
+import StrategyBuilder from '@/components/StrategyBuilder';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -193,7 +199,7 @@ const Index = () => {
                   size="sm"
                   onClick={() => setCurrentView('dashboard')}
                 >
-                  <Home className="w-4 h-4 mr-2" />
+                <HomeIcon className="w-4 h-4 mr-2" />
                   Dashboard
                 </Button>
                 <Button
@@ -236,7 +242,7 @@ const Index = () => {
             setCurrentView('dashboard');
           }}
         >
-          <Home className="w-4 h-4 mr-2" />
+          <HomeIcon className="w-4 h-4 mr-2" />
           Dashboard
         </Button>
         <Button
