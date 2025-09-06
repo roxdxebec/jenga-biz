@@ -611,20 +611,18 @@ const FinancialTracker = ({
                 );
               })}
             </div>
-
-             {goals.length === 0 && (
-               <Card>
-                 <CardContent className="text-center py-8">
-                   <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                   <p className="text-gray-500">No financial goals set yet. Create your first goal above.</p>
-                 </CardContent>
-               </Card>
-             )}
-          </div>
-        </div>
-      </div>
+          ) : (
+            <div className="text-center py-8">
+              <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No financial goals set yet. Create your first goal above.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
-  );
+  </div>
+</div>
+);
 };
 
 export default FinancialTracker;
