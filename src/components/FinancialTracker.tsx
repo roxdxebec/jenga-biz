@@ -320,15 +320,8 @@ const FinancialTracker = ({
           <p className="text-lg text-gray-600">{t.subtitle}</p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">{t.overview}</TabsTrigger>
-            <TabsTrigger value="transactions">{t.transactions}</TabsTrigger>
-            <TabsTrigger value="goals">{t.goals}</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border-green-200">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">{t.totalIncome}</CardTitle>
@@ -408,9 +401,6 @@ const FinancialTracker = ({
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="transactions" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>{t.addTransaction}</CardTitle>
@@ -553,9 +543,6 @@ const FinancialTracker = ({
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-
-          <TabsContent value="goals" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>{t.addGoal}</CardTitle>
@@ -625,16 +612,16 @@ const FinancialTracker = ({
               })}
             </div>
 
-            {goals.length === 0 && (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No financial goals set yet. Create your first goal above.</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
+             {goals.length === 0 && (
+               <Card>
+                 <CardContent className="text-center py-8">
+                   <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                   <p className="text-gray-500">No financial goals set yet. Create your first goal above.</p>
+                 </CardContent>
+               </Card>
+             )}
+          </div>
+        </div>
       </div>
     </div>
   );

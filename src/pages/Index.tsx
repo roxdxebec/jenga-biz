@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react';
-import DropdownTemplateSelector from '@/components/DropdownTemplateSelector';
-import FinancialTracker from '@/components/FinancialTracker';
-import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
-import TemplateDataLoader from '@/components/TemplateDataLoader';
-import StrategyBuilder from '@/components/StrategyBuilder';
+import Home from '@/pages/Home';
 import UserDashboard from '@/components/UserDashboard';
 import SaaSFeatures from '@/components/SaaSFeatures';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { Globe, Home, LogOut } from 'lucide-react';
-import { TemplateData, getTemplateData } from '@/data/templateData';
+import { TemplateData } from '@/data/templateData';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { useAuth } from '@/hooks/useAuth';
@@ -32,11 +25,9 @@ const Index = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
   const [language, setLanguage] = useState('en');
   const [country, setCountry] = useState('KE');
-  const [strategyData, setStrategyData] = useState(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [needsProfileSetup, setNeedsProfileSetup] = useState(false);
   const [profileCheckComplete, setProfileCheckComplete] = useState(false);
-  const { toast } = useToast();
 
   // Check if user has admin role and needs profile setup
   useEffect(() => {
@@ -111,16 +102,10 @@ const Index = () => {
 
   const handleSignOut = async () => {
     try {
-      toast({
-        title: "Logging out...",
-        description: "Please wait while we log you out.",
-      });
-      
       await signOut();
       
       // Clear local state
       setCurrentStrategy(null);
-      setStrategyData(null);
       setSelectedTemplate(null);
       setCurrentView('home');
       setNeedsProfileSetup(false);
@@ -132,49 +117,16 @@ const Index = () => {
       
     } catch (error) {
       console.error('Logout error:', error);
-      toast({
-        title: "Logout Error",
-        description: "There was an error logging out. Please try again.",
-        variant: "destructive"
-      });
     }
   };
 
-  const handleTemplateSelectFromHome = async (template: any) => {
-    console.log('Template selected:', template);
-    
-    // Load template data with content
-    const templates = getTemplateData(language);
-    const templateData = templates.find(t => t.id === template.id);
-    if (templateData) {
-      setSelectedTemplate(templateData);
-      setStrategyData(templateData);
-      setCurrentView('strategyBuilder');
-      
-      toast({
-        title: "Template Loaded",
-        description: `${template.name} template has been loaded and is ready for editing.`,
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to load template data. Please try again.",
-        variant: "destructive"
-      });
-    }
+  const handleTemplateSelect = (template: TemplateData) => {
+    setSelectedTemplate(template);
+    setCurrentView('strategyBuilder');
   };
 
-  const handleStrategyChangeWithSave = async (strategy: any) => {
-    setStrategyData(strategy);
-    // Auto-save strategy changes with debouncing
-    if (user) {
-      await autoSaveStrategy(strategy);
-    }
-  };
-
-  const handleViewStrategy = (strategy: any) => {
-    setCurrentStrategy(strategy);
-    setStrategyData(strategy);
+  const handleStartFromScratch = () => {
+    setSelectedTemplate(null);
     setCurrentView('strategyBuilder');
   };
 
@@ -410,36 +362,27 @@ const Index = () => {
     );
   }
 
-  // Default: User Dashboard
-  return (
-    <>
-      <UserDashboard
-        onBackToHome={() => {
-          console.log('Navigating to home');
-          setCurrentView('home');
-        }}
-        onNewStrategy={() => setCurrentView('templates')}
-        onViewStrategy={handleViewStrategy}
-        onEditProfile={() => {
-          console.log('Opening profile editor');
-          setCurrentView('profile');
-        }}
-        onNavigateToFinancialTracker={() => {
-          console.log('Navigating to financial tracker');
-          setCurrentView('financialTracker');
-        }}
-        onNavigateToMilestones={() => {
-          console.log('Navigating to milestones');
-          setCurrentView('milestones');
-        }}
+  // Show Home page with 4 cards when currentView is 'home'
+  if (currentView === 'home') {
+    return (
+      <Home 
+        language={language}
+        onTemplateSelect={handleTemplateSelect}
+        onStartFromScratch={handleStartFromScratch}
       />
-      <div id="milestones-section" className="max-w-7xl mx-auto px-6 py-8">
-        <BusinessMilestonesSection 
-          language={language}
-          isPro={true}
-        />
-      </div>
-    </>
+    );
+  }
+
+  // Default: User Dashboard for logged in users
+  return (
+    <UserDashboard
+      onBackToHome={() => setCurrentView('home')}
+      onNewStrategy={() => setCurrentView('templates')}
+      onViewStrategy={() => {}}
+      onEditProfile={() => setCurrentView('profile')}
+      onNavigateToFinancialTracker={() => setCurrentView('financialTracker')}
+      onNavigateToMilestones={() => setCurrentView('milestones')}
+    />
   );
 };
 
