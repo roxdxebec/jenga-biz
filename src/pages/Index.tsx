@@ -282,14 +282,14 @@ const Index = () => {
             <div className="py-4 flex items-center justify-between">
               <h1 className="text-xl font-bold text-gray-900">Choose Your Template</h1>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentView('dashboard')}
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentView('dashboard')}
+              >
+                <HomeIcon className="w-4 h-4 mr-2" />
+                Dashboard
+              </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -305,10 +305,9 @@ const Index = () => {
         </div>
 
         <DropdownTemplateSelector
-          onTemplateSelect={handleTemplateSelectFromHome}
+          onTemplateSelect={handleTemplateSelect}
           onStartFromScratch={() => {
             setSelectedTemplate(null);
-            setStrategyData(null);
             setCurrentView('strategyBuilder');
           }}
           onBack={() => setCurrentView('dashboard')}
@@ -332,7 +331,7 @@ const Index = () => {
                   size="sm"
                   onClick={() => setCurrentView('dashboard')}
                 >
-                  <Home className="w-4 h-4 mr-2" />
+                  <HomeIcon className="w-4 h-4 mr-2" />
                   Dashboard
                 </Button>
                 <Button
@@ -351,8 +350,8 @@ const Index = () => {
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <StrategyBuilder
-            template={strategyData || selectedTemplate}
-            onStrategyChange={handleStrategyChangeWithSave}
+            template={selectedTemplate}
+            onStrategyChange={autoSaveStrategy}
             onShowSummary={() => {}}
             onBack={() => setCurrentView('dashboard')}
             onHome={() => setCurrentView('dashboard')}
