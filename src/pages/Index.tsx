@@ -305,7 +305,7 @@ const Index = () => {
         </div>
 
         <DropdownTemplateSelector
-          onTemplateSelect={handleTemplateSelect}
+          onTemplateSelect={(template: any) => handleTemplateSelect(template)}
           onStartFromScratch={() => {
             setSelectedTemplate(null);
             setCurrentView('strategyBuilder');
