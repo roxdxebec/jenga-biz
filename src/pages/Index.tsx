@@ -1,393 +1,126 @@
-import { useState, useEffect } from 'react';
-import Home from '@/pages/Home';
-import UserDashboard from '@/components/UserDashboard';
-import SaaSFeatures from '@/components/SaaSFeatures';
-import { TemplateData } from '@/data/templateData';
-import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
-import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
-import { useAuth } from '@/hooks/useAuth';
-import { useStrategy } from '@/hooks/useStrategy';
-import ProfileSetup from '@/components/ProfileSetup';
-import { supabase } from '@/integrations/supabase/client';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LogOut, Home as HomeIcon } from 'lucide-react';
-import FinancialTracker from '@/components/FinancialTracker';
-import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
-import DropdownTemplateSelector from '@/components/DropdownTemplateSelector';
-import StrategyBuilder from '@/components/StrategyBuilder';
+import { FileText, Zap, Target, DollarSign, Globe, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
-  const { user, loading, signOut } = useAuth();
-  const { 
-    strategies, 
-    currentStrategy, 
-    saveStrategy, 
-    autoSaveStrategy,
-    createFromTemplate, 
-    setCurrentStrategy 
-  } = useStrategy();
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
-  const [currentView, setCurrentView] = useState('home');
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateData | null>(null);
-  const [language, setLanguage] = useState('en');
-  const [country, setCountry] = useState('KE');
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [needsProfileSetup, setNeedsProfileSetup] = useState(false);
-  const [profileCheckComplete, setProfileCheckComplete] = useState(false);
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
-  // Check if user has admin role and needs profile setup
-  useEffect(() => {
-    if (user) {
-      checkUserRole();
-      checkProfileSetup();
-    } else {
-      setIsAdmin(null);
-      setNeedsProfileSetup(false);
-      setProfileCheckComplete(false);
+  const features = [
+    {
+      icon: FileText,
+      title: 'Business Templates',
+      description: 'Choose from 15+ pre-built templates specifically designed for popular African businesses and market needs',
+      buttonText: 'Use Templates',
+      buttonColor: 'bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600',
+      bgColor: 'bg-orange-50',
+      iconColor: 'text-orange-600',
+      onClick: () => navigate('/templates')
+    },
+    {
+      icon: Zap,
+      title: 'Custom Strategy',
+      description: 'Build a completely custom business strategy from scratch with all features included - perfect for unique business models',
+      buttonText: 'Start from Scratch',
+      buttonColor: 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600',
+      bgColor: 'bg-blue-50',
+      iconColor: 'text-blue-600',
+      onClick: () => navigate('/strategy')
+    },
+    {
+      icon: Target,
+      title: 'Milestone Tracking',
+      description: 'Set and track business milestones based on your current stage and growth goals with deadlines',
+      buttonText: 'Track Milestones',
+      buttonColor: 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600',
+      bgColor: 'bg-purple-50',
+      iconColor: 'text-purple-600',
+      onClick: () => navigate('/milestones')
+    },
+    {
+      icon: DollarSign,
+      title: 'Financial Tracking',
+      description: 'Monitor daily revenue and expenses with calendar-based entries and generate financial reports',
+      buttonText: 'Track Finances',
+      buttonColor: 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600',
+      bgColor: 'bg-green-50',
+      iconColor: 'text-green-600',
+      onClick: () => navigate('/financial-tracker')
     }
-  }, [user]);
+  ];
 
-  const checkUserRole = async () => {
-    if (!user) {
-      setIsAdmin(null);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .in('role', ['admin', 'super_admin', 'hub_manager']);
-
-      if (error) throw error;
-      
-      const adminRole = data.find(role => ['admin', 'super_admin', 'hub_manager'].includes(role.role));
-      setIsAdmin(!!adminRole);
-    } catch (error) {
-      console.error('Error checking user role:', error);
-      setIsAdmin(false);
-    }
-  };
-
-  const checkProfileSetup = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('is_profile_complete, account_type')
-        .eq('id', user.id)
-        .single();
-
-      if (error) {
-        setNeedsProfileSetup(true);
-      } else {
-        setNeedsProfileSetup(!data.is_profile_complete);
-      }
-    } catch (error) {
-      console.error('Error checking profile setup:', error);
-      setNeedsProfileSetup(true);
-    } finally {
-      setProfileCheckComplete(true);
-    }
-  };
-
-  // Show auth dialog if user is not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      setShowAuthDialog(true);
-    }
-  }, [user, loading]);
-
-  const handleAuthDialogChange = (open: boolean) => {
-    if (user) {
-      setShowAuthDialog(open);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      
-      // Clear local state
-      setCurrentStrategy(null);
-      setSelectedTemplate(null);
-      setCurrentView('home');
-      setNeedsProfileSetup(false);
-      setProfileCheckComplete(false);
-      setIsAdmin(null);
-      
-      // Navigate to auth page
-      window.location.href = '/auth';
-      
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  const handleTemplateSelect = (template: TemplateData) => {
-    setSelectedTemplate(template);
-    setCurrentView('strategyBuilder');
-  };
-
-  const handleStartFromScratch = () => {
-    setSelectedTemplate(null);
-    setCurrentView('strategyBuilder');
-  };
-
-  const handleProfileSetupComplete = () => {
-    setNeedsProfileSetup(false);
-    setCurrentView('dashboard');
-  };
-
-  // Loading state
-  if (loading || (user && !profileCheckComplete)) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Auth dialog for non-authenticated users
-  if (!user) {
-    return (
-      <>
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Jenga Biz Africa</h1>
-            <p className="text-xl text-gray-600 mb-8">Build Your Business Strategy for the African Market</p>
-            <Button onClick={() => setShowAuthDialog(true)} size="lg">
-              Get Started
-            </Button>
-          </div>
-        </div>
-        <EnhancedAuthDialog open={showAuthDialog} onOpenChange={handleAuthDialogChange} />
-      </>
-    );
-  }
-
-  // Profile setup required
-  if (needsProfileSetup) {
-    return (
-      <ProfileSetup 
-        onComplete={handleProfileSetupComplete}
-      />
-    );
-  }
-
-  // Show admin dashboard for admin users
-  if (user && isAdmin === true) {
-    return <AdminDashboard />;
-  }
-
-  // Show Financial Tracker
-  if (user && currentView === 'financialTracker') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4 flex items-center justify-between">
-              <h1 className="text-xl font-bold text-gray-900">Financial Tracker</h1>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentView('dashboard')}
-                >
-                <HomeIcon className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <FinancialTracker 
-          language={language}
-          currency="KES"
-          currencySymbol="KSh"
-        />
-      </div>
-    );
-  }
-
-  // Show Milestones
-  if (user && currentView === 'milestones') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4 flex items-center justify-between">
-              <h1 className="text-xl font-bold text-gray-900">Business Milestones</h1>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            console.log('Back to Home clicked');
-            console.log('Navigating to home');
-            setCurrentView('dashboard');
-          }}
-        >
-          <HomeIcon className="w-4 h-4 mr-2" />
-          Dashboard
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleSignOut}
-          className="border-gray-200 text-gray-700 hover:bg-gray-50"
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          Sign Out
-        </Button>
-      </div>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <BusinessMilestonesSection 
-            language={language}
-            isPro={true}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Show SaaS features for organization account types
-  if (user && currentView === 'saas') {
-    return <SaaSFeatures onSignOut={handleSignOut} />;
-  }
-
-  // Template selection
-  if (currentView === 'templates') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4 flex items-center justify-between">
-              <h1 className="text-xl font-bold text-gray-900">Choose Your Template</h1>
-              <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentView('dashboard')}
-              >
-                <HomeIcon className="w-4 h-4 mr-2" />
-                Dashboard
-              </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DropdownTemplateSelector
-          onTemplateSelect={(template: any) => handleTemplateSelect(template)}
-          onStartFromScratch={() => {
-            setSelectedTemplate(null);
-            setCurrentView('strategyBuilder');
-          }}
-          onBack={() => setCurrentView('dashboard')}
-          language={language}
-        />
-      </div>
-    );
-  }
-
-  // Strategy Builder
-  if (currentView === 'strategyBuilder') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-4 flex items-center justify-between">
-              <h1 className="text-xl font-bold text-gray-900">Strategy Builder</h1>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentView('dashboard')}
-                >
-                  <HomeIcon className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <StrategyBuilder
-            template={selectedTemplate}
-            onStrategyChange={autoSaveStrategy}
-            onShowSummary={() => {}}
-            onBack={() => setCurrentView('dashboard')}
-            onHome={() => setCurrentView('dashboard')}
-            language={language}
-            onLanguageChange={setLanguage}
-            country={country}
-            onCountryChange={setCountry}
-            currency="KES"
-            currencySymbol="KSh"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Show Home page with 4 cards when currentView is 'home'
-  if (currentView === 'home') {
-    return (
-      <Home 
-        language={language}
-        onTemplateSelect={handleTemplateSelect}
-        onStartFromScratch={handleStartFromScratch}
-      />
-    );
-  }
-
-  // Default: User Dashboard for logged in users
   return (
-    <UserDashboard
-      onBackToHome={() => setCurrentView('home')}
-      onNewStrategy={() => setCurrentView('templates')}
-      onViewStrategy={() => {}}
-      onEditProfile={() => setCurrentView('profile')}
-      onNavigateToFinancialTracker={() => setCurrentView('financialTracker')}
-      onNavigateToMilestones={() => setCurrentView('milestones')}
-    />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
+            <div className="flex items-center space-x-4">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Globe className="w-4 h-4" />
+                Language
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={signOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-orange-600 mb-6">
+            Jenga Biz Africa
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Build Your Business Strategy for the African Market
+          </p>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon;
+            return (
+              <Card key={index} className={`${feature.bgColor} border-0 shadow-lg hover:shadow-xl transition-shadow`}>
+                <CardContent className="p-8">
+                  <div className="flex items-center mb-6">
+                    <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-md">
+                      <IconComponent className={`w-8 h-8 ${feature.iconColor}`} />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 mb-8 leading-relaxed">
+                    {feature.description}
+                  </p>
+                  <Button 
+                    onClick={feature.onClick}
+                    className={`w-full ${feature.buttonColor} text-white font-semibold py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+                  >
+                    {feature.buttonText}
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </main>
+    </div>
   );
 };
 
