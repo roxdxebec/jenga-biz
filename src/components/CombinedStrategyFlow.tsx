@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, Save, Download, Share2, Sparkles } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles, X, MessageCircle, Mail, Copy, FileDown } from 'lucide-react';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
@@ -30,6 +31,12 @@ const CombinedStrategyFlow = ({
   const [currencySymbol, setCurrencySymbol] = useState('KSh');
   const [strategy, setStrategy] = useState(null);
   const [milestones, setMilestones] = useState([]);
+  
+  // Modal states
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showAISummaryModal, setShowAISummaryModal] = useState(false);
+  const [aiSummaryContent, setAiSummaryContent] = useState(null);
+  const [currentSection, setCurrentSection] = useState('');
 
   const translations = {
     en: {
@@ -124,24 +131,113 @@ const CombinedStrategyFlow = ({
   };
 
   const handleAISummary = (section: string) => {
-    toast({
-      title: 'AI Summary',
-      description: `Generating AI summary for ${section} section...`,
-    });
+    setCurrentSection(section);
+    
+    // Generate AI summary content based on section
+    let summaryData = {};
+    
+    if (section === 'strategy') {
+      summaryData = {
+        title: 'Business Strategy Summary',
+        subtitle: 'AI-generated summary of your business strategy',
+        businessName: strategy?.business_name || 'Your Business',
+        vision: strategy?.vision || 'Not specified',
+        mission: strategy?.mission || 'Not specified',
+        targetMarket: strategy?.target_market || 'Not specified',
+        revenueModel: strategy?.revenue_model || 'Not specified',
+        valueProposition: strategy?.value_proposition || 'Not specified'
+      };
+    } else if (section === 'milestones') {
+      summaryData = {
+        title: 'Business Milestones Summary',
+        subtitle: 'Overview of your business milestone progress and insights',
+        businessStage: 'Growth Stage',
+        currentMilestones: milestones.length > 0 ? milestones : 'No milestones added yet',
+        progressSummary: milestones.length > 0 ? 
+          `You have ${milestones.length} milestones set` : 
+          'Start by adding some business milestones to begin your journey.'
+      };
+    } else if (section === 'financial') {
+      summaryData = {
+        title: 'Financial Insights Summary',
+        subtitle: 'Based on your daily financial data:',
+        totalRevenue: `${currencySymbol} 0.00`,
+        totalExpenses: `${currencySymbol} 0.00`,
+        netProfit: `${currencySymbol} 0.00`,
+        profitMargin: '0%',
+        insights: [
+          'Your business is profitable',
+          'No revenue entries recorded',
+          'No expense entries recorded'
+        ]
+      };
+    }
+    
+    setAiSummaryContent(summaryData);
+    setShowAISummaryModal(true);
   };
 
   const handleDownload = (section: string) => {
+    // Generate filename with timestamp
+    const timestamp = Date.now();
+    const filename = `jenga-biz-${section}-${timestamp}.txt`;
+    
+    let content = '';
+    
+    if (section === 'strategy' && strategy) {
+      content = `Business Strategy Summary\n\nBusiness Name: ${strategy.business_name || 'N/A'}\nVision: ${strategy.vision || 'N/A'}\nMission: ${strategy.mission || 'N/A'}\nTarget Market: ${strategy.target_market || 'N/A'}\nRevenue Model: ${strategy.revenue_model || 'N/A'}\nValue Proposition: ${strategy.value_proposition || 'N/A'}\n\nCreated with Jenga Biz Africa ✨`;
+    } else if (section === 'milestones') {
+      content = `Business Milestones Summary\n\nBusiness Stage: Growth Stage\nTotal Milestones: ${milestones.length}\n\nMilestones:\n${milestones.length > 0 ? milestones.map(m => `- ${m.title || m.name}`).join('\n') : 'No milestones added yet'}\n\nCreated with Jenga Biz Africa ✨`;
+    } else if (section === 'financial') {
+      content = `Financial Summary\n\nTotal Revenue: ${currencySymbol} 0.00\nTotal Expenses: ${currencySymbol} 0.00\nNet Profit: ${currencySymbol} 0.00\nProfit Margin: 0%\n\nKey Insights:\n- Your business is profitable\n- No revenue entries recorded\n- No expense entries recorded\n\nCreated with Jenga Biz Africa ✨`;
+    }
+    
+    // Create and download file
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
     toast({
-      title: 'Download Started',
-      description: `Downloading ${section} summary...`,
+      title: 'Summary Downloaded',
+      description: `${filename} downloaded successfully.`,
     });
   };
 
   const handleShare = (section: string) => {
-    toast({
-      title: 'Share Link Generated',
-      description: `Share link for ${section} has been copied to clipboard.`,
-    });
+    setCurrentSection(section);
+    setShowShareModal(true);
+  };
+
+  const handleShareOption = (option: string) => {
+    const shareText = `Check out my ${currentSection} summary from Jenga Biz Africa!`;
+    const shareUrl = window.location.href;
+    
+    switch (option) {
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`);
+        break;
+      case 'email':
+        window.open(`mailto:?subject=${encodeURIComponent(`My ${currentSection} from Jenga Biz Africa`)}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`);
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(shareUrl);
+        toast({
+          title: 'Link Copied',
+          description: 'Share link copied to clipboard.',
+        });
+        break;
+      case 'pdf':
+        handleDownload(currentSection);
+        break;
+    }
+    
+    setShowShareModal(false);
   };
 
   return (
@@ -366,6 +462,188 @@ const CombinedStrategyFlow = ({
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Share {currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-4">
+            <p className="text-sm text-gray-600 text-center">Share via</p>
+            
+            <Button
+              className="w-full bg-green-500 hover:bg-green-600 text-white justify-center gap-3 py-3"
+              size="lg"
+              onClick={() => handleShareOption('whatsapp')}
+            >
+              <MessageCircle className="w-5 h-5" />
+              WhatsApp
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="w-full justify-center gap-3 py-3"
+              size="lg"
+              onClick={() => handleShareOption('email')}
+            >
+              <Mail className="w-5 h-5" />
+              Email
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="w-full justify-center gap-3 py-3"
+              size="lg"
+              onClick={() => handleShareOption('copy')}
+            >
+              <Copy className="w-5 h-5" />
+              Copy Text
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="w-full justify-center gap-3 py-3"
+              size="lg"
+              onClick={() => handleShareOption('pdf')}
+            >
+              <FileDown className="w-5 h-5" />
+              Download PDF
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Summary Modal */}
+      <Dialog open={showAISummaryModal} onOpenChange={setShowAISummaryModal}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              {aiSummaryContent?.title}
+            </DialogTitle>
+            {aiSummaryContent?.subtitle && (
+              <p className="text-sm text-gray-600">{aiSummaryContent.subtitle}</p>
+            )}
+          </DialogHeader>
+          
+          <div className="space-y-4 p-4">
+            {currentSection === 'strategy' && aiSummaryContent && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">📈</span>
+                  <h3 className="font-bold text-lg">{aiSummaryContent.businessName}</h3>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">🎯</span>
+                    <div>
+                      <strong>Vision:</strong>
+                      <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.vision}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">🚀</span>
+                    <div>
+                      <strong>Mission:</strong>
+                      <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.mission}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">👥</span>
+                    <div>
+                      <strong>Target Market:</strong>
+                      <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.targetMarket}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">💰</span>
+                    <div>
+                      <strong>Revenue Model:</strong>
+                      <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.revenueModel}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">⭐</span>
+                    <div>
+                      <strong>Value Proposition:</strong>
+                      <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.valueProposition}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {currentSection === 'milestones' && aiSummaryContent && (
+              <div className="space-y-4">
+                <div>
+                  <strong>Business Stage:</strong>
+                  <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.businessStage}</p>
+                </div>
+                
+                <div>
+                  <strong>Current Milestones:</strong>
+                  {typeof aiSummaryContent.currentMilestones === 'string' ? (
+                    <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.currentMilestones}</p>
+                  ) : (
+                    <div className="text-sm text-gray-700 mt-1">
+                      {aiSummaryContent.currentMilestones.map((milestone, index) => (
+                        <p key={index}>• {milestone.title || milestone.name}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <strong className="text-purple-700">Progress Summary:</strong>
+                  <p className="text-sm text-purple-600 mt-1">{aiSummaryContent.progressSummary}</p>
+                </div>
+              </div>
+            )}
+            
+            {currentSection === 'financial' && aiSummaryContent && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <strong>Total Revenue:</strong>
+                    <p className="text-lg text-green-600 font-semibold">{aiSummaryContent.totalRevenue}</p>
+                  </div>
+                  <div>
+                    <strong>Total Expenses:</strong>
+                    <p className="text-lg text-red-600 font-semibold">{aiSummaryContent.totalExpenses}</p>
+                  </div>
+                  <div>
+                    <strong>Net Profit:</strong>
+                    <p className="text-lg text-blue-600 font-semibold">{aiSummaryContent.netProfit}</p>
+                  </div>
+                  <div>
+                    <strong>Profit Margin:</strong>
+                    <p className="text-lg font-semibold">{aiSummaryContent.profitMargin}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <strong>Key Insights:</strong>
+                  <div className="text-sm text-gray-700 mt-1 space-y-1">
+                    {aiSummaryContent.insights.map((insight, index) => (
+                      <p key={index}>• {insight}</p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="text-center text-xs text-gray-400 mt-6 border-t pt-4">
+              Created with Jenga Biz Africa ✨
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
