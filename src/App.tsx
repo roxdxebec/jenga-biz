@@ -13,6 +13,7 @@ import FinancialTrackerPage from "./pages/FinancialTracker";
 import Templates from "./pages/Templates";
 import Strategy from "./pages/Strategy";
 import Milestones from "./pages/Milestones";
+import Profile from "./pages/Profile";
 import SaaSFeatures from "./components/SaaSFeatures";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/strategy" element={<Strategy />} />
             <Route path="/milestones" element={<Milestones />} />
             <Route path="/financial-tracker" element={<FinancialTrackerPage />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/saas" element={<SaaSFeatures onSignOut={() => {}} />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
