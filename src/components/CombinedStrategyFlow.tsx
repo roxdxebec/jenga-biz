@@ -159,36 +159,44 @@ const CombinedStrategyFlow = ({
             />
           </section>
 
-          {/* AI Summary for Strategy */}
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-            <h3 className="font-semibold text-blue-900 mb-2">🤖 AI Strategy Summary</h3>
-            <p className="text-blue-800 text-sm">Your business strategy focuses on sustainable growth through targeted market expansion and efficient resource allocation.</p>
-          </div>
-
-          {/* Save Strategy Button */}
-          <div className="flex justify-center space-x-4">
-            <Button
-              size="lg"
-              onClick={handleSave}
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              <Save className="w-5 h-5" />
-              Save Strategy
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              📤 Share
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              📥 Download
-            </Button>
+          {/* Business Strategy Summary */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Strategy Summary</h3>
+            
+            <div className="space-y-3">
+              <Button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
+                  💼
+                </div>
+                AI Summary
+              </Button>
+              
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                ⬇️ Download Summary
+              </Button>
+              
+              <Button
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                🔗 Share Strategy
+              </Button>
+              
+              <Button
+                size="lg"
+                onClick={handleSave}
+                className="w-full flex items-center justify-center gap-2 py-3"
+              >
+                <Save className="w-5 h-5" />
+                Save Strategy
+              </Button>
+            </div>
           </div>
 
           {/* Divider */}
@@ -204,36 +212,44 @@ const CombinedStrategyFlow = ({
             />
           </section>
 
-          {/* AI Summary for Milestones */}
-          <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-            <h3 className="font-semibold text-purple-900 mb-2">🤖 AI Milestones Summary</h3>
-            <p className="text-purple-800 text-sm">Your milestones are well-structured with realistic timelines. Consider adding intermediate checkpoints for better tracking.</p>
-          </div>
-
-          {/* Save Milestones Button */}
-          <div className="flex justify-center space-x-4">
-            <Button
-              size="lg"
-              onClick={handleSave}
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              <Save className="w-5 h-5" />
-              Save Milestones
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              📤 Share
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              📥 Download
-            </Button>
+          {/* Business Milestones Summary */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Milestones Summary</h3>
+            
+            <div className="space-y-3">
+              <Button
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
+                  💼
+                </div>
+                AI Summary
+              </Button>
+              
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                ⬇️ Download Summary
+              </Button>
+              
+              <Button
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                📅 Share Milestones
+              </Button>
+              
+              <Button
+                size="lg"
+                onClick={handleSave}
+                className="w-full flex items-center justify-center gap-2 py-3"
+              >
+                <Save className="w-5 h-5" />
+                Save Milestones
+              </Button>
+            </div>
           </div>
 
           {/* Divider */}
@@ -248,36 +264,44 @@ const CombinedStrategyFlow = ({
             />
           </section>
 
-          {/* AI Summary for Financial Data */}
-          <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-            <h3 className="font-semibold text-green-900 mb-2">🤖 AI Financial Summary</h3>
-            <p className="text-green-800 text-sm">Your financial health looks promising. Focus on maintaining positive cash flow and consider diversifying revenue streams.</p>
-          </div>
-
-          {/* Save Financial Button at the very end */}
-          <div className="flex justify-center space-x-4 pt-8">
-            <Button
-              size="lg"
-              onClick={handleSave}
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              <Save className="w-5 h-5" />
-              Save Financial
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              📤 Share
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-2 px-8 py-3"
-            >
-              📥 Download
-            </Button>
+          {/* Financial Summary */}
+          <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Financial Summary</h3>
+            
+            <div className="space-y-3">
+              <Button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
+                  💼
+                </div>
+                AI Summary
+              </Button>
+              
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                ⬇️ Download Summary
+              </Button>
+              
+              <Button
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2 py-3"
+                size="lg"
+              >
+                📤 Share Financials
+              </Button>
+              
+              <Button
+                size="lg"
+                onClick={handleSave}
+                className="w-full flex items-center justify-center gap-2 py-3 mt-4"
+              >
+                <Save className="w-5 h-5" />
+                Save Financial
+              </Button>
+            </div>
           </div>
         </div>
       </div>
