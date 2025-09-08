@@ -81,6 +81,8 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
 
     try {
       setLoadingMilestones(true);
+      console.log('Loading milestones for user:', user.id);
+      
       const { data, error } = await supabase
         .from('milestones')
         .select('*')
@@ -88,6 +90,8 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      
+      console.log('Loaded milestones:', data);
       setAllMilestones(data || []);
     } catch (error) {
       console.error('Error loading user milestones:', error);
