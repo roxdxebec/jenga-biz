@@ -88,8 +88,23 @@ const CombinedStrategyFlow = ({
   };
 
   const handleSave = () => {
-    // Save all data
-    console.log('Saving combined data:', { strategy, milestones });
+    console.log('Save button clicked - saving combined data:', { strategy, milestones });
+    // Save all data logic here
+  };
+
+  const handleAISummary = (section: string) => {
+    console.log(`AI Summary button clicked for section: ${section}`);
+    // AI Summary logic here
+  };
+
+  const handleDownload = (section: string) => {
+    console.log(`Download button clicked for section: ${section}`);
+    // Download logic here
+  };
+
+  const handleShare = (section: string) => {
+    console.log(`Share button clicked for section: ${section}`);
+    // Share logic here
   };
 
   return (
@@ -167,6 +182,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleAISummary('strategy')}
               >
                 <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
                   💼
@@ -177,6 +193,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleDownload('strategy')}
               >
                 ⬇️ Download Summary
               </Button>
@@ -184,6 +201,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleShare('strategy')}
               >
                 🔗 Share Strategy
               </Button>
@@ -220,6 +238,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleAISummary('milestones')}
               >
                 <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
                   💼
@@ -230,6 +249,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleDownload('milestones')}
               >
                 ⬇️ Download Summary
               </Button>
@@ -237,6 +257,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleShare('milestones')}
               >
                 📅 Share Milestones
               </Button>
@@ -272,6 +293,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleAISummary('financial')}
               >
                 <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
                   💼
@@ -282,6 +304,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleDownload('financial')}
               >
                 ⬇️ Download Summary
               </Button>
@@ -289,6 +312,7 @@ const CombinedStrategyFlow = ({
               <Button
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2 py-3"
                 size="lg"
+                onClick={() => handleShare('financial')}
               >
                 📤 Share Financials
               </Button>
