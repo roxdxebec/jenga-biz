@@ -66,27 +66,27 @@ const Templates = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                {t.back}
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => navigate('/')}
-                className="flex items-center gap-2"
-              >
-                <Home className="w-4 h-4" />
-                {t.home}
-              </Button>
-            </div>
+          <div className="flex items-center space-x-4">
             <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t.back}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <Home className="w-4 h-4" />
+              {t.home}
+            </Button>
+          </div>
             <LanguageSelector 
               currentLanguage={language}
               onLanguageChange={setLanguage}
