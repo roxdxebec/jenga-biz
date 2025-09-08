@@ -372,17 +372,17 @@ export const getTemplateData = (language: string = 'en'): TemplateData[] => {
   const getTranslatedContent = (templateId: string, language: string) => {
     const content = templateContents[templateId];
     if (!content) {
-      // Fallback for templates not yet translated
+      // Fallback for templates not yet translated - provide empty fields for user to fill
       return {
-        vision: 'Template content not yet available in this language',
-        mission: 'Template content not yet available in this language',
-        targetMarket: 'Template content not yet available in this language',
-        revenueModel: 'Template content not yet available in this language',
-        valueProposition: 'Template content not yet available in this language',
-        keyPartners: 'Template content not yet available in this language',
-        marketingApproach: 'Template content not yet available in this language',
-        operationalNeeds: 'Template content not yet available in this language',
-        growthGoals: 'Template content not yet available in this language'
+        vision: '',
+        mission: '',
+        targetMarket: '',
+        revenueModel: '',
+        valueProposition: '',
+        keyPartners: '',
+        marketingApproach: '',
+        operationalNeeds: '',
+        growthGoals: ''
       };
     }
     

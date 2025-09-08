@@ -29,7 +29,18 @@ const CombinedStrategyFlow = ({
   const [country, setCountry] = useState('KE');
   const [currency, setCurrency] = useState('KES');
   const [currencySymbol, setCurrencySymbol] = useState('KSh');
-  const [strategy, setStrategy] = useState(null);
+  const [strategy, setStrategy] = useState({
+    businessName: '',
+    vision: '',
+    mission: '',
+    targetMarket: '',
+    revenueModel: '',
+    valueProposition: '',
+    keyPartners: '',
+    marketingApproach: '',
+    operationalNeeds: '',
+    growthGoals: ''
+  });
   const [milestones, setMilestones] = useState([]);
   
   // Modal states
@@ -91,6 +102,7 @@ const CombinedStrategyFlow = ({
   }, [country]);
 
   const handleStrategyChange = (newStrategy) => {
+    console.log('Strategy changed:', newStrategy);
     setStrategy(newStrategy);
   };
 
@@ -99,7 +111,16 @@ const CombinedStrategyFlow = ({
   };
 
   const handleSaveStrategy = async () => {
-    if (!strategy) {
+    const hasData = strategy && (
+      strategy.businessName || 
+      strategy.vision || 
+      strategy.mission || 
+      strategy.targetMarket || 
+      strategy.revenueModel || 
+      strategy.valueProposition
+    );
+    
+    if (!hasData) {
       toast({
         title: 'No Strategy Data',
         description: 'Please fill out the strategy form before saving.',
@@ -109,8 +130,24 @@ const CombinedStrategyFlow = ({
     }
     
     try {
-      console.log('Saving strategy data:', strategy);
-      await saveStrategy(strategy, true);
+      const strategyToSave = {
+        business_name: strategy.businessName,
+        vision: strategy.vision,
+        mission: strategy.mission,
+        target_market: strategy.targetMarket,
+        revenue_model: strategy.revenueModel,
+        value_proposition: strategy.valueProposition,
+        key_partners: strategy.keyPartners,
+        marketing_approach: strategy.marketingApproach,
+        operational_needs: strategy.operationalNeeds,
+        growth_goals: strategy.growthGoals,
+        language: language,
+        country: country,
+        currency: currency
+      };
+      
+      console.log('Saving strategy data:', strategyToSave);
+      await saveStrategy(strategyToSave, true);
       toast({
         title: 'Strategy Saved',
         description: 'Your business strategy has been saved successfully.',
@@ -169,12 +206,12 @@ const CombinedStrategyFlow = ({
       summaryData = {
         title: 'Business Strategy Summary',
         subtitle: 'AI-generated summary of your business strategy',
-        businessName: strategy?.business_name || 'Your Business',
+        businessName: strategy?.businessName || 'Your Business',
         vision: strategy?.vision || 'Not specified',
         mission: strategy?.mission || 'Not specified',
-        targetMarket: strategy?.target_market || 'Not specified',
-        revenueModel: strategy?.revenue_model || 'Not specified',
-        valueProposition: strategy?.value_proposition || 'Not specified'
+        targetMarket: strategy?.targetMarket || 'Not specified',
+        revenueModel: strategy?.revenueModel || 'Not specified',
+        valueProposition: strategy?.valueProposition || 'Not specified'
       };
     } else if (section === 'milestones') {
       summaryData = {
@@ -214,7 +251,7 @@ const CombinedStrategyFlow = ({
     let content = '';
     
     if (section === 'strategy' && strategy) {
-      content = `Business Strategy Summary\n\nBusiness Name: ${strategy.business_name || 'N/A'}\nVision: ${strategy.vision || 'N/A'}\nMission: ${strategy.mission || 'N/A'}\nTarget Market: ${strategy.target_market || 'N/A'}\nRevenue Model: ${strategy.revenue_model || 'N/A'}\nValue Proposition: ${strategy.value_proposition || 'N/A'}\n\nCreated with Jenga Biz Africa ✨`;
+      content = `Business Strategy Summary\n\nBusiness Name: ${strategy.businessName || 'N/A'}\nVision: ${strategy.vision || 'N/A'}\nMission: ${strategy.mission || 'N/A'}\nTarget Market: ${strategy.targetMarket || 'N/A'}\nRevenue Model: ${strategy.revenueModel || 'N/A'}\nValue Proposition: ${strategy.valueProposition || 'N/A'}\n\nCreated with Jenga Biz Africa ✨`;
     } else if (section === 'milestones') {
       content = `Business Milestones Summary\n\nBusiness Stage: Growth Stage\nTotal Milestones: ${milestones.length}\n\nMilestones:\n${milestones.length > 0 ? milestones.map(m => `- ${m.title || m.name}`).join('\n') : 'No milestones added yet'}\n\nCreated with Jenga Biz Africa ✨`;
     } else if (section === 'financial') {
@@ -347,7 +384,7 @@ const CombinedStrategyFlow = ({
                 onClick={() => handleAISummary('strategy')}
               >
                 <Sparkles className="w-5 h-5" />
-                AI Summary
+                Business Summary
               </Button>
               
               <Button
@@ -403,7 +440,7 @@ const CombinedStrategyFlow = ({
                 onClick={() => handleAISummary('milestones')}
               >
                 <Sparkles className="w-5 h-5" />
-                AI Summary
+                Milestones Summary
               </Button>
               
               <Button
@@ -458,7 +495,7 @@ const CombinedStrategyFlow = ({
                 onClick={() => handleAISummary('financial')}
               >
                 <Sparkles className="w-5 h-5" />
-                AI Summary
+                Financials Summary
               </Button>
               
               <Button
