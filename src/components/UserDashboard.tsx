@@ -43,14 +43,17 @@ interface UserProfile {
 
 const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile }: UserDashboardProps) => {
   const { user, signOut } = useAuth();
-  const { strategies, loading, loadStrategies } = useStrategy();
+  const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [allMilestones, setAllMilestones] = useState<any[]>([]);
+  const [loadingMilestones, setLoadingMilestones] = useState(true);
 
   useEffect(() => {
     if (user) {
       loadUserProfile();
       loadStrategies();
+      loadUserMilestones();
     }
   }, [user]);
 
@@ -70,6 +73,26 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
       console.error('Error loading user profile:', error);
     } finally {
       setLoadingProfile(false);
+    }
+  };
+
+  const loadUserMilestones = async () => {
+    if (!user) return;
+
+    try {
+      setLoadingMilestones(true);
+      const { data, error } = await supabase
+        .from('milestones')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAllMilestones(data || []);
+    } catch (error) {
+      console.error('Error loading user milestones:', error);
+    } finally {
+      setLoadingMilestones(false);
     }
   };
 
@@ -328,20 +351,56 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             <h2 className="text-xl font-semibold text-gray-900">Your Milestones</h2>
           </div>
           
-          <Card className="border-blue-200">
-            <CardContent className="p-6 text-center">
-              <div className="mb-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-6 h-6 text-blue-600" />
+          {loadingMilestones ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading milestones...</p>
+            </div>
+          ) : allMilestones.length === 0 ? (
+            <Card className="border-blue-200">
+              <CardContent className="p-6 text-center">
+                <div className="mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-900 mb-2">No Milestones Yet</h3>
+                  <p className="text-gray-600 mb-4">
+                    Set and track important business milestones to measure your progress.
+                  </p>
+                  <p className="text-sm text-gray-500">Access milestones through your saved strategies above.</p>
                 </div>
-                <h3 className="font-medium text-gray-900 mb-2">No Milestones Yet</h3>
-                <p className="text-gray-600 mb-4">
-                  Set and track important business milestones to measure your progress.
-                </p>
-                <p className="text-sm text-gray-500">Access milestones through your saved strategies above.</p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {allMilestones.slice(0, 6).map((milestone) => (
+                <Card key={milestone.id} className="border-blue-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-medium text-gray-900 text-sm line-clamp-2">{milestone.title}</h4>
+                      <Badge 
+                        variant={milestone.status === 'complete' ? 'default' : 
+                                milestone.status === 'in-progress' ? 'secondary' : 'outline'}
+                        className="text-xs ml-2"
+                      >
+                        {milestone.status === 'not-started' ? 'Not Started' :
+                         milestone.status === 'in-progress' ? 'In Progress' :
+                         milestone.status === 'complete' ? 'Complete' : 'Overdue'}
+                      </Badge>
+                    </div>
+                    {milestone.target_date && (
+                      <p className="text-xs text-gray-500 mb-2">
+                        Target: {new Date(milestone.target_date).toLocaleDateString()}
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-400">
+                      Created {formatDistanceToNow(new Date(milestone.created_at), { addSuffix: true })}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Financial Data Section */}
