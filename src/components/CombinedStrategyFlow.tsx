@@ -367,18 +367,8 @@ const CombinedStrategyFlow = ({
               </div>
             </div>
 
-            {/* Right section - Selectors */}
+            {/* Right section - Navigation Only */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
-              <LanguageSelector
-                currentLanguage={language}
-                onLanguageChange={setLanguage}
-              />
-              
-              <CountrySelector
-                currentCountry={country}
-                onCountryChange={setCountry}
-                language={language}
-              />
             </div>
           </div>
         </div>

@@ -144,26 +144,6 @@ const Index = () => {
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
       onClick: () => navigate('/strategy', { state: { language } })
-    },
-    {
-      icon: Target,
-      title: t.features.milestones.title,
-      description: t.features.milestones.description,
-      buttonText: t.features.milestones.buttonText,
-      buttonColor: 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600',
-      bgColor: 'bg-purple-50',
-      iconColor: 'text-purple-600',
-      onClick: () => navigate('/milestones')
-    },
-    {
-      icon: DollarSign,
-      title: t.features.financial.title,
-      description: t.features.financial.description,
-      buttonText: t.features.financial.buttonText,
-      buttonColor: 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600',
-      bgColor: 'bg-green-50',
-      iconColor: 'text-green-600',
-      onClick: () => navigate('/financial-tracker')
     }
   ];
 
@@ -226,7 +206,7 @@ const Index = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (

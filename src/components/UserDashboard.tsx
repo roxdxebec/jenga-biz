@@ -26,8 +26,6 @@ interface UserDashboardProps {
   onNewStrategy: () => void;
   onViewStrategy: (strategy: any) => void;
   onEditProfile: () => void;
-  onNavigateToFinancialTracker?: () => void;
-  onNavigateToMilestones?: () => void;
 }
 
 interface UserProfile {
@@ -43,7 +41,7 @@ interface UserProfile {
   country?: string;
 }
 
-const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile, onNavigateToFinancialTracker, onNavigateToMilestones }: UserDashboardProps) => {
+const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile }: UserDashboardProps) => {
   const { user, signOut } = useAuth();
   const { strategies, loading, loadStrategies } = useStrategy();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -340,14 +338,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                 <p className="text-gray-600 mb-4">
                   Set and track important business milestones to measure your progress.
                 </p>
-                <Button
-                  onClick={() => onNavigateToMilestones?.()}
-                  variant="outline"
-                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
-                >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Add Milestones
-                </Button>
+                <p className="text-sm text-gray-500">Access milestones through your strategy pages.</p>
               </div>
             </CardContent>
           </Card>
@@ -369,14 +360,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                 <p className="text-gray-600 mb-4">
                   Track your revenue and expenses to monitor your business health.
                 </p>
-                <Button
-                  onClick={() => onNavigateToFinancialTracker?.()}
-                  variant="outline"
-                  className="border-green-200 text-green-700 hover:bg-green-50"
-                >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Add Financial Data
-                </Button>
+                <p className="text-sm text-gray-500">Access financial tracking through your strategy pages.</p>
               </div>
             </CardContent>
           </Card>
@@ -391,7 +375,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card 
               className="border-orange-200 hover:border-orange-300 cursor-pointer transition-colors"
-              onClick={onBackToHome}
+              onClick={onNewStrategy}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
@@ -401,40 +385,6 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                   <div>
                     <h3 className="font-medium text-gray-900">New Strategy</h3>
                     <p className="text-sm text-gray-600">Choose template or start from scratch</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="border-blue-200 hover:border-blue-300 cursor-pointer transition-colors"
-              onClick={() => onNavigateToMilestones?.()}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Calendar className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">Track Milestones</h3>
-                    <p className="text-sm text-gray-600">Manage your business goals</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="border-green-200 hover:border-green-300 cursor-pointer transition-colors"
-              onClick={() => onNavigateToFinancialTracker?.()}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <BarChart3 className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">Financial Tracker</h3>
-                    <p className="text-sm text-gray-600">Monitor your finances</p>
                   </div>
                 </div>
               </CardContent>
