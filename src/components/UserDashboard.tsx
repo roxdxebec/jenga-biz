@@ -202,7 +202,32 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Strategies Overview - Now First */}
+        {/* Check if user has no data in all sections */}
+        {strategies.length === 0 && (
+          <Card className="border-orange-200 mb-8">
+            <CardContent className="p-8 text-center">
+              <div className="mb-4">
+                <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <BarChart3 className="w-10 h-10 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Let's Get Started!</h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  Create your business strategy, set milestones, and track your financial progress to achieve your entrepreneurial goals.
+                </p>
+                <Button
+                  onClick={onBackToHome}
+                  className="bg-orange-600 hover:bg-orange-700"
+                  size="lg"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Start Your Journey
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Strategies Overview */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Strategies</h2>
@@ -304,7 +329,65 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
           )}
         </div>
 
-        {/* Quick Actions - Now After Strategies */}
+        {/* Milestones Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Your Milestones</h2>
+          </div>
+          
+          <Card className="border-blue-200">
+            <CardContent className="p-6 text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="font-medium text-gray-900 mb-2">No Milestones Yet</h3>
+                <p className="text-gray-600 mb-4">
+                  Set and track important business milestones to measure your progress.
+                </p>
+                <Button
+                  onClick={() => onNavigateToMilestones?.()}
+                  variant="outline"
+                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Add Milestones
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Financial Data Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Your Financial Data</h2>
+          </div>
+          
+          <Card className="border-green-200">
+            <CardContent className="p-6 text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BarChart3 className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="font-medium text-gray-900 mb-2">No Financial Data Yet</h3>
+                <p className="text-gray-600 mb-4">
+                  Track your revenue and expenses to monitor your business health.
+                </p>
+                <Button
+                  onClick={() => onNavigateToFinancialTracker?.()}
+                  variant="outline"
+                  className="border-green-200 text-green-700 hover:bg-green-50"
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Add Financial Data
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>

@@ -39,6 +39,7 @@ const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
     
     // Common fields
     country: 'KE',
+    currency: 'KES',
     industry: '',
     contactEmail: user?.email || ''
   });
@@ -93,6 +94,7 @@ const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
           website: data.website || '',
           contactPhone: data.contact_phone || '',
           country: data.country || 'KE',
+          currency: 'KES', // Default currency based on country
           industry: data.industry || '',
           contactEmail: data.email || user.email || ''
         });
@@ -165,6 +167,7 @@ const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
         profile_picture_url: profileData.profilePictureUrl || null,
         logo_url: profileData.logoUrl || null,
         country: profileData.country,
+        currency: profileData.currency,
         industry: profileData.industry,
         website: profileData.website || null,
         contact_phone: profileData.contactPhone || null,
@@ -399,13 +402,38 @@ const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
                 />
               </div>
 
-              <div>
-                <Label>Country *</Label>
-                <CountrySelector
-                  currentCountry={profileData.country}
-                  onCountryChange={(country) => handleInputChange('country', country)}
-                  showAllCountries={true}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Country *</Label>
+                  <CountrySelector
+                    currentCountry={profileData.country}
+                    onCountryChange={(country) => handleInputChange('country', country)}
+                    showAllCountries={true}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="currency">Currency *</Label>
+                  <Select
+                    value={profileData.currency}
+                    onValueChange={(value) => handleInputChange('currency', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="KES">KES - Kenyan Shilling</SelectItem>
+                      <SelectItem value="USD">USD - US Dollar</SelectItem>
+                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                      <SelectItem value="NGN">NGN - Nigerian Naira</SelectItem>
+                      <SelectItem value="GHS">GHS - Ghanaian Cedi</SelectItem>
+                      <SelectItem value="UGX">UGX - Ugandan Shilling</SelectItem>
+                      <SelectItem value="TZS">TZS - Tanzanian Shilling</SelectItem>
+                      <SelectItem value="RWF">RWF - Rwandan Franc</SelectItem>
+                      <SelectItem value="ZAR">ZAR - South African Rand</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div>

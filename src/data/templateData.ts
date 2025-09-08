@@ -28,6 +28,62 @@ interface TemplateContent {
 }
 
 const templateContents: { [key: string]: TemplateContent } = {
+  'bakery': {
+    vision: {
+      en: 'To be the neighborhood\'s favorite bakery, bringing fresh, delicious baked goods that bring families and communities together',
+      sw: 'Kuwa jikoni la upishi wa kawaida la mtaa, kuleta vitu vya upishi vipya na vitamu vinavyoleta familia na jamii pamoja',
+      ar: 'أن نكون المخبز المفضل في الحي، حيث نقدم منتجات طازجة ولذيذة تجمع العائلات والمجتمعات معًا',
+      fr: 'Être la boulangerie préférée du quartier, apportant des produits frais et délicieux qui rassemblent les familles et les communautés'
+    },
+    mission: {
+      en: 'Creating high-quality baked goods with fresh ingredients, exceptional service, and traditional recipes that satisfy every customer',
+      sw: 'Kuunda bidhaa za upishi za ubora wa juu kwa viungo vipya, huduma ya kipekee, na mapishi ya jadi yanayoridhisha kila mteja',
+      ar: 'إنتاج منتجات مخبوزة عالية الجودة بمكونات طازجة وخدمة استثنائية ووصفات تقليدية ترضي كل عميل',
+      fr: 'Créer des produits de boulangerie de haute qualité avec des ingrédients frais, un service exceptionnel et des recettes traditionnelles qui satisfont chaque client'
+    },
+    targetMarket: {
+      en: 'Local families, office workers, restaurants, cafes, schools, and special event planners seeking fresh baked goods',
+      sw: 'Familia za mitaani, wafanyakazi wa ofisi, migahawa, viketi, shule, na wapanga matukio maalum wanaotafuta bidhaa za upishi zipya',
+      ar: 'العائلات المحلية، موظفو المكاتب، المطاعم، المقاهي، المدارس، ومخططو الفعاليات الخاصة الذين يبحثون عن منتجات مخبوزة طازجة',
+      fr: 'Familles locales, employés de bureau, restaurants, cafés, écoles et organisateurs d\'événements spéciaux recherchant des produits de boulangerie frais'
+    },
+    revenueModel: {
+      en: 'Direct sales of bread, pastries, cakes, catering orders, custom cake orders, wholesale to local businesses',
+      sw: 'Mauzo ya moja kwa moja ya mikate, vitale, keki, maagizo ya chakula, maagizo ya keki maalum, jumlani kwa biashara za mitaani',
+      ar: 'المبيعات المباشرة للخبز والمعجنات والكعك، طلبات التموين، طلبات الكعك المخصصة، البيع بالجملة للشركات المحلية',
+      fr: 'Ventes directes de pain, pâtisseries, gâteaux, commandes de restauration, commandes de gâteaux personnalisés, vente en gros aux entreprises locales'
+    },
+    valueProposition: {
+      en: 'Fresh daily baked goods, competitive prices, custom orders, reliable delivery, quality ingredients, traditional and modern recipes',
+      sw: 'Bidhaa za upishi zilizopikwa kila siku, bei za ushindani, maagizo maalum, utoaji wa kutegemewa, viungo vya ubora, mapishi ya jadi na ya kisasa',
+      ar: 'منتجات مخبوزة طازجة يومية، أسعار تنافسية، طلبات مخصصة، توصيل موثوق، مكونات عالية الجودة، وصفات تقليدية وحديثة',
+      fr: 'Produits frais cuits quotidiennement, prix compétitifs, commandes personnalisées, livraison fiable, ingrédients de qualité, recettes traditionnelles et modernes'
+    },
+    keyPartners: {
+      en: 'Flour suppliers, local farmers for eggs and dairy, packaging suppliers, delivery services, local restaurants and cafes',
+      sw: 'Wauzaji wa unga, wakulima wa mitaani kwa mayai na mazao ya ng\'ombe, wauzaji wa mifuko, huduma za utoaji, migahawa ya mitaani na viketi',
+      ar: 'موردو الدقيق، المزارعون المحليون للبيض ومنتجات الألبان، موردو التغليف، خدمات التوصيل، المطاعم والمقاهي المحلية',
+      fr: 'Fournisseurs de farine, agriculteurs locaux pour œufs et produits laitiers, fournisseurs d\'emballage, services de livraison, restaurants et cafés locaux'
+    },
+    marketingApproach: {
+      en: 'Social media marketing, local community events, word-of-mouth referrals, seasonal promotions, loyalty programs',
+      sw: 'Uuzaji kupitia mitandao ya kijamii, matukio ya jamii za mitaani, mapendekezo ya mdomo kwa mdomo, uuzaji wa msimu, mipango ya uongozi',
+      ar: 'التسويق عبر وسائل التواصل الاجتماعي، فعاليات المجتمع المحلي، الإحالات الشفهية، العروض الترويجية الموسمية، برامج الولاء',
+      fr: 'Marketing sur les réseaux sociaux, événements communautaires locaux, recommandations bouche-à-oreille, promotions saisonnières, programmes de fidélité'
+    },
+    operationalNeeds: {
+      en: 'Commercial ovens, baking equipment, ingredients, packaging materials, display cases, Point of Sale system, delivery vehicle',
+      sw: 'Matanuru ya kibiashara, vifaa vya upishi, viungo, nyenzo za mifuko, masanduku ya kuonyesha, mfumo wa Mahali pa Mauzo, gari la utoaji',
+      ar: 'أفران تجارية، معدات الخبز، المكونات، مواد التغليف، واجهات العرض، نظام نقاط البيع، مركبة التوصيل',
+      fr: 'Fours commerciaux, équipement de boulangerie, ingrédients, matériaux d\'emballage, vitrines d\'exposition, système de point de vente, véhicule de livraison'
+    },
+    growthGoals: {
+      en: 'Add breakfast pastries line, establish wedding cake specialty, hire 2 additional bakers, expand catering services',
+      sw: 'Kuongeza safu ya vitale vya kifungua kinywa, kuanzisha utaalamu wa keki za harusi, kuajiri wapishi 2 zaidi, kupanua huduma za chakula',
+      ar: 'إضافة خط المعجنات للإفطار، إنشاء تخصص كعك الزفاف، توظيف خبازين إضافيين، توسيع خدمات التموين',
+      fr: 'Ajouter une gamme de pâtisseries petit-déjeuner, établir une spécialité gâteaux de mariage, embaucher 2 boulangers supplémentaires, étendre les services de restauration'
+    }
+  },
   'mitumba': {
     vision: {
       en: 'To be the most trusted source of quality second-hand clothing in our community, promoting sustainable fashion and affordability',
@@ -306,62 +362,6 @@ const templateContents: { [key: string]: TemplateContent } = {
       sw: 'Kuongeza sehemu ya michezo, kutoa kozi za mafunzo ya kompyuta, kupanua hadi huduma za ukarabati wa simu, kuweka intaneti ya haraka zaidi',
       ar: 'إضافة قسم الألعاب، تقديم دورات تدريب الكمبيوتر، التوسع إلى خدمات إصلاح الهواتف المحمولة، تثبيت إنترنت أسرع',
       fr: 'Ajouter une section jeux, offrir des cours de formation informatique, étendre aux services de réparation mobile, installer internet plus rapide'
-    }
-  },
-  'bakery': {
-    vision: {
-      en: 'To be the community\'s favorite bakery, bringing fresh, quality baked goods and creating memorable moments for our customers',
-      sw: 'Kuwa duka la mkate linalopendelewa zaidi la jamii, likileta bidhaa za mkate mpya za ubora na kuumba nyakati za kukumbukwa kwa wateja wetu',
-      ar: 'أن نكون المخبز المفضل في المجتمع، ونقدم منتجات مخبوزة طازجة وعالية الجودة ونخلق لحظات لا تُنسى لعملائنا',
-      fr: 'Être la boulangerie préférée de la communauté, apportant des produits de boulangerie frais et de qualité et créant des moments mémorables pour nos clients'
-    },
-    mission: {
-      en: 'Providing fresh, artisanal baked goods daily while supporting local ingredients and building community connections',
-      sw: 'Kutoa bidhaa za mkate mpya za ustadi kila siku huku tukiuunga mkono viungo vya mitaani na kujenga uhusiano wa jamii',
-      ar: 'توفير منتجات مخبوزة طازجة ومصنوعة يدوياً يومياً مع دعم المكونات المحلية وبناء روابط المجتمع',
-      fr: 'Fournir quotidiennement des produits de boulangerie frais et artisanaux tout en soutenant les ingrédients locaux et en créant des liens communautaires'
-    },
-    targetMarket: {
-      en: 'Local families, office workers, students, event planners, and special occasion customers in the neighborhood',
-      sw: 'Familia za mitaani, wafanyakazi wa ofisi, wanafunzi, wapangaji wa matukio, na wateja wa hafla maalum katika mtaa',
-      ar: 'العائلات المحلية، العاملون في المكاتب، الطلاب، منظمو الفعاليات، وعملاء المناسبات الخاصة في الحي',
-      fr: 'Familles locales, employés de bureau, étudiants, organisateurs d\'événements et clients d\'occasions spéciales du quartier'
-    },
-    revenueModel: {
-      en: 'Daily fresh bread sales, custom cake orders, catering services, wholesale to local shops, seasonal specialties',
-      sw: 'Mauzo ya mkate mpya ya kila siku, maagizo ya keki maalum, huduma za chakula, mauzo ya jumla kwa maduka ya mitaani, bidhaa maalum za msimu',
-      ar: 'مبيعات الخبز الطازج اليومية، طلبات الكعك المخصص، خدمات التموين، البيع بالجملة للمحلات المحلية، المتخصصات الموسمية',
-      fr: 'Ventes de pain frais quotidiennes, commandes de gâteaux personnalisés, services de restauration, vente en gros aux magasins locaux, spécialités saisonnières'
-    },
-    valueProposition: {
-      en: 'Fresh daily baking, custom orders, competitive pricing, quality ingredients, and personalized customer service',
-      sw: 'Kuoka kila siku, maagizo maalum, bei za ushindani, viungo vya ubora, na huduma ya kibinafsi ya wateja',
-      ar: 'الخبز الطازج اليومي، الطلبات المخصصة، الأسعار التنافسية، المكونات عالية الجودة، وخدمة العملاء الشخصية',
-      fr: 'Cuisson fraîche quotidienne, commandes personnalisées, prix compétitifs, ingrédients de qualité et service client personnalisé'
-    },
-    keyPartners: {
-      en: 'Local flour suppliers, dairy farms, equipment suppliers, event planners, restaurants, grocery stores',
-      sw: 'Wasambazaji wa unga wa mitaani, mashamba ya maziwa, wasambazaji wa vifaa, wapangaji wa matukio, migahawa, maduka ya vyakula',
-      ar: 'موردو الدقيق المحليون، مزارع الألبان، موردو المعدات، منظمو الفعاليات، المطاعم، محلات البقالة',
-      fr: 'Fournisseurs locaux de farine, fermes laitières, fournisseurs d\'équipement, organisateurs d\'événements, restaurants, épiceries'
-    },
-    marketingApproach: {
-      en: 'Word-of-mouth referrals, social media showcases, local events participation, loyalty programs, community partnerships',
-      sw: 'Mapendekezo ya mdomo kwa mdomo, maonyesho ya mitandao ya kijamii, ushiriki wa matukio ya mitaani, mipango ya uaminifu, ushirikiano wa jamii',
-      ar: 'إحالات الكلام الشفهي، عروض وسائل التواصل الاجتماعي، المشاركة في الفعاليات المحلية، برامج الولاء، الشراكات المجتمعية',
-      fr: 'Références de bouche-à-oreille, showcases sur les réseaux sociaux, participation aux événements locaux, programmes de fidélité, partenariats communautaires'
-    },
-    operationalNeeds: {
-      en: 'Commercial ovens, mixing equipment, baking tools, refrigeration, display cases, ingredients storage, packaging materials',
-      sw: 'Tanuru za kibiashara, vifaa vya kuchanganya, vifaa vya kuoka, vifaa vya hifadhi ya baridi, sanduku za kuonyesha, ghala la viungo, vifaa vya ufungashaji',
-      ar: 'أفران تجارية، معدات الخلط، أدوات الخبز، التبريد، خزائن العرض، تخزين المكونات، مواد التعبئة والتغليف',
-      fr: 'Fours commerciaux, équipement de mélange, outils de cuisson, réfrigération, vitrines d\'exposition, stockage des ingrédients, matériaux d\'emballage'
-    },
-    growthGoals: {
-      en: 'Expand product line, add coffee service, delivery options, second location, wholesale partnerships, online ordering',
-      sw: 'Kupanua laini ya bidhaa, kuongeza huduma ya kahawa, chaguzi za upeperishaji, mahali pa pili, ushirikiano wa mauzo ya jumla, kuagiza mtandaoni',
-      ar: 'توسيع خط الإنتاج، إضافة خدمة القهوة، خيارات التوصيل، موقع ثاني، شراكات البيع بالجملة، الطلب عبر الإنترنت',
-      fr: 'Élargir la gamme de produits, ajouter un service de café, options de livraison, deuxième emplacement, partenariats de gros, commande en ligne'
     }
   }
 };
