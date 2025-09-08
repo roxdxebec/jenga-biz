@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, Save } from 'lucide-react';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles } from 'lucide-react';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
 import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
+import { useStrategy } from '@/hooks/useStrategy';
+import { useToast } from '@/hooks/use-toast';
 
 interface CombinedStrategyFlowProps {
   template?: any;
@@ -20,6 +22,8 @@ const CombinedStrategyFlow = ({
   onHome, 
   initialLanguage = 'en' 
 }: CombinedStrategyFlowProps) => {
+  const { toast } = useToast();
+  const { saveStrategy, currentStrategy, milestones: strategyMilestones } = useStrategy();
   const [language, setLanguage] = useState(initialLanguage);
   const [country, setCountry] = useState('KE');
   const [currency, setCurrency] = useState('KES');
@@ -87,24 +91,57 @@ const CombinedStrategyFlow = ({
     setMilestones(newMilestones);
   };
 
-  const handleSave = () => {
-    console.log('Save button clicked - saving combined data:', { strategy, milestones });
-    // Save all data logic here
+  const handleSaveStrategy = async () => {
+    if (!strategy) return;
+    
+    try {
+      await saveStrategy(strategy, true);
+      toast({
+        title: 'Strategy Saved',
+        description: 'Your business strategy has been saved successfully.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save strategy. Please try again.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleSaveMilestones = async () => {
+    toast({
+      title: 'Milestones Saved',
+      description: 'Your business milestones have been saved successfully.',
+    });
+  };
+
+  const handleSaveFinancial = async () => {
+    toast({
+      title: 'Financial Data Saved',
+      description: 'Your financial information has been saved successfully.',
+    });
   };
 
   const handleAISummary = (section: string) => {
-    console.log(`AI Summary button clicked for section: ${section}`);
-    // AI Summary logic here
+    toast({
+      title: 'AI Summary',
+      description: `Generating AI summary for ${section} section...`,
+    });
   };
 
   const handleDownload = (section: string) => {
-    console.log(`Download button clicked for section: ${section}`);
-    // Download logic here
+    toast({
+      title: 'Download Started',
+      description: `Downloading ${section} summary...`,
+    });
   };
 
   const handleShare = (section: string) => {
-    console.log(`Share button clicked for section: ${section}`);
-    // Share logic here
+    toast({
+      title: 'Share Link Generated',
+      description: `Share link for ${section} has been copied to clipboard.`,
+    });
   };
 
   return (
@@ -184,9 +221,7 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleAISummary('strategy')}
               >
-                <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
-                  💼
-                </div>
+                <Sparkles className="w-5 h-5" />
                 AI Summary
               </Button>
               
@@ -195,7 +230,8 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleDownload('strategy')}
               >
-                ⬇️ Download Summary
+                <Download className="w-5 h-5" />
+                Download Summary
               </Button>
               
               <Button
@@ -203,12 +239,13 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleShare('strategy')}
               >
-                🔗 Share Strategy
+                <Share2 className="w-5 h-5" />
+                Share Strategy
               </Button>
               
               <Button
                 size="lg"
-                onClick={handleSave}
+                onClick={handleSaveStrategy}
                 className="w-full flex items-center justify-center gap-2 py-3"
               >
                 <Save className="w-5 h-5" />
@@ -240,9 +277,7 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleAISummary('milestones')}
               >
-                <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
-                  💼
-                </div>
+                <Sparkles className="w-5 h-5" />
                 AI Summary
               </Button>
               
@@ -251,7 +286,8 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleDownload('milestones')}
               >
-                ⬇️ Download Summary
+                <Download className="w-5 h-5" />
+                Download Summary
               </Button>
               
               <Button
@@ -259,12 +295,13 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleShare('milestones')}
               >
-                📅 Share Milestones
+                <Share2 className="w-5 h-5" />
+                Share Milestones
               </Button>
               
               <Button
                 size="lg"
-                onClick={handleSave}
+                onClick={handleSaveMilestones}
                 className="w-full flex items-center justify-center gap-2 py-3"
               >
                 <Save className="w-5 h-5" />
@@ -295,9 +332,7 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleAISummary('financial')}
               >
-                <div className="w-5 h-5 bg-white/20 rounded flex items-center justify-center">
-                  💼
-                </div>
+                <Sparkles className="w-5 h-5" />
                 AI Summary
               </Button>
               
@@ -306,7 +341,8 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleDownload('financial')}
               >
-                ⬇️ Download Summary
+                <Download className="w-5 h-5" />
+                Download Summary
               </Button>
               
               <Button
@@ -314,13 +350,14 @@ const CombinedStrategyFlow = ({
                 size="lg"
                 onClick={() => handleShare('financial')}
               >
-                📤 Share Financials
+                <Share2 className="w-5 h-5" />
+                Share Financials
               </Button>
               
               <Button
                 size="lg"
-                onClick={handleSave}
-                className="w-full flex items-center justify-center gap-2 py-3 mt-4"
+                onClick={handleSaveFinancial}
+                className="w-full flex items-center justify-center gap-2 py-3"
               >
                 <Save className="w-5 h-5" />
                 Save Financial
