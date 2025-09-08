@@ -10,6 +10,9 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import PasswordReset from "./pages/PasswordReset";
 import FinancialTrackerPage from "./pages/FinancialTracker";
+import Templates from "./pages/Templates";
+import Strategy from "./pages/Strategy";
+import Milestones from "./pages/Milestones";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<PasswordReset />} />
+            <Route path="/templates" element={<Templates />} />
+            <Route path="/strategy" element={<Strategy />} />
+            <Route path="/milestones" element={<Milestones />} />
             <Route path="/financial-tracker" element={<FinancialTrackerPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

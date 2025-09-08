@@ -1,0 +1,146 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Home } from 'lucide-react';
+import { getTemplateData } from '@/data/templateData';
+import LanguageSelector from '@/components/LanguageSelector';
+
+const Templates = () => {
+  const navigate = useNavigate();
+  const [language, setLanguage] = useState('en');
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  
+  const templates = getTemplateData(language);
+
+  const translations = {
+    en: {
+      title: 'Choose Your Business Template',
+      subtitle: 'Select a template that matches your business type to get started quickly',
+      selectTemplate: 'Select a Business Type',
+      getStarted: 'Get Started',
+      back: 'Back',
+      home: 'Home'
+    },
+    sw: {
+      title: 'Chagua Kiolezo cha Biashara Yako',
+      subtitle: 'Chagua kiolezo kinachofaa aina ya biashara yako ili uanze haraka',
+      selectTemplate: 'Chagua Aina ya Biashara',
+      getStarted: 'Anza',
+      back: 'Rudi',
+      home: 'Nyumbani'
+    },
+    ar: {
+      title: 'اختر قالب عملك',
+      subtitle: 'اختر قالباً يطابق نوع عملك للبدء بسرعة',
+      selectTemplate: 'اختر نوع العمل',
+      getStarted: 'ابدأ',
+      back: 'رجوع',
+      home: 'الرئيسية'
+    },
+    fr: {
+      title: 'Choisissez Votre Modèle d\'Entreprise',
+      subtitle: 'Sélectionnez un modèle qui correspond à votre type d\'entreprise pour commencer rapidement',
+      selectTemplate: 'Sélectionner un Type d\'Entreprise',
+      getStarted: 'Commencer',
+      back: 'Retour',
+      home: 'Accueil'
+    }
+  };
+
+  const t = translations[language] || translations.en;
+
+  const handleGetStarted = () => {
+    if (selectedTemplateId) {
+      const template = templates.find(t => t.id === selectedTemplateId);
+      if (template) {
+        navigate('/strategy', { state: { template } });
+      }
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {t.back}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                {t.home}
+              </Button>
+            </div>
+            <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
+            <LanguageSelector 
+              currentLanguage={language}
+              onLanguageChange={setLanguage}
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Title Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            {t.title}
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            {t.subtitle}
+          </p>
+        </div>
+
+        {/* Template Selection Card */}
+        <Card className="max-w-lg mx-auto">
+          <CardHeader>
+            <CardTitle className="text-center">{t.selectTemplate}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
+              <SelectTrigger>
+                <SelectValue placeholder={t.selectTemplate} />
+              </SelectTrigger>
+              <SelectContent className="bg-white z-50">
+                {templates.map((template) => (
+                  <SelectItem key={template.id} value={template.id}>
+                    <div>
+                      <div className="font-medium">{template.name}</div>
+                      <div className="text-sm text-gray-500">{template.description}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button 
+              onClick={handleGetStarted}
+              disabled={!selectedTemplateId}
+              className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-lg"
+            >
+              {t.getStarted}
+            </Button>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+};
+
+export default Templates;
