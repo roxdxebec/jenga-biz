@@ -24,7 +24,7 @@ const CombinedStrategyFlow = ({
   initialLanguage = 'en' 
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
-  const { saveStrategy, currentStrategy, milestones: strategyMilestones } = useStrategy();
+  const { saveStrategy, currentStrategy, milestones: strategyMilestones, setCurrentStrategy } = useStrategy();
   const [language, setLanguage] = useState(initialLanguage);
   const [country, setCountry] = useState('KE');
   const [currency, setCurrency] = useState('KES');
@@ -42,6 +42,8 @@ const CombinedStrategyFlow = ({
     growthGoals: ''
   });
   const [milestones, setMilestones] = useState([]);
+  const [templateId, setTemplateId] = useState(template?.id || '');
+  const [templateName, setTemplateName] = useState(template?.name || '');
   
   // Modal states
   const [showShareModal, setShowShareModal] = useState(false);
@@ -101,6 +103,30 @@ const CombinedStrategyFlow = ({
     setCurrencySymbol(countryData.symbol);
   }, [country]);
 
+  // Load existing strategy data when editing
+  useEffect(() => {
+    if (currentStrategy) {
+      console.log('Loading existing strategy for editing:', currentStrategy);
+      setStrategy({
+        businessName: currentStrategy.business_name || '',
+        vision: currentStrategy.vision || '',
+        mission: currentStrategy.mission || '',
+        targetMarket: currentStrategy.target_market || '',
+        revenueModel: currentStrategy.revenue_model || '',
+        valueProposition: currentStrategy.value_proposition || '',
+        keyPartners: currentStrategy.key_partners || '',
+        marketingApproach: currentStrategy.marketing_approach || '',
+        operationalNeeds: currentStrategy.operational_needs || '',
+        growthGoals: currentStrategy.growth_goals || ''
+      });
+      setLanguage(currentStrategy.language || 'en');
+      setCountry(currentStrategy.country || 'KE');
+      setCurrency(currentStrategy.currency || 'KES');
+      setTemplateId(currentStrategy.template_id || '');
+      setTemplateName(currentStrategy.template_name || '');
+    }
+  }, [currentStrategy]);
+
   const handleStrategyChange = (newStrategy) => {
     console.log('Strategy changed:', newStrategy);
     setStrategy(newStrategy);
@@ -143,7 +169,9 @@ const CombinedStrategyFlow = ({
         growth_goals: strategy.growthGoals,
         language: language,
         country: country,
-        currency: currency
+        currency: currency,
+        template_id: templateId,
+        template_name: templateName
       };
       
       console.log('Saving strategy data:', strategyToSave);
@@ -361,16 +389,17 @@ const CombinedStrategyFlow = ({
         <div className="space-y-12">
           {/* Strategy Builder Section */}
           <section id="strategy-section">
-            <StrategyBuilder
-              template={template}
-              onStrategyChange={handleStrategyChange}
-              language={language}
-              onLanguageChange={setLanguage}
-              country={country}
-              onCountryChange={setCountry}
-              currency={currency}
-              currencySymbol={currencySymbol}
-            />
+        <StrategyBuilder
+          template={template}
+          onStrategyChange={handleStrategyChange}
+          language={language}
+          onLanguageChange={setLanguage}
+          country={country}
+          onCountryChange={setCountry}
+          currency={currency}
+          currencySymbol={currencySymbol}
+          existingStrategy={strategy}
+        />
           </section>
 
           {/* Business Strategy Summary */}

@@ -23,6 +23,7 @@ interface StrategyBuilderProps {
   onCountryChange?: (country: string) => void;
   currency?: string;
   currencySymbol?: string;
+  existingStrategy?: any;
 }
 
 const StrategyBuilder = ({ 
@@ -36,7 +37,8 @@ const StrategyBuilder = ({
   country = 'KE',
   onCountryChange,
   currency = 'KES',
-  currencySymbol = 'KSh'
+  currencySymbol = 'KSh',
+  existingStrategy
 }: StrategyBuilderProps) => {
   const [strategy, setStrategy] = useState({
     businessName: '',
@@ -230,6 +232,7 @@ const StrategyBuilder = ({
   useEffect(() => {
     console.log('=== STRATEGY BUILDER USEEFFECT DEBUG ===');
     console.log('Template received:', template);
+    console.log('Existing strategy received:', existingStrategy);
     
     // Track strategy building stage start
     trackStrategyStage('strategy_building', 'started', { 
@@ -241,7 +244,14 @@ const StrategyBuilder = ({
       language 
     });
     
-    if (template && template.content) {
+    // First priority: load existing strategy data if editing
+    if (existingStrategy && (existingStrategy.businessName || existingStrategy.vision || existingStrategy.mission)) {
+      console.log('Loading existing strategy data');
+      setStrategy(existingStrategy);
+      onStrategyChange?.(existingStrategy);
+    }
+    // Second priority: load template data if creating new strategy
+    else if (template && template.content) {
       console.log('Template has content - loading fields');
       const newStrategy = {
         businessName: template.name || '',
@@ -276,7 +286,7 @@ const StrategyBuilder = ({
     } else {
       console.log('No template or template content provided');
     }
-  }, [template, onStrategyChange, trackStrategyStage, trackJourney, language]);
+  }, [template, existingStrategy, onStrategyChange, trackStrategyStage, trackJourney, language]);
 
   const handleInputChange = (field: string, value: string) => {
     const newStrategy = { ...strategy, [field]: value };
