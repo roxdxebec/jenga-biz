@@ -126,17 +126,17 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       return strategyData.businessMilestones;
     }
     
-    // Otherwise initialize with only the first suggested milestone
-    const suggestedMilestones = getStageSpecificMilestones('ideation');
-    const defaultMilestones = [
-      {
-        id: '1',
-        title: suggestedMilestones[0] || 'Validate business idea with potential customers',
-        targetDate: null,
-        status: 'not-started' as const
-      }
-    ];
-    return defaultMilestones;
+  // Otherwise initialize with stage-appropriate milestone
+  const suggestedMilestones = getStageSpecificMilestones(businessStage);
+  const defaultMilestones = [
+    {
+      id: '1',
+      title: suggestedMilestones[0] || 'Research target market and competition',
+      targetDate: null,
+      status: 'not-started' as const
+    }
+  ];
+  return defaultMilestones;
   });
 
   const { toast } = useToast();

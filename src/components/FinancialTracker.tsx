@@ -314,7 +314,7 @@ const FinancialTracker = ({
               <div>
                 <label className="block text-sm font-medium mb-2">Type</label>
                 <Select
-                  value={newTransaction.type === 'income' ? newTransaction.category : 'Cash'}
+                  value={newTransaction.type === 'income' && newTransaction.category ? newTransaction.category : ''}
                   onValueChange={(value) => setNewTransaction({
                     ...newTransaction,
                     type: 'income',
@@ -322,7 +322,7 @@ const FinancialTracker = ({
                   })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Cash" />
+                    <SelectValue placeholder="Select payment type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Cash">Cash</SelectItem>
@@ -389,7 +389,7 @@ const FinancialTracker = ({
               <div>
                 <label className="block text-sm font-medium mb-2">Type</label>
                 <Select
-                  value={newTransaction.type === 'expense' ? newTransaction.category : 'Operational'}
+                  value={newTransaction.type === 'expense' && newTransaction.category ? newTransaction.category : ''}
                   onValueChange={(value) => setNewTransaction({
                     ...newTransaction,
                     type: 'expense',
@@ -397,7 +397,7 @@ const FinancialTracker = ({
                   })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Operational" />
+                    <SelectValue placeholder="Select expense type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Operational">Operational</SelectItem>
