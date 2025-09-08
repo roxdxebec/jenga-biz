@@ -120,9 +120,10 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
       {/* Header */}
-      <div className="bg-white border-b border-orange-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <div className="bg-white border-b border-orange-200 px-4 sm:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          {/* Top Row - Back button and Actions */}
+          <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
               size="sm"
@@ -136,65 +137,65 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
               Back to Home
             </Button>
             
-            <div className="h-6 w-px bg-gray-300" />
-            
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={getProfileImage()} alt={getUserDisplayName()} />
-                <AvatarFallback className="bg-orange-100 text-orange-700">
-                  {getUserInitials()}
-                </AvatarFallback>
-              </Avatar>
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log('Settings clicked');
+                  onEditProfile();
+                }}
+                className="border-orange-200 text-orange-700 hover:bg-orange-50 text-xs sm:text-sm"
+              >
+                <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                Settings
+              </Button>
               
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">
-                  {getUserDisplayName()}
-                </h1>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {getAccountTypeDisplay()}
-                  </Badge>
-                  {profile?.industry && (
-                    <Badge variant="outline" className="text-xs">
-                      {profile.industry}
-                    </Badge>
-                  )}
-                  {profile?.country && (
-                    <Badge variant="outline" className="text-xs">
-                      {profile.country}
-                    </Badge>
-                  )}
-                </div>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  console.log('Sign out clicked');
+                  await signOut();
+                  window.location.href = '/auth';
+                }}
+                className="border-gray-200 text-gray-700 hover:bg-gray-50 text-xs sm:text-sm"
+              >
+                Sign Out
+              </Button>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                console.log('Settings clicked');
-                onEditProfile();
-              }}
-              className="border-orange-200 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
+          {/* Profile Information Row */}
+          <div className="flex items-start gap-4">
+            <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0">
+              <AvatarImage src={getProfileImage()} alt={getUserDisplayName()} />
+              <AvatarFallback className="bg-orange-100 text-orange-700 text-lg">
+                {getUserInitials()}
+              </AvatarFallback>
+            </Avatar>
             
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                console.log('Sign out clicked');
-                await signOut();
-                window.location.href = '/auth';
-              }}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50 w-full sm:w-auto"
-            >
-              Sign Out
-            </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 truncate">
+                {getUserDisplayName()}
+              </h1>
+              
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary" className="text-xs sm:text-sm">
+                  {getAccountTypeDisplay()}
+                </Badge>
+                {profile?.industry && (
+                  <Badge variant="outline" className="text-xs sm:text-sm">
+                    {profile.industry}
+                  </Badge>
+                )}
+                {profile?.country && (
+                  <Badge variant="outline" className="text-xs sm:text-sm">
+                    {profile.country}
+                  </Badge>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
