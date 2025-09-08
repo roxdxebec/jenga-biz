@@ -14,12 +14,16 @@ import {
   Settings,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  Download,
+  Share2,
+  FileDown
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 interface UserDashboardProps {
   onBackToHome: () => void;
@@ -44,6 +48,7 @@ interface UserProfile {
 const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile }: UserDashboardProps) => {
   const { user, signOut } = useAuth();
   const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
+  const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [allMilestones, setAllMilestones] = useState<any[]>([]);
@@ -166,6 +171,205 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
     } else {
       return 'Entrepreneur';
     }
+  };
+
+  const handleComprehensiveDownload = (type: 'full' | 'strategy' | 'milestones') => {
+    const timestamp = new Date().toISOString().split('T')[0];
+    let content = '';
+    let filename = '';
+
+    if (type === 'full') {
+      filename = `jenga-biz-full-report-${timestamp}.txt`;
+      content = generateFullReport();
+    } else if (type === 'strategy') {
+      filename = `jenga-biz-strategies-${timestamp}.txt`;
+      content = generateStrategyReport();
+    } else if (type === 'milestones') {
+      filename = `jenga-biz-milestones-${timestamp}.txt`;
+      content = generateMilestonesReport();
+    }
+
+    // Create and download file
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: 'Report Downloaded',
+      description: `${filename} downloaded successfully.`,
+    });
+  };
+
+  const handleComprehensiveShare = () => {
+    const shareText = `Check out my comprehensive business report from Jenga Biz Africa!`;
+    const shareUrl = window.location.href;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'My Business Report - Jenga Biz Africa',
+        text: shareText,
+        url: shareUrl,
+      });
+    } else {
+      navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+      toast({
+        title: 'Link Copied',
+        description: 'Share link copied to clipboard.',
+      });
+    }
+  };
+
+  const generateFullReport = () => {
+    const userName = getUserDisplayName();
+    const timestamp = new Date().toLocaleDateString();
+    
+    let report = `JENGA BIZ AFRICA - COMPREHENSIVE BUSINESS REPORT\n`;
+    report += `Generated for: ${userName}\n`;
+    report += `Date: ${timestamp}\n`;
+    report += `${'='.repeat(60)}\n\n`;
+
+    // Add strategies section
+    report += `BUSINESS STRATEGIES (${strategies.length})\n`;
+    report += `${'-'.repeat(30)}\n`;
+    if (strategies.length > 0) {
+      strategies.forEach((strategy, index) => {
+        report += `${index + 1}. ${strategy.business_name || 'Untitled Strategy'}\n`;
+        if (strategy.vision) report += `   Vision: ${strategy.vision}\n`;
+        if (strategy.mission) report += `   Mission: ${strategy.mission}\n`;
+        if (strategy.target_market) report += `   Target Market: ${strategy.target_market}\n`;
+        if (strategy.revenue_model) report += `   Revenue Model: ${strategy.revenue_model}\n`;
+        report += `   Updated: ${formatDistanceToNow(new Date(strategy.updated_at || strategy.created_at), { addSuffix: true })}\n\n`;
+      });
+    } else {
+      report += `No strategies created yet.\n\n`;
+    }
+
+    // Add milestones section
+    report += `BUSINESS MILESTONES (${allMilestones.length})\n`;
+    report += `${'-'.repeat(30)}\n`;
+    if (allMilestones.length > 0) {
+      allMilestones.forEach((milestone, index) => {
+        report += `${index + 1}. ${milestone.title}\n`;
+        report += `   Status: ${milestone.status === 'not-started' ? 'Not Started' : 
+                      milestone.status === 'in-progress' ? 'In Progress' : 
+                      milestone.status === 'complete' ? 'Complete' : 'Overdue'}\n`;
+        if (milestone.target_date) {
+          report += `   Target Date: ${new Date(milestone.target_date).toLocaleDateString()}\n`;
+        }
+        report += `   Created: ${formatDistanceToNow(new Date(milestone.created_at), { addSuffix: true })}\n\n`;
+      });
+    } else {
+      report += `No milestones created yet.\n\n`;
+    }
+
+    // Add financial section
+    report += `FINANCIAL SUMMARY\n`;
+    report += `${'-'.repeat(30)}\n`;
+    report += `Total Revenue: KSh ${financialData.totalRevenue.toLocaleString()}\n`;
+    report += `Total Expenses: KSh ${financialData.totalExpenses.toLocaleString()}\n`;
+    report += `Net Profit: KSh ${financialData.netProfit.toLocaleString()}\n`;
+    report += `Recent Transactions: ${financialData.recentTransactions.length}\n\n`;
+
+    if (financialData.recentTransactions.length > 0) {
+      report += `RECENT TRANSACTIONS (Last 5)\n`;
+      report += `${'-'.repeat(30)}\n`;
+      financialData.recentTransactions.forEach((transaction, index) => {
+        report += `${index + 1}. ${transaction.description}\n`;
+        report += `   Type: ${transaction.transaction_type}\n`;
+        report += `   Amount: KSh ${Number(transaction.amount).toLocaleString()}\n`;
+        report += `   Category: ${transaction.category}\n`;
+        report += `   Date: ${new Date(transaction.transaction_date).toLocaleDateString()}\n\n`;
+      });
+    }
+
+    report += `\n${'='.repeat(60)}\n`;
+    report += `This report was generated by Jenga Biz Africa\n`;
+    report += `Empowering African Entrepreneurs ✨\n`;
+
+    return report;
+  };
+
+  const generateStrategyReport = () => {
+    let report = `JENGA BIZ AFRICA - BUSINESS STRATEGIES REPORT\n`;
+    report += `Generated: ${new Date().toLocaleDateString()}\n`;
+    report += `${'='.repeat(50)}\n\n`;
+
+    if (strategies.length > 0) {
+      strategies.forEach((strategy, index) => {
+        report += `STRATEGY ${index + 1}: ${strategy.business_name || 'Untitled'}\n`;
+        report += `${'-'.repeat(40)}\n`;
+        if (strategy.vision) report += `Vision: ${strategy.vision}\n\n`;
+        if (strategy.mission) report += `Mission: ${strategy.mission}\n\n`;
+        if (strategy.target_market) report += `Target Market: ${strategy.target_market}\n\n`;
+        if (strategy.value_proposition) report += `Value Proposition: ${strategy.value_proposition}\n\n`;
+        if (strategy.revenue_model) report += `Revenue Model: ${strategy.revenue_model}\n\n`;
+        if (strategy.key_partners) report += `Key Partners: ${strategy.key_partners}\n\n`;
+        if (strategy.marketing_approach) report += `Marketing Approach: ${strategy.marketing_approach}\n\n`;
+        if (strategy.operational_needs) report += `Operational Needs: ${strategy.operational_needs}\n\n`;
+        if (strategy.growth_goals) report += `Growth Goals: ${strategy.growth_goals}\n\n`;
+        report += `Created: ${formatDistanceToNow(new Date(strategy.created_at), { addSuffix: true })}\n`;
+        report += `Updated: ${formatDistanceToNow(new Date(strategy.updated_at), { addSuffix: true })}\n\n`;
+        report += `${'='.repeat(50)}\n\n`;
+      });
+    } else {
+      report += `No strategies found. Start creating your business strategy today!\n\n`;
+    }
+
+    report += `Generated with Jenga Biz Africa ✨\n`;
+    return report;
+  };
+
+  const generateMilestonesReport = () => {
+    let report = `JENGA BIZ AFRICA - BUSINESS MILESTONES REPORT\n`;
+    report += `Generated: ${new Date().toLocaleDateString()}\n`;
+    report += `${'='.repeat(50)}\n\n`;
+
+    if (allMilestones.length > 0) {
+      const groupedMilestones = {
+        'not-started': allMilestones.filter(m => m.status === 'not-started'),
+        'in-progress': allMilestones.filter(m => m.status === 'in-progress'), 
+        'complete': allMilestones.filter(m => m.status === 'complete'),
+        'overdue': allMilestones.filter(m => m.status === 'overdue')
+      };
+
+      Object.entries(groupedMilestones).forEach(([status, milestones]) => {
+        if (milestones.length > 0) {
+          report += `${status.toUpperCase().replace('-', ' ')} MILESTONES (${milestones.length})\n`;
+          report += `${'-'.repeat(40)}\n`;
+          milestones.forEach((milestone, index) => {
+            report += `${index + 1}. ${milestone.title}\n`;
+            if (milestone.target_date) {
+              report += `   Target: ${new Date(milestone.target_date).toLocaleDateString()}\n`;
+            }
+            report += `   Stage: ${milestone.business_stage || 'Not specified'}\n`;
+            report += `   Created: ${formatDistanceToNow(new Date(milestone.created_at), { addSuffix: true })}\n\n`;
+          });
+          report += `\n`;
+        }
+      });
+
+      report += `SUMMARY:\n`;
+      report += `Total Milestones: ${allMilestones.length}\n`;
+      report += `Completed: ${groupedMilestones.complete.length}\n`;
+      report += `In Progress: ${groupedMilestones['in-progress'].length}\n`;
+      report += `Not Started: ${groupedMilestones['not-started'].length}\n`;
+      report += `Overdue: ${groupedMilestones.overdue.length}\n\n`;
+      
+      const completionRate = allMilestones.length > 0 ? 
+        Math.round((groupedMilestones.complete.length / allMilestones.length) * 100) : 0;
+      report += `Completion Rate: ${completionRate}%\n\n`;
+    } else {
+      report += `No milestones found. Start setting business milestones to track your progress!\n\n`;
+    }
+
+    report += `Generated with Jenga Biz Africa ✨\n`;
+    return report;
   };
 
   if (loadingProfile) {
@@ -522,6 +726,65 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             </div>
           )}
         </div>
+
+        {/* Comprehensive Download/Share Section */}
+        {(strategies.length > 0 || allMilestones.length > 0 || financialData.recentTransactions.length > 0) && (
+          <div className="mb-8">
+            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+              <CardHeader>
+                <CardTitle className="text-lg text-purple-900 flex items-center">
+                  <FileDown className="w-5 h-5 mr-2" />
+                  Download & Share Your Business Data
+                </CardTitle>
+                <p className="text-sm text-purple-700">
+                  Generate comprehensive reports combining your strategies, milestones, and financial data
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Button
+                    onClick={() => handleComprehensiveDownload('full')}
+                    className="bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center gap-2 py-3"
+                    size="lg"
+                  >
+                    <Download className="w-4 h-4" />
+                    Full Report
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleComprehensiveDownload('strategy')}
+                    className="bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 py-3"
+                    size="lg"
+                    variant="outline"
+                  >
+                    <Download className="w-4 h-4" />
+                    Strategy Only
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleComprehensiveDownload('milestones')}
+                    className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
+                    size="lg"
+                    variant="outline"
+                  >
+                    <Download className="w-4 h-4" />
+                    Milestones Only
+                  </Button>
+                  
+                  <Button
+                    onClick={() => handleComprehensiveShare()}
+                    className="bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center gap-2 py-3"
+                    size="lg"
+                    variant="outline"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share Report
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
       </div>
     </div>

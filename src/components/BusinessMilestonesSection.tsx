@@ -315,6 +315,17 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         return;
       }
 
+      // Check if milestone already exists to prevent duplicates
+      const existingMilestone = milestones.find(m => m.title === milestoneTitle);
+      if (existingMilestone) {
+        toast({
+          title: "Milestone Exists",
+          description: "This milestone already exists in your list",
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Save to Supabase
       const { data, error } = await supabase
         .from('milestones')
@@ -328,7 +339,10 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       const newMilestone: Milestone = {
         id: data.id,

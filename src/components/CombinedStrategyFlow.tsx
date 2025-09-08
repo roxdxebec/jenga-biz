@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Home, Save, Download, Share2, Sparkles, X, MessageCircle, Mail, Copy, FileDown } from 'lucide-react';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles, X, MessageCircle, Mail, Copy, FileDown, BarChart3 } from 'lucide-react';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
@@ -383,8 +383,17 @@ const CombinedStrategyFlow = ({
               </div>
             </div>
 
-            {/* Right section - Navigation Only */}
+            {/* Right section - Dashboard Navigation */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.href = '/dashboard'}
+                className="flex items-center gap-2 text-xs sm:text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Dashboard
+              </Button>
             </div>
           </div>
         </div>
