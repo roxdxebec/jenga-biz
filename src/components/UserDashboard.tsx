@@ -338,7 +338,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                 <p className="text-gray-600 mb-4">
                   Set and track important business milestones to measure your progress.
                 </p>
-                <p className="text-sm text-gray-500">Access milestones through your strategy pages.</p>
+                <p className="text-sm text-gray-500">Access milestones through your saved strategies above.</p>
               </div>
             </CardContent>
           </Card>
@@ -360,37 +360,12 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                 <p className="text-gray-600 mb-4">
                   Track your revenue and expenses to monitor your business health.
                 </p>
-                <p className="text-sm text-gray-500">Access financial tracking through your strategy pages.</p>
+                <p className="text-sm text-gray-500">Access your financials through your saved strategies above.</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Quick Actions */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card 
-              className="border-orange-200 hover:border-orange-300 cursor-pointer transition-colors"
-              onClick={onNewStrategy}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <Plus className="w-5 h-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">New Strategy</h3>
-                    <p className="text-sm text-gray-600">Choose template or start from scratch</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
       </div>
     </div>
   );

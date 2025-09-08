@@ -103,7 +103,7 @@ const CombinedStrategyFlow = ({
     setCurrencySymbol(countryData.symbol);
   }, [country]);
 
-  // Load existing strategy data when editing
+  // Load existing strategy data when editing, or clear for start from scratch
   useEffect(() => {
     if (currentStrategy) {
       console.log('Loading existing strategy for editing:', currentStrategy);
@@ -124,8 +124,24 @@ const CombinedStrategyFlow = ({
       setCurrency(currentStrategy.currency || 'KES');
       setTemplateId(currentStrategy.template_id || '');
       setTemplateName(currentStrategy.template_name || '');
+    } else if (!template) {
+      // Clear strategy for start from scratch mode
+      console.log('Start from scratch - clearing strategy data');
+      setStrategy({
+        businessName: '',
+        vision: '',
+        mission: '',
+        targetMarket: '',
+        revenueModel: '',
+        valueProposition: '',
+        keyPartners: '',
+        marketingApproach: '',
+        operationalNeeds: '',
+        growthGoals: ''
+      });
+      setCurrentStrategy(null);
     }
-  }, [currentStrategy]);
+  }, [currentStrategy, template, setCurrentStrategy]);
 
   const handleStrategyChange = (newStrategy) => {
     console.log('Strategy changed:', newStrategy);
