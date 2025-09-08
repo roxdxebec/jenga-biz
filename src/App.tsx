@@ -14,6 +14,7 @@ import Templates from "./pages/Templates";
 import Strategy from "./pages/Strategy";
 import Milestones from "./pages/Milestones";
 import Profile from "./pages/Profile";
+import UserDashboard from "./components/UserDashboard";
 import SaaSFeatures from "./components/SaaSFeatures";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,14 @@ const App = () => (
             <Route path="/milestones" element={<Milestones />} />
             <Route path="/financial-tracker" element={<FinancialTrackerPage />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/dashboard" element={<UserDashboard 
+              onBackToHome={() => window.location.href = '/'}
+              onNewStrategy={() => window.location.href = '/templates'}
+              onViewStrategy={(strategy) => window.location.href = `/strategy?id=${strategy.id}`}
+              onEditProfile={() => window.location.href = '/profile'}
+              onNavigateToFinancialTracker={() => window.location.href = '/financial-tracker'}
+              onNavigateToMilestones={() => window.location.href = '/milestones'}
+            />} />
             <Route path="/saas" element={<SaaSFeatures onSignOut={() => {}} />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

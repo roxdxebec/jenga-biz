@@ -172,9 +172,11 @@ const Index = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
             <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
-            <div className="flex items-center space-x-4">
+            
+            {/* Mobile-responsive navigation */}
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
               <LanguageSelector 
                 currentLanguage={language}
                 onLanguageChange={setLanguage}
@@ -183,7 +185,7 @@ const Index = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={() => navigate('/dashboard')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <BarChart3 className="w-4 h-4" />
                 Dashboard
@@ -192,7 +194,7 @@ const Index = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={() => navigate('/profile')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <User className="w-4 h-4" />
                 Profile
@@ -201,7 +203,7 @@ const Index = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={signOut}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <LogOut className="w-4 h-4" />
                 {t.signOut}
