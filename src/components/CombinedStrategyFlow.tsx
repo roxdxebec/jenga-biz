@@ -159,6 +159,38 @@ const CombinedStrategyFlow = ({
             />
           </section>
 
+          {/* AI Summary for Strategy */}
+          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <h3 className="font-semibold text-blue-900 mb-2">🤖 AI Strategy Summary</h3>
+            <p className="text-blue-800 text-sm">Your business strategy focuses on sustainable growth through targeted market expansion and efficient resource allocation.</p>
+          </div>
+
+          {/* Save Strategy Button */}
+          <div className="flex justify-center space-x-4">
+            <Button
+              size="lg"
+              onClick={handleSave}
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              <Save className="w-5 h-5" />
+              Save Strategy
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              📤 Share
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              📥 Download
+            </Button>
+          </div>
+
           {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
@@ -172,6 +204,38 @@ const CombinedStrategyFlow = ({
             />
           </section>
 
+          {/* AI Summary for Milestones */}
+          <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+            <h3 className="font-semibold text-purple-900 mb-2">🤖 AI Milestones Summary</h3>
+            <p className="text-purple-800 text-sm">Your milestones are well-structured with realistic timelines. Consider adding intermediate checkpoints for better tracking.</p>
+          </div>
+
+          {/* Save Milestones Button */}
+          <div className="flex justify-center space-x-4">
+            <Button
+              size="lg"
+              onClick={handleSave}
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              <Save className="w-5 h-5" />
+              Save Milestones
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              📤 Share
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              📥 Download
+            </Button>
+          </div>
+
           {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
@@ -184,15 +248,35 @@ const CombinedStrategyFlow = ({
             />
           </section>
 
-          {/* Save Strategy Button at the end */}
-          <div className="flex justify-center pt-8">
+          {/* AI Summary for Financial Data */}
+          <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+            <h3 className="font-semibold text-green-900 mb-2">🤖 AI Financial Summary</h3>
+            <p className="text-green-800 text-sm">Your financial health looks promising. Focus on maintaining positive cash flow and consider diversifying revenue streams.</p>
+          </div>
+
+          {/* Save Financial Button at the very end */}
+          <div className="flex justify-center space-x-4 pt-8">
             <Button
               size="lg"
               onClick={handleSave}
               className="flex items-center gap-2 px-8 py-3"
             >
               <Save className="w-5 h-5" />
-              {t.save} Strategy
+              Save Financial
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              📤 Share
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              📥 Download
             </Button>
           </div>
         </div>
