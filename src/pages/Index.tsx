@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Zap, Target, DollarSign, LogOut, User } from 'lucide-react';
+import { FileText, Zap, Target, DollarSign, LogOut, User, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import LanguageSelector from '@/components/LanguageSelector';
 
@@ -179,6 +179,15 @@ const Index = () => {
                 currentLanguage={language}
                 onLanguageChange={setLanguage}
               />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/dashboard')}
+                className="flex items-center gap-2"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Dashboard
+              </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
