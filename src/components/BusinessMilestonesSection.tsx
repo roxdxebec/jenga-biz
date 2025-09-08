@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -284,7 +285,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     return statusOptions.find(opt => opt.value === status)?.color || 'bg-gray-100 text-gray-700';
   };
 
-  const addMilestone = (e?: React.FormEvent, title?: string) => {
+  const addMilestone = async (e?: React.FormEvent, title?: string) => {
     e?.preventDefault();
     const milestoneTitle = title || customMilestone.trim();
     
@@ -303,75 +304,137 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       return;
     }
 
-    const newMilestone: Milestone = {
-      id: Date.now().toString(),
-      title: milestoneTitle,
-      targetDate: null,
-      status: 'not-started'
-    };
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Please log in to save milestones",
+          variant: "destructive"
+        });
+        return;
+      }
 
-    const updatedMilestones = [...milestones, newMilestone];
-    setMilestones(updatedMilestones);
-    
-    // Track milestone creation
-    trackBusinessMilestone('created', {
-      title: milestoneTitle,
-      category: 'business_goal',
-      targetDate: null,
-      businessStage: businessStage
-    });
-    
-    // Update parent component
-    if (onMilestonesChange) {
-      onMilestonesChange(updatedMilestones);
-    }
-    
-    // Clear the custom milestone input if it was used
-    if (!title) {
-      setCustomMilestone('');
-    }
+      // Save to Supabase
+      const { data, error } = await supabase
+        .from('milestones')
+        .insert({
+          user_id: user.id,
+          title: milestoneTitle,
+          target_date: null,
+          status: 'not-started',
+          business_stage: businessStage
+        })
+        .select()
+        .single();
 
-    toast({
-      title: language === 'sw' ? 'Lengo Limeongezwa' :
-             language === 'ar' ? 'تم إضافة المعلم' :
-             language === 'fr' ? 'Jalon Ajouté' :
-             'Milestone Added',
-      description: language === 'sw' ? 'Lengo jipya limeongezwa kwenye orodha yako' :
-                   language === 'ar' ? 'تم إضافة معلم جديد إلى قائمتك' :
-                   language === 'fr' ? 'Un nouveau jalon a été ajouté à votre liste' :
-                   'New milestone added to your list',
-    });
+      if (error) throw error;
+
+      const newMilestone: Milestone = {
+        id: data.id,
+        title: milestoneTitle,
+        targetDate: null,
+        status: 'not-started'
+      };
+
+      const updatedMilestones = [...milestones, newMilestone];
+      setMilestones(updatedMilestones);
+      
+      // Track milestone creation
+      trackBusinessMilestone('created', {
+        title: milestoneTitle,
+        category: 'business_goal',
+        targetDate: null,
+        businessStage: businessStage
+      });
+      
+      // Update parent component
+      if (onMilestonesChange) {
+        onMilestonesChange(updatedMilestones);
+      }
+      
+      // Clear the custom milestone input if it was used
+      if (!title) {
+        setCustomMilestone('');
+      }
+
+      toast({
+        title: language === 'sw' ? 'Lengo Limeongezwa' :
+               language === 'ar' ? 'تم إضافة المعلم' :
+               language === 'fr' ? 'Jalon Ajouté' :
+               'Milestone Added',
+        description: language === 'sw' ? 'Lengo jipya limeongezwa kwenye orodha yako' :
+                     language === 'ar' ? 'تم إضافة معلم جديد إلى قائمتك' :
+                     language === 'fr' ? 'Un nouveau jalon a été ajouté à votre liste' :
+                     'New milestone added to your list',
+      });
+    } catch (error) {
+      console.error('Error saving milestone:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save milestone. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const updateMilestone = (id: string, field: keyof Milestone, value: any) => {
-    const updatedMilestones = milestones.map(milestone => 
-      milestone.id === id ? { ...milestone, [field]: value } : milestone
-    );
-    setMilestones(updatedMilestones);
-    
-    // Track milestone status changes
-    if (field === 'status' && value === 'complete') {
-      const milestone = milestones.find(m => m.id === id);
-      if (milestone) {
-        trackBusinessMilestone('completed', {
-          title: milestone.title,
-          category: 'business_goal',
-          businessStage: businessStage
-        });
+  const updateMilestone = async (id: string, field: keyof Milestone, value: any) => {
+    try {
+      // Update in Supabase first
+      const updateData: any = {};
+      
+      if (field === 'targetDate') {
+        updateData.target_date = value ? value.toISOString().split('T')[0] : null;
+      } else if (field === 'status') {
+        updateData.status = value;
+      } else if (field === 'title') {
+        updateData.title = value;
       }
-    }
-    
-    // Track user interaction
-    trackJourney('/milestones', 'form_interaction', {
-      action: 'milestone_updated',
-      field,
-      milestoneId: id,
-      newValue: value
-    });
-    
-    // Update parent component
-    if (onMilestonesChange) {
-      onMilestonesChange(updatedMilestones);
+
+      const { error } = await supabase
+        .from('milestones')
+        .update(updateData)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Update local state only after successful database update
+      const updatedMilestones = milestones.map(milestone => 
+        milestone.id === id ? { ...milestone, [field]: value } : milestone
+      );
+      setMilestones(updatedMilestones);
+      
+      // Track milestone status changes
+      if (field === 'status' && value === 'complete') {
+        const milestone = milestones.find(m => m.id === id);
+        if (milestone) {
+          trackBusinessMilestone('completed', {
+            title: milestone.title,
+            category: 'business_goal',
+            businessStage: businessStage
+          });
+        }
+      }
+      
+      // Track user interaction
+      trackJourney('/milestones', 'form_interaction', {
+        action: 'milestone_updated',
+        field,
+        milestoneId: id,
+        newValue: value
+      });
+      
+      // Update parent component
+      if (onMilestonesChange) {
+        onMilestonesChange(updatedMilestones);
+      }
+    } catch (error) {
+      console.error('Error updating milestone:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update milestone. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 

@@ -103,7 +103,7 @@ const FinancialTracker = ({
 
   const netProfit = totalIncome - totalExpenses;
 
-  const addTransaction = () => {
+  const addTransaction = async () => {
     if (!newTransaction.amount || !newTransaction.category) {
       toast({
         title: "Error",
@@ -113,27 +113,62 @@ const FinancialTracker = ({
       return;
     }
 
-    const transaction: Transaction = {
-      id: Date.now().toString(),
-      type: newTransaction.type,
-      amount: parseFloat(newTransaction.amount),
-      description: newTransaction.description || `${newTransaction.type} - ${format(new Date(), 'MMM dd')}`,
-      category: newTransaction.category,
-      date: new Date()
-    };
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "Please log in to save transactions",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    setTransactions([transaction, ...transactions]);
-    setNewTransaction({
-      type: 'income',
-      amount: '',
-      description: '',
-      category: ''
-    });
+    try {
+      const transaction: Transaction = {
+        id: Date.now().toString(),
+        type: newTransaction.type,
+        amount: parseFloat(newTransaction.amount),
+        description: newTransaction.description || `${newTransaction.type} - ${format(new Date(), 'MMM dd')}`,
+        category: newTransaction.category,
+        date: new Date()
+      };
 
-    toast({
-      title: "Transaction Added",
-      description: "Your transaction has been recorded"
-    });
+      // Save to Supabase
+      const { error } = await supabase
+        .from('financial_transactions')
+        .insert({
+          user_id: user.id,
+          strategy_id: strategyId,
+          transaction_type: newTransaction.type,
+          amount: parseFloat(newTransaction.amount),
+          description: transaction.description,
+          category: newTransaction.category,
+          currency: currency,
+          transaction_date: new Date().toISOString().split('T')[0]
+        });
+
+      if (error) throw error;
+
+      // Update local state
+      setTransactions([transaction, ...transactions]);
+      setNewTransaction({
+        type: 'income',
+        amount: '',
+        description: '',
+        category: ''
+      });
+
+      toast({
+        title: "Transaction Added",
+        description: "Your transaction has been saved successfully"
+      });
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save transaction. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Process image with OCR
