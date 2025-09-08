@@ -320,6 +320,48 @@ export type Database = {
           },
         ]
       }
+      financial_transactions: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          currency: string
+          description: string
+          id: string
+          strategy_id: string | null
+          transaction_date: string
+          transaction_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          currency?: string
+          description: string
+          id?: string
+          strategy_id?: string | null
+          transaction_date?: string
+          transaction_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          currency?: string
+          description?: string
+          id?: string
+          strategy_id?: string | null
+          transaction_date?: string
+          transaction_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       geographic_analytics: {
         Row: {
           active_businesses: number

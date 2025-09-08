@@ -48,12 +48,15 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [allMilestones, setAllMilestones] = useState<any[]>([]);
   const [loadingMilestones, setLoadingMilestones] = useState(true);
+  const [financialData, setFinancialData] = useState<any>({ totalRevenue: 0, totalExpenses: 0, recentTransactions: [] });
+  const [loadingFinancial, setLoadingFinancial] = useState(true);
 
   useEffect(() => {
     if (user) {
       loadUserProfile();
       loadStrategies();
       loadUserMilestones();
+      loadUserFinancialData();
     }
   }, [user]);
 
@@ -97,6 +100,40 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
       console.error('Error loading user milestones:', error);
     } finally {
       setLoadingMilestones(false);
+    }
+  };
+
+  const loadUserFinancialData = async () => {
+    if (!user) return;
+
+    try {
+      setLoadingFinancial(true);
+      console.log('Loading financial data for user:', user.id);
+      
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('transaction_date', { ascending: false });
+
+      if (error) throw error;
+      
+      console.log('Loaded financial transactions:', data);
+      
+      const totalRevenue = data?.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      const totalExpenses = data?.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+      const recentTransactions = data?.slice(0, 5) || [];
+      
+      setFinancialData({
+        totalRevenue,
+        totalExpenses,
+        netProfit: totalRevenue - totalExpenses,
+        recentTransactions
+      });
+    } catch (error) {
+      console.error('Error loading financial data:', error);
+    } finally {
+      setLoadingFinancial(false);
     }
   };
 
@@ -413,20 +450,77 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
             <h2 className="text-xl font-semibold text-gray-900">Your Financial Data</h2>
           </div>
           
-          <Card className="border-green-200">
-            <CardContent className="p-6 text-center">
-              <div className="mb-4">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="w-6 h-6 text-green-600" />
+          {loadingFinancial ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading financial data...</p>
+            </div>
+          ) : financialData.recentTransactions.length === 0 ? (
+            <Card className="border-green-200">
+              <CardContent className="p-6 text-center">
+                <div className="mb-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BarChart3 className="w-6 h-6 text-green-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-900 mb-2">No Financial Data Yet</h3>
+                  <p className="text-gray-600 mb-4">
+                    Track your revenue and expenses to monitor your business health.
+                  </p>
+                  <p className="text-sm text-gray-500">Access your financials through your saved strategies above.</p>
                 </div>
-                <h3 className="font-medium text-gray-900 mb-2">No Financial Data Yet</h3>
-                <p className="text-gray-600 mb-4">
-                  Track your revenue and expenses to monitor your business health.
-                </p>
-                <p className="text-sm text-gray-500">Access your financials through your saved strategies above.</p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <Card className="border-green-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        {profile?.country === 'KE' ? 'KSh' : '$'} {financialData.totalRevenue.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <BarChart3 className="w-5 h-5 text-green-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-red-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Total Expenses</p>
+                      <p className="text-2xl font-bold text-red-600">
+                        {profile?.country === 'KE' ? 'KSh' : '$'} {financialData.totalExpenses.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-red-100 rounded-lg">
+                      <BarChart3 className="w-5 h-5 text-red-600" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-blue-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">Net Profit</p>
+                      <p className={`text-2xl font-bold ${financialData.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {profile?.country === 'KE' ? 'KSh' : '$'} {financialData.netProfit.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className={`p-2 rounded-lg ${financialData.netProfit >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
+                      <BarChart3 className={`w-5 h-5 ${financialData.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
 
       </div>

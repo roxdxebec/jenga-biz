@@ -516,6 +516,7 @@ const CombinedStrategyFlow = ({
               language={language}
               currency={currency}
               currencySymbol={currencySymbol}
+              strategyId={currentStrategy?.id}
             />
           </section>
 

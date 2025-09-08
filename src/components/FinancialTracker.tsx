@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,8 @@ import {
 import { createWorker } from 'tesseract.js';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Transaction {
   id: string;
@@ -30,13 +32,16 @@ interface FinancialTrackerProps {
   language?: string;
   currency?: string;
   currencySymbol?: string;
+  strategyId?: string;
 }
 
 const FinancialTracker = ({ 
   language = 'en', 
   currency = 'KES', 
-  currencySymbol = 'KSh' 
+  currencySymbol = 'KSh',
+  strategyId
 }: FinancialTrackerProps) => {
+  const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [newTransaction, setNewTransaction] = useState({
     type: 'income' as 'income' | 'expense',
@@ -45,9 +50,47 @@ const FinancialTracker = ({
     category: ''
   });
   const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { toast } = useToast();
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Load transactions from Supabase
+  useEffect(() => {
+    if (user) {
+      loadTransactions();
+    }
+  }, [user]);
+
+  const loadTransactions = async () => {
+    if (!user) return;
+
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('transaction_date', { ascending: false });
+
+      if (error) throw error;
+
+      const formattedTransactions = data?.map(t => ({
+        id: t.id,
+        type: t.transaction_type as 'income' | 'expense',
+        amount: Number(t.amount),
+        description: t.description,
+        category: t.category,
+        date: new Date(t.transaction_date)
+      })) || [];
+
+      setTransactions(formattedTransactions);
+    } catch (error) {
+      console.error('Error loading transactions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const totalIncome = transactions
