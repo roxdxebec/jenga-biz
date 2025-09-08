@@ -1,8 +1,8 @@
 import React from 'react';
-import FinancialTracker from '@/components/FinancialTracker';
+import FinancialTrackerWithSave from '@/components/FinancialTrackerWithSave';
 
 const FinancialTrackerPage = () => {
-  return <FinancialTracker />;
+  return <FinancialTrackerWithSave />;
 };
 
 export default FinancialTrackerPage;

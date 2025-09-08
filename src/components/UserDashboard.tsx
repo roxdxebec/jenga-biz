@@ -267,13 +267,8 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-lg text-gray-900 line-clamp-1">
-                          {strategy.business_name || strategy.template_name || 'Untitled Strategy'}
+                          {strategy.business_name || 'Untitled Strategy'}
                         </CardTitle>
-                        {strategy.template_name && (
-                          <Badge variant="outline" className="mt-2 text-xs">
-                            {strategy.template_name}
-                          </Badge>
-                        )}
                       </div>
                     </div>
                   </CardHeader>
