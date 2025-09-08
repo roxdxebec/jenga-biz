@@ -97,16 +97,17 @@ const CombinedStrategyFlow = ({
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
+            {/* Left section - Logo and main actions */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
               <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
               
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onBack}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 text-xs sm:text-sm"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   {t.backToTemplates}
@@ -116,24 +117,16 @@ const CombinedStrategyFlow = ({
                   variant="outline"
                   size="sm"
                   onClick={onHome}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 text-xs sm:text-sm"
                 >
                   <Home className="w-4 h-4" />
                   {t.home}
                 </Button>
-                
-                <Button
-                  size="sm"
-                  onClick={handleSave}
-                  className="flex items-center gap-2"
-                >
-                  <Save className="w-4 h-4" />
-                  {t.save}
-                </Button>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* Right section - Selectors */}
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
               <LanguageSelector
                 currentLanguage={language}
                 onLanguageChange={setLanguage}
@@ -190,6 +183,18 @@ const CombinedStrategyFlow = ({
               currencySymbol={currencySymbol}
             />
           </section>
+
+          {/* Save Strategy Button at the end */}
+          <div className="flex justify-center pt-8">
+            <Button
+              size="lg"
+              onClick={handleSave}
+              className="flex items-center gap-2 px-8 py-3"
+            >
+              <Save className="w-5 h-5" />
+              {t.save} Strategy
+            </Button>
+          </div>
         </div>
       </div>
     </div>
