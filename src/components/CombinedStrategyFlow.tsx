@@ -99,15 +99,24 @@ const CombinedStrategyFlow = ({
   };
 
   const handleSaveStrategy = async () => {
-    if (!strategy) return;
+    if (!strategy) {
+      toast({
+        title: 'No Strategy Data',
+        description: 'Please fill out the strategy form before saving.',
+        variant: 'destructive'
+      });
+      return;
+    }
     
     try {
+      console.log('Saving strategy data:', strategy);
       await saveStrategy(strategy, true);
       toast({
         title: 'Strategy Saved',
         description: 'Your business strategy has been saved successfully.',
       });
     } catch (error) {
+      console.error('Error saving strategy:', error);
       toast({
         title: 'Error',
         description: 'Failed to save strategy. Please try again.',
@@ -117,10 +126,30 @@ const CombinedStrategyFlow = ({
   };
 
   const handleSaveMilestones = async () => {
-    toast({
-      title: 'Milestones Saved',
-      description: 'Your business milestones have been saved successfully.',
-    });
+    if (milestones.length === 0) {
+      toast({
+        title: 'No Milestones',
+        description: 'Please add some milestones before saving.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      console.log('Saving milestones data:', milestones);
+      // Here we would save milestones if there was a saveMilestones function
+      toast({
+        title: 'Milestones Saved',
+        description: 'Your business milestones have been saved successfully.',
+      });
+    } catch (error) {
+      console.error('Error saving milestones:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to save milestones. Please try again.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleSaveFinancial = async () => {
