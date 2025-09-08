@@ -1,0 +1,199 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Home, Save } from 'lucide-react';
+import StrategyBuilder from '@/components/StrategyBuilder';
+import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
+import FinancialTracker from '@/components/FinancialTracker';
+import LanguageSelector from '@/components/LanguageSelector';
+import CountrySelector from '@/components/CountrySelector';
+
+interface CombinedStrategyFlowProps {
+  template?: any;
+  onBack?: () => void;
+  onHome?: () => void;
+  initialLanguage?: string;
+}
+
+const CombinedStrategyFlow = ({ 
+  template, 
+  onBack, 
+  onHome, 
+  initialLanguage = 'en' 
+}: CombinedStrategyFlowProps) => {
+  const [language, setLanguage] = useState(initialLanguage);
+  const [country, setCountry] = useState('KE');
+  const [currency, setCurrency] = useState('KES');
+  const [currencySymbol, setCurrencySymbol] = useState('KSh');
+  const [strategy, setStrategy] = useState(null);
+  const [milestones, setMilestones] = useState([]);
+
+  const translations = {
+    en: {
+      backToTemplates: 'Back',
+      home: 'Home',
+      save: 'Save',
+      language: 'Language',
+      currency: 'Currency'
+    },
+    sw: {
+      backToTemplates: 'Rudi',
+      home: 'Nyumbani',
+      save: 'Hifadhi',
+      language: 'Lugha',
+      currency: 'Sarafu'
+    },
+    ar: {
+      backToTemplates: 'رجوع',
+      home: 'الرئيسية',
+      save: 'حفظ',
+      language: 'اللغة',
+      currency: 'العملة'
+    },
+    fr: {
+      backToTemplates: 'Retour',
+      home: 'Accueil',
+      save: 'Sauvegarder',
+      language: 'Langue',
+      currency: 'Devise'
+    }
+  };
+
+  const t = translations[language] || translations.en;
+
+  // Update currency when country changes
+  useEffect(() => {
+    const currencyMap = {
+      'KE': { currency: 'KES', symbol: 'KSh' },
+      'UG': { currency: 'UGX', symbol: 'UGX' },
+      'TZ': { currency: 'TZS', symbol: 'TZS' },
+      'RW': { currency: 'RWF', symbol: 'RWF' },
+      'NG': { currency: 'NGN', symbol: '₦' },
+      'GH': { currency: 'GHS', symbol: 'GH₵' },
+      'ZA': { currency: 'ZAR', symbol: 'R' },
+      'EG': { currency: 'EGP', symbol: 'E£' },
+      'MA': { currency: 'MAD', symbol: 'MAD' }
+    };
+    
+    const countryData = currencyMap[country] || currencyMap['KE'];
+    setCurrency(countryData.currency);
+    setCurrencySymbol(countryData.symbol);
+  }, [country]);
+
+  const handleStrategyChange = (newStrategy) => {
+    setStrategy(newStrategy);
+  };
+
+  const handleMilestonesChange = (newMilestones) => {
+    setMilestones(newMilestones);
+  };
+
+  const handleSave = () => {
+    // Save all data
+    console.log('Saving combined data:', { strategy, milestones });
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
+              
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onBack}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t.backToTemplates}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onHome}
+                  className="flex items-center gap-2"
+                >
+                  <Home className="w-4 h-4" />
+                  {t.home}
+                </Button>
+                
+                <Button
+                  size="sm"
+                  onClick={handleSave}
+                  className="flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  {t.save}
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <LanguageSelector
+                currentLanguage={language}
+                onLanguageChange={setLanguage}
+              />
+              
+              <CountrySelector
+                currentCountry={country}
+                onCountryChange={setCountry}
+                language={language}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-12">
+          {/* Strategy Builder Section */}
+          <section id="strategy-section">
+            <StrategyBuilder
+              template={template}
+              onStrategyChange={handleStrategyChange}
+              language={language}
+              onLanguageChange={setLanguage}
+              country={country}
+              onCountryChange={setCountry}
+              currency={currency}
+              currencySymbol={currencySymbol}
+            />
+          </section>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Milestones Section */}
+          <section id="milestones-section">
+            <BusinessMilestonesSection
+              isPro={true}
+              strategyData={strategy}
+              language={language}
+              onMilestonesChange={handleMilestonesChange}
+            />
+          </section>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Financial Tracker Section */}
+          <section id="financial-tracker-section">
+            <FinancialTracker
+              language={language}
+              currency={currency}
+              currencySymbol={currencySymbol}
+            />
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CombinedStrategyFlow;

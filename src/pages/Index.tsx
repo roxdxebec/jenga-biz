@@ -133,7 +133,7 @@ const Index = () => {
       buttonColor: 'bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600',
       bgColor: 'bg-orange-50',
       iconColor: 'text-orange-600',
-      onClick: () => navigate('/templates')
+      onClick: () => navigate('/templates', { state: { language } })
     },
     {
       icon: Zap,
@@ -143,7 +143,7 @@ const Index = () => {
       buttonColor: 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600',
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
-      onClick: () => navigate('/strategy')
+      onClick: () => navigate('/strategy', { state: { language } })
     },
     {
       icon: Target,

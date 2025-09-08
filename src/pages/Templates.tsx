@@ -55,7 +55,7 @@ const Templates = () => {
     if (selectedTemplateId) {
       const template = templates.find(t => t.id === selectedTemplateId);
       if (template) {
-        navigate('/strategy', { state: { template } });
+        navigate('/strategy', { state: { template, language } });
       }
     }
   };
