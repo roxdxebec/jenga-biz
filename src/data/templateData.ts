@@ -142,377 +142,274 @@ const templateContents: { [key: string]: TemplateContent } = {
   },
   'auto-repair': {
     vision: {
-      en: 'To be the most trusted auto repair service providing reliable, efficient, and honest vehicle maintenance and repairs',
-      sw: 'Kuwa huduma ya ukarabati wa magari inayoaminika zaidi ikitoa matengenezo na marekebisho ya magari ya kuaminika, ya ufanisi, na ya uaminifu',
-      ar: 'أن نكون خدمة إصلاح السيارات الأكثر ثقة التي توفر صيانة وإصلاحات مركبات موثوقة وفعالة وصادقة',
-      fr: 'Être le service de réparation automobile le plus fiable offrant un entretien et des réparations de véhicules fiables, efficaces et honnêtes'
+      en: 'To be the most trusted automotive repair service in our area, known for honest pricing, quality work, and exceptional customer service',
+      sw: 'Kuwa huduma ya ukarabati wa magari inayoaminika zaidi katika eneo letu, inayojulikana kwa bei za uaminifu, kazi ya ubora, na huduma ya kipekee kwa wateja',
+      ar: 'أن نكون خدمة إصلاح السيارات الأكثر ثقة في منطقتنا، المعروفة بالأسعار الصادقة والعمل عالي الجودة وخدمة العملاء الاستثنائية',
+      fr: 'Être le service de réparation automobile le plus fiable de notre région, connu pour ses prix honnêtes, son travail de qualité et son service client exceptionnel'
     },
     mission: {
-      en: 'Keeping vehicles safe and reliable through expert mechanical services, transparent pricing, and exceptional customer care',
-      sw: 'Kuweka magari kuwa salama na ya kutegemewa kupitia huduma za umaarufu za mitambo, bei wazi, na huduma bora ya wateja',
-      ar: 'الحفاظ على سلامة وموثوقية المركبات من خلال خدمات ميكانيكية خبيرة وأسعار شفافة ورعاية استثنائية للعملاء',
-      fr: 'Maintenir les véhicules sûrs et fiables grâce à des services mécaniques experts, une tarification transparente et un service client exceptionnel'
+      en: 'Providing reliable, affordable automotive repair and maintenance services with transparent pricing and skilled craftsmanship',
+      sw: 'Kutoa huduma za ukarabati na matengenezo ya magari za kutegemewa na bei nafuu kwa bei wazi na ufundi wa ustadi',
+      ar: 'تقديم خدمات إصلاح وصيانة السيارات الموثوقة وبأسعار معقولة مع تسعير شفاف وحرفية ماهرة',
+      fr: 'Fournir des services de réparation et d\'entretien automobile fiables et abordables avec une tarification transparente et un savoir-faire qualifié'
     },
     targetMarket: {
-      en: 'Vehicle owners, taxi drivers, boda boda operators, commercial fleet owners, individual car owners in urban and rural areas',
-      sw: 'Wamiliki wa magari, madereva wa teksi, waendeshaji wa boda boda, wamiliki wa magari ya kibiashara, wamiliki wa magari binafsi katika maeneo ya mijini na vijijini',
-      ar: 'أصحاب المركبات، سائقو التاكسي، مشغلو بودا بودا، أصحاب الأساطيل التجارية، أصحاب السيارات الفردية في المناطق الحضرية والريفية',
-      fr: 'Propriétaires de véhicules, chauffeurs de taxi, opérateurs de boda boda, propriétaires de flottes commerciales, propriétaires individuels de voitures dans les zones urbaines et rurales'
+      en: 'Vehicle owners, taxi operators, matatu owners, delivery companies, government fleets, and individual car owners',
+      sw: 'Wamiliki wa magari, waendeshaji wa teksi, wamiliki wa matatu, makampuni ya utoaji, madereva za serikali, na wamiliki wa magari binafsi',
+      ar: 'أصحاب المركبات، مشغلو سيارات الأجرة، أصحاب الماتاتو، شركات التوصيل، أساطيل الحكومة، وأصحاب السيارات الأفراد',
+      fr: 'Propriétaires de véhicules, opérateurs de taxi, propriétaires de matatu, entreprises de livraison, flottes gouvernementales et propriétaires de voitures individuels'
     },
     revenueModel: {
-      en: 'Hourly labor charges, parts markup, diagnostic fees, maintenance service packages, emergency roadside assistance',
-      sw: 'Malipo ya kazi kwa saa, faida ya vipengee, ada za uchunguzi, vifurushi vya huduma za matengenezo, msaada wa dharura wa kando ya barabara',
-      ar: 'رسوم العمالة بالساعة، هامش ربح قطع الغيار، رسوم التشخيص، حزم خدمات الصيانة، المساعدة الطارئة على الطريق',
-      fr: 'Frais de main-d\'œuvre horaires, marge sur les pièces, frais de diagnostic, forfaits de services d\'entretien, assistance routière d\'urgence'
+      en: 'Repair services, maintenance packages, parts sales, diagnostic services, emergency roadside assistance',
+      sw: 'Huduma za ukarabati, vifurushi vya matengenezo, mauzo ya sehemu, huduma za uchunguzi, msaada wa dharura wa barabarani',
+      ar: 'خدمات الإصلاح، حزم الصيانة، مبيعات قطع الغيار، خدمات التشخيص، المساعدة الطارئة على الطريق',
+      fr: 'Services de réparation, forfaits d\'entretien, vente de pièces, services de diagnostic, assistance routière d\'urgence'
     },
     valueProposition: {
-      en: 'Expert diagnostics, quality repairs using genuine parts, transparent pricing, fast turnaround, and warranty on all work',
-      sw: 'Uchunguzi wa umaarufu, marekebisho ya ubora ukitumia vipengee halisi, bei wazi, haraka ya kurudi, na dhaman kwenye kazi zote',
-      ar: 'تشخيصات خبيرة، إصلاحات عالية الجودة باستخدام قطع أصلية، أسعار شفافة، دوران سريع، وضمان على جميع الأعمال',
-      fr: 'Diagnostics experts, réparations de qualité utilisant des pièces authentiques, tarification transparente, délai rapide et garantie sur tous les travaux'
+      en: 'Honest pricing, quality repairs, quick turnaround, warranty on work, experienced mechanics, genuine parts',
+      sw: 'Bei za uaminifu, ukarabati wa ubora, mzunguko wa haraka, dhamana ya kazi, mafundi wenye uzoefu, sehemu halisi',
+      ar: 'أسعار صادقة، إصلاحات عالية الجودة، تسليم سريع، ضمان على العمل، ميكانيكيون ذوو خبرة، قطع أصلية',
+      fr: 'Prix honnêtes, réparations de qualité, délai d\'exécution rapide, garantie sur le travail, mécaniciens expérimentés, pièces authentiques'
     },
     keyPartners: {
-      en: 'Auto parts suppliers, towing services, insurance companies, vehicle dealers, diagnostic equipment suppliers',
-      sw: 'Wasambazaji wa vipengee vya magari, huduma za kukokota, makampuni ya bima, wachuuzi wa magari, wasambazaji wa vifaa vya uchunguzi',
-      ar: 'موردو قطع غيار السيارات، خدمات السحب، شركات التأمين، وكلاء المركبات، موردو معدات التشخيص',
-      fr: 'Fournisseurs de pièces automobiles, services de remorquage, compagnies d\'assurance, concessionnaires de véhicules, fournisseurs d\'équipements de diagnostic'
+      en: 'Auto parts suppliers, towing services, insurance companies, vehicle dealerships, equipment suppliers',
+      sw: 'Wasambazaji wa sehemu za magari, huduma za kuvuta, makampuni ya bima, mauzo ya magari, wasambazaji wa vifaa',
+      ar: 'موردو قطع غيار السيارات، خدمات السحب، شركات التأمين، وكلاء السيارات، موردو المعدات',
+      fr: 'Fournisseurs de pièces automobiles, services de remorquage, compagnies d\'assurance, concessionnaires de véhicules, fournisseurs d\'équipements'
     },
     marketingApproach: {
-      en: 'Customer referrals, local business partnerships, social media presence, vehicle inspection campaigns, loyalty programs',
-      sw: 'Mapendekezo ya wateja, ushirikiano wa biashara za mitaani, uwepo wa mitandao ya kijamii, kampeni za ukaguzi wa magari, mipango ya uaminifu',
-      ar: 'إحالات العملاء، شراكات الأعمال المحلية، الحضور على وسائل التواصل الاجتماعي، حملات فحص المركبات، برامج الولاء',
-      fr: 'Références clients, partenariats commerciaux locaux, présence sur les réseaux sociaux, campagnes d\'inspection de véhicules, programmes de fidélité'
+      en: 'Word-of-mouth referrals, local advertising, social media presence, customer loyalty programs, partnerships with fleet owners',
+      sw: 'Mapendekezo ya mdomo kwa mdomo, matangazo ya mitaani, uwepo wa mitandao ya kijamii, mipango ya uongozi wa wateja, ushirikiano na wamiliki wa madereva',
+      ar: 'إحالات الكلام الشفهي، الإعلان المحلي، الحضور على وسائل التواصل الاجتماعي، برامج ولاء العملاء، الشراكات مع أصحاب الأساطيل',
+      fr: 'Références de bouche-à-oreille, publicité locale, présence sur les réseaux sociaux, programmes de fidélité client, partenariats avec les propriétaires de flottes'
     },
     operationalNeeds: {
-      en: 'Workshop space, diagnostic equipment, hand tools, spare parts inventory, vehicle lift, air compressor, safety equipment',
-      sw: 'Nafasi ya warsha, vifaa vya uchunguzi, vifaa vya mkono, ghala la vipengee vya nyongeza, kifaa cha kuinua magari, msongeo wa hewa, vifaa vya usalama',
-      ar: 'مساحة ورشة، معدات تشخيص، أدوات يدوية، مخزون قطع الغيار، رافعة مركبات، ضاغط هواء، معدات السلامة',
-      fr: 'Espace d\'atelier, équipement de diagnostic, outils à main, inventaire de pièces de rechange, élévateur de véhicule, compresseur d\'air, équipement de sécurité'
+      en: 'Workshop space, automotive tools, diagnostic equipment, parts inventory, lift/jack systems, safety equipment',
+      sw: 'Nafasi ya warsha, zana za magari, vifaa vya uchunguzi, ghala la sehemu, mifumo ya kuinua/jack, vifaa vya usalama',
+      ar: 'مساحة الورشة، أدوات السيارات، معدات التشخيص، مخزون قطع الغيار، أنظمة الرفع/الرافعة، معدات السلامة',
+      fr: 'Espace d\'atelier, outils automobiles, équipement de diagnostic, inventaire de pièces, systèmes de levage/cric, équipement de sécurité'
     },
     growthGoals: {
-      en: 'Add mobile repair services, hire 2 additional mechanics, offer 24/7 emergency service, expand to commercial fleet services',
-      sw: 'Kuongeza huduma za ukarabati wa kufuatilia, kuajiri mafundi 2 zaidi, kutoa huduma za dharura za saa 24/7, kupanua hadi huduma za magari ya kibiashara',
-      ar: 'إضافة خدمات الإصلاح المتنقلة، توظيف 2 من الميكانيكيين الإضافيين، تقديم خدمة طوارئ على مدار 24/7، التوسع إلى خدمات الأساطيل التجارية',
-      fr: 'Ajouter des services de réparation mobile, embaucher 2 mécaniciens supplémentaires, offrir un service d\'urgence 24/7, étendre aux services de flotte commerciale'
+      en: 'Add specialized services (AC repair, bodywork), hire additional mechanics, expand workshop space, offer mobile repair services',
+      sw: 'Kuongeza huduma maalum (ukarabati wa AC, kazi ya mwili), kuajiri mafundi zaidi, kupanua nafasi ya warsha, kutoa huduma za ukarabati wa simu',
+      ar: 'إضافة خدمات متخصصة (إصلاح التكييف، أعمال الهيكل)، توظيف ميكانيكيين إضافيين، توسيع مساحة الورشة، تقديم خدمات الإصلاح المتنقلة',
+      fr: 'Ajouter des services spécialisés (réparation AC, carrosserie), embaucher des mécaniciens supplémentaires, agrandir l\'espace d\'atelier, offrir des services de réparation mobile'
     }
   },
-  'boda-boda': {
+  'cybercafe': {
     vision: {
-      en: 'To provide safe, reliable, and affordable transportation while supporting drivers and contributing to community development',
-      sw: 'Kutoa usafiri salama, wa kutegemewa, na wa bei nafuu huku tukiwasaidia dereva na kuchangia maendeleo ya jamii',
-      ar: 'توفير وسائل نقل آمنة وموثوقة ومعقولة التكلفة مع دعم السائقين والمساهمة في تنمية المجتمع',
-      fr: 'Fournir un transport sûr, fiable et abordable tout en soutenant les conducteurs et en contribuant au développement communautaire'
+      en: 'To be the leading digital services hub in our community, bridging the digital divide and empowering people with technology access',
+      sw: 'Kuwa kituo cha huduma za kidijitali kinachongoza katika jamii yetu, kiunganisha pengo la kidijitali na kuwezesha watu kupata teknolojia',
+      ar: 'أن نكون مركز الخدمات الرقمية الرائد في مجتمعنا، وسد الفجوة الرقمية وتمكين الناس من الوصول إلى التكنولوجيا',
+      fr: 'Être le centre de services numériques leader dans notre communauté, comblant la fracture numérique et donnant aux gens l\'accès à la technologie'
     },
     mission: {
-      en: 'Connecting people to their destinations safely while supporting local economy, providing employment, and serving our community',
-      sw: 'Kuunganisha watu na maeneo wanayoelekea kwa usalama huku tukiuunga mkono uchumi wa mitaani, kutoa ajira, na kutumikia jamii yetu',
-      ar: 'ربط الناس بوجهاتهم بأمان مع دعم الاقتصاد المحلي وتوفير فرص العمل وخدمة مجتمعنا',
-      fr: 'Connecter les gens à leurs destinations en toute sécurité tout en soutenant l\'économie locale, en fournissant des emplois et en servant notre communauté'
+      en: 'Providing affordable internet access, computer services, and digital literacy training to empower our community',
+      sw: 'Kutoa upatikanaji wa mtandao wa bei nafuu, huduma za kompyuta, na mafunzo ya ujuzi wa kidijitali ili kuwezesha jamii yetu',
+      ar: 'توفير الوصول إلى الإنترنت بأسعار معقولة وخدمات الكمبيوتر والتدريب على محو الأمية الرقمية لتمكين مجتمعنا',
+      fr: 'Fournir un accès Internet abordable, des services informatiques et une formation en littératie numérique pour autonomiser notre communauté'
     },
     targetMarket: {
-      en: 'Daily commuters, students, shoppers, business people, delivery services, and anyone needing quick transportation',
-      sw: 'Wasafiri wa kila siku, wanafunzi, wanunuzi, watu wa biashara, huduma za upeperishaji, na mtu yeyote anayehitaji usafiri wa haraka',
-      ar: 'المسافرون اليوميون، الطلاب، المتسوقون، رجال الأعمال، خدمات التوصيل، وأي شخص يحتاج إلى وسائل نقل سريعة',
-      fr: 'Navetteurs quotidiens, étudiants, acheteurs, gens d\'affaires, services de livraison, et toute personne ayant besoin de transport rapide'
+      en: 'Students, job seekers, small business owners, government service users, and individuals without home internet access',
+      sw: 'Wanafunzi, watafutaji kazi, wamiliki wa biashara ndogo, watumiaji wa huduma za serikali, na watu wasio na mtandao wa nyumbani',
+      ar: 'الطلاب، الباحثون عن عمل، أصحاب الأعمال الصغيرة، مستخدمو الخدمات الحكومية، والأفراد الذين لا يملكون إنترنت منزلي',
+      fr: 'Étudiants, demandeurs d\'emploi, propriétaires de petites entreprises, utilisateurs de services gouvernementaux et personnes sans accès Internet à domicile'
     },
     revenueModel: {
-      en: 'Per-trip passenger fares, delivery service fees, package transport charges, rental income from drivers, fuel commission',
-      sw: 'Nauli za abiria kwa safari, ada za huduma za upeperishaji, gharama za usafirishaji wa mizigo, mapato ya kukodisha kutoka kwa madereva, komishan ya mafuta',
-      ar: 'أجرة الركاب لكل رحلة، رسوم خدمات التوصيل، رسوم نقل الطرود، دخل الإيجار من السائقين، عمولة الوقود',
-      fr: 'Tarifs passagers par voyage, frais de services de livraison, frais de transport de colis, revenus locatifs des conducteurs, commission carburant'
+      en: 'Internet access fees, printing services, document typing, computer training, mobile money services, phone charging',
+      sw: 'Ada za upatikanaji wa mtandao, huduma za kuchapisha, kuandika hati, mafunzo ya kompyuta, huduma za pesa za simu, kuchaji simu',
+      ar: 'رسوم الوصول إلى الإنترنت، خدمات الطباعة، كتابة المستندات، تدريب الكمبيوتر، خدمات الأموال المحمولة، شحن الهاتف',
+      fr: 'Frais d\'accès Internet, services d\'impression, saisie de documents, formation informatique, services d\'argent mobile, recharge de téléphone'
     },
     valueProposition: {
-      en: 'Fast, affordable transportation with experienced, safety-conscious riders, flexible service, and reliable availability',
-      sw: 'Usafiri wa haraka, wa bei nafuu na waendesha mzoefu, wanaojali usalama, huduma ya kubadilika, na upatikanaji wa kutegemewa',
-      ar: 'وسائل نقل سريعة ومعقولة التكلفة مع راكبين ذوي خبرة وواعين بالسلامة، وخدمة مرنة، وتوفر موثوق',
-      fr: 'Transport rapide et abordable avec des conducteurs expérimentés et soucieux de la sécurité, service flexible et disponibilité fiable'
+      en: 'Affordable rates, reliable internet, extended hours, additional services, friendly assistance, secure environment',
+      sw: 'Viwango vya bei nafuu, mtandao wa kutegemewa, masaa ya ziada, huduma za ziada, msaada wa kirafiki, mazingira salama',
+      ar: 'أسعار معقولة، إنترنت موثوق، ساعات ممتدة، خدمات إضافية، مساعدة ودية، بيئة آمنة',
+      fr: 'Tarifs abordables, Internet fiable, heures prolongées, services supplémentaires, assistance amicale, environnement sécurisé'
     },
     keyPartners: {
-      en: 'Motorcycle dealers, insurance companies, fuel stations, maintenance shops, loading companies, delivery businesses',
-      sw: 'Wachuuzi wa pikipiki, makampuni ya bima, vituo vya mafuta, maduka ya matengenezo, makampuni ya upakiaji, biashara za upeperishaji',
-      ar: 'تجار الدراجات النارية، شركات التأمين، محطات الوقود، ورش الصيانة، شركات التحميل، أعمال التوصيل',
-      fr: 'Concessionnaires de motos, compagnies d\'assurance, stations-service, ateliers de maintenance, entreprises de chargement, entreprises de livraison'
+      en: 'Internet service providers, computer suppliers, software vendors, mobile money agents, stationery suppliers',
+      sw: 'Watoa huduma za mtandao, wasambazaji wa kompyuta, wachuuzi wa programu, mawakala wa pesa za simu, wasambazaji wa vifaa vya ofisi',
+      ar: 'مقدمو خدمات الإنترنت، موردو الكمبيوتر، بائعو البرمجيات، وكلاء الأموال المحمولة، موردو القرطاسية',
+      fr: 'Fournisseurs de services Internet, fournisseurs d\'ordinateurs, vendeurs de logiciels, agents d\'argent mobile, fournisseurs de papeterie'
     },
     marketingApproach: {
-      en: 'Community presence, customer referrals, mobile app integration, strategic location positioning, safety campaigns',
-      sw: 'Uwepo wa jamii, mapendekezo ya wateja, ujumuishaji wa programu za simu, miweka mikakati ya mahali, mipango ya usalama',
-      ar: 'الحضور المجتمعي، إحالات العملاء، تكامل تطبيقات الهاتف المحمول، تموضع مواقع استراتيجي، حملات السلامة',
-      fr: 'Présence communautaire, références clients, intégration d\'applications mobiles, positionnement stratégique, campagnes de sécurité'
+      en: 'Community outreach, student discounts, referral programs, local partnerships, social media marketing',
+      sw: 'Kufikia jamii, punguzo za wanafunzi, mipango ya mapendekezo, ushirikiano wa mitaani, uuzaji wa mitandao ya kijamii',
+      ar: 'التواصل المجتمعي، خصومات الطلاب، برامج الإحالة، الشراكات المحلية، التسويق عبر وسائل التواصل الاجتماعي',
+      fr: 'Sensibilisation communautaire, remises étudiantes, programmes de parrainage, partenariats locaux, marketing sur les réseaux sociaux'
     },
     operationalNeeds: {
-      en: 'Motorcycles, safety gear (helmets, reflective vests), licenses, insurance, maintenance tools, communication devices',
-      sw: 'Pikipiki, vifaa vya usalama (kofia za kinga, mikanda ya kuelea), leseni, bima, vifaa vya matengenezo, vifaa vya mawasiliano',
-      ar: 'دراجات نارية، معدات السلامة (خوذات، سترات عاكسة)، تراخيص، تأمين، أدوات الصيانة، أجهزة الاتصال',
-      fr: 'Motos, équipement de sécurité (casques, gilets réfléchissants), licences, assurance, outils de maintenance, dispositifs de communication'
+      en: 'Computers, internet connection, printers, furniture, security system, backup power, software licenses',
+      sw: 'Kompyuta, muunganisho wa mtandao, vichapishi, samani, mfumo wa usalama, nguvu za hifadhi, leseni za programu',
+      ar: 'أجهزة كمبيوتر، اتصال إنترنت، طابعات، أثاث، نظام أمان، طاقة احتياطية، تراخيص برمجيات',
+      fr: 'Ordinateurs, connexion Internet, imprimantes, mobilier, système de sécurité, alimentation de secours, licences logicielles'
     },
     growthGoals: {
-      en: 'Add 5 more motorcycles, establish delivery service partnerships, create driver training program, expand coverage area',
-      sw: 'Kuongeza pikipiki 5 zaidi, kuanzisha ushirikiano wa huduma za upeperishaji, kuunda programu ya mafunzo ya madereva, kupanua eneo la utumikaji',
-      ar: 'إضافة 5 دراجات نارية أخرى، إنشاء شراكات خدمات التوصيل، إنشاء برنامج تدريب السائقين، توسيع منطقة التغطية',
-      fr: 'Ajouter 5 motos supplémentaires, établir des partenariats de services de livraison, créer un programme de formation des conducteurs, étendre la zone de couverture'
+      en: 'Add gaming services, expand training programs, offer web design services, establish multiple locations',
+      sw: 'Kuongeza huduma za michezo, kupanua mipango ya mafunzo, kutoa huduma za kubuni tovuti, kuanzisha maeneo mengi',
+      ar: 'إضافة خدمات الألعاب، توسيع برامج التدريب، تقديم خدمات تصميم الويب، إنشاء مواقع متعددة',
+      fr: 'Ajouter des services de jeux, étendre les programmes de formation, offrir des services de conception Web, établir plusieurs emplacements'
     }
   },
-  'daycare': {
+  'agribusiness': {
     vision: {
-      en: 'To provide a safe, nurturing environment where children can learn, grow, and develop to their fullest potential',
-      sw: 'Kutoa mazingira salama, ya ulea ambayo watoto wanaweza kujifunza, kukua, na kuendeleza kwa uwezo wao kamili',
-      ar: 'توفير بيئة آمنة ومغذية حيث يمكن للأطفال التعلم والنمو والتطوير إلى أقصى إمكاناتهم',
-      fr: 'Fournir un environnement sûr et nourrissant où les enfants peuvent apprendre, grandir et se développer à leur plein potentiel'
+      en: 'To be a leading sustainable agricultural enterprise that feeds communities while preserving the environment',
+      sw: 'Kuwa shirika la kilimo endelevu linalongoza ambalo linalisisha jamii huku likilinda mazingira',
+      ar: 'أن نكون مؤسسة زراعية مستدامة رائدة تطعم المجتمعات مع الحفاظ على البيئة',
+      fr: 'Être une entreprise agricole durable de premier plan qui nourrit les communautés tout en préservant l\'environnement'
     },
     mission: {
-      en: 'Supporting working families by providing quality childcare with educational activities, loving care, and developmental support',
-      sw: 'Kusaidia familia zinazofanya kazi kwa kutoa huduma za malezi ya watoto za ubora pamoja na shughuli za elimu, malezi ya upendo, na msaada wa maendeleo',
-      ar: 'دعم العائلات العاملة من خلال توفير رعاية أطفال عالية الجودة مع الأنشطة التعليمية والرعاية المحبة والدعم التنموي',
-      fr: 'Soutenir les familles qui travaillent en fournissant des services de garde d\'enfants de qualité avec des activités éducatives, des soins aimants et un soutien au développement'
+      en: 'Producing high-quality crops using sustainable farming practices to provide nutritious food and create employment',
+      sw: 'Kuzalisha mazao ya ubora wa juu kwa kutumia mbinu za kilimo endelevu kutoa chakula chenye vitamini na kuunda ajira',
+      ar: 'إنتاج محاصيل عالية الجودة باستخدام ممارسات زراعية مستدامة لتوفير غذاء مغذي وخلق فرص عمل',
+      fr: 'Produire des cultures de haute qualité en utilisant des pratiques agricoles durables pour fournir des aliments nutritifs et créer des emplois'
     },
     targetMarket: {
-      en: 'Working parents with children aged 6 months to 5 years, single parents, shift workers, families needing flexible care',
-      sw: 'Wazazi wanaofanya kazi wenye watoto wa umri wa miezi 6 hadi miaka 5, wazazi wa kipeke, wafanyakazi wa mzunguko, familia zinazohitaji huduma za kubadilika',
-      ar: 'الآباء العاملون الذين لديهم أطفال تتراوح أعمارهم بين 6 أشهر إلى 5 سنوات، والآباء المنفردون، وعمال النوبات، والعائلات التي تحتاج إلى رعاية مرنة',
-      fr: 'Parents qui travaillent avec des enfants âgés de 6 mois à 5 ans, parents célibataires, travailleurs postés, familles ayant besoin de soins flexibles'
+      en: 'Local markets, restaurants, schools, food processors, export markets, agricultural cooperatives',
+      sw: 'Masoko ya mitaani, migahawa, shule, wasindikaji wa chakula, masoko ya nje, vyama vya ushirika wa kilimo',
+      ar: 'الأسواق المحلية، المطاعم، المدارس، معالجات الأغذية، أسواق التصدير، التعاونيات الزراعية',
+      fr: 'Marchés locaux, restaurants, écoles, transformateurs alimentaires, marchés d\'exportation, coopératives agricoles'
     },
     revenueModel: {
-      en: 'Daily/weekly childcare fees, registration fees, after-school care, summer programs, meals, educational activities',
-      sw: 'Ada za malezi ya watoto za kila siku/wiki, ada za usajili, malezi baada ya shule, mipango ya majira ya joto, chakula, shughuli za elimu',
-      ar: 'رسوم رعاية الأطفال اليومية/الأسبوعية، رسوم التسجيل، الرعاية بعد المدرسة، البرامج الصيفية، الوجبات، الأنشطة التعليمية',
-      fr: 'Frais de garde quotidiens/hebdomadaires, frais d\'inscription, garde après l\'école, programmes d\'été, repas, activités éducatives'
+      en: 'Direct crop sales, wholesale to distributors, farm-to-table services, value-added processing, contract farming',
+      sw: 'Mauzo ya moja kwa moja ya mazao, jumla kwa wasambazaji, huduma za kutoka shambani hadi mezani, usindikaji wa kuongeza thamani, kilimo cha mkataba',
+      ar: 'مبيعات المحاصيل المباشرة، البيع بالجملة للموزعين، خدمات من المزرعة إلى المائدة، المعالجة ذات القيمة المضافة، الزراعة التعاقدية',
+      fr: 'Ventes directes de cultures, vente en gros aux distributeurs, services de la ferme à la table, transformation à valeur ajoutée, agriculture contractuelle'
     },
     valueProposition: {
-      en: 'Safe, educational childcare with flexible scheduling, caring qualified staff, developmental activities, and nutritious meals',
-      sw: 'Malezi salama ya kielimu ya watoto yenye ratiba za kubadilika, wafanyakazi wenye sifa wa kujali, shughuli za maendeleo, na chakula chenye lishe',
-      ar: 'رعاية أطفال آمنة وتعليمية مع جدولة مرنة وموظفين مؤهلين ومهتمين وأنشطة تنموية ووجبات مغذية',
-      fr: 'Garde d\'enfants sûre et éducative avec horaires flexibles, personnel qualifié et attentionné, activités de développement et repas nutritifs'
+      en: 'Fresh, organic produce, sustainable farming methods, reliable supply, competitive pricing, local sourcing',
+      sw: 'Mazao mazuri na mazuri, mbinu za kilimo endelevu, ugavi wa kutegemewa, bei za ushindani, vyanzo vya mitaani',
+      ar: 'منتجات طازجة وعضوية، طرق زراعة مستدامة، إمداد موثوق، أسعار تنافسية، مصادر محلية',
+      fr: 'Produits frais et biologiques, méthodes de culture durables, approvisionnement fiable, prix compétitifs, approvisionnement local'
     },
     keyPartners: {
-      en: 'Educational toy suppliers, child development specialists, local schools, health clinics, food suppliers',
-      sw: 'Wasambazaji wa vinyago vya kielimu, wataalamu wa maendeleo ya watoto, shule za mitaani, kliniki za afya, wasambazaji wa chakula',
-      ar: 'موردو الألعاب التعليمية، أخصائيو تنمية الطفل، المدارس المحلية، العيادات الصحية، موردو الطعام',
-      fr: 'Fournisseurs de jouets éducatifs, spécialistes du développement de l\'enfant, écoles locales, cliniques de santé, fournisseurs alimentaires'
+      en: 'Agricultural input suppliers, irrigation companies, equipment dealers, agricultural extension services, cooperatives',
+      sw: 'Wasambazaji wa vitu vya kilimo, makampuni ya umwagiliaji, wachuuzi wa vifaa, huduma za upanuzi wa kilimo, vyama vya ushirika',
+      ar: 'موردو المدخلات الزراعية، شركات الري، تجار المعدات، خدمات الإرشاد الزراعي، التعاونيات',
+      fr: 'Fournisseurs d\'intrants agricoles, entreprises d\'irrigation, concessionnaires d\'équipements, services de vulgarisation agricole, coopératives'
     },
     marketingApproach: {
-      en: 'Parent referrals, community bulletin boards, social media, open houses, partnerships with employers, pediatrician referrals',
-      sw: 'Mapendekezo ya wazazi, mabao ya jamii, mitandao ya kijamii, nyumba za uwazi, ushirikiano na waajiri, mapendekezo ya madaktari wa watoto',
-      ar: 'إحالات الآباء، لوحات الإعلانات المجتمعية، وسائل التواصل الاجتماعي، البيوت المفتوحة، الشراكات مع أصحاب العمل، إحالات أطباء الأطفال',
-      fr: 'Références de parents, tableaux d\'affichage communautaires, médias sociaux, portes ouvertes, partenariats avec employeurs, références de pédiatres'
+      en: 'Direct relationships with buyers, farmers markets, online platforms, agricultural trade shows, word-of-mouth',
+      sw: 'Uhusiano wa moja kwa moja na wanunuzi, masoko ya wakulima, mifumo ya mtandaoni, maonyesho ya biashara ya kilimo, mdomo kwa mdomo',
+      ar: 'علاقات مباشرة مع المشترين، أسواق المزارعين، منصات عبر الإنترنت، معارض التجارة الزراعية، الكلام الشفهي',
+      fr: 'Relations directes avec les acheteurs, marchés fermiers, plateformes en ligne, salons commerciaux agricoles, bouche-à-oreille'
     },
     operationalNeeds: {
-      en: 'Child-safe facility, toys and educational materials, security system, licenses, insurance, kitchen facilities',
-      sw: 'Kituo salama cha watoto, vinyago na vifaa vya kielimu, mfumo wa usalama, leseni, bima, vifaa vya jikoni',
-      ar: 'مرفق آمن للأطفال، ألعاب ومواد تعليمية، نظام أمني، تراخيص، تأمين، مرافق مطبخ',
-      fr: 'Installation sécurisée pour enfants, jouets et matériels éducatifs, système de sécurité, licences, assurance, installations de cuisine'
+      en: 'Land, seeds, fertilizers, irrigation system, farming equipment, storage facilities, transportation, workers',
+      sw: 'Ardhi, mbegu, mbolea, mfumo wa umwagiliaji, vifaa vya kilimo, vifaa vya kuhifadhi, usafiri, wafanyakazi',
+      ar: 'الأرض، البذور، الأسمدة، نظام الري، معدات الزراعة، مرافق التخزين، النقل، العمال',
+      fr: 'Terrain, graines, engrais, système d\'irrigation, équipement agricole, installations de stockage, transport, travailleurs'
     },
     growthGoals: {
-      en: 'Add after-school program, increase capacity to 30 children, hire 2 teachers, establish pre-school curriculum',
-      sw: 'Kuongeza mpango wa baada ya shule, kuongeza uwezo hadi watoto 30, kuajiri walimu 2, kuanzisha mtaala wa kabla ya shule',
-      ar: 'إضافة برنامج ما بعد المدرسة، زيادة السعة إلى 30 طفلاً، توظيف 2 من المعلمين، وضع منهج ما قبل المدرسة',
-      fr: 'Ajouter un programme après l\'école, augmenter la capacité à 30 enfants, embaucher 2 enseignants, établir un programme préscolaire'
-    }
-  },
-  'cyber-cafe': {
-    vision: {
-      en: 'To be the leading digital access hub providing reliable internet services and digital solutions for our community',
-      sw: 'Kuwa kituo cha kwanza cha ufikiaji wa kidijiti kinachotoa huduma za intaneti za kutegemewa na suluhisho za kidijiti kwa jamii yetu',
-      ar: 'أن نكون مركز الوصول الرقمي الرائد الذي يوفر خدمات إنترنت موثوقة وحلول رقمية لمجتمعنا',
-      fr: 'Être le centre d\'accès numérique leader fournissant des services internet fiables et des solutions numériques pour notre communauté'
-    },
-    mission: {
-      en: 'Bridging the digital divide by providing affordable internet access, computer services, and digital literacy training',
-      sw: 'Kuunganisha pengo la kidijiti kwa kutoa ufikiaji wa intaneti wa bei nafuu, huduma za kompyuta, na mafunzo ya ujuzi wa kidijiti',
-      ar: 'سد الفجوة الرقمية من خلال توفير الوصول إلى الإنترنت بأسعار معقولة وخدمات الكمبيوتر والتدريب على محو الأمية الرقمية',
-      fr: 'Combler la fracture numérique en fournissant un accès internet abordable, des services informatiques et une formation à l\'alphabétisation numérique'
-    },
-    targetMarket: {
-      en: 'Students, job seekers, small business owners, remote workers, elderly learning technology, people without home internet',
-      sw: 'Wanafunzi, watafutaji kazi, wamiliki wa biashara ndogo, wafanyakazi wa mbali, wazee wanaojifunza teknolojia, watu wasio na intaneti nyumbani',
-      ar: 'الطلاب، الباحثون عن عمل، أصحاب الأعمال الصغيرة، العمال عن بُعد، كبار السن الذين يتعلمون التكنولوجيا، الأشخاص بدون إنترنت منزلي',
-      fr: 'Étudiants, demandeurs d\'emploi, propriétaires de petites entreprises, travailleurs à distance, personnes âgées apprenant la technologie, personnes sans internet à domicile'
-    },
-    revenueModel: {
-      en: 'Hourly internet access fees, printing and scanning services, document typing, training workshops, computer repairs',
-      sw: 'Ada za ufikiaji wa intaneti kwa saa, huduma za kuchapisha na kuskaini, kuandika hati, warsha za mafunzo, ukarabati wa kompyuta',
-      ar: 'رسوم الوصول إلى الإنترنت بالساعة، خدمات الطباعة والمسح الضوئي، كتابة المستندات، ورش التدريب، إصلاح أجهزة الكمبيوتر',
-      fr: 'Frais d\'accès internet horaires, services d\'impression et de numérisation, frappe de documents, ateliers de formation, réparations d\'ordinateurs'
-    },
-    valueProposition: {
-      en: 'Reliable high-speed internet, modern computers, printing services, technical support, and affordable rates',
-      sw: 'Intaneti ya haraka ya kutegemewa, kompyuta za kisasa, huduma za kuchapisha, msaada wa kiufundi, na bei za bei nafuu',
-      ar: 'إنترنت عالي السرعة موثوق، أجهزة كمبيوتر حديثة، خدمات طباعة، دعم فني، وأسعار معقولة',
-      fr: 'Internet haut débit fiable, ordinateurs modernes, services d\'impression, support technique et tarifs abordables'
-    },
-    keyPartners: {
-      en: 'Internet service providers, computer suppliers, software vendors, local schools, government offices, training institutions',
-      sw: 'Watoa huduma za intaneti, wasambazaji wa kompyuta, wauza programu, shule za mitaani, ofisi za serikali, taasisi za mafunzo',
-      ar: 'مقدمو خدمات الإنترنت، موردو أجهزة الكمبيوتر، بائعو البرامج، المدارس المحلية، المكاتب الحكومية، مؤسسات التدريب',
-      fr: 'Fournisseurs de services internet, fournisseurs d\'ordinateurs, vendeurs de logiciels, écoles locales, bureaux gouvernementaux, institutions de formation'
-    },
-    marketingApproach: {
-      en: 'Community outreach, student discounts, business partnerships, social media presence, referral programs',
-      sw: 'Kutembea jamii, punguzo za wanafunzi, ushirikiano wa kibiashara, uwepo wa mitandao ya kijamii, mipango ya mapendekezo',
-      ar: 'التوعية المجتمعية، خصومات الطلاب، الشراكات التجارية، الحضور على وسائل التواصل الاجتماعي، برامج الإحالة',
-      fr: 'Sensibilisation communautaire, réductions étudiantes, partenariats commerciaux, présence sur les réseaux sociaux, programmes de parrainage'
-    },
-    operationalNeeds: {
-      en: 'Computers, high-speed internet connection, printers, scanners, UPS systems, security cameras, comfortable seating',
-      sw: 'Kompyuta, muunganisho wa intaneti wa haraka, printa, skaners, mifumo ya UPS, kamera za usalama, viti vya starehe',
-      ar: 'أجهزة كمبيوتر، اتصال إنترنت عالي السرعة، طابعات، ماسحات ضوئية، أنظمة UPS، كاميرات أمنية، مقاعد مريحة',
-      fr: 'Ordinateurs, connexion internet haut débit, imprimantes, scanners, systèmes UPS, caméras de sécurité, sièges confortables'
-    },
-    growthGoals: {
-      en: 'Add gaming section, offer computer training courses, expand to mobile repair services, install faster internet',
-      sw: 'Kuongeza sehemu ya michezo, kutoa kozi za mafunzo ya kompyuta, kupanua hadi huduma za ukarabati wa simu, kuweka intaneti ya haraka zaidi',
-      ar: 'إضافة قسم الألعاب، تقديم دورات تدريب الكمبيوتر، التوسع إلى خدمات إصلاح الهواتف المحمولة، تثبيت إنترنت أسرع',
-      fr: 'Ajouter une section jeux, offrir des cours de formation informatique, étendre aux services de réparation mobile, installer internet plus rapide'
+      en: 'Expand acreage, add greenhouse farming, diversify crops, establish processing facility, enter export markets',
+      sw: 'Kupanua eneo, kuongeza kilimo cha bustani, kutofautisha mazao, kuanzisha kituo cha usindikaji, kuingia masoko ya nje',
+      ar: 'توسيع المساحة، إضافة الزراعة المحمية، تنويع المحاصيل، إنشاء مرفق معالجة، دخول أسواق التصدير',
+      fr: 'Étendre la superficie, ajouter la culture en serre, diversifier les cultures, établir une installation de traitement, entrer sur les marchés d\'exportation'
     }
   }
 };
 
-export const getTemplateData = (language: string = 'en'): TemplateData[] => {
-  console.log('Getting template data for language:', language);
-  
-  const getTranslatedContent = (templateId: string, language: string) => {
-    const content = templateContents[templateId];
-    if (!content) {
-      // Fallback for templates not yet translated - provide empty fields for user to fill
-      return {
-        vision: '',
-        mission: '',
-        targetMarket: '',
-        revenueModel: '',
-        valueProposition: '',
-        keyPartners: '',
-        marketingApproach: '',
-        operationalNeeds: '',
-        growthGoals: ''
-      };
-    }
-    
-    return {
-      vision: content.vision[language] || content.vision.en,
-      mission: content.mission[language] || content.mission.en,
-      targetMarket: content.targetMarket[language] || content.targetMarket.en,
-      revenueModel: content.revenueModel[language] || content.revenueModel.en,
-      valueProposition: content.valueProposition[language] || content.valueProposition.en,
-      keyPartners: content.keyPartners[language] || content.keyPartners.en,
-      marketingApproach: content.marketingApproach[language] || content.marketingApproach.en,
-      operationalNeeds: content.operationalNeeds[language] || content.operationalNeeds.en,
-      growthGoals: content.growthGoals[language] || content.growthGoals.en
-    };
-  };
-  
+export const getTemplateData = (language: string = 'en') => {
   const templates: TemplateData[] = [
     {
+      id: 'bakery',
+      name: 'Bakery',
+      description: language === 'sw' ? 'Biashara ya upishi na vipindi' :
+                  language === 'ar' ? 'أعمال المخبز والحلويات' :
+                  language === 'fr' ? 'Affaires de boulangerie et pâtisserie' :
+                  'Bakery and baked goods business',
+      content: {
+        vision: templateContents.bakery.vision[language] || templateContents.bakery.vision.en,
+        mission: templateContents.bakery.mission[language] || templateContents.bakery.mission.en,
+        targetMarket: templateContents.bakery.targetMarket[language] || templateContents.bakery.targetMarket.en,
+        revenueModel: templateContents.bakery.revenueModel[language] || templateContents.bakery.revenueModel.en,
+        valueProposition: templateContents.bakery.valueProposition[language] || templateContents.bakery.valueProposition.en,
+        keyPartners: templateContents.bakery.keyPartners[language] || templateContents.bakery.keyPartners.en,
+        marketingApproach: templateContents.bakery.marketingApproach[language] || templateContents.bakery.marketingApproach.en,
+        operationalNeeds: templateContents.bakery.operationalNeeds[language] || templateContents.bakery.operationalNeeds.en,
+        growthGoals: templateContents.bakery.growthGoals[language] || templateContents.bakery.growthGoals.en,
+      }
+    },
+    {
       id: 'mitumba',
-      name: language === 'sw' ? 'Biashara ya Mitumba' : language === 'ar' ? 'تجارة الملابس المستعملة' : language === 'fr' ? 'Commerce de Vêtements d\'Occasion' : 'Second-Hand Clothing (Mitumba)',
-      description: language === 'sw' ? 'Uuzaji wa nguo za mitumba na bidhaa za mtindo' : language === 'ar' ? 'بيع الملابس المستعملة ومنتجات الأزياء' : language === 'fr' ? 'Vente de vêtements d\'occasion et produits de mode' : 'Selling second-hand clothes and fashion items',
-      content: getTranslatedContent('mitumba', language)
+      name: 'Mitumba Shop',
+      description: language === 'sw' ? 'Biashara ya nguo za mitumba' :
+                  language === 'ar' ? 'متجر الملابس المستعملة' :
+                  language === 'fr' ? 'Magasin de vêtements d\'occasion' :
+                  'Second-hand clothing business',
+      content: {
+        vision: templateContents.mitumba.vision[language] || templateContents.mitumba.vision.en,
+        mission: templateContents.mitumba.mission[language] || templateContents.mitumba.mission.en,
+        targetMarket: templateContents.mitumba.targetMarket[language] || templateContents.mitumba.targetMarket.en,
+        revenueModel: templateContents.mitumba.revenueModel[language] || templateContents.mitumba.revenueModel.en,
+        valueProposition: templateContents.mitumba.valueProposition[language] || templateContents.mitumba.valueProposition.en,
+        keyPartners: templateContents.mitumba.keyPartners[language] || templateContents.mitumba.keyPartners.en,
+        marketingApproach: templateContents.mitumba.marketingApproach[language] || templateContents.mitumba.marketingApproach.en,
+        operationalNeeds: templateContents.mitumba.operationalNeeds[language] || templateContents.mitumba.operationalNeeds.en,
+        growthGoals: templateContents.mitumba.growthGoals[language] || templateContents.mitumba.growthGoals.en,
+      }
     },
     {
       id: 'auto-repair',
-      name: language === 'sw' ? 'Huduma za Ukarabati wa Magari' : language === 'ar' ? 'خدمات إصلاح السيارات' : language === 'fr' ? 'Services de Réparation Auto' : 'Auto Repair Services',
-      description: language === 'sw' ? 'Ukarabati na matengenezo ya magari' : language === 'ar' ? 'إصلاح وصيانة السيارات' : language === 'fr' ? 'Réparation et entretien automobile' : 'Vehicle repair and maintenance',
-      content: getTranslatedContent('auto-repair', language)
+      name: 'Auto Repair Shop',
+      description: language === 'sw' ? 'Biashara ya ukarabati wa magari' :
+                  language === 'ar' ? 'ورشة إصلاح السيارات' :
+                  language === 'fr' ? 'Atelier de réparation automobile' :
+                  'Automotive repair and maintenance business',
+      content: {
+        vision: templateContents['auto-repair'].vision[language] || templateContents['auto-repair'].vision.en,
+        mission: templateContents['auto-repair'].mission[language] || templateContents['auto-repair'].mission.en,
+        targetMarket: templateContents['auto-repair'].targetMarket[language] || templateContents['auto-repair'].targetMarket.en,
+        revenueModel: templateContents['auto-repair'].revenueModel[language] || templateContents['auto-repair'].revenueModel.en,
+        valueProposition: templateContents['auto-repair'].valueProposition[language] || templateContents['auto-repair'].valueProposition.en,
+        keyPartners: templateContents['auto-repair'].keyPartners[language] || templateContents['auto-repair'].keyPartners.en,
+        marketingApproach: templateContents['auto-repair'].marketingApproach[language] || templateContents['auto-repair'].marketingApproach.en,
+        operationalNeeds: templateContents['auto-repair'].operationalNeeds[language] || templateContents['auto-repair'].operationalNeeds.en,
+        growthGoals: templateContents['auto-repair'].growthGoals[language] || templateContents['auto-repair'].growthGoals.en,
+      }
     },
     {
-      id: 'boda-boda',
-      name: language === 'sw' ? 'Biashara ya Boda Boda' : language === 'ar' ? 'أعمال الدراجات النارية' : language === 'fr' ? 'Business de Moto-taxi' : 'Boda Boda Business',
-      description: language === 'sw' ? 'Usafiri wa boda boda na upeperishaji' : language === 'ar' ? 'نقل الدراجات النارية والتوصيل' : language === 'fr' ? 'Transport et livraison en moto-taxi' : 'Motorcycle transport and delivery',
-      content: getTranslatedContent('boda-boda', language)
+      id: 'cybercafe',
+      name: 'Cybercafe',
+      description: language === 'sw' ? 'Biashara ya huduma za mtandao na kompyuta' :
+                  language === 'ar' ? 'مقهى إنترنت وخدمات الكمبيوتر' :
+                  language === 'fr' ? 'Cybercafé et services informatiques' :
+                  'Internet cafe and computer services business',
+      content: {
+        vision: templateContents.cybercafe.vision[language] || templateContents.cybercafe.vision.en,
+        mission: templateContents.cybercafe.mission[language] || templateContents.cybercafe.mission.en,
+        targetMarket: templateContents.cybercafe.targetMarket[language] || templateContents.cybercafe.targetMarket.en,
+        revenueModel: templateContents.cybercafe.revenueModel[language] || templateContents.cybercafe.revenueModel.en,
+        valueProposition: templateContents.cybercafe.valueProposition[language] || templateContents.cybercafe.valueProposition.en,
+        keyPartners: templateContents.cybercafe.keyPartners[language] || templateContents.cybercafe.keyPartners.en,
+        marketingApproach: templateContents.cybercafe.marketingApproach[language] || templateContents.cybercafe.marketingApproach.en,
+        operationalNeeds: templateContents.cybercafe.operationalNeeds[language] || templateContents.cybercafe.operationalNeeds.en,
+        growthGoals: templateContents.cybercafe.growthGoals[language] || templateContents.cybercafe.growthGoals.en,
+      }
     },
     {
       id: 'agribusiness',
-      name: language === 'sw' ? 'Biashara ya Kilimo' : language === 'ar' ? 'الأعمال الزراعية' : language === 'fr' ? 'Agrobusiness' : 'Agribusiness',
-      description: language === 'sw' ? 'Kilimo, mifugo, na bidhaa za kilimo' : language === 'ar' ? 'الزراعة وتربية المواشي والمنتجات الزراعية' : language === 'fr' ? 'Agriculture, élevage et produits agricoles' : 'Farming, livestock, and agricultural products',
-      content: getTranslatedContent('agribusiness', language)
-    },
-    {
-      id: 'mobile-money',
-      name: language === 'sw' ? 'Wakala wa Pesa za Simu' : language === 'ar' ? 'وكيل الأموال المحمولة' : language === 'fr' ? 'Agent d\'Argent Mobile' : 'Mobile Money Agent',
-      description: language === 'sw' ? 'Huduma za kifedha za kielektroniki' : language === 'ar' ? 'الخدمات المالية الإلكترونية' : language === 'fr' ? 'Services financiers électroniques' : 'Electronic financial services',
-      content: getTranslatedContent('mobile-money', language)
-    },
-    {
-      id: 'real-estate',
-      name: language === 'sw' ? 'Wakala wa Mali Isiyohamishika' : language === 'ar' ? 'وكالة العقارات' : language === 'fr' ? 'Agence Immobilière' : 'Real Estate Agency',
-      description: language === 'sw' ? 'Uuzaji na kukodisha mali' : language === 'ar' ? 'بيع وتأجير العقارات' : language === 'fr' ? 'Vente et location immobilière' : 'Property sales and rentals',
-      content: getTranslatedContent('real-estate', language)
-    },
-    {
-      id: 'cleaning-services',
-      name: language === 'sw' ? 'Huduma za Usafi' : language === 'ar' ? 'خدمات التنظيف' : language === 'fr' ? 'Services de Nettoyage' : 'Cleaning Services',
-      description: language === 'sw' ? 'Usafi wa nyumba na makazi' : language === 'ar' ? 'تنظيف المنازل والمكاتب' : language === 'fr' ? 'Nettoyage de maisons et bureaux' : 'Home and office cleaning',
-      content: getTranslatedContent('cleaning-services', language)
-    },
-    {
-      id: 'event-planning',
-      name: language === 'sw' ? 'Upangaji wa Matukio' : language === 'ar' ? 'تنظيم الفعاليات' : language === 'fr' ? 'Organisation d\'Événements' : 'Event Planning',
-      description: language === 'sw' ? 'Kupanga harusi, sherehe na matukio' : language === 'ar' ? 'تنظيم الأعراس والحفلات والفعاليات' : language === 'fr' ? 'Organisation de mariages, fêtes et événements' : 'Weddings, parties, and celebrations',
-      content: getTranslatedContent('event-planning', language)
-    },
-    {
-      id: 'photography',
-      name: language === 'sw' ? 'Upigaji Picha na Video' : language === 'ar' ? 'التصوير الفوتوغرافي والفيديو' : language === 'fr' ? 'Photographie et Vidéographie' : 'Photography & Videography',
-      description: language === 'sw' ? 'Huduma za upigaji picha na video' : language === 'ar' ? 'خدمات التصوير الفوتوغرافي والفيديو' : language === 'fr' ? 'Services de photographie et vidéographie' : 'Professional photo and video services',
-      content: getTranslatedContent('photography', language)
-    },
-    {
-      id: 'food-delivery',
-      name: language === 'sw' ? 'Huduma za Upeperishaji Chakula' : language === 'ar' ? 'خدمات توصيل الطعام' : language === 'fr' ? 'Services de Livraison de Nourriture' : 'Food Delivery Services',
-      description: language === 'sw' ? 'Upeperishaji wa chakula na vinywaji' : language === 'ar' ? 'توصيل الطعام والمشروبات' : language === 'fr' ? 'Livraison de nourriture et boissons' : 'Food and beverage delivery',
-      content: getTranslatedContent('food-delivery', language)
-    },
-    {
-      id: 'beauty-salon',
-      name: language === 'sw' ? 'Salon ya Urembo na Ukonyaji' : language === 'ar' ? 'صالون تجميل وحلاقة' : language === 'fr' ? 'Salon de Beauté et Coiffure' : 'Beauty Salon & Barber Shop',
-      description: language === 'sw' ? 'Huduma za urembo na unyolaji' : language === 'ar' ? 'خدمات التجميل والحلاقة' : language === 'fr' ? 'Services de beauté et coiffure' : 'Beauty and grooming services',
-      content: getTranslatedContent('beauty-salon', language)
-    },
-    {
-      id: 'freelance-writing',
-      name: language === 'sw' ? 'Uandishi wa Kujitegemea' : language === 'ar' ? 'الكتابة المستقلة' : language === 'fr' ? 'Rédaction Freelance' : 'Freelance Writing & Content Creator',
-      description: language === 'sw' ? 'Uandishi na utengenezaji maudhui' : language === 'ar' ? 'الكتابة وإنشاء المحتوى' : language === 'fr' ? 'Rédaction et création de contenu' : 'Writing and content creation services',
-      content: getTranslatedContent('freelance-writing', language)
-    },
-    {
-      id: 'bakery',
-      name: language === 'sw' ? 'Biashara ya Mkate' : language === 'ar' ? 'مخبز' : language === 'fr' ? 'Boulangerie' : 'Bakery',
-      description: language === 'sw' ? 'Kuoka mkate na keki' : language === 'ar' ? 'خبز الخبز والكعك' : language === 'fr' ? 'Cuisson de pain et gâteaux' : 'Baking bread, cakes, and pastries',
-      content: getTranslatedContent('bakery', language)
-    },
-    {
-      id: 'tutoring',
-      name: language === 'sw' ? 'Huduma za Ufundishaji' : language === 'ar' ? 'خدمات التدريس' : language === 'fr' ? 'Services de Tutorat' : 'Tutoring Services',
-      description: language === 'sw' ? 'Mafunzo ya kibinafsi na darasa' : language === 'ar' ? 'التعليم الخاص والفصول الدراسية' : language === 'fr' ? 'Enseignement privé et cours' : 'Private lessons and academic support',
-      content: getTranslatedContent('tutoring', language)
-    },
-    {
-      id: 'fitness-training',
-      name: language === 'sw' ? 'Mazoezi ya Mwili' : language === 'ar' ? 'التدريب البدني' : language === 'fr' ? 'Entraînement Fitness' : 'Fitness Training',
-      description: language === 'sw' ? 'Mafunzo ya mazoezi na afya' : language === 'ar' ? 'تدريب اللياقة البدنية والصحة' : language === 'fr' ? 'Entraînement de fitness et santé' : 'Personal training and fitness coaching',
-      content: getTranslatedContent('fitness-training', language)
-    },
-    {
-      id: 'social-media',
-      name: language === 'sw' ? 'Huduma za Mitandao ya Kijamii' : language === 'ar' ? 'خدمات وسائل التواصل الاجتماعي' : language === 'fr' ? 'Services de Médias Sociaux' : 'Social Media Services',
-      description: language === 'sw' ? 'Usimamizi wa mitandao ya kijamii' : language === 'ar' ? 'إدارة وسائل التواصل الاجتماعي' : language === 'fr' ? 'Gestion des médias sociaux' : 'Social media management and marketing',
-      content: getTranslatedContent('social-media', language)
-    },
-    {
-      id: 'daycare',
-      name: language === 'sw' ? 'Huduma za Malezi ya Watoto' : language === 'ar' ? 'خدمات رعاية الأطفال' : language === 'fr' ? 'Services de Garde d\'Enfants' : 'Daycare Services',
-      description: language === 'sw' ? 'Malezi na uangalizi wa watoto' : language === 'ar' ? 'رعاية ومراقبة الأطفال' : language === 'fr' ? 'Garde et surveillance d\'enfants' : 'Child care and supervision',
-      content: getTranslatedContent('daycare', language)
-    },
-    {
-      id: 'cyber-cafe',
-      name: language === 'sw' ? 'Cyber Café' : language === 'ar' ? 'مقهى إنترنت' : language === 'fr' ? 'Cybercafé' : 'Cyber Café',
-      description: language === 'sw' ? 'Huduma za intaneti na kielektroniki' : language === 'ar' ? 'خدمات الإنترنت والإلكترونيات' : language === 'fr' ? 'Services internet et électroniques' : 'Internet and computer services',
-      content: getTranslatedContent('cyber-cafe', language)
+      name: 'Agribusiness',
+      description: language === 'sw' ? 'Biashara ya kilimo na mazao' :
+                  language === 'ar' ? 'الأعمال الزراعية والمنتجات' :
+                  language === 'fr' ? 'Agrobusiness et production agricole' :
+                  'Agricultural business and farming',
+      content: {
+        vision: templateContents.agribusiness.vision[language] || templateContents.agribusiness.vision.en,
+        mission: templateContents.agribusiness.mission[language] || templateContents.agribusiness.mission.en,
+        targetMarket: templateContents.agribusiness.targetMarket[language] || templateContents.agribusiness.targetMarket.en,
+        revenueModel: templateContents.agribusiness.revenueModel[language] || templateContents.agribusiness.revenueModel.en,
+        valueProposition: templateContents.agribusiness.valueProposition[language] || templateContents.agribusiness.valueProposition.en,
+        keyPartners: templateContents.agribusiness.keyPartners[language] || templateContents.agribusiness.keyPartners.en,
+        marketingApproach: templateContents.agribusiness.marketingApproach[language] || templateContents.agribusiness.marketingApproach.en,
+        operationalNeeds: templateContents.agribusiness.operationalNeeds[language] || templateContents.agribusiness.operationalNeeds.en,
+        growthGoals: templateContents.agribusiness.growthGoals[language] || templateContents.agribusiness.growthGoals.en,
+      }
     }
   ];
 
-  // Sort templates alphabetically by name
   const sortedTemplates = templates.sort((a, b) => a.name.localeCompare(b.name));
-  
   console.log('Template data generated:', sortedTemplates.length, 'templates');
   return sortedTemplates;
 };

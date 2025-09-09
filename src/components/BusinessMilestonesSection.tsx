@@ -289,7 +289,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     e?.preventDefault();
     const milestoneTitle = title || customMilestone.trim();
     
-    if (!milestoneTitle || milestoneTitle.trim() === '' || milestoneTitle === 'Select a milestone') {
+    if (!milestoneTitle || milestoneTitle.trim() === '') {
       console.log('Invalid milestone title:', milestoneTitle);
       toast({
         title: language === 'sw' ? 'Kosa' :
