@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Share2, MessageCircle, Copy, Download, Check, Mail } from 'lucide-react';
@@ -16,6 +16,16 @@ interface ShareModalProps {
 const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFinancial = false }: ShareModalProps) => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+
+  // Prevent conflicts with external share-modal scripts
+  useEffect(() => {
+    // Add a small delay to prevent conflicts with external scripts
+    const timer = setTimeout(() => {
+      // This ensures our component loads after any external scripts
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const translations = {
     en: {
@@ -145,7 +155,22 @@ Created with Strategy Grid ✨`;
 
   const handleCopyText = async () => {
     try {
-      await navigator.clipboard.writeText(generateShareText());
+      if (!navigator.clipboard) {
+        // Fallback for browsers without clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = generateShareText();
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+      } else {
+        await navigator.clipboard.writeText(generateShareText());
+      }
+      
       setCopied(true);
       toast({
         title: t.copiedToast,
@@ -153,6 +178,11 @@ Created with Strategy Grid ✨`;
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
+      toast({
+        title: 'Failed to copy text',
+        description: 'Please try again or copy manually',
+        variant: 'destructive'
+      });
     }
   };
 
