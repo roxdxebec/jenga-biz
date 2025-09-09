@@ -16,14 +16,24 @@ const Strategy = () => {
   useEffect(() => {
     if (strategyId) {
       // Load strategies and find the specific strategy to edit
-      loadStrategies().then(() => {
-        const strategyToEdit = strategies.find(s => s.id === strategyId);
-        if (strategyToEdit) {
-          setCurrentStrategy(strategyToEdit);
-        }
-      });
+      const loadStrategy = async () => {
+        await loadStrategies();
+        // Strategy will be found after loading completes
+      };
+      loadStrategy();
     }
-  }, [strategyId, loadStrategies, strategies, setCurrentStrategy]);
+  }, [strategyId, loadStrategies]);
+
+  // Separate effect to set current strategy when strategies are loaded
+  useEffect(() => {
+    if (strategyId && strategies.length > 0) {
+      const strategyToEdit = strategies.find(s => s.id === strategyId);
+      if (strategyToEdit) {
+        console.log('Setting current strategy for editing:', strategyToEdit);
+        setCurrentStrategy(strategyToEdit);
+      }
+    }
+  }, [strategyId, strategies, setCurrentStrategy]);
 
   const handleBack = () => {
     navigate(-1);

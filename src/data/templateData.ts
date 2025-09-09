@@ -193,119 +193,959 @@ const templateContents: { [key: string]: TemplateContent } = {
       en: 'Add specialized services (AC repair, bodywork), hire additional mechanics, expand workshop space, offer mobile repair services',
       sw: 'Kuongeza huduma maalum (ukarabati wa AC, kazi ya mwili), kuajiri mafundi zaidi, kupanua nafasi ya warsha, kutoa huduma za ukarabati wa simu',
       ar: 'إضافة خدمات متخصصة (إصلاح التكييف، أعمال الهيكل)، توظيف ميكانيكيين إضافيين، توسيع مساحة الورشة، تقديم خدمات الإصلاح المتنقلة',
-      fr: 'Ajouter des services spécialisés (réparation AC, carrosserie), embaucher des mécaniciens supplémentaires, agrandir l\'espace d\'atelier, offrir des services de réparation mobile'
+      fr: 'Ajouter des services spécialisés (réparation AC, carrosserie), embaucher des mécaniciens supplémentaires, agrandir l\'espace d\'atelier, offrir des services de réparation mobiles'
     }
   },
   'cybercafe': {
     vision: {
-      en: 'To be the leading digital services hub in our community, bridging the digital divide and empowering people with technology access',
-      sw: 'Kuwa kituo cha huduma za kidijitali kinachongoza katika jamii yetu, kiunganisha pengo la kidijitali na kuwezesha watu kupata teknolojia',
-      ar: 'أن نكون مركز الخدمات الرقمية الرائد في مجتمعنا، وسد الفجوة الرقمية وتمكين الناس من الوصول إلى التكنولوجيا',
-      fr: 'Être le centre de services numériques leader dans notre communauté, comblant la fracture numérique et donnant aux gens l\'accès à la technologie'
+      en: 'To bridge the digital divide by providing accessible technology services to our community',
+      sw: 'Kuunganisha pengo la kidijitali kwa kutoa huduma za teknolojia zinazoweza kupatikana kwa jamii yetu',
+      ar: 'ردم الفجوة الرقمية من خلال توفير خدمات تكنولوجية يمكن الوصول إليها لمجتمعنا',
+      fr: 'Combler la fracture numérique en fournissant des services technologiques accessibles à notre communauté'
     },
     mission: {
-      en: 'Providing affordable internet access, computer services, and digital literacy training to empower our community',
-      sw: 'Kutoa upatikanaji wa mtandao wa bei nafuu, huduma za kompyuta, na mafunzo ya ujuzi wa kidijitali ili kuwezesha jamii yetu',
-      ar: 'توفير الوصول إلى الإنترنت بأسعار معقولة وخدمات الكمبيوتر والتدريب على محو الأمية الرقمية لتمكين مجتمعنا',
-      fr: 'Fournir un accès Internet abordable, des services informatiques et une formation en littératie numérique pour autonomiser notre communauté'
+      en: 'Enabling digital literacy and connectivity through affordable computer and internet services',
+      sw: 'Kuwezesha ujuzi wa kidijitali na muunganisho kupitia huduma za kompyuta na mtandao za bei nafuu',
+      ar: 'تمكين محو الأمية الرقمية والاتصال من خلال خدمات الكمبيوتر والإنترنت بأسعار معقولة',
+      fr: 'Permettre l\'alphabétisation numérique et la connectivité grâce à des services informatiques et internet abordables'
     },
     targetMarket: {
-      en: 'Students, job seekers, small business owners, government service users, and individuals without home internet access',
-      sw: 'Wanafunzi, watafutaji kazi, wamiliki wa biashara ndogo, watumiaji wa huduma za serikali, na watu wasio na mtandao wa nyumbani',
-      ar: 'الطلاب، الباحثون عن عمل، أصحاب الأعمال الصغيرة، مستخدمو الخدمات الحكومية، والأفراد الذين لا يملكون إنترنت منزلي',
-      fr: 'Étudiants, demandeurs d\'emploi, propriétaires de petites entreprises, utilisateurs de services gouvernementaux et personnes sans accès Internet à domicile'
+      en: 'Students, small business owners, job seekers, elderly citizens, and tourists needing internet access',
+      sw: 'Wanafunzi, wamiliki wa biashara ndogo, wanaotafuta kazi, wazee, na watalii wanaohitaji kufikia mtandao',
+      ar: 'الطلاب، أصحاب الأعمال الصغيرة، الباحثون عن عمل، كبار السن، والسياح الذين يحتاجون للوصول للإنترنت',
+      fr: 'Étudiants, propriétaires de petites entreprises, demandeurs d\'emploi, personnes âgées et touristes ayant besoin d\'accès internet'
     },
     revenueModel: {
-      en: 'Internet access fees, printing services, document typing, computer training, mobile money services, phone charging',
-      sw: 'Ada za upatikanaji wa mtandao, huduma za kuchapisha, kuandika hati, mafunzo ya kompyuta, huduma za pesa za simu, kuchaji simu',
-      ar: 'رسوم الوصول إلى الإنترنت، خدمات الطباعة، كتابة المستندات، تدريب الكمبيوتر، خدمات الأموال المحمولة، شحن الهاتف',
-      fr: 'Frais d\'accès Internet, services d\'impression, saisie de documents, formation informatique, services d\'argent mobile, recharge de téléphone'
+      en: 'Computer rental by hour, printing and scanning services, typing services, internet packages, computer training',
+      sw: 'Ukodishaji wa kompyuta kwa saa, huduma za kuchapisha na kusoma, huduma za kuandika, vifurushi vya mtandao, mafunzo ya kompyuta',
+      ar: 'تأجير الحاسوب بالساعة، خدمات الطباعة والمسح الضوئي، خدمات الكتابة، حزم الإنترنت، تدريب الحاسوب',
+      fr: 'Location d\'ordinateurs à l\'heure, services d\'impression et de numérisation, services de frappe, forfaits internet, formation informatique'
     },
     valueProposition: {
-      en: 'Affordable rates, reliable internet, extended hours, additional services, friendly assistance, secure environment',
-      sw: 'Viwango vya bei nafuu, mtandao wa kutegemewa, masaa ya ziada, huduma za ziada, msaada wa kirafiki, mazingira salama',
-      ar: 'أسعار معقولة، إنترنت موثوق، ساعات ممتدة، خدمات إضافية، مساعدة ودية، بيئة آمنة',
-      fr: 'Tarifs abordables, Internet fiable, heures prolongées, services supplémentaires, assistance amicale, environnement sécurisé'
+      en: 'Fast internet, modern equipment, affordable rates, technical support, convenient location, flexible hours',
+      sw: 'Mtandao wa haraka, vifaa vya kisasa, viwango vya bei nafuu, msaada wa kiufundi, mahali pazuri, masaa ya kubadilika',
+      ar: 'إنترنت سريع، معدات حديثة، أسعار معقولة، دعم فني، موقع مناسب، ساعات مرنة',
+      fr: 'Internet rapide, équipement moderne, tarifs abordables, support technique, emplacement pratique, horaires flexibles'
     },
     keyPartners: {
-      en: 'Internet service providers, computer suppliers, software vendors, mobile money agents, stationery suppliers',
-      sw: 'Watoa huduma za mtandao, wasambazaji wa kompyuta, wachuuzi wa programu, mawakala wa pesa za simu, wasambazaji wa vifaa vya ofisi',
-      ar: 'مقدمو خدمات الإنترنت، موردو الكمبيوتر، بائعو البرمجيات، وكلاء الأموال المحمولة، موردو القرطاسية',
-      fr: 'Fournisseurs de services Internet, fournisseurs d\'ordinateurs, vendeurs de logiciels, agents d\'argent mobile, fournisseurs de papeterie'
+      en: 'Internet service providers, computer suppliers, software vendors, printing supplies, training institutions',
+      sw: 'Watoa huduma za mtandao, wasambazaji wa kompyuta, wauzaji wa programu, vifaa vya kuchapisha, taasisi za mafunzo',
+      ar: 'مقدمو خدمات الإنترنت، موردو الحاسوب، بائعو البرمجيات، مستلزمات الطباعة، مؤسسات التدريب',
+      fr: 'Fournisseurs de services internet, fournisseurs d\'ordinateurs, vendeurs de logiciels, fournitures d\'impression, institutions de formation'
     },
     marketingApproach: {
-      en: 'Community outreach, student discounts, referral programs, local partnerships, social media marketing',
-      sw: 'Kufikia jamii, punguzo za wanafunzi, mipango ya mapendekezo, ushirikiano wa mitaani, uuzaji wa mitandao ya kijamii',
-      ar: 'التواصل المجتمعي، خصومات الطلاب، برامج الإحالة، الشراكات المحلية، التسويق عبر وسائل التواصل الاجتماعي',
-      fr: 'Sensibilisation communautaire, remises étudiantes, programmes de parrainage, partenariats locaux, marketing sur les réseaux sociaux'
+      en: 'Local advertising, student discounts, business partnerships, community outreach, social media presence',
+      sw: 'Matangazo ya mitaani, punguzo za wanafunzi, ushirikiano wa biashara, kufikia jamii, uwepo wa mitandao ya kijamii',
+      ar: 'الإعلان المحلي، خصومات الطلاب، شراكات الأعمال، التواصل المجتمعي، الحضور على وسائل التواصل الاجتماعي',
+      fr: 'Publicité locale, remises étudiantes, partenariats commerciaux, sensibilisation communautaire, présence sur les réseaux sociaux'
     },
     operationalNeeds: {
-      en: 'Computers, internet connection, printers, furniture, security system, backup power, software licenses',
-      sw: 'Kompyuta, muunganisho wa mtandao, vichapishi, samani, mfumo wa usalama, nguvu za hifadhi, leseni za programu',
-      ar: 'أجهزة كمبيوتر، اتصال إنترنت، طابعات، أثاث، نظام أمان، طاقة احتياطية، تراخيص برمجيات',
-      fr: 'Ordinateurs, connexion Internet, imprimantes, mobilier, système de sécurité, alimentation de secours, licences logicielles'
+      en: 'Computers, printers, internet connection, UPS systems, furniture, air conditioning, security system',
+      sw: 'Kompyuta, mashine za kuchapisha, muunganisho wa mtandao, mifumo ya UPS, samani, hewa baridi, mfumo wa usalama',
+      ar: 'أجهزة كمبيوتر، طابعات، اتصال إنترنت، أنظمة UPS، أثاث، تكييف هواء، نظام أمني',
+      fr: 'Ordinateurs, imprimantes, connexion internet, systèmes UPS, mobilier, climatisation, système de sécurité'
     },
     growthGoals: {
-      en: 'Add gaming services, expand training programs, offer web design services, establish multiple locations',
-      sw: 'Kuongeza huduma za michezo, kupanua mipango ya mafunzo, kutoa huduma za kubuni tovuti, kuanzisha maeneo mengi',
-      ar: 'إضافة خدمات الألعاب، توسيع برامج التدريب، تقديم خدمات تصميم الويب، إنشاء مواقع متعددة',
-      fr: 'Ajouter des services de jeux, étendre les programmes de formation, offrir des services de conception Web, établir plusieurs emplacements'
+      en: 'Add training programs, expand to mobile services, offer web design, add gaming section, franchise model',
+      sw: 'Kuongeza mipango ya mafunzo, kupanua kwa huduma za simu, kutoa muundo wa wavuti, kuongeza sehemu ya mchezo, mfano wa franchise',
+      ar: 'إضافة برامج تدريبية، التوسع للخدمات المحمولة، تقديم تصميم المواقع، إضافة قسم الألعاب، نموذج الامتياز',
+      fr: 'Ajouter des programmes de formation, s\'étendre aux services mobiles, offrir la conception web, ajouter une section jeux, modèle de franchise'
     }
   },
   'agribusiness': {
     vision: {
-      en: 'To be a leading sustainable agricultural enterprise that feeds communities while preserving the environment',
-      sw: 'Kuwa shirika la kilimo endelevu linalongoza ambalo linalisisha jamii huku likilinda mazingira',
+      en: 'To be a leading sustainable agriculture enterprise that feeds communities while preserving the environment',
+      sw: 'Kuwa shirika la kilimo endelevu linalongoza linalolisha jamii huku likihifadhi mazingira',
       ar: 'أن نكون مؤسسة زراعية مستدامة رائدة تطعم المجتمعات مع الحفاظ على البيئة',
       fr: 'Être une entreprise agricole durable de premier plan qui nourrit les communautés tout en préservant l\'environnement'
     },
     mission: {
-      en: 'Producing high-quality crops using sustainable farming practices to provide nutritious food and create employment',
-      sw: 'Kuzalisha mazao ya ubora wa juu kwa kutumia mbinu za kilimo endelevu kutoa chakula chenye vitamini na kuunda ajira',
-      ar: 'إنتاج محاصيل عالية الجودة باستخدام ممارسات زراعية مستدامة لتوفير غذاء مغذي وخلق فرص عمل',
-      fr: 'Produire des cultures de haute qualité en utilisant des pratiques agricoles durables pour fournir des aliments nutritifs et créer des emplois'
+      en: 'Producing high-quality crops using sustainable farming practices that benefit farmers, consumers, and the environment',
+      sw: 'Kuzalisha mazao ya ubora wa juu kwa kutumia mbinu za kilimo endelevu zinazofaidika wakulima, watumiaji, na mazingira',
+      ar: 'إنتاج محاصيل عالية الجودة باستخدام ممارسات زراعية مستدامة تفيد المزارعين والمستهلكين والبيئة',
+      fr: 'Produire des cultures de haute qualité en utilisant des pratiques agricoles durables qui profitent aux agriculteurs, aux consommateurs et à l\'environnement'
     },
     targetMarket: {
-      en: 'Local markets, restaurants, schools, food processors, export markets, agricultural cooperatives',
-      sw: 'Masoko ya mitaani, migahawa, shule, wasindikaji wa chakula, masoko ya nje, vyama vya ushirika wa kilimo',
-      ar: 'الأسواق المحلية، المطاعم، المدارس، معالجات الأغذية، أسواق التصدير، التعاونيات الزراعية',
-      fr: 'Marchés locaux, restaurants, écoles, transformateurs alimentaires, marchés d\'exportation, coopératives agricoles'
+      en: 'Local markets, supermarket chains, food processors, restaurants, export markets, and direct consumers',
+      sw: 'Masoko ya mitaani, minyororo ya maduka makuu, wachakataji wa chakula, migahawa, masoko ya nje, na watumiaji wa moja kwa moja',
+      ar: 'الأسواق المحلية، سلاسل السوبر ماركت، معالجات الأغذية، المطاعم، أسواق التصدير، والمستهلكون المباشرون',
+      fr: 'Marchés locaux, chaînes de supermarchés, transformateurs alimentaires, restaurants, marchés d\'exportation et consommateurs directs'
     },
     revenueModel: {
-      en: 'Direct crop sales, wholesale to distributors, farm-to-table services, value-added processing, contract farming',
-      sw: 'Mauzo ya moja kwa moja ya mazao, jumla kwa wasambazaji, huduma za kutoka shambani hadi mezani, usindikaji wa kuongeza thamani, kilimo cha mkataba',
-      ar: 'مبيعات المحاصيل المباشرة، البيع بالجملة للموزعين، خدمات من المزرعة إلى المائدة، المعالجة ذات القيمة المضافة، الزراعة التعاقدية',
-      fr: 'Ventes directes de cultures, vente en gros aux distributeurs, services de la ferme à la table, transformation à valeur ajoutée, agriculture contractuelle'
+      en: 'Crop sales, value-added products, agro-processing, farm consulting, equipment rental, training services',
+      sw: 'Mauzo ya mazao, bidhaa za thamani iliyoongezwa, usindikaji wa kilimo, ushauri wa shamba, ukodishaji wa vifaa, huduma za mafunzo',
+      ar: 'مبيعات المحاصيل، المنتجات ذات القيمة المضافة، المعالجة الزراعية، الاستشارات الزراعية، تأجير المعدات، خدمات التدريب',
+      fr: 'Ventes de cultures, produits à valeur ajoutée, agro-transformation, conseil agricole, location d\'équipement, services de formation'
     },
     valueProposition: {
-      en: 'Fresh, organic produce, sustainable farming methods, reliable supply, competitive pricing, local sourcing',
-      sw: 'Mazao mazuri na mazuri, mbinu za kilimo endelevu, ugavi wa kutegemewa, bei za ushindani, vyanzo vya mitaani',
-      ar: 'منتجات طازجة وعضوية، طرق زراعة مستدامة، إمداد موثوق، أسعار تنافسية، مصادر محلية',
-      fr: 'Produits frais et biologiques, méthodes de culture durables, approvisionnement fiable, prix compétitifs, approvisionnement local'
+      en: 'Organic produce, sustainable practices, reliable supply, competitive pricing, traceability, technical expertise',
+      sw: 'Mazao ya asili, mbinu endelevu, ugavi wa kutegemewa, bei za ushindani, ufuatiliaji, ujuzi wa kiufundi',
+      ar: 'المنتجات العضوية، الممارسات المستدامة، الإمداد الموثوق، التسعير التنافسي، القابلية للتتبع، الخبرة التقنية',
+      fr: 'Produits biologiques, pratiques durables, approvisionnement fiable, prix compétitifs, traçabilité, expertise technique'
     },
     keyPartners: {
-      en: 'Agricultural input suppliers, irrigation companies, equipment dealers, agricultural extension services, cooperatives',
-      sw: 'Wasambazaji wa vitu vya kilimo, makampuni ya umwagiliaji, wachuuzi wa vifaa, huduma za upanuzi wa kilimo, vyama vya ushirika',
-      ar: 'موردو المدخلات الزراعية، شركات الري، تجار المعدات، خدمات الإرشاد الزراعي، التعاونيات',
-      fr: 'Fournisseurs d\'intrants agricoles, entreprises d\'irrigation, concessionnaires d\'équipements, services de vulgarisation agricole, coopératives'
+      en: 'Seed suppliers, fertilizer companies, equipment dealers, buyers, cooperatives, research institutions',
+      sw: 'Wauzaji wa mbegu, makampuni ya mbolea, wachuuzi wa vifaa, wanunuzi, ushirikiano, taasisi za utafiti',
+      ar: 'موردو البذور، شركات الأسمدة، تجار المعدات، المشترون، التعاونيات، مؤسسات البحث',
+      fr: 'Fournisseurs de semences, compagnies d\'engrais, concessionnaires d\'équipement, acheteurs, coopératives, institutions de recherche'
     },
     marketingApproach: {
-      en: 'Direct relationships with buyers, farmers markets, online platforms, agricultural trade shows, word-of-mouth',
-      sw: 'Uhusiano wa moja kwa moja na wanunuzi, masoko ya wakulima, mifumo ya mtandaoni, maonyesho ya biashara ya kilimo, mdomo kwa mdomo',
-      ar: 'علاقات مباشرة مع المشترين، أسواق المزارعين، منصات عبر الإنترنت، معارض التجارة الزراعية، الكلام الشفهي',
-      fr: 'Relations directes avec les acheteurs, marchés fermiers, plateformes en ligne, salons commerciaux agricoles, bouche-à-oreille'
+      en: 'Direct sales, farmer cooperatives, digital marketing, trade shows, contract farming, sustainability certifications',
+      sw: 'Mauzo ya moja kwa moja, ushirikiano wa wakulima, uuzaji wa kidijitali, maonyesho ya biashara, kilimo cha mkataba, vyeti vya uendelevu',
+      ar: 'المبيعات المباشرة، تعاونيات المزارعين، التسويق الرقمي، المعارض التجارية، الزراعة التعاقدية، شهادات الاستدامة',
+      fr: 'Ventes directes, coopératives d\'agriculteurs, marketing numérique, salons professionnels, agriculture contractuelle, certifications de durabilité'
     },
     operationalNeeds: {
-      en: 'Land, seeds, fertilizers, irrigation system, farming equipment, storage facilities, transportation, workers',
-      sw: 'Ardhi, mbegu, mbolea, mfumo wa umwagiliaji, vifaa vya kilimo, vifaa vya kuhifadhi, usafiri, wafanyakazi',
-      ar: 'الأرض، البذور، الأسمدة، نظام الري، معدات الزراعة، مرافق التخزين، النقل، العمال',
-      fr: 'Terrain, graines, engrais, système d\'irrigation, équipement agricole, installations de stockage, transport, travailleurs'
+      en: 'Farm land, seeds, fertilizers, irrigation systems, storage facilities, transportation, processing equipment',
+      sw: 'Ardhi ya shamba, mbegu, mbolea, mifumo ya umwagiliaji, vituo vya uhifadhi, usafiri, vifaa vya usindikaji',
+      ar: 'أراضي زراعية، بذور، أسمدة، أنظمة ري، مرافق تخزين، نقل، معدات معالجة',
+      fr: 'Terres agricoles, semences, engrais, systèmes d\'irrigation, installations de stockage, transport, équipement de transformation'
     },
     growthGoals: {
       en: 'Expand acreage, add greenhouse farming, diversify crops, establish processing facility, enter export markets',
       sw: 'Kupanua eneo, kuongeza kilimo cha bustani, kutofautisha mazao, kuanzisha kituo cha usindikaji, kuingia masoko ya nje',
       ar: 'توسيع المساحة، إضافة الزراعة المحمية، تنويع المحاصيل، إنشاء مرفق معالجة، دخول أسواق التصدير',
       fr: 'Étendre la superficie, ajouter la culture en serre, diversifier les cultures, établir une installation de traitement, entrer sur les marchés d\'exportation'
+    }
+  },
+  'restaurant': {
+    vision: {
+      en: 'To become the most beloved dining destination in our community',
+      sw: 'Kuwa mahali pa chakula penye kupendwa zaidi katika jamii yetu',
+      ar: 'أن نصبح وجهة الطعام الأكثر حبًا في مجتمعنا',
+      fr: 'Devenir la destination culinaire la plus appréciée de notre communauté'
+    },
+    mission: {
+      en: 'Serving delicious, fresh meals with exceptional hospitality',
+      sw: 'Kutoa chakula kitamu na kipya kwa ukarimu wa kipekee',
+      ar: 'تقديم وجبات لذيذة وطازجة بضيافة استثنائية',
+      fr: 'Servir des repas délicieux et frais avec une hospitalité exceptionnelle'
+    },
+    targetMarket: {
+      en: 'Local residents, office workers, families, tourists',
+      sw: 'Wakazi wa mitaani, wafanyakazi wa ofisi, familia, watalii',
+      ar: 'السكان المحليون، موظفو المكاتب، العائلات، السياح',
+      fr: 'Résidents locaux, employés de bureau, familles, touristes'
+    },
+    revenueModel: {
+      en: 'Food sales, beverages, catering services, delivery',
+      sw: 'Mauzo ya chakula, vinywaji, huduma za chakula, utoaji',
+      ar: 'مبيعات الطعام، المشروبات، خدمات التموين، التوصيل',
+      fr: 'Ventes de nourriture, boissons, services de restauration, livraison'
+    },
+    valueProposition: {
+      en: 'Fresh ingredients, authentic flavors, excellent service',
+      sw: 'Viungo vipya, ladha halisi, huduma bora',
+      ar: 'مكونات طازجة، نكهات أصيلة، خدمة ممتازة',
+      fr: 'Ingrédients frais, saveurs authentiques, excellent service'
+    },
+    keyPartners: {
+      en: 'Food suppliers, delivery services, local farmers',
+      sw: 'Wauzaji wa chakula, huduma za utoaji, wakulima wa mitaani',
+      ar: 'موردو الطعام، خدمات التوصيل، المزارعون المحليون',
+      fr: 'Fournisseurs alimentaires, services de livraison, agriculteurs locaux'
+    },
+    marketingApproach: {
+      en: 'Social media, local advertising, customer referrals',
+      sw: 'Mitandao ya kijamii, matangazo ya mitaani, mapendekezo ya wateja',
+      ar: 'وسائل التواصل الاجتماعي، الإعلان المحلي، إحالات العملاء',
+      fr: 'Médias sociaux, publicité locale, références clients'
+    },
+    operationalNeeds: {
+      en: 'Kitchen equipment, dining furniture, POS system',
+      sw: 'Vifaa vya jikoni, samani za chakula, mfumo wa POS',
+      ar: 'معدات المطبخ، أثاث الطعام، نظام نقطة البيع',
+      fr: 'Équipement de cuisine, mobilier de salle à manger, système POS'
+    },
+    growthGoals: {
+      en: 'Expand menu, add catering, open second location',
+      sw: 'Kupanua menyu, kuongeza chakula, kufungua mahali pa pili',
+      ar: 'توسيع القائمة، إضافة التموين، افتتاح موقع ثاني',
+      fr: 'Élargir le menu, ajouter la restauration, ouvrir un deuxième emplacement'
+    }
+  },
+  'salon': {
+    vision: {
+      en: 'To be the premier beauty destination for modern African women',
+      sw: 'Kuwa mahali pa urembo pa kwanza kwa wanawake wa Kiafrika wa kisasa',
+      ar: 'أن نكون الوجهة الأولى للجمال للنساء الأفريقيات العصريات',
+      fr: 'Être la destination beauté de premier plan pour les femmes africaines modernes'
+    },
+    mission: {
+      en: 'Enhancing natural beauty through professional services',
+      sw: 'Kuboresha uzuri wa asili kupitia huduma za kitaalamu',
+      ar: 'تعزيز الجمال الطبيعي من خلال خدمات احترافية',
+      fr: 'Sublimer la beauté naturelle grâce à des services professionnels'
+    },
+    targetMarket: {
+      en: 'Women aged 18-50, professionals, brides, students',
+      sw: 'Wanawake wenye umri wa miaka 18-50, wataalamu, wake wa harusi, wanafunzi',
+      ar: 'النساء من 18 إلى 50 سنة، المحترفات، العرائس، الطالبات',
+      fr: 'Femmes de 18 à 50 ans, professionnelles, mariées, étudiantes'
+    },
+    revenueModel: {
+      en: 'Hair services, makeup, manicures, beauty products',
+      sw: 'Huduma za nywele, mapambo, manicures, bidhaa za urembo',
+      ar: 'خدمات الشعر، المكياج، العناية بالأظافر، منتجات التجميل',
+      fr: 'Services capillaires, maquillage, manucures, produits de beauté'
+    },
+    valueProposition: {
+      en: 'Professional stylists, quality products, affordable prices',
+      sw: 'Wasanii wa kitaalamu, bidhaa za ubora, bei nafuu',
+      ar: 'مصممون محترفون، منتجات ذات جودة، أسعار معقولة',
+      fr: 'Stylists professionnels, produits de qualité, prix abordables'
+    },
+    keyPartners: {
+      en: 'Beauty product suppliers, equipment vendors',
+      sw: 'Wauzaji wa bidhaa za urembo, wauzaji wa vifaa',
+      ar: 'موردو منتجات التجميل، بائعو المعدات',
+      fr: 'Fournisseurs de produits de beauté, vendeurs d\'équipements'
+    },
+    marketingApproach: {
+      en: 'Social media showcases, referral programs, partnerships',
+      sw: 'Maonyesho ya mitandao ya kijamii, mipango ya rufaa, ushirikiano',
+      ar: 'عروض وسائل التواصل الاجتماعي، برامج الإحالة، شراكات',
+      fr: 'Présentations sur les réseaux sociaux, programmes de parrainage, partenariats'
+    },
+    operationalNeeds: {
+      en: 'Salon chairs, styling tools, beauty products, mirrors',
+      sw: 'Viti vya salon, zana za mtindo, bidhaa za urembo, vioo',
+      ar: 'كراسي الصالون، أدوات التصفيف، منتجات التجميل، مرايا',
+      fr: 'Chaises de salon, outils de coiffure, produits de beauté, miroirs'
+    },
+    growthGoals: {
+      en: 'Add spa services, hire more stylists, launch product line',
+      sw: 'Ongeza huduma za spa, ajiri wasanii zaidi, anzisha mstari wa bidhaa',
+      ar: 'إضافة خدمات السبا، توظيف مصممين إضافيين، إطلاق خط منتجات',
+      fr: 'Ajouter des services de spa, embaucher plus de stylistes, lancer une ligne de produits'
+    }
+  },
+  'grocery': {
+    vision: {
+      en: 'To be the neighborhood\'s trusted source for fresh groceries',
+      sw: 'Kuwa chanzo kinachoaminika cha bidhaa safi za nyumbani',
+      ar: 'أن نكون المصدر الموثوق للبقالة الطازجة في الحي',
+      fr: 'Être la source de confiance du quartier pour les produits frais'
+    },
+    mission: {
+      en: 'Providing fresh, quality groceries at affordable prices',
+      sw: 'Kutoa bidhaa safi na za ubora kwa bei nafuu',
+      ar: 'توفير بقالة طازجة وعالية الجودة بأسعار معقولة',
+      fr: 'Fournir des produits frais et de qualité à des prix abordables'
+    },
+    targetMarket: {
+      en: 'Local households, working families, small businesses',
+      sw: 'Nyumba za mitaani, familia zinazofanya kazi, biashara ndogo',
+      ar: 'الأسر المحلية، العائلات العاملة، الشركات الصغيرة',
+      fr: 'Ménages locaux, familles actives, petites entreprises'
+    },
+    revenueModel: {
+      en: 'Retail sales, bulk purchases, home delivery',
+      sw: 'Mauzo ya rejareja, ununuzi wa jumla, utoaji nyumbani',
+      ar: 'مبيعات التجزئة، الشراء بالجملة، التوصيل إلى المنزل',
+      fr: 'Ventes au détail, achats en gros, livraison à domicile'
+    },
+    valueProposition: {
+      en: 'Fresh products, competitive prices, convenient location',
+      sw: 'Bidhaa safi, bei za ushindani, mahali panapofaa',
+      ar: 'منتجات طازجة، أسعار تنافسية، موقع ملائم',
+      fr: 'Produits frais, prix compétitifs, emplacement pratique'
+    },
+    keyPartners: {
+      en: 'Wholesalers, local farmers, delivery services',
+      sw: 'Wauzaji wa jumla, wakulima wa mitaani, huduma za utoaji',
+      ar: 'تجار الجملة، المزارعون المحليون، خدمات التوصيل',
+      fr: 'Grossistes, agriculteurs locaux, services de livraison'
+    },
+    marketingApproach: {
+      en: 'Community engagement, loyalty programs, promotions',
+      sw: 'Ushirikiano wa jamii, mipango ya uaminifu, matangazo',
+      ar: 'مشاركة المجتمع، برامج الولاء، العروض الترويجية',
+      fr: 'Engagement communautaire, programmes de fidélité, promotions'
+    },
+    operationalNeeds: {
+      en: 'Shelving, refrigeration, POS system, inventory',
+      sw: 'Rafu, friji, mfumo wa POS, hesabu',
+      ar: 'أرفف، تبريد، نظام نقاط البيع، المخزون',
+      fr: 'Étagères, réfrigération, système POS, inventaire'
+    },
+    growthGoals: {
+      en: 'Expand product range, add delivery service, open branches',
+      sw: 'Kupanua aina za bidhaa, kuongeza huduma ya utoaji, kufungua matawi',
+      ar: 'توسيع نطاق المنتجات، إضافة خدمة التوصيل، فتح فروع',
+      fr: 'Élargir la gamme de produits, ajouter un service de livraison, ouvrir des succursales'
+    }
+  },
+  'tailoring': {
+    vision: {
+      en: 'To be the go-to tailor for quality custom clothing',
+      sw: 'Kuwa mshonaji wa kwanza kwa nguo za ubora wa hali ya juu',
+      ar: 'أن نكون الخياط المفضل للملابس المخصصة عالية الجودة',
+      fr: 'Être le tailleur de référence pour des vêtements sur mesure de qualité'
+    },
+    mission: {
+      en: 'Creating beautiful, well-fitted clothing for every occasion',
+      sw: 'Kutengeneza nguo nzuri na zinazofaa kwa kila tukio',
+      ar: 'صنع ملابس جميلة ومناسبة لكل مناسبة',
+      fr: 'Créer des vêtements beaux et bien ajustés pour chaque occasion'
+    },
+    targetMarket: {
+      en: 'Professionals, students, fashion-conscious individuals',
+      sw: 'Wataalamu, wanafunzi, watu wanaojali mtindo',
+      ar: 'المحترفون، الطلاب، الأفراد المهتمون بالموضة',
+      fr: 'Professionnels, étudiants, personnes soucieuses de la mode'
+    },
+    revenueModel: {
+      en: 'Custom tailoring, alterations, uniform contracts',
+      sw: 'Ushonaji maalum, marekebisho, mikataba ya sare',
+      ar: 'الخياطة المخصصة، التعديلات، عقود الزي الرسمي',
+      fr: 'Confection sur mesure, retouches, contrats d\'uniformes'
+    },
+    valueProposition: {
+      en: 'Perfect fit, quality craftsmanship, timely delivery',
+      sw: 'Ulinganifu kamili, ufundi wa ubora, utoaji kwa wakati',
+      ar: 'مقاس مثالي، حرفة عالية الجودة، تسليم في الوقت المحدد',
+      fr: 'Ajustement parfait, savoir-faire de qualité, livraison ponctuelle'
+    },
+    keyPartners: {
+      en: 'Fabric suppliers, sewing machine vendors, dry cleaners',
+      sw: 'Wauzaji wa vitambaa, wauzaji wa mashine za kushona, wavuvi wa nguo',
+      ar: 'موردو الأقمشة، بائعو ماكينات الخياطة، منظفو الملابس',
+      fr: 'Fournisseurs de tissus, vendeurs de machines à coudre, pressings'
+    },
+    marketingApproach: {
+      en: 'Word of mouth, social media, fashion shows',
+      sw: 'Maneno ya mdomo, mitandao ya kijamii, maonyesho ya mitindo',
+      ar: 'الكلام الشفهي، وسائل التواصل الاجتماعي، عروض الأزياء',
+      fr: 'Bouche à oreille, réseaux sociaux, défilés de mode'
+    },
+    operationalNeeds: {
+      en: 'Sewing machines, measuring tools, fabric inventory',
+      sw: 'Mashine za kushona, zana za kupima, hesabu ya vitambaa',
+      ar: 'ماكينات الخياطة، أدوات القياس، مخزون الأقمشة',
+      fr: 'Machines à coudre, outils de mesure, inventaire de tissus'
+    },
+    growthGoals: {
+      en: 'Hire assistants, expand to ready-made clothes, online orders',
+      sw: 'Ajiri wasaidizi, panua kwa nguo tayari, maagizo mtandaoni',
+      ar: 'توظيف مساعدين، التوسع إلى الملابس الجاهزة، الطلبات عبر الإنترنت',
+      fr: 'Embaucher des assistants, étendre aux vêtements prêts-à-porter, commandes en ligne'
+    }
+  },
+  'boutique': {
+    vision: {
+      en: 'To be the premier fashion destination for style-conscious shoppers',
+      sw: 'Kuwa mahali pa kwanza kwa wanunuzi wanaojali mtindo',
+      ar: 'أن نكون الوجهة الأولى للأزياء للمتسوقين المهتمين بالأناقة',
+      fr: 'Être la destination mode de premier choix pour les acheteurs soucieux du style'
+    },
+    mission: {
+      en: 'Curating the latest fashion trends at accessible prices',
+      sw: 'Kuchagua mitindo ya hivi punde kwa bei zinazopatikana',
+      ar: 'تنسيق أحدث صيحات الموضة بأسعار معقولة',
+      fr: 'Sélectionner les dernières tendances de la mode à des prix accessibles'
+    },
+    targetMarket: {
+      en: 'Fashion-forward women, young professionals, teenagers',
+      sw: 'Wanawake wanaofuata mtindo, wataalamu vijana, vijana',
+      ar: 'النساء المهتمات بالموضة، المحترفون الشباب، المراهقون',
+      fr: 'Femmes à la mode, jeunes professionnels, adolescents'
+    },
+    revenueModel: {
+      en: 'Clothing sales, accessories, personal styling services',
+      sw: 'Mauzo ya mavazi, vifaa vya mtindo, huduma za mtindo binafsi',
+      ar: 'مبيعات الملابس، الإكسسوارات، خدمات تنسيق شخصية',
+      fr: 'Ventes de vêtements, accessoires, services de stylisme personnel'
+    },
+    valueProposition: {
+      en: 'Trendy styles, affordable luxury, personalized service',
+      sw: 'Mitindo ya mtindo, anasa la bei nafuu, huduma binafsi',
+      ar: 'أنماط عصرية، رفاهية بأسعار معقولة، خدمة مخصصة',
+      fr: 'Styles tendance, luxe abordable, service personnalisé'
+    },
+    keyPartners: {
+      en: 'Fashion wholesalers, accessories suppliers, style influencers',
+      sw: 'Wauzaji wa rejareja wa mtindo, wasambazaji wa vifaa, watu wenye ushawishi wa mtindo',
+      ar: 'تجار الجملة للأزياء، موردي الإكسسوارات، المؤثرين في الموضة',
+      fr: 'Grossistes en mode, fournisseurs d\'accessoires, influenceurs de style'
+    },
+    marketingApproach: {
+      en: 'Social media, fashion events, influencer partnerships',
+      sw: 'Mitandao ya kijamii, matukio ya mtindo, ushirikiano na watu wenye ushawishi',
+      ar: 'وسائل التواصل الاجتماعي، فعاليات الموضة، شراكات مع المؤثرين',
+      fr: 'Réseaux sociaux, événements de mode, partenariats avec influenceurs'
+    },
+    operationalNeeds: {
+      en: 'Display fixtures, inventory, fitting rooms, POS',
+      sw: 'Vifaa vya kuonyesha, hesabu, vyumba vya kupima, mfumo wa POS',
+      ar: 'تركيبات عرض، مخزون، غرف قياس، نظام نقاط البيع',
+      fr: 'Présentoirs, inventaire, cabines d\'essayage, système POS'
+    },
+    growthGoals: {
+      en: 'Launch online store, add menswear, expand accessories',
+      sw: 'Anzisha duka la mtandaoni, ongeza mavazi ya wanaume, panua vifaa',
+      ar: 'إطلاق متجر إلكتروني، إضافة ملابس رجالية، توسيع الإكسسوارات',
+      fr: 'Lancer une boutique en ligne, ajouter des vêtements pour hommes, élargir les accessoires'
+    }
+  },
+  'pharmacy': {
+    vision: {
+      en: 'To be the community\'s trusted healthcare partner',
+      sw: 'Kuwa mshirika wa afya anayeaminika katika jamii',
+      ar: 'أن نكون شريك الرعاية الصحية الموثوق به في المجتمع',
+      fr: 'Être le partenaire de santé de confiance de la communauté'
+    },
+    mission: {
+      en: 'Providing quality medicines and health advice to our community',
+      sw: 'Kutoa dawa za ubora na ushauri wa afya kwa jamii yetu',
+      ar: 'توفير أدوية ذات جودة ونصائح صحية لمجتمعنا',
+      fr: 'Fournir des médicaments de qualité et des conseils de santé à notre communauté'
+    },
+    targetMarket: {
+      en: 'Local residents, healthcare facilities, chronic patients',
+      sw: 'Wakazi wa mitaani, vituo vya afya, wagonjwa wa muda mrefu',
+      ar: 'المقيمون المحليون، مرافق الرعاية الصحية، المرضى المزمنون',
+      fr: 'Résidents locaux, établissements de santé, patients chroniques'
+    },
+    revenueModel: {
+      en: 'Prescription drugs, OTC medicines, health consultations',
+      sw: 'Dawa za agizo, dawa zisizo za agizo, ushauri wa afya',
+      ar: 'الأدوية بوصفة طبية، الأدوية بدون وصفة، الاستشارات الصحية',
+      fr: 'Médicaments sur ordonnance, médicaments en vente libre, consultations de santé'
+    },
+    valueProposition: {
+      en: 'Licensed pharmacist, quality medicines, health advice',
+      sw: 'Mtaalamu wa dawa aliyeidhinishwa, dawa za ubora, ushauri wa afya',
+      ar: 'صيدلي مرخص، أدوية ذات جودة، نصائح صحية',
+      fr: 'Pharmacien agréé, médicaments de qualité, conseils de santé'
+    },
+    keyPartners: {
+      en: 'Drug distributors, healthcare providers, insurance companies',
+      sw: 'Wasambazaji wa dawa, watoa huduma za afya, makampuni ya bima',
+      ar: 'موزعو الأدوية، مقدمو الرعاية الصحية، شركات التأمين',
+      fr: 'Distributeurs de médicaments, prestataires de soins, compagnies d\'assurance'
+    },
+    marketingApproach: {
+      en: 'Community health programs, doctor referrals, health talks',
+      sw: 'Mipango ya afya ya jamii, rufaa za madaktari, mazungumzo ya afya',
+      ar: 'برامج الصحة المجتمعية، إحالات الأطباء، محاضرات صحية',
+      fr: 'Programmes de santé communautaire, recommandations de médecins, conférences santé'
+    },
+    operationalNeeds: {
+      en: 'Drug storage, dispensing equipment, consultation room',
+      sw: 'Uhifadhi wa dawa, vifaa vya kugawa, chumba cha ushauri',
+      ar: 'تخزين الأدوية، معدات الصرف، غرفة الاستشارة',
+      fr: 'Stockage des médicaments, équipement de distribution, salle de consultation'
+    },
+    growthGoals: {
+      en: 'Add health screening, expand to medical supplies, home delivery',
+      sw: 'Ongeza uchunguzi wa afya, panua kwa vifaa vya matibabu, utoaji nyumbani',
+      ar: 'إضافة فحوصات صحية، التوسع في المستلزمات الطبية، التوصيل للمنازل',
+      fr: 'Ajouter le dépistage de santé, étendre aux fournitures médicales, livraison à domicile'
+    }
+  },
+  'electronics': {
+    vision: {
+      en: 'To be the leading electronics retailer in our area',
+      sw: 'Kuwa muuzaji mkuu wa vifaa vya umeme katika eneo letu',
+      ar: 'أن نكون بائع الإلكترونيات الرائد في منطقتنا',
+      fr: 'Être le principal détaillant d\'électronique dans notre région'
+    },
+    mission: {
+      en: 'Providing quality electronics with excellent after-sales service',
+      sw: 'Kutoa vifaa vya umeme vya ubora na huduma bora baada ya mauzo',
+      ar: 'توفير إلكترونيات عالية الجودة مع خدمة ما بعد البيع الممتازة',
+      fr: 'Fournir des produits électroniques de qualité avec un excellent service après-vente'
+    },
+    targetMarket: {
+      en: 'Tech enthusiasts, students, professionals, businesses',
+      sw: 'Wapenzi wa teknolojia, wanafunzi, wataalamu, biashara',
+      ar: 'محبو التكنولوجيا، الطلاب، المحترفون، الشركات',
+      fr: 'Passionnés de technologie, étudiants, professionnels, entreprises'
+    },
+    revenueModel: {
+      en: 'Electronics sales, repairs, accessories, warranties',
+      sw: 'Mauzo ya vifaa vya umeme, ukarabati, vifaa vya ziada, dhamana',
+      ar: 'مبيعات الإلكترونيات، الإصلاحات، الإكسسوارات، الضمانات',
+      fr: 'Ventes d\'électronique, réparations, accessoires, garanties'
+    },
+    valueProposition: {
+      en: 'Quality products, competitive prices, repair services',
+      sw: 'Bidhaa za ubora, bei za ushindani, huduma za ukarabati',
+      ar: 'منتجات ذات جودة، أسعار تنافسية، خدمات إصلاح',
+      fr: 'Produits de qualité, prix compétitifs, services de réparation'
+    },
+    keyPartners: {
+      en: 'Electronics suppliers, repair technicians, warranty providers',
+      sw: 'Wauzaji wa vifaa vya umeme, mafundi wa ukarabati, watoa dhamana',
+      ar: 'موردو الإلكترونيات، فنيي الإصلاح، مزودو الضمان',
+      fr: 'Fournisseurs d\'électronique, techniciens de réparation, fournisseurs de garantie'
+    },
+    marketingApproach: {
+      en: 'Digital marketing, tech demonstrations, customer reviews',
+      sw: 'Uuzaji wa kidijitali, maonyesho ya teknolojia, maoni ya wateja',
+      ar: 'التسويق الرقمي، عروض التكنولوجيا، مراجعات العملاء',
+      fr: 'Marketing digital, démonstrations technologiques, avis clients'
+    },
+    operationalNeeds: {
+      en: 'Display cases, repair tools, inventory, security system',
+      sw: 'Masanduku ya kuonyesha, zana za ukarabati, hesabu, mfumo wa usalama',
+      ar: 'حالات العرض، أدوات الإصلاح، المخزون، نظام الأمان',
+      fr: 'Vitrines, outils de réparation, inventaire, système de sécurité'
+    },
+    growthGoals: {
+      en: 'Add mobile repair services, expand online, franchise model',
+      sw: 'Ongeza huduma za ukarabati wa simu, panua mtandaoni, mfano wa leseni',
+      ar: 'إضافة خدمات إصلاح الهواتف المحمولة، التوسع عبر الإنترنت، نموذج الامتياز',
+      fr: 'Ajouter des services de réparation mobile, étendre en ligne, modèle de franchise'
+    }
+  },
+  'stationery': {
+    vision: {
+      en: 'To be the one-stop shop for all educational and office needs',
+      sw: 'Kuwa duka la kila kitu kwa mahitaji yote ya elimu na ofisi',
+      ar: 'أن نكون المتجر الشامل لجميع الاحتياجات التعليمية والمكتبية',
+      fr: 'Être la boutique unique pour tous les besoins éducatifs et de bureau'
+    },
+    mission: {
+      en: 'Supporting education and business with quality supplies',
+      sw: 'Kusaidia elimu na biashara kwa vifaa vya ubora',
+      ar: 'دعم التعليم والأعمال بمستلزمات ذات جودة',
+      fr: 'Soutenir l\'éducation et les affaires avec des fournitures de qualité'
+    },
+    targetMarket: {
+      en: 'Students, teachers, offices, small businesses',
+      sw: 'Wanafunzi, walimu, ofisi, biashara ndogo',
+      ar: 'الطلاب، المعلمون، المكاتب، الشركات الصغيرة',
+      fr: 'Étudiants, enseignants, bureaux, petites entreprises'
+    },
+    revenueModel: {
+      en: 'Stationery sales, printing services, bulk orders',
+      sw: 'Mauzo ya vifaa vya shule, huduma za uchapishaji, maagizo makubwa',
+      ar: 'مبيعات القرطاسية، خدمات الطباعة، الطلبات بالجملة',
+      fr: 'Ventes de papeterie, services d\'impression, commandes en gros'
+    },
+    valueProposition: {
+      en: 'Complete range, competitive prices, printing services',
+      sw: 'Aina kamili, bei za ushindani, huduma za uchapishaji',
+      ar: 'مجموعة كاملة، أسعار تنافسية، خدمات الطباعة',
+      fr: 'Gamme complète, prix compétitifs, services d\'impression'
+    },
+    keyPartners: {
+      en: 'Stationery wholesalers, printing suppliers, schools',
+      sw: 'Wauzaji wa rejareja wa vifaa, wasambazaji wa uchapishaji, shule',
+      ar: 'تجار الجملة للقرطاسية، موردي الطباعة، المدارس',
+      fr: 'Grossistes en papeterie, fournisseurs d\'impression, écoles'
+    },
+    marketingApproach: {
+      en: 'School partnerships, back-to-school promotions, bulk discounts',
+      sw: 'Ushirikiano wa shule, matangazo ya kurudi shuleni, punguzo la jumla',
+      ar: 'شراكات مدرسية، عروض العودة إلى المدرسة، خصومات بالجملة',
+      fr: 'Partenariats scolaires, promotions de rentrée, remises en gros'
+    },
+    operationalNeeds: {
+      en: 'Shelving, printing equipment, cash register, inventory',
+      sw: 'Rafu, vifaa vya uchapishaji, mashine ya fedha, hesabu',
+      ar: 'أرفف، معدات الطباعة، ماكينة تسجيل النقد، المخزون',
+      fr: 'Étagères, équipement d\'impression, caisse enregistreuse, inventaire'
+    },
+    growthGoals: {
+      en: 'Add photocopy services, expand to uniforms, online catalog',
+      sw: 'Ongeza huduma za kunakili, panua kwa sare, katalogi mtandaoni',
+      ar: 'إضافة خدمات النسخ، التوسع إلى الزي الرسمي، كتالوج عبر الإنترنت',
+      fr: 'Ajouter des services de photocopie, étendre aux uniformes, catalogue en ligne'
+    }
+  },
+  'mobile-money': {
+    vision: {
+      en: 'To be the most reliable mobile money service provider',
+      sw: 'Kuwa mtoa huduma wa pesa za simu anayeaminika zaidi',
+      ar: 'أن نكون مزود خدمة الأموال المحمولة الأكثر موثوقية',
+      fr: 'Être le fournisseur de services d\'argent mobile le plus fiable'
+    },
+    mission: {
+      en: 'Facilitating convenient and secure financial transactions',
+      sw: 'Kuwezesha miamala ya kifedha rahisi na salama',
+      ar: 'تسهيل المعاملات المالية المريحة والآمنة',
+      fr: 'Faciliter des transactions financières pratiques et sécurisées'
+    },
+    targetMarket: {
+      en: 'Local residents, small businesses, unbanked population',
+      sw: 'Wakazi wa mitaani, biashara ndogo, watu wasio na akaunti benki',
+      ar: 'المقيمون المحليون، الشركات الصغيرة، السكان غير المتعاملين مع البنوك',
+      fr: 'Résidents locaux, petites entreprises, population non bancarisée'
+    },
+    revenueModel: {
+      en: 'Transaction commissions, airtime sales, bill payments',
+      sw: 'Kamisheni za miamala, mauzo ya muda wa simu, malipo ya bili',
+      ar: 'عمولات المعاملات، مبيعات رصيد الهاتف، دفع الفواتير',
+      fr: 'Commissions sur transactions, ventes de crédit, paiements de factures'
+    },
+    valueProposition: {
+      en: 'Fast service, secure transactions, convenient location',
+      sw: 'Huduma ya haraka, miamala salama, mahali panapofaa',
+      ar: 'خدمة سريعة، معاملات آمنة، موقع ملائم',
+      fr: 'Service rapide, transactions sécurisées, emplacement pratique'
+    },
+    keyPartners: {
+      en: 'Mobile network operators, banks, utility companies',
+      sw: 'Watoa huduma za mtandao wa simu, benki, makampuni ya huduma',
+      ar: 'مشغلو شبكات الهاتف المحمول، البنوك، شركات المرافق',
+      fr: 'Opérateurs de réseau mobile, banques, compagnies de services publics'
+    },
+    marketingApproach: {
+      en: 'Community trust building, referral programs, visibility',
+      sw: 'Kujenga imani ya jamii, mipango ya rufaa, uonekano',
+      ar: 'بناء ثقة المجتمع، برامج الإحالة، الظهور',
+      fr: 'Renforcement de la confiance communautaire, programmes de parrainage, visibilité'
+    },
+    operationalNeeds: {
+      en: 'Mobile phones, cash float, secure storage, signage',
+      sw: 'Simu za mkononi, fedha za biashara, hifadhi salama, alama',
+      ar: 'هواتف محمولة، رأس مال نقدي، تخزين آمن، لافتات',
+      fr: 'Téléphones mobiles, fonds de caisse, stockage sécurisé, signalisation'
+    },
+    growthGoals: {
+      en: 'Add more services, increase float, train more agents',
+      sw: 'Ongeza huduma zaidi, ongeza fedha za biashara, funza mawakala zaidi',
+      ar: 'إضافة المزيد من الخدمات، زيادة رأس المال، تدريب المزيد من الوكلاء',
+      fr: 'Ajouter plus de services, augmenter le fonds de roulement, former plus d\'agents'
+    }
+  },
+  'barbershop': {
+    vision: {
+      en: 'To be the neighborhood\'s premier men\'s grooming destination',
+      sw: 'Kuwa mahali pa kwanza pa urembo wa wanaume katika mtaa',
+      ar: 'أن نكون الوجهة الأولى للعناية بالرجل في الحي',
+      fr: 'Être la destination de premier choix pour le toilettage masculin dans le quartier'
+    },
+    mission: {
+      en: 'Providing professional grooming services in a welcoming environment',
+      sw: 'Kutoa huduma za urembo za kitaalamu katika mazingira ya kukaribisha',
+      ar: 'تقديم خدمات العناية الشخصية المهنية في بيئة مرحبة',
+      fr: 'Fournir des services de toilettage professionnels dans un environnement accueillant'
+    },
+    targetMarket: {
+      en: 'Men of all ages, professionals, students, local residents',
+      sw: 'Wanaume wa rika zote, wataalamu, wanafunzi, wakazi wa mtaa',
+      ar: 'الرجال من جميع الأعمار، المحترفون، الطلاب، السكان المحليون',
+      fr: 'Hommes de tous âges, professionnels, étudiants, résidents locaux'
+    },
+    revenueModel: {
+      en: 'Haircuts, shaves, grooming products, membership packages',
+      sw: 'Kunyolewa nywele, kunyoa, bidhaa za urembo, vifurushi vya uanachama',
+      ar: 'قص الشعر، الحلاقة، منتجات العناية، باقات العضوية',
+      fr: 'Coupe de cheveux, rasage, produits de toilettage, forfaits d\'abonnement'
+    },
+    valueProposition: {
+      en: 'Skilled barbers, modern techniques, comfortable atmosphere',
+      sw: 'Wanyoa wenye ujuzi, mbinu za kisasa, mazingira ya starehe',
+      ar: 'حلاقون مهرة، تقنيات حديثة، جو مريح',
+      fr: 'Barbiers qualifiés, techniques modernes, ambiance confortable'
+    },
+    keyPartners: {
+      en: 'Grooming product suppliers, equipment vendors, local businesses',
+      sw: 'Wauzaji wa bidhaa za urembo, wauzaji wa vifaa, biashara za mtaa',
+      ar: 'موردو منتجات العناية، بائعو المعدات، الشركات المحلية',
+      fr: 'Fournisseurs de produits de toilettage, vendeurs d\'équipements, entreprises locales'
+    },
+    marketingApproach: {
+      en: 'Word of mouth, social media, community presence',
+      sw: 'Maneno ya mdomo, mitandao ya kijamii, uwepo wa jamii',
+      ar: 'الكلام الشفهي، وسائل التواصل الاجتماعي، الحضور المجتمعي',
+      fr: 'Bouche à oreille, réseaux sociaux, présence communautaire'
+    },
+    operationalNeeds: {
+      en: 'Barber chairs, grooming tools, mirrors, sound system',
+      sw: 'Viti vya kunyoa, zana za urembo, vioo, mfumo wa sauti',
+      ar: 'كراسي الحلاقة، أدوات العناية، مرايا، نظام صوتي',
+      fr: 'Chaises de barbier, outils de toilettage, miroirs, système sonore'
+    },
+    growthGoals: {
+      en: 'Add spa services, hire more barbers, launch grooming products',
+      sw: 'Ongeza huduma za spa, ajiri wanyoa zaidi, anzisha bidhaa za urembo',
+      ar: 'إضافة خدمات السبا، توظيف حلاقين أكثر، إطلاق منتجات العناية',
+      fr: 'Ajouter des services de spa, embaucher plus de barbiers, lancer des produits de toilettage'
+    }
+  },
+  'fitness': {
+    vision: {
+      en: 'To be the community\'s leading health and fitness destination',
+      sw: 'Kuwa mahali pa kwanza pa afya na mazoezi katika jamii',
+      ar: 'أن نكون الوجهة الرائدة للصحة واللياقة في المجتمع',
+      fr: 'Être la destination santé et fitness leader de la communauté'
+    },
+    mission: {
+      en: 'Promoting healthy lifestyles through fitness and wellness programs',
+      sw: 'Kukuza maisha yenye afya kupitia mazoezi na mipango ya ustawi',
+      ar: 'تعزيز أنماط الحياة الصحية من خلال برامج اللياقة والعافية',
+      fr: 'Promouvoir des modes de vie sains grâce à des programmes de fitness et bien-être'
+    },
+    targetMarket: {
+      en: 'Health-conscious individuals, professionals, athletes, seniors',
+      sw: 'Watu wanaojali afya, wataalamu, wanariadha, wazee',
+      ar: 'الأفراد المهتمون بالصحة، المحترفون، الرياضيون، كبار السن',
+      fr: 'Personnes soucieuses de leur santé, professionnels, athlètes, seniors'
+    },
+    revenueModel: {
+      en: 'Membership fees, personal training, group classes, nutrition plans',
+      sw: 'Ada za uanachama, mafunzo binafsi, madarasa ya kikundi, mipango ya lishe',
+      ar: 'رسوم العضوية، التدريب الشخصي، دروس جماعية، خطط تغذية',
+      fr: 'Frais d\'adhésion, entraînement personnel, cours collectifs, plans nutritionnels'
+    },
+    valueProposition: {
+      en: 'Modern equipment, certified trainers, flexible schedules',
+      sw: 'Vifaa vya kisasa, wakufunzi waliothibitishwa, ratiba zinazobadilika',
+      ar: 'معدات حديثة، مدربون معتمدون، جداول مرنة',
+      fr: 'Équipements modernes, entraîneurs certifiés, horaires flexibles'
+    },
+    keyPartners: {
+      en: 'Equipment suppliers, nutrition brands, health professionals',
+      sw: 'Wauzaji wa vifaa, chapa za lishe, wataalamu wa afya',
+      ar: 'موردو المعدات، علامات تجارية للتغذية، محترفو الصحة',
+      fr: 'Fournisseurs d\'équipement, marques de nutrition, professionnels de santé'
+    },
+    marketingApproach: {
+      en: 'Health campaigns, social media, referral programs, events',
+      sw: 'Kampeni za afya, mitandao ya kijamii, mipango ya rufaa, matukio',
+      ar: 'حملات صحية، وسائل التواصل الاجتماعي، برامج الإحالة، فعاليات',
+      fr: 'Campagnes de santé, réseaux sociaux, programmes de parrainage, événements'
+    },
+    operationalNeeds: {
+      en: 'Exercise equipment, changing rooms, sound system, mats',
+      sw: 'Vifaa vya mazoezi, vyumba vya kubadilisha nguo, mfumo wa sauti, mazulia',
+      ar: 'معدات التمرين، غرف تبديل الملابس، نظام صوت، حصائر',
+      fr: 'Équipements d\'exercice, vestiaires, système sonore, tapis'
+    },
+    growthGoals: {
+      en: 'Add nutrition center, expand classes, outdoor programs',
+      sw: 'Ongeza kituo cha lishe, panua madarasa, mipango ya nje',
+      ar: 'إضافة مركز تغذية، توسيع الفصول، برامج خارجية',
+      fr: 'Ajouter un centre de nutrition, étendre les cours, programmes en plein air'
+    }
+  },
+  'transport': {
+    vision: {
+      en: 'To be the most reliable transport service in our region',
+      sw: 'Kuwa huduma ya usafiri inayotegemewa zaidi katika eneo letu',
+      ar: 'أن نكون خدمة النقل الأكثر موثوقية في منطقتنا',
+      fr: 'Être le service de transport le plus fiable de notre région'
+    },
+    mission: {
+      en: 'Providing safe, comfortable, and timely transport solutions',
+      sw: 'Kutoa suluhisho za usafiri salama, za starehe, na kwa wakati',
+      ar: 'توفير حلول نقل آمنة ومريحة وفي الوقت المناسب',
+      fr: 'Fournir des solutions de transport sûres, confortables et ponctuelles'
+    },
+    targetMarket: {
+      en: 'Commuters, tourists, businesses, cargo clients',
+      sw: 'Wasafiri wa kila siku, watalii, biashara, wateja wa mizigo',
+      ar: 'المسافرون اليوميون، السياح، الشركات، عملاء الشحن',
+      fr: 'Navetteurs, touristes, entreprises, clients de fret'
+    },
+    revenueModel: {
+      en: 'Passenger fares, cargo fees, charter services, delivery',
+      sw: 'Ada za abiria, ada za mizigo, huduma za kukodisha, utoaji',
+      ar: 'أجرة الركاب، رسوم الشحن، خدمات الاستئجار، التوصيل',
+      fr: 'Tarifs passagers, frais de fret, services de location, livraison'
+    },
+    valueProposition: {
+      en: 'Reliable schedules, competitive rates, safety first',
+      sw: 'Ratiba za kuaminika, viwango vya ushindani, usalama kwanza',
+      ar: 'جداول موثوقة، أسعار تنافسية، السلامة أولاً',
+      fr: 'Horaires fiables, tarifs compétitifs, sécurité avant tout'
+    },
+    keyPartners: {
+      en: 'Fuel suppliers, mechanics, insurance companies, terminals',
+      sw: 'Wauzaji wa mafuta, mafundi, makampuni ya bima, vituo vya usafiri',
+      ar: 'موردو الوقود، الميكانيكيون، شركات التأمين، المحطات',
+      fr: 'Fournisseurs de carburant, mécaniciens, compagnies d\'assurance, terminaux'
+    },
+    marketingApproach: {
+      en: 'Route advertising, customer loyalty, partnerships',
+      sw: 'Matangazo ya njia, uaminifu wa wateja, ushirikiano',
+      ar: 'إعلانات الطرق، ولاء العملاء، الشراكات',
+      fr: 'Publicité sur les itinéraires, fidélisation client, partenariats'
+    },
+    operationalNeeds: {
+      en: 'Vehicles, fuel, maintenance tools, permits, insurance',
+      sw: 'Magari, mafuta, zana za matengenezo, vibali, bima',
+      ar: 'مركبات، وقود، أدوات صيانة، تصاريح، تأمين',
+      fr: 'Véhicules, carburant, outils d\'entretien, permis, assurance'
+    },
+    growthGoals: {
+      en: 'Expand routes, add vehicles, GPS tracking, mobile app',
+      sw: 'Kupanua njia, kuongeza magari, ufuatiliaji wa GPS, programu ya simu',
+      ar: 'توسيع الطرق، إضافة مركبات، تتبع GPS، تطبيق جوال',
+      fr: 'Étendre les itinéraires, ajouter des véhicules, suivi GPS, application mobile'
+    }
+  },
+  'laundry': {
+    vision: {
+      en: 'To be the most trusted laundry service in our community',
+      sw: 'Kuwa huduma ya kufulia inayotegemewa zaidi katika jamii yetu',
+      ar: 'أن نكون خدمة الغسيل الأكثر موثوقية في مجتمعنا',
+      fr: 'Être le service de blanchisserie le plus fiable de notre communauté'
+    },
+    mission: {
+      en: 'Providing professional laundry services with care and convenience',
+      sw: 'Kutoa huduma za kufulia za kitaalamu kwa uangalifu na urahisi',
+      ar: 'تقديم خدمات غسيل احترافية مع العناية والراحة',
+      fr: 'Fournir des services de blanchisserie professionnels avec soin et commodité'
+    },
+    targetMarket: {
+      en: 'Busy professionals, families, students, hotels, restaurants',
+      sw: 'Wataalamu wenye shughuli nyingi, familia, wanafunzi, hoteli, migahawa',
+      ar: 'المحترفون المشغولون، العائلات، الطلاب، الفنادق، المطاعم',
+      fr: 'Professionnels occupés, familles, étudiants, hôtels, restaurants'
+    },
+    revenueModel: {
+      en: 'Washing services, dry cleaning, ironing, pickup/delivery',
+      sw: 'Huduma za kufulia, kusafisha kavu, kupiga chupa, kuchukua/kutoa',
+      ar: 'خدمات الغسيل، التنظيف الجاف، الكي، الاستلام/التوصيل',
+      fr: 'Services de lavage, nettoyage à sec, repassage, collecte/livraison'
+    },
+    valueProposition: {
+      en: 'Quality cleaning, quick turnaround, competitive prices',
+      sw: 'Usafi wa ubora, mzunguko wa haraka, bei za ushindani',
+      ar: 'تنظيف عالي الجودة، سرعة التنفيذ، أسعار تنافسية',
+      fr: 'Nettoyage de qualité, délai rapide, prix compétitifs'
+    },
+    keyPartners: {
+      en: 'Detergent suppliers, equipment vendors, delivery services',
+      sw: 'Wauzaji wa sabuni, wauzaji wa vifaa, huduma za utoaji',
+      ar: 'موردو المنظفات، بائعو المعدات، خدمات التوصيل',
+      fr: 'Fournisseurs de détergents, vendeurs d\'équipements, services de livraison'
+    },
+    marketingApproach: {
+      en: 'Local advertising, customer referrals, corporate contracts',
+      sw: 'Matangazo ya mitaani, rufaa za wateja, mikataba ya kampuni',
+      ar: 'الإعلان المحلي، إحالات العملاء، عقود الشركات',
+      fr: 'Publicité locale, recommandations clients, contrats d\'entreprise'
+    },
+    operationalNeeds: {
+      en: 'Washing machines, dryers, ironing equipment, chemicals',
+      sw: 'Mashine za kufulia, mashine za kukausha, vifaa vya kupiga chupa, kemikali',
+      ar: 'غسالات، مجففات، معدات الكي، مواد كيميائية',
+      fr: 'Machines à laver, sèche-linge, équipements de repassage, produits chimiques'
+    },
+    growthGoals: {
+      en: 'Add pickup service, expand capacity, franchise model',
+      sw: 'Ongeza huduma ya kuchukua, panua uwezo, mfano wa leseni',
+      ar: 'إضافة خدمة الاستلام، توسيع السعة، نموذج الامتياز',
+      fr: 'Ajouter un service de collecte, augmenter la capacité, modèle de franchise'
+    }
+  },
+  'daycare': {
+    vision: {
+      en: 'To provide the best early childhood development in our community',
+      sw: 'Kutoa maendeleo bora ya utotoni katika jamii yetu',
+      ar: 'توفير أفضل تنمية للطفولة المبكرة في مجتمعنا',
+      fr: 'Offrir le meilleur développement de la petite enfance dans notre communauté'
+    },
+    mission: {
+      en: 'Nurturing young minds through play, learning, and care',
+      sw: 'Kukuza akili za watoto kupitia michezo, kujifunza, na utunzaji',
+      ar: 'رعاية العقول الصغيرة من خلال اللعب والتعلم والرعاية',
+      fr: 'Nourrir les jeunes esprits par le jeu, l\'apprentissage et les soins'
+    },
+    targetMarket: {
+      en: 'Working parents, young families, single parents',
+      sw: 'Wazazi wanaofanya kazi, familia changa, wazazi wa watoto pekee',
+      ar: 'الآباء العاملون، العائلات الشابة، الآباء العزاب',
+      fr: 'Parents actifs, jeunes familles, parents célibataires'
+    },
+    revenueModel: {
+      en: 'Monthly fees, registration fees, meal programs, extended hours',
+      sw: 'Ada za kila mwezi, ada za usajili, mipango ya chakula, masaa ya ziada',
+      ar: 'رسوم شهرية، رسوم تسجيل، برامج وجبات، ساعات ممتدة',
+      fr: 'Frais mensuels, frais d\'inscription, programmes de repas, heures prolongées'
+    },
+    valueProposition: {
+      en: 'Qualified caregivers, educational programs, safe environment',
+      sw: 'Wahudumu wenye sifa, mipango ya elimu, mazingira salama',
+      ar: 'مقدمو رعاية مؤهلون، برامج تعليمية، بيئة آمنة',
+      fr: 'Soignants qualifiés, programmes éducatifs, environnement sûr'
+    },
+    keyPartners: {
+      en: 'Educational suppliers, nutrition providers, pediatricians',
+      sw: 'Wauzaji wa vifaa vya elimu, watoa lishe, madaktari wa watoto',
+      ar: 'موردو المواد التعليمية، مزودو التغذية، أطباء الأطفال',
+      fr: 'Fournisseurs éducatifs, fournisseurs de nutrition, pédiatres'
+    },
+    marketingApproach: {
+      en: 'Parent networks, community events, educational workshops',
+      sw: 'Mitandao ya wazazi, matukio ya jamii, warsha za elimu',
+      ar: 'شبكات الآباء، فعاليات المجتمع، ورش عمل تعليمية',
+      fr: 'Réseaux de parents, événements communautaires, ateliers éducatifs'
+    },
+    operationalNeeds: {
+      en: 'Play equipment, educational materials, safety gear, kitchen',
+      sw: 'Vifaa vya kuchezea, vifaa vya elimu, vifaa vya usalama, jikoni',
+      ar: 'معدات اللعب، مواد تعليمية، معدات السلامة، مطبخ',
+      fr: 'Équipements de jeu, matériel éducatif, équipements de sécurité, cuisine'
+    },
+    growthGoals: {
+      en: 'Add preschool programs, expand age groups, multiple locations',
+      sw: 'Ongeza mipango ya shule ya awali, panua makundi ya umri, maeneo mengi',
+      ar: 'إضافة برامج ما قبل المدرسة، توسيع الفئات العمرية، مواقع متعددة',
+      fr: 'Ajouter des programmes préscolaires, élargir les groupes d\'âge, plusieurs sites'
+    }
+  },
+  'internet-cafe': {
+    vision: {
+      en: 'To be the premier digital services hub in our area',
+      sw: 'Kuwa kituo cha huduma za kidijitali cha kwanza katika eneo letu',
+      ar: 'أن نكون مركز الخدمات الرقمية الرائد في منطقتنا',
+      fr: 'Être le centre de services numériques de premier plan dans notre région'
+    },
+    mission: {
+      en: 'Bridging the digital divide through accessible technology services',
+      sw: 'Kudhibiti pengo la kidijitali kupitia huduma za teknolojia zinazopatikana',
+      ar: 'سد الفجوة الرقمية من خلال خدمات التكنولوجيا المتاحة',
+      fr: 'Combler la fracture numérique grâce à des services technologiques accessibles'
+    },
+    targetMarket: {
+      en: 'Students, job seekers, small businesses, elderly, tourists',
+      sw: 'Wanafunzi, watafutaji kazi, biashara ndogo, wazee, watalii',
+      ar: 'الطلاب، الباحثون عن عمل، الشركات الصغيرة، كبار السن، السياح',
+      fr: 'Étudiants, demandeurs d\'emploi, petites entreprises, personnes âgées, touristes'
+    },
+    revenueModel: {
+      en: 'Computer time, printing, scanning, typing services, training',
+      sw: 'Muda wa kompyuta, uchapishaji, usomaji, huduma za kuandika, mafunzo',
+      ar: 'وقت استخدام الكمبيوتر، الطباعة، المسح، خدمات الكتابة، التدريب',
+      fr: 'Temps d\'ordinateur, impression, numérisation, services de dactylographie, formation'
+    },
+    valueProposition: {
+      en: 'Fast internet, modern computers, affordable rates, training',
+      sw: 'Mtandao wa haraka, kompyuta za kisasa, viwango vya bei nafuu, mafunzo',
+      ar: 'إنترنت سريع، حواسيب حديثة، أسعار معقولة، تدريب',
+      fr: 'Internet rapide, ordinateurs modernes, tarifs abordables, formation'
+    },
+    keyPartners: {
+      en: 'Internet providers, computer suppliers, software vendors',
+      sw: 'Watoa huduma za mtandao, wasambazaji wa kompyuta, wauzaji wa programu',
+      ar: 'مزودو الإنترنت، موردي الحواسيب، بائعي البرمجيات',
+      fr: 'Fournisseurs d\'internet, fournisseurs d\'ordinateurs, vendeurs de logiciels'
+    },
+    marketingApproach: {
+      en: 'Student discounts, business packages, community programs',
+      sw: 'Punguzo la wanafunzi, vifurushi vya biashara, mipango ya jamii',
+      ar: 'خصومات للطلاب، حزم الأعمال، برامج المجتمع',
+      fr: 'Réductions étudiantes, forfaits entreprise, programmes communautaires'
+    },
+    operationalNeeds: {
+      en: 'Computers, printers, internet connection, UPS, furniture',
+      sw: 'Kompyuta, mashine za kuchapisha, muunganisho wa mtandao, UPS, samani',
+      ar: 'حواسيب، طابعات، اتصال إنترنت، UPS، أثاث',
+      fr: 'Ordinateurs, imprimantes, connexion internet, onduleurs, mobilier'
+    },
+    growthGoals: {
+      en: 'Add training programs, expand services, mobile units',
+      sw: 'Ongeza mipango ya mafunzo, panua huduma, vitengo vya simu',
+      ar: 'إضافة برامج تدريبية، توسيع الخدمات، وحدات متنقلة',
+      fr: 'Ajouter des programmes de formation, étendre les services, unités mobiles'
     }
   }
 };
@@ -333,10 +1173,10 @@ export const getTemplateData = (language: string = 'en') => {
     },
     {
       id: 'mitumba',
-      name: 'Mitumba Shop',
+      name: 'Mitumba',
       description: language === 'sw' ? 'Biashara ya nguo za mitumba' :
-                  language === 'ar' ? 'متجر الملابس المستعملة' :
-                  language === 'fr' ? 'Magasin de vêtements d\'occasion' :
+                  language === 'ar' ? 'تجارة الملابس المستعملة' :
+                  language === 'fr' ? 'Commerce de vêtements d\'occasion' :
                   'Second-hand clothing business',
       content: {
         vision: templateContents.mitumba.vision[language] || templateContents.mitumba.vision.en,
@@ -405,6 +1245,246 @@ export const getTemplateData = (language: string = 'en') => {
         marketingApproach: templateContents.agribusiness.marketingApproach[language] || templateContents.agribusiness.marketingApproach.en,
         operationalNeeds: templateContents.agribusiness.operationalNeeds[language] || templateContents.agribusiness.operationalNeeds.en,
         growthGoals: templateContents.agribusiness.growthGoals[language] || templateContents.agribusiness.growthGoals.en,
+      }
+    },
+    {
+      id: 'restaurant',
+      name: 'Restaurant',
+      description: language === 'sw' ? 'Biashara ya chakula na mgahawa' : 'Food service and restaurant business',
+      content: {
+        vision: templateContents.restaurant.vision[language] || templateContents.restaurant.vision.en,
+        mission: templateContents.restaurant.mission[language] || templateContents.restaurant.mission.en,
+        targetMarket: templateContents.restaurant.targetMarket[language] || templateContents.restaurant.targetMarket.en,
+        revenueModel: templateContents.restaurant.revenueModel[language] || templateContents.restaurant.revenueModel.en,
+        valueProposition: templateContents.restaurant.valueProposition[language] || templateContents.restaurant.valueProposition.en,
+        keyPartners: templateContents.restaurant.keyPartners[language] || templateContents.restaurant.keyPartners.en,
+        marketingApproach: templateContents.restaurant.marketingApproach[language] || templateContents.restaurant.marketingApproach.en,
+        operationalNeeds: templateContents.restaurant.operationalNeeds[language] || templateContents.restaurant.operationalNeeds.en,
+        growthGoals: templateContents.restaurant.growthGoals[language] || templateContents.restaurant.growthGoals.en,
+      }
+    },
+    {
+      id: 'salon',
+      name: 'Beauty Salon',
+      description: language === 'sw' ? 'Biashara ya urembo na upamba' : 'Beauty and grooming services',
+      content: {
+        vision: 'To be the premier beauty destination for modern African women',
+        mission: 'Enhancing natural beauty through professional services',
+        targetMarket: 'Women aged 18-50, professionals, brides, students',
+        revenueModel: 'Hair services, makeup, manicures, beauty products',
+        valueProposition: 'Professional stylists, quality products, affordable prices',
+        keyPartners: 'Beauty product suppliers, equipment vendors',
+        marketingApproach: 'Social media showcases, referral programs, partnerships',
+        operationalNeeds: 'Salon chairs, styling tools, beauty products, mirrors',
+        growthGoals: 'Add spa services, hire more stylists, launch product line'
+      }
+    },
+    {
+      id: 'grocery',
+      name: 'Grocery Store',
+      description: language === 'sw' ? 'Duka la vitu vya nyumbani' : 'Retail grocery and household goods',
+      content: {
+        vision: 'To be the neighborhood\'s trusted source for fresh groceries',
+        mission: 'Providing fresh, quality groceries at affordable prices',
+        targetMarket: 'Local households, working families, small businesses',
+        revenueModel: 'Retail sales, bulk purchases, home delivery',
+        valueProposition: 'Fresh products, competitive prices, convenient location',
+        keyPartners: 'Wholesalers, local farmers, delivery services',
+        marketingApproach: 'Community engagement, loyalty programs, promotions',
+        operationalNeeds: 'Shelving, refrigeration, POS system, inventory',
+        growthGoals: 'Expand product range, add delivery service, open branches'
+      }
+    },
+    {
+      id: 'tailoring',
+      name: 'Tailoring Shop',
+      description: language === 'sw' ? 'Biashara ya ushonaji na ukarabati nguo' : 'Custom clothing and alterations',
+      content: {
+        vision: 'To be the go-to tailor for quality custom clothing',
+        mission: 'Creating beautiful, well-fitted clothing for every occasion',
+        targetMarket: 'Professionals, students, fashion-conscious individuals',
+        revenueModel: 'Custom tailoring, alterations, uniform contracts',
+        valueProposition: 'Perfect fit, quality craftsmanship, timely delivery',
+        keyPartners: 'Fabric suppliers, sewing machine vendors, dry cleaners',
+        marketingApproach: 'Word of mouth, social media, fashion shows',
+        operationalNeeds: 'Sewing machines, measuring tools, fabric inventory',
+        growthGoals: 'Hire assistants, expand to ready-made clothes, online orders'
+      }
+    },
+    {
+      id: 'boutique',
+      name: 'Fashion Boutique',
+      description: language === 'sw' ? 'Duka la mavazi ya mtindo' : 'Fashion retail and accessories',
+      content: {
+        vision: 'To be the premier fashion destination for style-conscious shoppers',
+        mission: 'Curating the latest fashion trends at accessible prices',
+        targetMarket: 'Fashion-forward women, young professionals, teenagers',
+        revenueModel: 'Clothing sales, accessories, personal styling services',
+        valueProposition: 'Trendy styles, affordable luxury, personalized service',
+        keyPartners: 'Fashion wholesalers, accessories suppliers, style influencers',
+        marketingApproach: 'Social media, fashion events, influencer partnerships',
+        operationalNeeds: 'Display fixtures, inventory, fitting rooms, POS',
+        growthGoals: 'Launch online store, add menswear, expand accessories'
+      }
+    },
+    {
+      id: 'pharmacy',
+      name: 'Pharmacy',
+      description: language === 'sw' ? 'Duka la dawa na afya' : 'Pharmaceutical and health services',
+      content: {
+        vision: 'To be the community\'s trusted healthcare partner',
+        mission: 'Providing quality medicines and health advice to our community',
+        targetMarket: 'Local residents, healthcare facilities, chronic patients',
+        revenueModel: 'Prescription drugs, OTC medicines, health consultations',
+        valueProposition: 'Licensed pharmacist, quality medicines, health advice',
+        keyPartners: 'Drug distributors, healthcare providers, insurance companies',
+        marketingApproach: 'Community health programs, doctor referrals, health talks',
+        operationalNeeds: 'Drug storage, dispensing equipment, consultation room',
+        growthGoals: 'Add health screening, expand to medical supplies, home delivery'
+      }
+    },
+    {
+      id: 'electronics',
+      name: 'Electronics Shop',
+      description: language === 'sw' ? 'Duka la vifaa vya umeme' : 'Consumer electronics and repairs',
+      content: {
+        vision: 'To be the leading electronics retailer in our area',
+        mission: 'Providing quality electronics with excellent after-sales service',
+        targetMarket: 'Tech enthusiasts, students, professionals, businesses',
+        revenueModel: 'Electronics sales, repairs, accessories, warranties',
+        valueProposition: 'Quality products, competitive prices, repair services',
+        keyPartners: 'Electronics suppliers, repair technicians, warranty providers',
+        marketingApproach: 'Digital marketing, tech demonstrations, customer reviews',
+        operationalNeeds: 'Display cases, repair tools, inventory, security system',
+        growthGoals: 'Add mobile repair services, expand online, franchise model'
+      }
+    },
+    {
+      id: 'stationery',
+      name: 'Stationery Shop',
+      description: language === 'sw' ? 'Duka la vifaa vya shule na ofisi' : 'School and office supplies',
+      content: {
+        vision: 'To be the one-stop shop for all educational and office needs',
+        mission: 'Supporting education and business with quality supplies',
+        targetMarket: 'Students, teachers, offices, small businesses',
+        revenueModel: 'Stationery sales, printing services, bulk orders',
+        valueProposition: 'Complete range, competitive prices, printing services',
+        keyPartners: 'Stationery wholesalers, printing suppliers, schools',
+        marketingApproach: 'School partnerships, back-to-school promotions, bulk discounts',
+        operationalNeeds: 'Shelving, printing equipment, cash register, inventory',
+        growthGoals: 'Add photocopy services, expand to uniforms, online catalog'
+      }
+    },
+    {
+      id: 'mobile-money',
+      name: 'Mobile Money Shop',
+      description: language === 'sw' ? 'Biashara ya huduma za pesa za simu' : 'Mobile financial services',
+      content: {
+        vision: 'To be the most reliable mobile money service provider',
+        mission: 'Facilitating convenient and secure financial transactions',
+        targetMarket: 'Local residents, small businesses, unbanked population',
+        revenueModel: 'Transaction commissions, airtime sales, bill payments',
+        valueProposition: 'Fast service, secure transactions, convenient location',
+        keyPartners: 'Mobile network operators, banks, utility companies',
+        marketingApproach: 'Community trust building, referral programs, visibility',
+        operationalNeeds: 'Mobile phones, cash float, secure storage, signage',
+        growthGoals: 'Add more services, increase float, train more agents'
+      }
+    },
+    {
+      id: 'barbershop',
+      name: 'Barbershop',
+      description: language === 'sw' ? 'Duka la kunyoa na kutengeneza nywele' : 'Men\'s grooming and hair services',
+      content: {
+        vision: 'To be the neighborhood\'s premier men\'s grooming destination',
+        mission: 'Providing professional grooming services in a welcoming environment',
+        targetMarket: 'Men of all ages, professionals, students, local residents',
+        revenueModel: 'Haircuts, shaves, grooming products, membership packages',
+        valueProposition: 'Skilled barbers, modern techniques, comfortable atmosphere',
+        keyPartners: 'Grooming product suppliers, equipment vendors, local businesses',
+        marketingApproach: 'Word of mouth, social media, community presence',
+        operationalNeeds: 'Barber chairs, grooming tools, mirrors, sound system',
+        growthGoals: 'Add spa services, hire more barbers, launch grooming products'
+      }
+    },
+    {
+      id: 'fitness',
+      name: 'Fitness Center',
+      description: language === 'sw' ? 'Kituo cha mazoezi na afya' : 'Health and fitness services',
+      content: {
+        vision: 'To be the community\'s leading health and fitness destination',
+        mission: 'Promoting healthy lifestyles through fitness and wellness programs',
+        targetMarket: 'Health-conscious individuals, professionals, athletes, seniors',
+        revenueModel: 'Membership fees, personal training, group classes, nutrition plans',
+        valueProposition: 'Modern equipment, certified trainers, flexible schedules',
+        keyPartners: 'Equipment suppliers, nutrition brands, health professionals',
+        marketingApproach: 'Health campaigns, social media, referral programs, events',
+        operationalNeeds: 'Exercise equipment, changing rooms, sound system, mats',
+        growthGoals: 'Add nutrition center, expand classes, outdoor programs'
+      }
+    },
+    {
+      id: 'transport',
+      name: 'Transport Service',
+      description: language === 'sw' ? 'Biashara ya usafiri na mizigo' : 'Passenger and cargo transport',
+      content: {
+        vision: 'To be the most reliable transport service in our region',
+        mission: 'Providing safe, comfortable, and timely transport solutions',
+        targetMarket: 'Commuters, tourists, businesses, cargo clients',
+        revenueModel: 'Passenger fares, cargo fees, charter services, delivery',
+        valueProposition: 'Reliable schedules, competitive rates, safety first',
+        keyPartners: 'Fuel suppliers, mechanics, insurance companies, terminals',
+        marketingApproach: 'Route advertising, customer loyalty, partnerships',
+        operationalNeeds: 'Vehicles, fuel, maintenance tools, permits, insurance',
+        growthGoals: 'Expand routes, add vehicles, GPS tracking, mobile app'
+      }
+    },
+    {
+      id: 'laundry',
+      name: 'Laundry Service',
+      description: language === 'sw' ? 'Huduma za kufulia na kusafisha nguo' : 'Laundry and dry cleaning services',
+      content: {
+        vision: 'To be the most trusted laundry service in our community',
+        mission: 'Providing professional laundry services with care and convenience',
+        targetMarket: 'Busy professionals, families, students, hotels, restaurants',
+        revenueModel: 'Washing services, dry cleaning, ironing, pickup/delivery',
+        valueProposition: 'Quality cleaning, quick turnaround, competitive prices',
+        keyPartners: 'Detergent suppliers, equipment vendors, delivery services',
+        marketingApproach: 'Local advertising, customer referrals, corporate contracts',
+        operationalNeeds: 'Washing machines, dryers, ironing equipment, chemicals',
+        growthGoals: 'Add pickup service, expand capacity, franchise model'
+      }
+    },
+    {
+      id: 'daycare',
+      name: 'Daycare Center',
+      description: language === 'sw' ? 'Kituo cha malezi ya watoto' : 'Childcare and early education',
+      content: {
+        vision: 'To provide the best early childhood development in our community',
+        mission: 'Nurturing young minds through play, learning, and care',
+        targetMarket: 'Working parents, young families, single parents',
+        revenueModel: 'Monthly fees, registration fees, meal programs, extended hours',
+        valueProposition: 'Qualified caregivers, educational programs, safe environment',
+        keyPartners: 'Educational suppliers, nutrition providers, pediatricians',
+        marketingApproach: 'Parent networks, community events, educational workshops',
+        operationalNeeds: 'Play equipment, educational materials, safety gear, kitchen',
+        growthGoals: 'Add preschool programs, expand age groups, multiple locations'
+      }
+    },
+    {
+      id: 'internet-cafe',
+      name: 'Internet Cafe',
+      description: language === 'sw' ? 'Kafe ya mtandao na kompyuta' : 'Computer and internet services',
+      content: {
+        vision: 'To be the premier digital services hub in our area',
+        mission: 'Bridging the digital divide through accessible technology services',
+        targetMarket: 'Students, job seekers, small businesses, elderly, tourists',
+        revenueModel: 'Computer time, printing, scanning, typing services, training',
+        valueProposition: 'Fast internet, modern computers, affordable rates, training',
+        keyPartners: 'Internet providers, computer suppliers, software vendors',
+        marketingApproach: 'Student discounts, business packages, community programs',
+        operationalNeeds: 'Computers, printers, internet connection, UPS, furniture',
+        growthGoals: 'Add training programs, expand services, mobile units'
       }
     }
   ];
