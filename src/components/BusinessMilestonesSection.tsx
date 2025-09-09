@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { addToCalendar } from '@/lib/calendar';
 import CoachingTip from '@/components/CoachingTip';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useStrategy } from '@/hooks/useStrategy';
 
 interface Milestone {
   id: string;
@@ -32,6 +32,7 @@ interface BusinessMilestonesSectionProps {
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en', onMilestonesChange }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
   const [customMilestone, setCustomMilestone] = useState('');
+  const { milestones: strategyMilestones, saveMilestone, deleteMilestone: deleteStrategyMilestone, currentStrategy } = useStrategy();
   
   // Helper function to get stage-specific milestones
   const getStageSpecificMilestones = (stage: string) => {
@@ -120,24 +121,38 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     return stageMilestones[language]?.[stage] || stageMilestones.en[stage] || [];
   };
 
+  // Use milestones from strategy hook or initialize with defaults
   const [milestones, setMilestones] = useState<Milestone[]>(() => {
     // Initialize from strategyData if available
     if (strategyData?.businessMilestones) {
       return strategyData.businessMilestones;
     }
     
-  // Otherwise initialize with stage-appropriate milestone
-  const suggestedMilestones = getStageSpecificMilestones(businessStage);
-  const defaultMilestones = [
-    {
-      id: '1',
-      title: suggestedMilestones[0] || 'Research target market and competition',
-      targetDate: null,
-      status: 'not-started' as const
-    }
-  ];
-  return defaultMilestones;
+    // Otherwise initialize with stage-appropriate milestone
+    const suggestedMilestones = getStageSpecificMilestones(businessStage);
+    const defaultMilestones = [
+      {
+        id: '1',
+        title: suggestedMilestones[0] || 'Research target market and competition',
+        targetDate: null,
+        status: 'not-started' as const
+      }
+    ];
+    return defaultMilestones;
   });
+
+  // Update local milestones when strategy milestones change
+  useEffect(() => {
+    if (strategyMilestones && strategyMilestones.length > 0) {
+      const transformedMilestones = strategyMilestones.map(m => ({
+        id: m.id,
+        title: m.title,
+        targetDate: m.target_date ? new Date(m.target_date) : null,
+        status: m.status as 'not-started' | 'in-progress' | 'complete' | 'overdue'
+      }));
+      setMilestones(transformedMilestones);
+    }
+  }, [strategyMilestones]);
 
   const { toast } = useToast();
   const { trackBusinessMilestone, trackJourney } = useAnalytics();
@@ -305,17 +320,16 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       return;
     }
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast({
-          title: "Error",
-          description: "Please log in to save milestones",
-          variant: "destructive"
-        });
-        return;
-      }
+    if (!currentStrategy) {
+      toast({
+        title: "Error",
+        description: "Please create or select a strategy first",
+        variant: "destructive"
+      });
+      return;
+    }
 
+    try {
       // Check if milestone already exists to prevent duplicates
       const existingMilestone = milestones.find(m => m.title === milestoneTitle);
       if (existingMilestone) {
@@ -327,34 +341,15 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         return;
       }
 
-      // Save to Supabase
-      const { data, error } = await supabase
-        .from('milestones')
-        .insert({
-          user_id: user.id,
-          title: milestoneTitle,
-          target_date: null,
-          status: 'not-started',
-          business_stage: businessStage
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-
-      const newMilestone: Milestone = {
-        id: data.id,
+      // Use the strategy hook to save milestone
+      await saveMilestone({
+        strategy_id: currentStrategy.id,
         title: milestoneTitle,
-        targetDate: null,
-        status: 'not-started'
-      };
+        target_date: null,
+        status: 'not-started',
+        business_stage: businessStage
+      });
 
-      const updatedMilestones = [...milestones, newMilestone];
-      setMilestones(updatedMilestones);
-      
       // Track milestone creation
       trackBusinessMilestone('created', {
         title: milestoneTitle,
@@ -362,11 +357,6 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         targetDate: null,
         businessStage: businessStage
       });
-      
-      // Update parent component
-      if (onMilestonesChange) {
-        onMilestonesChange(updatedMilestones);
-      }
       
       // Clear the custom milestone input if it was used
       if (!title) {
@@ -395,8 +385,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
   const updateMilestone = async (id: string, field: keyof Milestone, value: any) => {
     try {
-      // Update in Supabase first
-      const updateData: any = {};
+      // Prepare update data for the strategy hook
+      const updateData: any = { id };
       
       if (field === 'targetDate') {
         updateData.target_date = value ? value.toISOString().split('T')[0] : null;
@@ -406,14 +396,10 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         updateData.title = value;
       }
 
-      const { error } = await supabase
-        .from('milestones')
-        .update(updateData)
-        .eq('id', id);
+      // Use the strategy hook to update milestone
+      await saveMilestone(updateData);
 
-      if (error) throw error;
-
-      // Update local state only after successful database update
+      // Update local state
       const updatedMilestones = milestones.map(milestone => 
         milestone.id === id ? { ...milestone, [field]: value } : milestone
       );
@@ -453,13 +439,31 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     }
   };
 
-  const deleteMilestone = (id: string) => {
-    const updatedMilestones = milestones.filter(milestone => milestone.id !== id);
-    setMilestones(updatedMilestones);
-    
-    // Update parent component
-    if (onMilestonesChange) {
-      onMilestonesChange(updatedMilestones);
+  const deleteMilestone = async (id: string) => {
+    try {
+      // Use the strategy hook to delete milestone
+      await deleteStrategyMilestone(id);
+      
+      // Update local state
+      const updatedMilestones = milestones.filter(milestone => milestone.id !== id);
+      setMilestones(updatedMilestones);
+      
+      // Update parent component
+      if (onMilestonesChange) {
+        onMilestonesChange(updatedMilestones);
+      }
+
+      toast({
+        title: "Milestone Deleted",
+        description: "Milestone has been removed successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting milestone:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete milestone. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
