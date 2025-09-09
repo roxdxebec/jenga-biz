@@ -15,25 +15,20 @@ import CoachingTip from '@/components/CoachingTip';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useStrategy } from '@/hooks/useStrategy';
 
-interface Milestone {
-  id: string;
-  title: string;
-  targetDate: Date | null;
-  status: 'not-started' | 'in-progress' | 'complete' | 'overdue';
-}
-
 interface BusinessMilestonesSectionProps {
   isPro?: boolean;
   strategyData?: any;
   language?: string;
-  onMilestonesChange?: (milestones: Milestone[]) => void;
+  onMilestonesChange?: (milestones: any[]) => void;
 }
 
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en', onMilestonesChange }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
   const [customMilestone, setCustomMilestone] = useState('');
-  const { milestones: strategyMilestones, saveMilestone, deleteMilestone: deleteStrategyMilestone, currentStrategy } = useStrategy();
-  
+  const { milestones, saveMilestone, deleteMilestone, currentStrategy } = useStrategy();
+  const { trackBusinessMilestone, trackJourney } = useAnalytics();
+  const { toast } = useToast();
+
   // Helper function to get stage-specific milestones
   const getStageSpecificMilestones = (stage: string) => {
     const stageMilestones = {
@@ -121,44 +116,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     return stageMilestones[language]?.[stage] || stageMilestones.en[stage] || [];
   };
 
-  // Use milestones from strategy hook or initialize with defaults
-  const [milestones, setMilestones] = useState<Milestone[]>(() => {
-    // Initialize from strategyData if available
-    if (strategyData?.businessMilestones) {
-      return strategyData.businessMilestones;
-    }
-    
-    // Otherwise initialize with stage-appropriate milestone
-    const suggestedMilestones = getStageSpecificMilestones(businessStage);
-    const defaultMilestones = [
-      {
-        id: '1',
-        title: suggestedMilestones[0] || 'Research target market and competition',
-        targetDate: null,
-        status: 'not-started' as const
-      }
-    ];
-    return defaultMilestones;
-  });
-
-  // Update local milestones when strategy milestones change
   useEffect(() => {
-    if (strategyMilestones && strategyMilestones.length > 0) {
-      const transformedMilestones = strategyMilestones.map(m => ({
-        id: m.id,
-        title: m.title,
-        targetDate: m.target_date ? new Date(m.target_date) : null,
-        status: m.status as 'not-started' | 'in-progress' | 'complete' | 'overdue'
-      }));
-      setMilestones(transformedMilestones);
-    }
-  }, [strategyMilestones]);
-
-  const { toast } = useToast();
-  const { trackBusinessMilestone, trackJourney } = useAnalytics();
-
-  useEffect(() => {
-    // Track milestone section page view
     trackJourney('/milestones', 'page_view', { 
       businessStage: businessStage,
       totalMilestones: milestones.length 
@@ -300,172 +258,105 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     return statusOptions.find(opt => opt.value === status)?.color || 'bg-gray-100 text-gray-700';
   };
 
-  const addMilestone = async (e?: React.FormEvent, title?: string) => {
-    e?.preventDefault();
-    const milestoneTitle = title || customMilestone.trim();
-    
-    if (!milestoneTitle || milestoneTitle.trim() === '') {
-      console.log('Invalid milestone title:', milestoneTitle);
-      toast({
-        title: language === 'sw' ? 'Kosa' :
-               language === 'ar' ? 'خطأ' :
-               language === 'fr' ? 'Erreur' :
-               'Error',
-        description: language === 'sw' ? 'Tafadhali andika jina la lengo' :
-                     language === 'ar' ? 'يرجى إدخال عنوان المعلم' :
-                     language === 'fr' ? 'Veuillez entrer un titre de jalon' :
-                     'Please enter a milestone title',
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!currentStrategy) {
-      toast({
-        title: "Error",
-        description: "Please create or select a strategy first",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      // Check if milestone already exists to prevent duplicates
-      const existingMilestone = milestones.find(m => m.title === milestoneTitle);
-      if (existingMilestone) {
-        toast({
-          title: "Milestone Exists",
-          description: "This milestone already exists in your list",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Use the strategy hook to save milestone
+  const handleAddMilestone = async () => {
+    if (customMilestone.trim() && currentStrategy?.id) {
       await saveMilestone({
-        strategy_id: currentStrategy.id,
-        title: milestoneTitle,
-        target_date: null,
+        title: customMilestone.trim(),
         status: 'not-started',
-        business_stage: businessStage
+        business_stage: businessStage,
+        strategy_id: currentStrategy.id
       });
+      
+      setCustomMilestone('');
+      trackBusinessMilestone('created', {
+        title: customMilestone.trim(),
+        category: businessStage,
+        businessStage
+      });
+      
+      toast({
+        title: "Milestone added successfully",
+        description: `"${customMilestone.trim()}" has been added to your milestones.`,
+      });
+    }
+  };
 
-      // Track milestone creation
+  const handleAddSuggestedMilestone = async (milestoneTitle: string) => {
+    if (currentStrategy?.id) {
+      await saveMilestone({
+        title: milestoneTitle,
+        status: 'not-started',
+        business_stage: businessStage,
+        strategy_id: currentStrategy.id
+      });
+      
       trackBusinessMilestone('created', {
         title: milestoneTitle,
-        category: 'business_goal',
-        targetDate: null,
-        businessStage: businessStage
+        category: businessStage,
+        businessStage
       });
       
-      // Clear the custom milestone input if it was used
-      if (!title) {
-        setCustomMilestone('');
-      }
-
       toast({
-        title: language === 'sw' ? 'Lengo Limeongezwa' :
-               language === 'ar' ? 'تم إضافة المعلم' :
-               language === 'fr' ? 'Jalon Ajouté' :
-               'Milestone Added',
-        description: language === 'sw' ? 'Lengo jipya limeongezwa kwenye orodha yako' :
-                     language === 'ar' ? 'تم إضافة معلم جديد إلى قائمتك' :
-                     language === 'fr' ? 'Un nouveau jalon a été ajouté à votre liste' :
-                     'New milestone added to your list',
-      });
-    } catch (error) {
-      console.error('Error saving milestone:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save milestone. Please try again.",
-        variant: "destructive"
+        title: "Milestone added successfully",
+        description: `"${milestoneTitle}" has been added to your milestones.`,
       });
     }
   };
 
-  const updateMilestone = async (id: string, field: keyof Milestone, value: any) => {
-    try {
-      // Prepare update data for the strategy hook
-      const updateData: any = { id };
-      
-      if (field === 'targetDate') {
-        updateData.target_date = value ? value.toISOString().split('T')[0] : null;
-      } else if (field === 'status') {
-        updateData.status = value;
-      } else if (field === 'title') {
-        updateData.title = value;
-      }
-
-      // Use the strategy hook to update milestone
-      await saveMilestone(updateData);
-
-      // Update local state
-      const updatedMilestones = milestones.map(milestone => 
-        milestone.id === id ? { ...milestone, [field]: value } : milestone
-      );
-      setMilestones(updatedMilestones);
-      
-      // Track milestone status changes
-      if (field === 'status' && value === 'complete') {
-        const milestone = milestones.find(m => m.id === id);
-        if (milestone) {
-          trackBusinessMilestone('completed', {
-            title: milestone.title,
-            category: 'business_goal',
-            businessStage: businessStage
-          });
-        }
-      }
-      
-      // Track user interaction
-      trackJourney('/milestones', 'form_interaction', {
-        action: 'milestone_updated',
-        field,
-        milestoneId: id,
-        newValue: value
-      });
-      
-      // Update parent component
-      if (onMilestonesChange) {
-        onMilestonesChange(updatedMilestones);
-      }
-    } catch (error) {
-      console.error('Error updating milestone:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update milestone. Please try again.",
-        variant: "destructive"
+  const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
+    await saveMilestone({
+      id: milestoneId,
+      status: newStatus
+    });
+    
+    if (newStatus === 'complete') {
+      trackBusinessMilestone('completed', {
+        title: milestones.find(m => m.id === milestoneId)?.title || 'Unknown'
       });
     }
   };
 
-  const deleteMilestone = async (id: string) => {
-    try {
-      // Use the strategy hook to delete milestone
-      await deleteStrategyMilestone(id);
-      
-      // Update local state
-      const updatedMilestones = milestones.filter(milestone => milestone.id !== id);
-      setMilestones(updatedMilestones);
-      
-      // Update parent component
-      if (onMilestonesChange) {
-        onMilestonesChange(updatedMilestones);
-      }
+  const handleUpdateMilestoneDate = async (milestoneId: string, date: Date | undefined) => {
+    await saveMilestone({
+      id: milestoneId,
+      target_date: date?.toISOString()
+    });
+    
+    // Use general activity tracking for date updates
+    trackJourney('/milestones', 'milestone_date_updated', {
+      milestoneId,
+      targetDate: date
+    });
+  };
 
-      toast({
-        title: "Milestone Deleted",
-        description: "Milestone has been removed successfully",
-      });
-    } catch (error) {
-      console.error('Error deleting milestone:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete milestone. Please try again.",
-        variant: "destructive"
-      });
+  const handleDeleteMilestone = async (milestoneId: string) => {
+    await deleteMilestone(milestoneId);
+    
+    // Use general activity tracking for deletions
+    trackJourney('/milestones', 'milestone_deleted', {
+      milestoneId
+    });
+    
+    toast({
+      title: "Milestone deleted",
+      description: "The milestone has been removed from your list.",
+    });
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'complete': return 'default';
+      case 'in-progress': return 'secondary';
+      case 'overdue': return 'destructive';
+      default: return 'outline';
     }
   };
+
+  const suggestedMilestones = getStageSpecificMilestones(businessStage);
+  const existingMilestoneTitles = milestones.map(m => m.title.toLowerCase());
+  const availableSuggestions = suggestedMilestones.filter(
+    suggestion => !existingMilestoneTitles.includes(suggestion.toLowerCase())
+  );
 
   const currentStage = businessStages.find(stage => stage.value === businessStage);
 
@@ -519,7 +410,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       </Card>
 
       {/* Suggested Milestones for Current Stage */}
-      {getStageSpecificMilestones(businessStage).length > 0 && (
+      {availableSuggestions.length > 0 && (
         <Card className="border-green-200 bg-green-50">
           <CardHeader>
             <CardTitle className="text-lg text-green-800">{t.suggestedMilestonesFor} {currentStage?.label}</CardTitle>
@@ -538,14 +429,14 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                    'Select a milestone from the list or write your custom milestone. The milestone will be added directly to "Your Milestones" where you can set dates and add to calendar.'}
                 </p>
               </div>
-              {getStageSpecificMilestones(businessStage).map((milestone, index) => (
+              {availableSuggestions.map((milestone, index) => (
                 <div key={index} className="flex items-center justify-between bg-white/50 rounded-lg p-3 border border-green-200">
                   <div className="flex items-center text-sm text-green-700">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-3 flex-shrink-0"></div>
                     <span className="flex-1">{milestone}</span>
                   </div>
                   <Button
-                    onClick={() => addMilestone(undefined, milestone)}
+                    onClick={() => handleAddSuggestedMilestone(milestone)}
                     size="sm"
                     variant="outline"
                     className="ml-3 text-green-600 border-green-300 hover:bg-green-100 px-3 py-1 text-xs"
@@ -567,12 +458,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                 className="w-full border-green-300 focus:border-green-400 focus:ring-green-200"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    addMilestone();
+                    handleAddMilestone();
                   }
                 }}
               />
               <Button
-                onClick={addMilestone}
+                onClick={handleAddMilestone}
                 size="sm"
                 variant="outline"
                 className="text-green-600 border-green-300 hover:bg-green-50 w-full"
@@ -618,7 +509,10 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       <div className="flex-1 mr-4">
                         <Input
                           value={milestone.title}
-                          onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
+                          onChange={(e) => saveMilestone({
+                            id: milestone.id,
+                            title: e.target.value
+                          })}
                           className="font-medium text-gray-900 bg-transparent border-none p-0 text-base focus:bg-white focus:border focus:border-orange-300 focus:px-3 focus:py-2 focus:rounded-md"
                         />
                       </div>
@@ -627,7 +521,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           {statusOptions.find(opt => opt.value === milestone.status)?.label}
                         </Badge>
                         <Button
-                          onClick={() => deleteMilestone(milestone.id)}
+                          onClick={() => handleDeleteMilestone(milestone.id)}
                           size="sm"
                           variant="ghost"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1"
@@ -646,14 +540,14 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                               className="text-left font-normal border-orange-200 hover:border-orange-300"
                             >
                               <CalendarIcon className="w-4 h-4 mr-2" />
-                              {milestone.targetDate ? format(milestone.targetDate, "PPP") : t.pickDate}
+                              {milestone.target_date ? format(new Date(milestone.target_date), "PPP") : t.pickDate}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={milestone.targetDate}
-                              onSelect={(date) => updateMilestone(milestone.id, 'targetDate', date)}
+                              selected={milestone.target_date ? new Date(milestone.target_date) : undefined}
+                              onSelect={(date) => handleUpdateMilestoneDate(milestone.id, date)}
                               initialFocus
                             />
                           </PopoverContent>
@@ -661,7 +555,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       </div>
                       <Select
                         value={milestone.status}
-                        onValueChange={(value) => updateMilestone(milestone.id, 'status', value)}
+                        onValueChange={(value) => handleUpdateMilestoneStatus(milestone.id, value)}
                       >
                         <SelectTrigger className="w-40 border-orange-200 hover:border-orange-300">
                           <SelectValue />
@@ -674,11 +568,11 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           ))}
                         </SelectContent>
                       </Select>
-                      {milestone.targetDate && (
+                      {milestone.target_date && (
                         <Button
                           onClick={() => addToCalendar({
                             title: milestone.title,
-                            startDate: milestone.targetDate!,
+                            startDate: new Date(milestone.target_date),
                             description: `Business milestone: ${milestone.title}`
                           })}
                           size="sm"
