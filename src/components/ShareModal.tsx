@@ -19,12 +19,29 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
 
   // Prevent conflicts with external share-modal scripts
   useEffect(() => {
-    // Add a small delay to prevent conflicts with external scripts
-    const timer = setTimeout(() => {
-      // This ensures our component loads after any external scripts
-    }, 100);
+    // Prevent conflicts with external scripts that might try to access DOM elements
+    const preventExternalConflicts = () => {
+      // Remove any external share-modal event listeners that might conflict
+      const existingElements = document.querySelectorAll('[data-share-modal]');
+      existingElements.forEach(element => {
+        if (element && typeof element.removeEventListener === 'function') {
+          try {
+            // Create a safe clone to avoid addEventListener on null errors
+            const cloned = element.cloneNode(true);
+            element.parentNode?.replaceChild(cloned, element);
+          } catch (error) {
+            console.warn('Share modal cleanup error:', error);
+          }
+        }
+      });
+    };
+
+    const timer = setTimeout(preventExternalConflicts, 100);
     
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      preventExternalConflicts();
+    };
   }, []);
 
   const translations = {
