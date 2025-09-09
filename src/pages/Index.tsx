@@ -182,7 +182,10 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={signOut}
+                onClick={async () => {
+                  await signOut();
+                  navigate('/auth');
+                }}
                 className="flex items-center gap-2 text-xs sm:text-sm"
               >
                 <LogOut className="w-4 h-4" />
