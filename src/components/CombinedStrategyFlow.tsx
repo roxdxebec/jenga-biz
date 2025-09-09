@@ -105,7 +105,31 @@ const CombinedStrategyFlow = ({
 
   // Load existing strategy data or create from template
   useEffect(() => {
-    if (template && !currentStrategy) {
+    console.log('Strategy loading effect triggered. currentStrategy:', currentStrategy, 'template:', template);
+    
+    if (currentStrategy) {
+      // Load existing strategy - this takes priority over template
+      console.log('Loading existing strategy data:', currentStrategy);
+      const loadedStrategy = {
+        businessName: currentStrategy.business_name || '',
+        vision: currentStrategy.vision || '',
+        mission: currentStrategy.mission || '',
+        targetMarket: currentStrategy.target_market || '',
+        revenueModel: currentStrategy.revenue_model || '',
+        valueProposition: currentStrategy.value_proposition || '',
+        keyPartners: currentStrategy.key_partners || '',
+        marketingApproach: currentStrategy.marketing_approach || '',
+        operationalNeeds: currentStrategy.operational_needs || '',
+        growthGoals: currentStrategy.growth_goals || ''
+      };
+      console.log('Setting loaded strategy data:', loadedStrategy);
+      setStrategy(loadedStrategy);
+      setLanguage(currentStrategy.language || 'en');
+      setCountry(currentStrategy.country || 'KE');
+      setCurrency(currentStrategy.currency || 'KES');
+      setTemplateId(currentStrategy.template_id || '');
+      setTemplateName(currentStrategy.template_name || '');
+    } else if (template) {
       // Template provided - create new strategy from template
       console.log('Creating strategy from template:', template);
       setStrategy({
@@ -122,29 +146,6 @@ const CombinedStrategyFlow = ({
       });
       setTemplateId(template.id || '');
       setTemplateName(template.name || '');
-    } else if (currentStrategy) {
-      // Load existing strategy
-      console.log('Loading existing strategy:', currentStrategy);
-      console.log('Setting strategy data from currentStrategy...');
-      const loadedStrategy = {
-        businessName: currentStrategy.business_name || '',
-        vision: currentStrategy.vision || '',
-        mission: currentStrategy.mission || '',
-        targetMarket: currentStrategy.target_market || '',
-        revenueModel: currentStrategy.revenue_model || '',
-        valueProposition: currentStrategy.value_proposition || '',
-        keyPartners: currentStrategy.key_partners || '',
-        marketingApproach: currentStrategy.marketing_approach || '',
-        operationalNeeds: currentStrategy.operational_needs || '',
-        growthGoals: currentStrategy.growth_goals || ''
-      };
-      console.log('Strategy data being set:', loadedStrategy);
-      setStrategy(loadedStrategy);
-      setLanguage(currentStrategy.language || 'en');
-      setCountry(currentStrategy.country || 'KE');
-      setCurrency(currentStrategy.currency || 'KES');
-      setTemplateId(currentStrategy.template_id || '');
-      setTemplateName(currentStrategy.template_name || '');
     } else {
       // Start from scratch - clear everything
       console.log('Start from scratch - clearing strategy data');

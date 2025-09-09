@@ -34,6 +34,9 @@ const Strategy = () => {
       } else {
         console.error('Strategy not found with ID:', strategyId, 'Available strategies:', strategies);
       }
+    } else if (!strategyId) {
+      // Clear current strategy when no ID (new strategy)
+      setCurrentStrategy(null);
     }
   }, [strategyId, strategies, setCurrentStrategy]);
 
@@ -47,6 +50,7 @@ const Strategy = () => {
 
   return (
     <CombinedStrategyFlow 
+      key={strategyId || 'new'} // Force re-mount when strategy changes
       template={template}
       onBack={handleBack}
       onHome={handleHome}
