@@ -24,7 +24,7 @@ const CombinedStrategyFlow = ({
   initialLanguage = 'en' 
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
-  const { saveStrategy, currentStrategy, milestones: strategyMilestones, setCurrentStrategy } = useStrategy();
+  const { saveStrategy, currentStrategy, milestones: strategyMilestones, setCurrentStrategy, clearStrategy } = useStrategy();
   const [language, setLanguage] = useState(initialLanguage);
   const [country, setCountry] = useState('KE');
   const [currency, setCurrency] = useState('KES');
@@ -103,10 +103,29 @@ const CombinedStrategyFlow = ({
     setCurrencySymbol(countryData.symbol);
   }, [country]);
 
-  // Load existing strategy data when editing, or clear for start from scratch
+  // Load existing strategy data or create from template
   useEffect(() => {
-    if (currentStrategy) {
-      console.log('Loading existing strategy for editing:', currentStrategy);
+    if (template) {
+      // Template provided - create new strategy from template
+      console.log('Creating strategy from template:', template);
+      clearStrategy(); // Clear any existing strategy first
+      setStrategy({
+        businessName: template.name || '',
+        vision: template.content?.vision || '',
+        mission: template.content?.mission || '',
+        targetMarket: template.content?.targetMarket || '',
+        revenueModel: template.content?.revenueModel || '',
+        valueProposition: template.content?.valueProposition || '',
+        keyPartners: template.content?.keyPartners || '',
+        marketingApproach: template.content?.marketingApproach || '',
+        operationalNeeds: template.content?.operationalNeeds || '',
+        growthGoals: template.content?.growthGoals || ''
+      });
+      setTemplateId(template.id || '');
+      setTemplateName(template.name || '');
+    } else if (currentStrategy) {
+      // Load existing strategy
+      console.log('Loading existing strategy:', currentStrategy);
       setStrategy({
         businessName: currentStrategy.business_name || '',
         vision: currentStrategy.vision || '',
@@ -124,9 +143,10 @@ const CombinedStrategyFlow = ({
       setCurrency(currentStrategy.currency || 'KES');
       setTemplateId(currentStrategy.template_id || '');
       setTemplateName(currentStrategy.template_name || '');
-    } else if (!template && !currentStrategy) {
-      // Clear strategy for start from scratch mode
+    } else {
+      // Start from scratch - clear everything
       console.log('Start from scratch - clearing strategy data');
+      clearStrategy();
       setStrategy({
         businessName: '',
         vision: '',
@@ -139,10 +159,9 @@ const CombinedStrategyFlow = ({
         operationalNeeds: '',
         growthGoals: ''
       });
-      setCurrentStrategy(null);
       setMilestones([]);
     }
-  }, [currentStrategy, template, setCurrentStrategy]);
+  }, [currentStrategy, template, clearStrategy]);
 
   const handleStrategyChange = (newStrategy) => {
     console.log('Strategy changed:', newStrategy);
@@ -390,7 +409,7 @@ const CombinedStrategyFlow = ({
                 variant="outline"
                 size="sm"
                 onClick={() => window.location.href = '/dashboard'}
-                className="flex items-center gap-2 text-xs sm:text-sm border-blue-200 text-blue-700 hover:bg-blue-50 bg-blue-50/50"
+                className="flex items-center gap-2 text-xs sm:text-sm border-primary/20 text-primary hover:bg-primary/10 bg-primary/5 ml-auto"
               >
                 <BarChart3 className="w-4 h-4" />
                 Dashboard

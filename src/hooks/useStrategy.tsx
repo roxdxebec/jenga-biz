@@ -62,11 +62,6 @@ export const useStrategy = () => {
       if (error) throw error;
       
       setStrategies(data || []);
-      
-      // Set the most recent strategy as current if none is selected
-      if (data && data.length > 0 && !currentStrategy) {
-        setCurrentStrategy(data[0]);
-      }
     } catch (error) {
       console.error('Error loading strategies:', error);
       toast({
@@ -324,12 +319,18 @@ export const useStrategy = () => {
     }
   }, [currentStrategy?.id]);
 
+  const clearStrategy = () => {
+    setCurrentStrategy(null);
+    setMilestones([]);
+  };
+
   return {
     loading,
     strategies,
     currentStrategy,
     milestones,
     setCurrentStrategy,
+    clearStrategy,
     loadStrategies,
     saveStrategy,
     autoSaveStrategy,
