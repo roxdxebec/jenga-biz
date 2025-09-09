@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,10 +27,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserDashboardProps {
-  onBackToHome: () => void;
-  onNewStrategy: () => void;
-  onViewStrategy: (strategy: any) => void;
-  onEditProfile: () => void;
+  // No props needed - using React Router navigation
 }
 
 interface UserProfile {
@@ -45,8 +43,12 @@ interface UserProfile {
   country?: string;
 }
 
-const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProfile }: UserDashboardProps) => {
+const UserDashboard = ({ }: UserDashboardProps) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  console.log('🔍 UserDashboard - Component rendering, user:', user?.email);
+  
+  // Import useStrategy hook
   const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -55,6 +57,15 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
   const [loadingMilestones, setLoadingMilestones] = useState(true);
   const [financialData, setFinancialData] = useState<any>({ totalRevenue: 0, totalExpenses: 0, recentTransactions: [] });
   const [loadingFinancial, setLoadingFinancial] = useState(true);
+
+  // Navigation handlers using React Router
+  const handleBackToHome = () => navigate('/');
+  const handleNewStrategy = () => navigate('/templates');
+  const handleViewStrategy = (strategy: any) => {
+    console.log('🔍 Dashboard - View strategy clicked, strategy.id:', strategy.id);
+    navigate(`/strategy?id=${strategy.id}`);
+  };
+  const handleEditProfile = () => navigate('/profile');
 
   useEffect(() => {
     if (user) {
@@ -395,7 +406,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
               size="sm"
               onClick={() => {
                 console.log('Back to Home clicked');
-                onBackToHome();
+                handleBackToHome();
               }}
               className="text-gray-600 hover:text-gray-900"
             >
@@ -409,7 +420,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                 size="sm"
                 onClick={() => {
                   console.log('Settings clicked');
-                  onEditProfile();
+                  handleEditProfile();
                 }}
                 className="border-orange-200 text-orange-700 hover:bg-orange-50 text-xs sm:text-sm"
               >
@@ -481,7 +492,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                   Create your business strategy, set milestones, and track your financial progress to achieve your entrepreneurial goals.
                 </p>
                 <Button
-                  onClick={onBackToHome}
+                onClick={handleBackToHome}
                   className="bg-orange-600 hover:bg-orange-700"
                   size="lg"
                 >
@@ -516,7 +527,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                     Create your first business strategy to get started with planning your venture.
                   </p>
                   <Button
-                    onClick={onBackToHome}
+                    onClick={handleBackToHome}
                     className="bg-orange-600 hover:bg-orange-700"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -570,7 +581,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                         onClick={() => {
                           console.log('DASHBOARD DEBUG: View button clicked, strategy.id:', strategy.id);
                           console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
-                          onViewStrategy(strategy);
+                          handleViewStrategy(strategy);
                         }}
                         className="flex-1"
                       >
@@ -583,7 +594,7 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                         onClick={() => {
                           console.log('DASHBOARD DEBUG: Edit button clicked, strategy.id:', strategy.id);
                           console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
-                          onViewStrategy(strategy);
+                          handleViewStrategy(strategy);
                         }}
                         className="flex-1"
                       >

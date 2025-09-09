@@ -31,12 +31,7 @@ const App = () => (
             <Route path="/templates" element={<Templates />} />
             <Route path="/strategy" element={<Strategy />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/dashboard" element={<UserDashboard 
-              onBackToHome={() => window.location.href = '/'}
-              onNewStrategy={() => window.location.href = '/templates'}
-              onViewStrategy={(strategy) => window.location.href = `/strategy?id=${strategy.id}`}
-              onEditProfile={() => window.location.href = '/profile'}
-            />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="/saas" element={<SaaSFeatures onSignOut={() => {}} />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
