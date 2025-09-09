@@ -90,20 +90,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    // Send custom confirmation email
-    if (!error) {
-      try {
-        await supabase.functions.invoke('send-signup-confirmation', {
-          body: {
-            email,
-            confirmationUrl: redirectUrl
-          }
-        });
-      } catch (emailError) {
-        console.error('Error sending custom signup confirmation email:', emailError);
-        // Don't return error for email sending failure, as the signup still works
-      }
-    }
+    // Custom email functions disabled - using default Supabase emails
+    // if (!error) {
+    //   try {
+    //     await supabase.functions.invoke('send-signup-confirmation', {
+    //       body: {
+    //         email,
+    //         confirmationUrl: redirectUrl
+    //       }
+    //     });
+    //   } catch (emailError) {
+    //     console.error('Error sending custom signup confirmation email:', emailError);
+    //     // Don't return error for email sending failure, as the signup still works
+    //   }
+    // }
     
     return { error };
   };
@@ -119,20 +119,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       redirectTo: redirectUrl,
     });
     
-    // Send custom password reset email via edge function
-    if (!error) {
-      try {
-        await supabase.functions.invoke('send-password-reset', {
-          body: {
-            to: email,
-            resetUrl: redirectUrl,
-          }
-        });
-      } catch (emailError) {
-        console.error('Error sending custom password reset email:', emailError);
-        // Don't return error for email sending failure, as the reset still works
-      }
-    }
+    // Custom email functions disabled - using default Supabase emails
+    // if (!error) {
+    //   try {
+    //     await supabase.functions.invoke('send-password-reset', {
+    //       body: {
+    //         to: email,
+    //         resetUrl: redirectUrl,
+    //       }
+    //     });
+    //   } catch (emailError) {
+    //     console.error('Error sending custom password reset email:', emailError);
+    //     // Don't return error for email sending failure, as the reset still works
+    //   }
+    // }
     
     return { error };
   };
