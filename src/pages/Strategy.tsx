@@ -17,8 +17,8 @@ const Strategy = () => {
     if (strategyId) {
       // Load strategies and find the specific strategy to edit
       const loadStrategy = async () => {
+        console.log('Loading strategies for strategy ID:', strategyId);
         await loadStrategies();
-        // Strategy will be found after loading completes
       };
       loadStrategy();
     }
@@ -29,8 +29,10 @@ const Strategy = () => {
     if (strategyId && strategies.length > 0) {
       const strategyToEdit = strategies.find(s => s.id === strategyId);
       if (strategyToEdit) {
-        console.log('Setting current strategy for editing:', strategyToEdit);
+        console.log('Found strategy to edit:', strategyToEdit);
         setCurrentStrategy(strategyToEdit);
+      } else {
+        console.error('Strategy not found with ID:', strategyId, 'Available strategies:', strategies);
       }
     }
   }, [strategyId, strategies, setCurrentStrategy]);

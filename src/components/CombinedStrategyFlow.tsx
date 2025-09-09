@@ -125,7 +125,8 @@ const CombinedStrategyFlow = ({
     } else if (currentStrategy) {
       // Load existing strategy
       console.log('Loading existing strategy:', currentStrategy);
-      setStrategy({
+      console.log('Setting strategy data from currentStrategy...');
+      const loadedStrategy = {
         businessName: currentStrategy.business_name || '',
         vision: currentStrategy.vision || '',
         mission: currentStrategy.mission || '',
@@ -136,7 +137,9 @@ const CombinedStrategyFlow = ({
         marketingApproach: currentStrategy.marketing_approach || '',
         operationalNeeds: currentStrategy.operational_needs || '',
         growthGoals: currentStrategy.growth_goals || ''
-      });
+      };
+      console.log('Strategy data being set:', loadedStrategy);
+      setStrategy(loadedStrategy);
       setLanguage(currentStrategy.language || 'en');
       setCountry(currentStrategy.country || 'KE');
       setCurrency(currentStrategy.currency || 'KES');
