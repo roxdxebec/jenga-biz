@@ -44,9 +44,9 @@ interface UserProfile {
 }
 
 const UserDashboard = ({ }: UserDashboardProps) => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  console.log('🔍 UserDashboard - Component rendering, user:', user?.email);
+  console.log('🔍 UserDashboard - Component rendering, user:', user?.email, 'authLoading:', authLoading);
   
   // Import useStrategy hook
   const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
@@ -68,13 +68,18 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   const handleEditProfile = () => navigate('/profile');
 
   useEffect(() => {
+    console.log('🔍 UserDashboard - useEffect triggered, user:', user?.email, 'authLoading:', authLoading);
     if (user) {
+      console.log('🔍 UserDashboard - User found, loading profile and data...');
       loadUserProfile();
       loadStrategies();
       loadUserMilestones();
       loadUserFinancialData();
+    } else if (!authLoading) {
+      console.log('🔍 UserDashboard - No user and auth not loading, redirecting to auth');
+      navigate('/auth');
     }
-  }, [user]);
+  }, [user, authLoading, navigate]);
 
   const loadUserProfile = async () => {
     if (!user) return;
@@ -382,6 +387,23 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     report += `Generated with Jenga Biz Africa ✨\n`;
     return report;
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    console.log('🔍 UserDashboard - No user found, redirecting to auth');
+    navigate('/auth');
+    return null;
+  }
 
   if (loadingProfile) {
     return (
