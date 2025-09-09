@@ -105,10 +105,9 @@ const CombinedStrategyFlow = ({
 
   // Load existing strategy data or create from template
   useEffect(() => {
-    if (template) {
+    if (template && !currentStrategy) {
       // Template provided - create new strategy from template
       console.log('Creating strategy from template:', template);
-      clearStrategy(); // Clear any existing strategy first
       setStrategy({
         businessName: template.name || '',
         vision: template.content?.vision || '',
@@ -146,7 +145,6 @@ const CombinedStrategyFlow = ({
     } else {
       // Start from scratch - clear everything
       console.log('Start from scratch - clearing strategy data');
-      clearStrategy();
       setStrategy({
         businessName: '',
         vision: '',
@@ -161,7 +159,7 @@ const CombinedStrategyFlow = ({
       });
       setMilestones([]);
     }
-  }, [currentStrategy, template, clearStrategy]);
+  }, [currentStrategy, template]);
 
   const handleStrategyChange = (newStrategy) => {
     console.log('Strategy changed:', newStrategy);
@@ -211,11 +209,10 @@ const CombinedStrategyFlow = ({
       };
       
       console.log('Saving strategy data:', strategyToSave);
-      await saveStrategy(strategyToSave, true);
-      toast({
-        title: 'Strategy Saved',
-        description: 'Your business strategy has been saved successfully.',
-      });
+      const result = await saveStrategy(strategyToSave, true);
+      if (result) {
+        console.log('Strategy saved successfully:', result);
+      }
     } catch (error) {
       console.error('Error saving strategy:', error);
       toast({
