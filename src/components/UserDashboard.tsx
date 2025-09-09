@@ -44,9 +44,9 @@ interface UserProfile {
 }
 
 const UserDashboard = ({ }: UserDashboardProps) => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  console.log('🔍 UserDashboard - Component rendering, user:', user?.email);
+  console.log('🔍 UserDashboard - Component rendering, user:', user?.email, 'authLoading:', authLoading);
   
   // Import useStrategy hook
   const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
@@ -385,7 +385,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     return report;
   };
 
-  if (loadingProfile) {
+  if (authLoading || loadingProfile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
         <div className="text-center">
