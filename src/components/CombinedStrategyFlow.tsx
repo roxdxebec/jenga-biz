@@ -124,7 +124,7 @@ const CombinedStrategyFlow = ({
       setCurrency(currentStrategy.currency || 'KES');
       setTemplateId(currentStrategy.template_id || '');
       setTemplateName(currentStrategy.template_name || '');
-    } else if (!template) {
+    } else if (!template && !currentStrategy) {
       // Clear strategy for start from scratch mode
       console.log('Start from scratch - clearing strategy data');
       setStrategy({
@@ -140,6 +140,7 @@ const CombinedStrategyFlow = ({
         growthGoals: ''
       });
       setCurrentStrategy(null);
+      setMilestones([]);
     }
   }, [currentStrategy, template, setCurrentStrategy]);
 
@@ -389,7 +390,7 @@ const CombinedStrategyFlow = ({
                 variant="outline"
                 size="sm"
                 onClick={() => window.location.href = '/dashboard'}
-                className="flex items-center gap-2 text-xs sm:text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
+                className="flex items-center gap-2 text-xs sm:text-sm border-blue-200 text-blue-700 hover:bg-blue-50 bg-blue-50/50"
               >
                 <BarChart3 className="w-4 h-4" />
                 Dashboard

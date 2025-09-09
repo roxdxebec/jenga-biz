@@ -120,9 +120,17 @@ Created with Strategy Grid ✨`;
   };
 
   const handleWhatsAppShare = () => {
-    const text = encodeURIComponent(generateShareText());
-    const url = `https://wa.me/?text=${text}`;
-    window.open(url, '_blank');
+    try {
+      const text = encodeURIComponent(generateShareText());
+      const url = `https://wa.me/?text=${text}`;
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('WhatsApp share failed:', error);
+      toast({
+        title: 'Share failed. Please try copying the text instead.',
+        variant: 'destructive'
+      });
+    }
   };
 
   const handleEmailShare = () => {
