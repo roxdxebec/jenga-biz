@@ -20,32 +20,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔍 useAuth - useEffect starting, initializing auth...');
     let initialSessionLoaded = false;
 
     // Set up auth state listener FIRST  
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('🔍 Auth state change:', event, 'session:', !!session);
+        console.log('🔍 Auth state change - event:', event, 'session exists:', !!session);
+        console.log('🔍 Auth state change - session user:', session?.user?.email || 'no user');
+        console.log('🔍 Auth state change - initialSessionLoaded:', initialSessionLoaded);
+        
         setSession(session);
         setUser(session?.user ?? null);
         
+        console.log('🔍 Auth state change - setting user to:', session?.user?.email || 'null');
+        
         // Only set loading to false after initial session check OR on auth change
         if (initialSessionLoaded || event !== 'INITIAL_SESSION') {
+          console.log('🔍 Auth state change - setting loading to false');
           setLoading(false);
         }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('🔍 Initial session check:', !!session);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('🔍 Initial session check - session exists:', !!session);
+      console.log('🔍 Initial session check - session user:', session?.user?.email || 'no user');
+      console.log('🔍 Initial session check - error:', error);
+      
       setSession(session);
       setUser(session?.user ?? null);
       initialSessionLoaded = true;
+      
+      console.log('🔍 Initial session check - setting loading to false');
+      setLoading(false);
+    }).catch((error) => {
+      console.error('🔍 Initial session check failed:', error);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('🔍 useAuth - cleaning up subscription');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
