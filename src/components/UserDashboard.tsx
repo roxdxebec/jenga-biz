@@ -567,7 +567,11 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => onViewStrategy(strategy)}
+                        onClick={() => {
+                          console.log('DASHBOARD DEBUG: View button clicked, strategy.id:', strategy.id);
+                          console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
+                          onViewStrategy(strategy);
+                        }}
                         className="flex-1"
                       >
                         <Eye className="w-3 h-3 mr-1" />
@@ -576,7 +580,11 @@ const UserDashboard = ({ onBackToHome, onNewStrategy, onViewStrategy, onEditProf
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => onViewStrategy(strategy)}
+                        onClick={() => {
+                          console.log('DASHBOARD DEBUG: Edit button clicked, strategy.id:', strategy.id);
+                          console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
+                          onViewStrategy(strategy);
+                        }}
                         className="flex-1"
                       >
                         <Edit className="w-3 h-3 mr-1" />

@@ -105,11 +105,14 @@ const CombinedStrategyFlow = ({
 
   // Load existing strategy data or create from template
   useEffect(() => {
-    console.log('Strategy loading effect triggered. currentStrategy:', currentStrategy, 'template:', template);
+    console.log('COMBINEDSTRATEGYFLOW DEBUG: Strategy loading effect triggered');
+    console.log('COMBINEDSTRATEGYFLOW DEBUG: currentStrategy received:', currentStrategy);
+    console.log('COMBINEDSTRATEGYFLOW DEBUG: template received:', template);
+    console.log('COMBINEDSTRATEGYFLOW DEBUG: Current local strategy state before update:', strategy);
     
     if (currentStrategy) {
       // Load existing strategy - this takes priority over template
-      console.log('Loading existing strategy data:', currentStrategy);
+      console.log('COMBINEDSTRATEGYFLOW DEBUG: Loading existing strategy data:', currentStrategy);
       const loadedStrategy = {
         businessName: currentStrategy.business_name || '',
         vision: currentStrategy.vision || '',
@@ -122,13 +125,14 @@ const CombinedStrategyFlow = ({
         operationalNeeds: currentStrategy.operational_needs || '',
         growthGoals: currentStrategy.growth_goals || ''
       };
-      console.log('Setting loaded strategy data:', loadedStrategy);
+      console.log('COMBINEDSTRATEGYFLOW DEBUG: Setting loaded strategy data:', loadedStrategy);
       setStrategy(loadedStrategy);
       setLanguage(currentStrategy.language || 'en');
       setCountry(currentStrategy.country || 'KE');
       setCurrency(currentStrategy.currency || 'KES');
       setTemplateId(currentStrategy.template_id || '');
       setTemplateName(currentStrategy.template_name || '');
+      console.log('COMBINEDSTRATEGYFLOW DEBUG: Strategy state should now be updated to:', loadedStrategy);
     } else if (template) {
       // Template provided - create new strategy from template
       console.log('Creating strategy from template:', template);

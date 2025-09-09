@@ -13,11 +13,16 @@ const Strategy = () => {
   const language = location.state?.language || 'en';
   const strategyId = searchParams.get('id');
 
+  console.log('STRATEGY.TSX DEBUG: Component mounted/updated');
+  console.log('STRATEGY.TSX DEBUG: strategyId from URL:', strategyId);
+  console.log('STRATEGY.TSX DEBUG: template from location.state:', template);
+  console.log('STRATEGY.TSX DEBUG: strategies array length:', strategies.length);
+
   useEffect(() => {
     if (strategyId) {
       // Load strategies and find the specific strategy to edit
       const loadStrategy = async () => {
-        console.log('Loading strategies for strategy ID:', strategyId);
+        console.log('STRATEGY.TSX DEBUG: Loading strategies for strategy ID:', strategyId);
         await loadStrategies();
       };
       loadStrategy();
@@ -26,16 +31,23 @@ const Strategy = () => {
 
   // Separate effect to set current strategy when strategies are loaded
   useEffect(() => {
+    console.log('STRATEGY.TSX DEBUG: Strategy setting effect triggered');
+    console.log('STRATEGY.TSX DEBUG: strategyId:', strategyId);
+    console.log('STRATEGY.TSX DEBUG: strategies.length:', strategies.length);
+    console.log('STRATEGY.TSX DEBUG: strategies array:', strategies);
+    
     if (strategyId && strategies.length > 0) {
       const strategyToEdit = strategies.find(s => s.id === strategyId);
       if (strategyToEdit) {
-        console.log('Found strategy to edit:', strategyToEdit);
+        console.log('STRATEGY.TSX DEBUG: Found strategy to edit:', strategyToEdit);
+        console.log('STRATEGY.TSX DEBUG: Calling setCurrentStrategy with:', strategyToEdit);
         setCurrentStrategy(strategyToEdit);
       } else {
-        console.error('Strategy not found with ID:', strategyId, 'Available strategies:', strategies);
+        console.error('STRATEGY.TSX DEBUG: Strategy not found with ID:', strategyId, 'Available strategies:', strategies);
       }
     } else if (!strategyId) {
       // Clear current strategy when no ID (new strategy)
+      console.log('STRATEGY.TSX DEBUG: No strategyId, clearing currentStrategy');
       setCurrentStrategy(null);
     }
   }, [strategyId, strategies, setCurrentStrategy]);
