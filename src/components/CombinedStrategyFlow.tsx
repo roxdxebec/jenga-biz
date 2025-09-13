@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Home, Save, Download, Share2, Sparkles, X, MessageCircle, Mail, Copy, FileDown, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles, X, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut } from 'lucide-react';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
@@ -9,6 +9,8 @@ import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
 import { useStrategy } from '@/hooks/useStrategy';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface CombinedStrategyFlowProps {
   template?: any;
@@ -24,6 +26,8 @@ const CombinedStrategyFlow = ({
   initialLanguage = 'en' 
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const { saveStrategy, currentStrategy, milestones: strategyMilestones, setCurrentStrategy, clearStrategy } = useStrategy();
   const [language, setLanguage] = useState(initialLanguage);
   const [country, setCountry] = useState('KE');
@@ -57,28 +61,32 @@ const CombinedStrategyFlow = ({
       home: 'Home',
       save: 'Save',
       language: 'Language',
-      currency: 'Currency'
+      currency: 'Currency',
+      signOut: 'Sign Out'
     },
     sw: {
       backToTemplates: 'Rudi',
       home: 'Nyumbani',
       save: 'Hifadhi',
       language: 'Lugha',
-      currency: 'Sarafu'
+      currency: 'Sarafu',
+      signOut: 'Toka'
     },
     ar: {
       backToTemplates: 'رجوع',
       home: 'الرئيسية',
       save: 'حفظ',
       language: 'اللغة',
-      currency: 'العملة'
+      currency: 'العملة',
+      signOut: 'تسجيل الخروج'
     },
     fr: {
       backToTemplates: 'Retour',
       home: 'Accueil',
       save: 'Sauvegarder',
       language: 'Langue',
-      currency: 'Devise'
+      currency: 'Devise',
+      signOut: 'Se Déconnecter'
     }
   };
 
@@ -460,17 +468,56 @@ const CombinedStrategyFlow = ({
               </div>
             </div>
 
-            {/* Right section - Dashboard Navigation */}
+            {/* Right section - User Navigation */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.location.href = '/dashboard'}
-                className="flex items-center gap-2 text-xs sm:text-sm border-primary/20 text-primary hover:bg-primary/10 bg-primary/5 ml-auto"
-              >
-                <BarChart3 className="w-4 h-4" />
-                Dashboard
-              </Button>
+              {user && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    try {
+                      navigate('/dashboard');
+                    } catch (error) {
+                      console.error('Navigation error:', error);
+                      window.location.href = '/dashboard';
+                    }
+                  }}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Dashboard
+                </Button>
+              )}
+              {user && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <User className="w-4 h-4" />
+                  Profile
+                </Button>
+              )}
+              {user && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={async () => {
+                    try {
+                      await signOut();
+                      navigate('/auth');
+                    } catch (error) {
+                      console.error('Sign out error:', error);
+                      navigate('/auth');
+                    }
+                  }}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <LogOut className="w-4 h-4" />
+                  {t.signOut}
+                </Button>
+              )}
             </div>
           </div>
         </div>

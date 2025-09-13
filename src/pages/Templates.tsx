@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Home } from 'lucide-react';
+import { ArrowLeft, Home, BarChart3, User, LogOut } from 'lucide-react';
 import { getTemplateData } from '@/data/templateData';
 import LanguageSelector from '@/components/LanguageSelector';
+import { useAuth } from '@/hooks/useAuth';
 
 const Templates = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [language, setLanguage] = useState('en');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   
@@ -21,7 +23,8 @@ const Templates = () => {
       selectTemplate: 'Select a Business Type',
       getStarted: 'Get Started',
       back: 'Back',
-      home: 'Home'
+      home: 'Home',
+      signOut: 'Sign Out'
     },
     sw: {
       title: 'Chagua Kiolezo cha Biashara Yako',
@@ -29,7 +32,8 @@ const Templates = () => {
       selectTemplate: 'Chagua Aina ya Biashara',
       getStarted: 'Anza',
       back: 'Rudi',
-      home: 'Nyumbani'
+      home: 'Nyumbani',
+      signOut: 'Toka'
     },
     ar: {
       title: 'اختر قالب عملك',
@@ -37,7 +41,8 @@ const Templates = () => {
       selectTemplate: 'اختر نوع العمل',
       getStarted: 'ابدأ',
       back: 'رجوع',
-      home: 'الرئيسية'
+      home: 'الرئيسية',
+      signOut: 'تسجيل الخروج'
     },
     fr: {
       title: 'Choisissez Votre Modèle d\'Entreprise',
@@ -45,7 +50,8 @@ const Templates = () => {
       selectTemplate: 'Sélectionner un Type d\'Entreprise',
       getStarted: 'Commencer',
       back: 'Retour',
-      home: 'Accueil'
+      home: 'Accueil',
+      signOut: 'Se Déconnecter'
     }
   };
 
@@ -92,6 +98,54 @@ const Templates = () => {
                 currentLanguage={language}
                 onLanguageChange={setLanguage}
               />
+              {user && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => {
+                    try {
+                      navigate('/dashboard');
+                    } catch (error) {
+                      console.error('Navigation error:', error);
+                      window.location.href = '/dashboard';
+                    }
+                  }}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Dashboard
+                </Button>
+              )}
+              {user && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <User className="w-4 h-4" />
+                  Profile
+                </Button>
+              )}
+              {user && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={async () => {
+                    try {
+                      await signOut();
+                      navigate('/auth');
+                    } catch (error) {
+                      console.error('Sign out error:', error);
+                      navigate('/auth');
+                    }
+                  }}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <LogOut className="w-4 h-4" />
+                  {t.signOut}
+                </Button>
+              )}
             </div>
           </div>
         </div>
