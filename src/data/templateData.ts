@@ -1092,60 +1092,60 @@ const templateContents: { [key: string]: TemplateContent } = {
       fr: 'Ajouter des programmes préscolaires, élargir les groupes d\'âge, plusieurs sites'
     }
   },
-  'internet-cafe': {
+  'boda-boda': {
     vision: {
-      en: 'To be the premier digital services hub in our area',
-      sw: 'Kuwa kituo cha huduma za kidijitali cha kwanza katika eneo letu',
-      ar: 'أن نكون مركز الخدمات الرقمية الرائد في منطقتنا',
-      fr: 'Être le centre de services numériques de premier plan dans notre région'
+      en: 'To provide safe, reliable, and affordable motorcycle transport services in our community',
+      sw: 'Kutoa huduma salama, za kutegemewa, na bei nafuu za usafiri wa pikipiki katika jamii yetu',
+      ar: 'توفير خدمات نقل آمنة وموثوقة وبأسعار معقولة بالدراجات النارية في مجتمعنا',
+      fr: 'Fournir des services de transport sûrs, fiables et abordables en moto dans notre communauté'
     },
     mission: {
-      en: 'Bridging the digital divide through accessible technology services',
-      sw: 'Kudhibiti pengo la kidijitali kupitia huduma za teknolojia zinazopatikana',
-      ar: 'سد الفجوة الرقمية من خلال خدمات التكنولوجيا المتاحة',
-      fr: 'Combler la fracture numérique grâce à des services technologiques accessibles'
+      en: 'Connecting people and delivering goods efficiently while creating income opportunities',
+      sw: 'Kuunganisha watu na kusafirisha bidhaa kwa ufanisi huku tukiunda fursa za kipato',
+      ar: 'ربط الناس وتوصيل البضائع بكفاءة مع خلق فرص دخل',
+      fr: 'Connecter les personnes et livrer les marchandises efficacement tout en créant des opportunités de revenus'
     },
     targetMarket: {
-      en: 'Students, job seekers, small businesses, elderly, tourists',
-      sw: 'Wanafunzi, watafutaji kazi, biashara ndogo, wazee, watalii',
-      ar: 'الطلاب، الباحثون عن عمل، الشركات الصغيرة، كبار السن، السياح',
-      fr: 'Étudiants, demandeurs d\'emploi, petites entreprises, personnes âgées, touristes'
+      en: 'Daily commuters, students, small business owners, delivery clients, tourists',
+      sw: 'Wasafiri wa kila siku, wanafunzi, wamiliki wa biashara ndogo, wateja wa utoaji, watalii',
+      ar: 'الركاب اليوميون، الطلاب، أصحاب الأعمال الصغيرة، عملاء التوصيل، السياح',
+      fr: 'Navetteurs quotidiens, étudiants, propriétaires de petites entreprises, clients de livraison, touristes'
     },
     revenueModel: {
-      en: 'Computer time, printing, scanning, typing services, training',
-      sw: 'Muda wa kompyuta, uchapishaji, usomaji, huduma za kuandika, mafunzo',
-      ar: 'وقت استخدام الكمبيوتر، الطباعة، المسح، خدمات الكتابة، التدريب',
-      fr: 'Temps d\'ordinateur, impression, numérisation, services de dactylographie, formation'
+      en: 'Per trip fares, package delivery fees, daily rental rates, commission from app platforms',
+      sw: 'Nauli za safari, ada za utoaji wa vifurushi, viwango vya kukodisha vya kila siku, kamisheni kutoka majukwaa ya programu',
+      ar: 'أجرة الرحلة الواحدة، رسوم توصيل الطرود، أسعار الإيجار اليومي، عمولة من منصات التطبيقات',
+      fr: 'Tarifs par voyage, frais de livraison de colis, tarifs de location quotidiens, commission des plateformes d\'applications'
     },
     valueProposition: {
-      en: 'Fast internet, modern computers, affordable rates, training',
-      sw: 'Mtandao wa haraka, kompyuta za kisasa, viwango vya bei nafuu, mafunzo',
-      ar: 'إنترنت سريع، حواسيب حديثة، أسعار معقولة، تدريب',
-      fr: 'Internet rapide, ordinateurs modernes, tarifs abordables, formation'
+      en: 'Quick and reliable transport, affordable fares, door-to-door service, flexible payment options',
+      sw: 'Usafiri wa haraka na wa kutegemewa, nauli za bei nafuu, huduma ya mlango hadi mlango, chaguzi za malipo zinazobadilika',
+      ar: 'نقل سريع وموثوق، أجرة معقولة، خدمة من الباب إلى الباب، خيارات دفع مرنة',
+      fr: 'Transport rapide et fiable, tarifs abordables, service porte-à-porte, options de paiement flexibles'
     },
     keyPartners: {
-      en: 'Internet providers, computer suppliers, software vendors',
-      sw: 'Watoa huduma za mtandao, wasambazaji wa kompyuta, wauzaji wa programu',
-      ar: 'مزودو الإنترنت، موردي الحواسيب، بائعي البرمجيات',
-      fr: 'Fournisseurs d\'internet, fournisseurs d\'ordinateurs, vendeurs de logiciels'
+      en: 'Fuel stations, motorcycle dealers, mobile money providers, insurance companies, delivery apps',
+      sw: 'Vituo vya mafuta, mauzo ya pikipiki, watoa huduma za pesa za simu, makampuni ya bima, programu za utoaji',
+      ar: 'محطات الوقود، تجار الدراجات النارية، مزودي الأموال المحمولة، شركات التأمين، تطبيقات التوصيل',
+      fr: 'Stations-service, concessionnaires de motos, fournisseurs d\'argent mobile, compagnies d\'assurance, applications de livraison'
     },
     marketingApproach: {
-      en: 'Student discounts, business packages, community programs',
-      sw: 'Punguzo la wanafunzi, vifurushi vya biashara, mipango ya jamii',
-      ar: 'خصومات للطلاب، حزم الأعمال، برامج المجتمع',
-      fr: 'Réductions étudiantes, forfaits entreprise, programmes communautaires'
+      en: 'Word-of-mouth referrals, social media presence, partnerships with local businesses, rider app platforms',
+      sw: 'Mapendekezo ya mdomo kwa mdomo, uwepo wa mitandao ya kijamii, ushirikiano na biashara za mitaani, majukwaa ya programu za waendesha',
+      ar: 'إحالات الكلام الشفهي، الحضور على وسائل التواصل الاجتماعي، الشراكات مع الشركات المحلية، منصات تطبيقات الراكبين',
+      fr: 'Références de bouche-à-oreille, présence sur les réseaux sociaux, partenariats avec les entreprises locales, plateformes d\'applications de chauffeurs'
     },
     operationalNeeds: {
-      en: 'Computers, printers, internet connection, UPS, furniture',
-      sw: 'Kompyuta, mashine za kuchapisha, muunganisho wa mtandao, UPS, samani',
-      ar: 'حواسيب، طابعات، اتصال إنترنت، UPS، أثاث',
-      fr: 'Ordinateurs, imprimantes, connexion internet, onduleurs, mobilier'
+      en: 'Motorcycle, protective gear, mobile phone, GPS navigation, maintenance tools, insurance',
+      sw: 'Pikipiki, vifaa vya ulinzi, simu ya mkononi, uwongozi wa GPS, zana za matengenezo, bima',
+      ar: 'دراجة نارية، معدات واقية، هاتف محمول، ملاحة GPS، أدوات صيانة، تأمين',
+      fr: 'Moto, équipement de protection, téléphone mobile, navigation GPS, outils de maintenance, assurance'
     },
     growthGoals: {
-      en: 'Add training programs, expand services, mobile units',
-      sw: 'Ongeza mipango ya mafunzo, panua huduma, vitengo vya simu',
-      ar: 'إضافة برامج تدريبية، توسيع الخدمات، وحدات متنقلة',
-      fr: 'Ajouter des programmes de formation, étendre les services, unités mobiles'
+      en: 'Add delivery services, acquire additional motorcycles, join ride-hailing platforms, hire other riders',
+      sw: 'Kuongeza huduma za utoaji, kupata pikipiki za ziada, kujiunga na majukwaa ya kupanga safari, kuajiri waendesha wengine',
+      ar: 'إضافة خدمات التوصيل، الحصول على دراجات نارية إضافية، الانضمام إلى منصات استدعاء الركوب، توظيف راكبين آخرين',
+      fr: 'Ajouter des services de livraison, acquérir des motos supplémentaires, rejoindre les plateformes de covoiturage, embaucher d\'autres chauffeurs'
     }
   }
 };
@@ -1472,19 +1472,22 @@ export const getTemplateData = (language: string = 'en') => {
       }
     },
     {
-      id: 'internet-cafe',
-      name: 'Internet Cafe',
-      description: language === 'sw' ? 'Kafe ya mtandao na kompyuta' : 'Computer and internet services',
+      id: 'boda-boda',
+      name: 'Boda Boda',
+      description: language === 'sw' ? 'Huduma za usafiri wa pikipiki' :
+                  language === 'ar' ? 'خدمات تاكسي الدراجات النارية والتوصيل' :
+                  language === 'fr' ? 'Services de taxi moto et de livraison' :
+                  'Motorcycle taxi and delivery services',
       content: {
-        vision: 'To be the premier digital services hub in our area',
-        mission: 'Bridging the digital divide through accessible technology services',
-        targetMarket: 'Students, job seekers, small businesses, elderly, tourists',
-        revenueModel: 'Computer time, printing, scanning, typing services, training',
-        valueProposition: 'Fast internet, modern computers, affordable rates, training',
-        keyPartners: 'Internet providers, computer suppliers, software vendors',
-        marketingApproach: 'Student discounts, business packages, community programs',
-        operationalNeeds: 'Computers, printers, internet connection, UPS, furniture',
-        growthGoals: 'Add training programs, expand services, mobile units'
+        vision: templateContents['boda-boda'].vision[language] || templateContents['boda-boda'].vision.en,
+        mission: templateContents['boda-boda'].mission[language] || templateContents['boda-boda'].mission.en,
+        targetMarket: templateContents['boda-boda'].targetMarket[language] || templateContents['boda-boda'].targetMarket.en,
+        revenueModel: templateContents['boda-boda'].revenueModel[language] || templateContents['boda-boda'].revenueModel.en,
+        valueProposition: templateContents['boda-boda'].valueProposition[language] || templateContents['boda-boda'].valueProposition.en,
+        keyPartners: templateContents['boda-boda'].keyPartners[language] || templateContents['boda-boda'].keyPartners.en,
+        marketingApproach: templateContents['boda-boda'].marketingApproach[language] || templateContents['boda-boda'].marketingApproach.en,
+        operationalNeeds: templateContents['boda-boda'].operationalNeeds[language] || templateContents['boda-boda'].operationalNeeds.en,
+        growthGoals: templateContents['boda-boda'].growthGoals[language] || templateContents['boda-boda'].growthGoals.en,
       }
     }
   ];

@@ -105,45 +105,45 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
     if (isFinancial) {
       return `${customTitle || t.shareTitle}
 
-📊 Financial Summary (${strategy.timePeriod})
+📊 Financial Summary (${strategy.timePeriod || 'Current Period'})
 
-💰 Total Revenue: ${strategy.currency} ${strategy.totalRevenue?.toFixed(2) || '0.00'}
+💰 Total Revenue: ${strategy.currency || 'KSh'} ${strategy.totalRevenue?.toFixed(2) || '0.00'}
 
-💸 Total Expenses: ${strategy.currency} ${strategy.totalExpenses?.toFixed(2) || '0.00'}
+💸 Total Expenses: ${strategy.currency || 'KSh'} ${strategy.totalExpenses?.toFixed(2) || '0.00'}
 
-📈 Net Profit: ${strategy.currency} ${strategy.netProfit?.toFixed(2) || '0.00'}
+📈 Net Profit: ${strategy.currency || 'KSh'} ${strategy.netProfit?.toFixed(2) || '0.00'}
 
 📋 Revenue Entries: ${strategy.revenueEntries?.length || 0}
 📋 Expense Entries: ${strategy.expenseEntries?.length || 0}
 
 Profit Margin: ${strategy.totalRevenue > 0 ? ((strategy.netProfit / strategy.totalRevenue) * 100).toFixed(1) : 0}%
 
-Generated with Financial Tracker ✨`;
+Created with Jenga Biz Africa ✨`;
     }
     
     return `${t.shareTitle}
 
-📈 ${strategy.businessName || 'My Business'}
+📈 ${strategy.businessName || strategy.business_name || 'My Business'}
 
-🎯 Vision: ${strategy.vision}
+🎯 Vision: ${strategy.vision || 'Not specified'}
 
-🚀 Mission: ${strategy.mission}
+🚀 Mission: ${strategy.mission || 'Not specified'}
 
-👥 Target Market: ${strategy.targetMarket}
+👥 Target Market: ${strategy.targetMarket || strategy.target_market || 'Not specified'}
 
-💰 Revenue Model: ${strategy.revenueModel}
+💰 Revenue Model: ${strategy.revenueModel || strategy.revenue_model || 'Not specified'}
 
-⭐ Value Proposition: ${strategy.valueProposition}
+⭐ Value Proposition: ${strategy.valueProposition || strategy.value_proposition || 'Not specified'}
 
-🤝 Key Partners: ${strategy.keyPartners}
+🤝 Key Partners: ${strategy.keyPartners || strategy.key_partners || 'Not specified'}
 
-📢 Marketing: ${strategy.marketingApproach}
+📢 Marketing: ${strategy.marketingApproach || strategy.marketing_approach || 'Not specified'}
 
-⚙️ Operations: ${strategy.operationalNeeds}
+⚙️ Operations: ${strategy.operationalNeeds || strategy.operational_needs || 'Not specified'}
 
-📊 Growth Goals: ${strategy.growthGoals}
+📊 Growth Goals: ${strategy.growthGoals || strategy.growth_goals || 'Not specified'}
 
-Created with Strategy Grid ✨`;
+Created with Jenga Biz Africa ✨`;
   };
 
   const handleWhatsAppShare = () => {

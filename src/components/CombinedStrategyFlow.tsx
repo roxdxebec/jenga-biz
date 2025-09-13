@@ -84,18 +84,70 @@ const CombinedStrategyFlow = ({
 
   const t = translations[language] || translations.en;
 
-  // Update currency when country changes
+  // Update currency when country changes  
   useEffect(() => {
     const currencyMap = {
-      'KE': { currency: 'KES', symbol: 'KSh' },
-      'UG': { currency: 'UGX', symbol: 'UGX' },
-      'TZ': { currency: 'TZS', symbol: 'TZS' },
-      'RW': { currency: 'RWF', symbol: 'RWF' },
-      'NG': { currency: 'NGN', symbol: '₦' },
-      'GH': { currency: 'GHS', symbol: 'GH₵' },
-      'ZA': { currency: 'ZAR', symbol: 'R' },
+      // Major currencies
+      'US': { currency: 'USD', symbol: '$' },
+      'EU': { currency: 'EUR', symbol: '€' },
+      
+      // African currencies
+      'DZ': { currency: 'DZD', symbol: 'DA' },
+      'AO': { currency: 'AOA', symbol: 'Kz' },
+      'BW': { currency: 'BWP', symbol: 'P' },
+      'BI': { currency: 'BIF', symbol: 'FBu' },
+      'CV': { currency: 'CVE', symbol: '$' },
+      'KM': { currency: 'KMF', symbol: 'CF' },
+      'CD': { currency: 'CDF', symbol: 'FC' },
+      'DJ': { currency: 'DJF', symbol: 'Fdj' },
       'EG': { currency: 'EGP', symbol: 'E£' },
-      'MA': { currency: 'MAD', symbol: 'MAD' }
+      'ER': { currency: 'ERN', symbol: 'Nfk' },
+      'SZ': { currency: 'SZL', symbol: 'L' },
+      'ET': { currency: 'ETB', symbol: 'Br' },
+      'GM': { currency: 'GMD', symbol: 'D' },
+      'GH': { currency: 'GHS', symbol: 'GH₵' },
+      'GN': { currency: 'GNF', symbol: 'FG' },
+      'KE': { currency: 'KES', symbol: 'KSh' },
+      'LS': { currency: 'LSL', symbol: 'L' },
+      'LR': { currency: 'LRD', symbol: 'L$' },
+      'LY': { currency: 'LYD', symbol: 'LD' },
+      'MG': { currency: 'MGA', symbol: 'Ar' },
+      'MW': { currency: 'MWK', symbol: 'MK' },
+      'MR': { currency: 'MRU', symbol: 'UM' },
+      'MU': { currency: 'MUR', symbol: '₨' },
+      'MA': { currency: 'MAD', symbol: 'DH' },
+      'MZ': { currency: 'MZN', symbol: 'MT' },
+      'NA': { currency: 'NAD', symbol: 'N$' },
+      'NG': { currency: 'NGN', symbol: '₦' },
+      'RW': { currency: 'RWF', symbol: 'RF' },
+      'ST': { currency: 'STN', symbol: 'Db' },
+      'SC': { currency: 'SCR', symbol: '₨' },
+      'SL': { currency: 'SLL', symbol: 'Le' },
+      'SO': { currency: 'SOS', symbol: 'S' },
+      'ZA': { currency: 'ZAR', symbol: 'R' },
+      'SS': { currency: 'SSP', symbol: '£' },
+      'SD': { currency: 'SDG', symbol: 'ج.س.' },
+      'TZ': { currency: 'TZS', symbol: 'TSh' },
+      'TN': { currency: 'TND', symbol: 'DT' },
+      'UG': { currency: 'UGX', symbol: 'USh' },
+      'ZM': { currency: 'ZMW', symbol: 'ZK' },
+      'ZW': { currency: 'ZWL', symbol: 'Z$' },
+      
+      // CFA Franc regions
+      'BJ': { currency: 'XOF', symbol: 'CFA' }, // Benin
+      'BF': { currency: 'XOF', symbol: 'CFA' }, // Burkina Faso
+      'CI': { currency: 'XOF', symbol: 'CFA' }, // Côte d'Ivoire
+      'GW': { currency: 'XOF', symbol: 'CFA' }, // Guinea-Bissau
+      'ML': { currency: 'XOF', symbol: 'CFA' }, // Mali
+      'NE': { currency: 'XOF', symbol: 'CFA' }, // Niger
+      'SN': { currency: 'XOF', symbol: 'CFA' }, // Senegal
+      'TG': { currency: 'XOF', symbol: 'CFA' }, // Togo
+      'CM': { currency: 'XAF', symbol: 'FCFA' }, // Cameroon
+      'CF': { currency: 'XAF', symbol: 'FCFA' }, // Central African Republic
+      'TD': { currency: 'XAF', symbol: 'FCFA' }, // Chad
+      'CG': { currency: 'XAF', symbol: 'FCFA' }, // Republic of Congo
+      'GQ': { currency: 'XAF', symbol: 'FCFA' }, // Equatorial Guinea
+      'GA': { currency: 'XAF', symbol: 'FCFA' }  // Gabon
     };
     
     const countryData = currencyMap[country] || currencyMap['KE'];
