@@ -46,7 +46,7 @@ interface UserProfile {
 const UserDashboard = ({ }: UserDashboardProps) => {
   const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  console.log('🔍 UserDashboard - Component rendering, user:', user?.email, 'authLoading:', authLoading);
+  console.log('🔍 UserDashboard - Component rendering v2 (no-onboarding)', user?.email, 'authLoading:', authLoading);
   
   // Import useStrategy hook
   const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
@@ -500,26 +500,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
               <p className="text-gray-600">Loading strategies...</p>
             </div>
           ) : strategies.length === 0 ? (
-            <Card className="border-gray-200">
-              <CardContent className="p-8 text-center">
-                <div className="mb-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BarChart3 className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Strategies Yet</h3>
-                  <p className="text-gray-600 mb-6">
-                    Create your first business strategy to get started with planning your venture.
-                  </p>
-                  <Button
-                    onClick={handleBackToHome}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Your First Strategy
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            null
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {strategies.map((strategy) => (
