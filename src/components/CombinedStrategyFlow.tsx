@@ -17,13 +17,15 @@ interface CombinedStrategyFlowProps {
   onBack?: () => void;
   onHome?: () => void;
   initialLanguage?: string;
+  currentStrategy?: any;
 }
 
 const CombinedStrategyFlow = ({ 
   template, 
-  onBack, 
+  onBack,
   onHome, 
-  initialLanguage = 'en' 
+  initialLanguage = 'en',
+  currentStrategy: propCurrentStrategy
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -180,14 +182,14 @@ const CombinedStrategyFlow = ({
     setCurrencySymbol(countryData.symbol);
   }, [country]);
 
-  // Ensure local strategy state updates when currentStrategy changes
+  // Ensure local strategy state updates when propCurrentStrategy changes
   useEffect(() => {
-    if (currentStrategy) {
-      const normalized = normalizeStrategy(currentStrategy);
+    if (propCurrentStrategy) {
+      const normalized = normalizeStrategy(propCurrentStrategy);
       setStrategy(normalized);
       console.log("Loaded normalized strategy into builder:", normalized);
     }
-  }, [currentStrategy]);
+  }, [propCurrentStrategy]);
 
   // Load existing strategy data or create from template
   useEffect(() => {

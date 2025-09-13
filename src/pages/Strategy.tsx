@@ -66,6 +66,7 @@ const Strategy = () => {
       onBack={handleBack}
       onHome={handleHome}
       initialLanguage={language}
+      currentStrategy={strategies.find(s => s.id === strategyId)}
     />
   );
 };
