@@ -163,6 +163,14 @@ const CombinedStrategyFlow = ({
     setCurrencySymbol(countryData.symbol);
   }, [country]);
 
+  // Ensure local strategy state updates when currentStrategy changes
+  useEffect(() => {
+    if (currentStrategy) {
+      setStrategy(currentStrategy as any);
+      console.log("Loaded strategy into builder:", currentStrategy);
+    }
+  }, [currentStrategy]);
+
   // Load existing strategy data or create from template
   useEffect(() => {
     console.log('COMBINEDSTRATEGYFLOW DEBUG: Strategy loading effect triggered');
