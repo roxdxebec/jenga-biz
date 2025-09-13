@@ -98,54 +98,48 @@ const Templates = () => {
                 currentLanguage={language}
                 onLanguageChange={setLanguage}
               />
-              {user && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => {
-                    try {
-                      navigate('/dashboard');
-                    } catch (error) {
-                      console.error('Navigation error:', error);
-                      window.location.href = '/dashboard';
-                    }
-                  }}
-                  className="flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Dashboard
-                </Button>
-              )}
-              {user && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => navigate('/profile')}
-                  className="flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <User className="w-4 h-4" />
-                  Profile
-                </Button>
-              )}
-              {user && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={async () => {
-                    try {
-                      await signOut();
-                      navigate('/auth');
-                    } catch (error) {
-                      console.error('Sign out error:', error);
-                      navigate('/auth');
-                    }
-                  }}
-                  className="flex items-center gap-2 text-xs sm:text-sm"
-                >
-                  <LogOut className="w-4 h-4" />
-                  {t.signOut}
-                </Button>
-              )}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  try {
+                    navigate('/dashboard');
+                  } catch (error) {
+                    console.error('Navigation error:', error);
+                    window.location.href = '/dashboard';
+                  }
+                }}
+                className="flex items-center gap-2 text-xs sm:text-sm"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Dashboard
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/profile')}
+                className="flex items-center gap-2 text-xs sm:text-sm"
+              >
+                <User className="w-4 h-4" />
+                Profile
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={async () => {
+                  try {
+                    await signOut();
+                    navigate('/auth');
+                  } catch (error) {
+                    console.error('Sign out error:', error);
+                    navigate('/auth');
+                  }
+                }}
+                className="flex items-center gap-2 text-xs sm:text-sm"
+              >
+                <LogOut className="w-4 h-4" />
+                {t.signOut}
+              </Button>
             </div>
           </div>
         </div>
