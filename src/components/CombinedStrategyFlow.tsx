@@ -470,6 +470,10 @@ const CombinedStrategyFlow = ({
 
             {/* Right section - User Navigation */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
+              <LanguageSelector 
+                currentLanguage={language}
+                onLanguageChange={setLanguage}
+              />
               {user && (
                 <Button
                   variant="outline"
