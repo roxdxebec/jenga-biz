@@ -53,7 +53,7 @@ const Strategy = () => {
   }, [strategyId, strategies, setCurrentStrategy]);
 
   const handleBack = () => {
-    navigate(-1);
+    navigate('/dashboard');
   };
 
   const handleHome = () => {
