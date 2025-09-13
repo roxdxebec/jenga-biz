@@ -92,6 +92,23 @@ const CombinedStrategyFlow = ({
 
   const t = translations[language] || translations.en;
 
+  // Map Supabase snake_case fields to local camelCase builder fields
+  function normalizeStrategy(data: any) {
+    if (!data) return null;
+    return {
+      businessName: data.business_name || '',
+      vision: data.vision || '',
+      mission: data.mission || '',
+      targetMarket: data.target_market || '',
+      revenueModel: data.revenue_model || '',
+      valueProposition: data.value_proposition || '',
+      keyPartners: data.key_partners || '',
+      marketingApproach: data.marketing_approach || '',
+      operationalNeeds: data.operational_needs || '',
+      growthGoals: data.growth_goals || '',
+    };
+  }
+
   // Update currency when country changes  
   useEffect(() => {
     const currencyMap = {
@@ -166,8 +183,9 @@ const CombinedStrategyFlow = ({
   // Ensure local strategy state updates when currentStrategy changes
   useEffect(() => {
     if (currentStrategy) {
-      setStrategy(currentStrategy as any);
-      console.log("Loaded strategy into builder:", currentStrategy);
+      const normalized = normalizeStrategy(currentStrategy);
+      setStrategy(normalized);
+      console.log("Loaded normalized strategy into builder:", normalized);
     }
   }, [currentStrategy]);
 
