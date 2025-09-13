@@ -62,7 +62,6 @@ const Strategy = () => {
 
   return (
     <CombinedStrategyFlow 
-      key={strategyId || 'new'} // Force re-mount when strategy changes
       template={template}
       onBack={handleBack}
       onHome={handleHome}
