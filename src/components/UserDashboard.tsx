@@ -487,30 +487,6 @@ const UserDashboard = ({ }: UserDashboardProps) => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Check if user has no data in all sections */}
-        {strategies.length === 0 && (
-          <Card className="border-orange-200 mb-8">
-            <CardContent className="p-8 text-center">
-              <div className="mb-4">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <BarChart3 className="w-10 h-10 text-orange-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Let's Get Started!</h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Create your business strategy, set milestones, and track your financial progress to achieve your entrepreneurial goals.
-                </p>
-                <Button
-                onClick={handleBackToHome}
-                  className="bg-orange-600 hover:bg-orange-700"
-                  size="lg"
-                >
-                  <Plus className="w-5 h-5 mr-2" />
-                  Start Your Journey
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Strategies Overview */}
         <div className="mb-8">
