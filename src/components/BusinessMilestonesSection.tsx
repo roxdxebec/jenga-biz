@@ -263,6 +263,15 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       // Use strategyData.id if currentStrategy.id is not available
       const strategyId = currentStrategy?.id || strategyData?.id;
       
+      if (!strategyId) {
+        toast({
+          title: "Error",
+          description: "Please save your strategy first before adding milestones.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       await saveMilestone({
         title: customMilestone.trim(),
         status: 'not-started',
@@ -288,25 +297,32 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     // Use strategyData.id if currentStrategy.id is not available
     const strategyId = currentStrategy?.id || strategyData?.id;
     
-    if (strategyId) {
-      await saveMilestone({
-        title: milestoneTitle,
-        status: 'not-started',
-        business_stage: businessStage,
-        strategy_id: strategyId
-      });
-      
-      trackBusinessMilestone('created', {
-        title: milestoneTitle,
-        category: businessStage,
-        businessStage
-      });
-      
+    if (!strategyId) {
       toast({
-        title: "Milestone added successfully",
-        description: `"${milestoneTitle}" has been added to your milestones.`,
+        title: "Error", 
+        description: "Please save your strategy first before adding milestones.",
+        variant: "destructive"
       });
+      return;
     }
+    
+    await saveMilestone({
+      title: milestoneTitle,
+      status: 'not-started',
+      business_stage: businessStage,
+      strategy_id: strategyId
+    });
+    
+    trackBusinessMilestone('created', {
+      title: milestoneTitle,
+      category: businessStage,
+      businessStage
+    });
+    
+    toast({
+      title: "Milestone added successfully",
+      description: `"${milestoneTitle}" has been added to your milestones.`,
+    });
   };
 
   const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {

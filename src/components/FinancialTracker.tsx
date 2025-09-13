@@ -18,6 +18,8 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import CountrySelector from '@/components/CountrySelector';
+import { africanCountries } from '@/data/africanCountries';
 
 interface Transaction {
   id: string;
@@ -260,16 +262,21 @@ const FinancialTracker = ({
           {/* Currency Selector */}
           <div className="flex items-center justify-center gap-2 mt-4">
             <span className="text-sm font-medium">Currency</span>
-            <Select value={currency}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="KES">🇰🇪 KSh KES</SelectItem>
-                <SelectItem value="USD">🇺🇸 $ USD</SelectItem>
-                <SelectItem value="EUR">🇪🇺 € EUR</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="w-48">
+              <CountrySelector 
+                currentCountry={currency}
+                onCountryChange={(country) => {
+                  // Update currency based on selected country
+                  const countryData = africanCountries.find(c => c.code === country);
+                  if (countryData) {
+                    // This would trigger parent component to update currency
+                    console.log('Currency changed to:', countryData.currency);
+                  }
+                }}
+                language={language}
+                showAllCountries={true}
+              />
+            </div>
           </div>
         </div>
 

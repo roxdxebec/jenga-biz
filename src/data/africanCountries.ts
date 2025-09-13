@@ -555,6 +555,26 @@ export const africanCountries: CountryData[] = [
     flag: '🇰🇲',
     translations: { sw: 'Comoro', ar: 'جزر القمر', fr: 'Comores' }
   },
+
+  // Add USD and EUR for international business
+  {
+    code: 'US',
+    name: 'United States',
+    currency: 'USD',
+    symbol: '$',
+    region: 'International',
+    flag: '🇺🇸',
+    translations: { sw: 'Marekani', ar: 'الولايات المتحدة', fr: 'États-Unis' }
+  },
+  {
+    code: 'EU',
+    name: 'European Union',
+    currency: 'EUR',
+    symbol: '€',
+    region: 'International',
+    flag: '🇪🇺',
+    translations: { sw: 'Umoja wa Ulaya', ar: 'الاتحاد الأوروبي', fr: 'Union européenne' }
+  }
 ];
 
 // Helper functions
@@ -586,7 +606,7 @@ export const majorAfricanCurrencies = [
   'NGN', 'ZAR', 'EGP', 'KES', 'GHS', 'TZS', 'UGX', 'ETB', 'XOF', 'XAF', 'MAD'
 ];
 
-// Popular business countries
+// Popular business countries (including USD/EUR)
 export const popularBusinessCountries = [
-  'NG', 'ZA', 'KE', 'GH', 'EG', 'MA', 'TZ', 'UG', 'ET', 'RW', 'SN', 'CI'
+  'NG', 'ZA', 'KE', 'GH', 'EG', 'MA', 'TZ', 'UG', 'ET', 'RW', 'SN', 'CI', 'US', 'EU'
 ];

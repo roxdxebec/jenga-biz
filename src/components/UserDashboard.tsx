@@ -435,8 +435,14 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                 size="sm"
                 onClick={async () => {
                   console.log('Sign out clicked');
-                  await signOut();
-                  window.location.href = '/auth';
+                  try {
+                    await signOut();
+                    navigate('/auth');
+                  } catch (error) {
+                    console.error('Sign out error:', error);
+                    // Force navigation even if signOut fails
+                    window.location.href = '/auth';
+                  }
                 }}
                 className="border-gray-200 text-gray-700 hover:bg-gray-50 text-xs sm:text-sm"
               >

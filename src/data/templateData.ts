@@ -1211,11 +1211,11 @@ export const getTemplateData = (language: string = 'en') => {
     },
     {
       id: 'cybercafe',
-      name: 'Cybercafe',
+      name: 'Cyber Café',
       description: language === 'sw' ? 'Biashara ya huduma za mtandao na kompyuta' :
                   language === 'ar' ? 'مقهى إنترنت وخدمات الكمبيوتر' :
                   language === 'fr' ? 'Cybercafé et services informatiques' :
-                  'Internet cafe and computer services business',
+                  'Cyber café and computer services business',
       content: {
         vision: templateContents.cybercafe.vision[language] || templateContents.cybercafe.vision.en,
         mission: templateContents.cybercafe.mission[language] || templateContents.cybercafe.mission.en,

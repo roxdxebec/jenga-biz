@@ -65,32 +65,34 @@ const Templates = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
             <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              {t.back}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2"
-            >
-              <Home className="w-4 h-4" />
-              {t.home}
-            </Button>
-          </div>
-            <LanguageSelector 
-              currentLanguage={language}
-              onLanguageChange={setLanguage}
-            />
+            
+            {/* Mobile-responsive navigation - Match Index.tsx */}
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-xs sm:text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {t.back}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 text-xs sm:text-sm"
+              >
+                <Home className="w-4 h-4" />
+                {t.home}
+              </Button>
+              <LanguageSelector 
+                currentLanguage={language}
+                onLanguageChange={setLanguage}
+              />
+            </div>
           </div>
         </div>
       </header>
