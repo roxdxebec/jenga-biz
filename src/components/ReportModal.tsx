@@ -26,21 +26,28 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
   const [type, setType] = useState("full");
   const [period, setPeriod] = useState("30days");
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleConfirm = () => {
     onConfirm({ type, period });
     onClose();
   };
 
-  const handleDesktopShare = (platform: "whatsapp" | "email" | "copy") => {
+  const handleShare = (platform: "whatsapp" | "email" | "copy") => {
     const shareText = `Here is my ${type} report for the period: ${period}.`;
     const url = window.location.href;
 
     if (platform === "whatsapp") {
-      window.open(
-        `https://web.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + url)}`,
-        "_blank"
-      );
+      if (isMobile) {
+        // Mobile deep link to WhatsApp app
+        window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText + " " + url)}`;
+      } else {
+        // Desktop web WhatsApp
+        window.open(
+          `https://web.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + url)}`,
+          "_blank"
+        );
+      }
     } else if (platform === "email") {
       window.location.href = `mailto:?subject=Business Report&body=${encodeURIComponent(
         shareText + "\n\n" + url
@@ -105,13 +112,13 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
             <Button onClick={handleConfirm}>Download</Button>
           ) : (
             <>
-              <Button onClick={() => handleDesktopShare("whatsapp")}>
+              <Button onClick={() => handleShare("whatsapp")}>
                 WhatsApp
               </Button>
-              <Button onClick={() => handleDesktopShare("email")}>
+              <Button onClick={() => handleShare("email")}>
                 Email
               </Button>
-              <Button onClick={() => handleDesktopShare("copy")}>
+              <Button onClick={() => handleShare("copy")}>
                 Copy Link
               </Button>
             </>
