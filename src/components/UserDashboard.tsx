@@ -34,6 +34,7 @@ import { useStrategy } from '@/hooks/useStrategy';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { generateShareText, useShareActions } from '@/lib/shareUtils';
 import ReportModal from './ReportModal';
 
 interface UserDashboardProps {
@@ -290,23 +291,11 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     });
   };
 
+  const shareActions = useShareActions();
+
   const handleComprehensiveShare = () => {
-    const shareText = `Check out my comprehensive business report from Jenga Biz Africa!`;
-    const shareUrl = window.location.href;
-    
-    if (navigator.share) {
-      navigator.share({
-        title: 'My Business Report - Jenga Biz Africa',
-        text: shareText,
-        url: shareUrl,
-      });
-    } else {
-      navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
-      toast({
-        title: 'Link Copied',
-        description: 'Share link copied to clipboard.',
-      });
-    }
+    const shareText = generateFullReport();
+    shareActions.handleCopyText(shareText);
   };
 
   const generateFullReport = () => {
