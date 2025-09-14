@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Share2, MessageCircle, Copy, Download, Check, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ShareModalProps {
   strategy: any;
@@ -16,6 +17,7 @@ interface ShareModalProps {
 const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFinancial = false }: ShareModalProps) => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   // Prevent conflicts with external share-modal scripts
   useEffect(() => {
@@ -149,8 +151,14 @@ Created with Jenga Biz Africa ✨`;
   const handleWhatsAppShare = () => {
     try {
       const text = encodeURIComponent(generateShareText());
-      const url = `https://wa.me/?text=${text}`;
-      window.open(url, '_blank');
+      
+      if (isMobile) {
+        // Mobile deep link to WhatsApp app
+        window.location.href = `whatsapp://send?text=${text}`;
+      } else {
+        // Desktop web WhatsApp
+        window.open(`https://web.whatsapp.com/send?text=${text}`, '_blank');
+      }
     } catch (error) {
       console.error('WhatsApp share failed:', error);
       toast({
