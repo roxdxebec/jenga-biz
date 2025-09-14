@@ -517,7 +517,7 @@ const CombinedStrategyFlow = ({
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
             {/* Left section - Logo and main actions */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-              <img src="/src/assets/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-8 w-auto" />
+              <img src="/src/assets/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-12 w-auto" />
               
               <div className="flex flex-wrap items-center gap-2">
                 <Button

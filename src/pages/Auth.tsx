@@ -43,7 +43,7 @@ const Auth = () => {
       <header className="absolute top-0 left-0 right-0 bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <img src="/src/assets/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-8 w-auto" />
+            <img src="/src/assets/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-12 w-auto" />
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
