@@ -159,7 +159,7 @@ export function AdminDashboard() {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Jenga Biz Africa</h1>
+            <img src="/src/assets/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-10 w-auto" />
             <p className="text-sm text-muted-foreground">Admin Dashboard</p>
           </div>
           <div className="flex items-center gap-4">

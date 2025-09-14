@@ -72,7 +72,7 @@ const Templates = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
-            <h1 className="text-xl font-bold text-gray-900">Jenga Biz Africa</h1>
+            <img src="/src/assets/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-8 w-auto" />
             
             {/* Mobile-responsive navigation - Match Index.tsx */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
