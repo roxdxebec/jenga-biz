@@ -63,6 +63,18 @@ Profit Margin: ${(strategy?.totalRevenue || strategy?.totalIncome) > 0 ? (((stra
 Created with Jenga Biz Africa ✨`;
   }
 
+  if (type === 'milestones') {
+    return `${customTitle || t.shareTitle}
+
+📈 Business Stage: Growth Stage
+📋 Total Milestones: ${strategy?.milestones?.length || 0}
+
+Milestones:
+${strategy?.milestones?.length > 0 ? strategy.milestones.map(m => `🎯 ${m.title || m.name}`).join('\n') : '🎯 No milestones added yet'}
+
+Created with Jenga Biz Africa ✨`;
+  }
+
   if (type === 'summary' || type === 'full') {
     return `${customTitle || t.shareTitle}
 

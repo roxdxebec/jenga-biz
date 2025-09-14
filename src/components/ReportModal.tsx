@@ -37,10 +37,10 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
   const handleShare = (platform: "whatsapp" | "email" | "copy") => {
     const shareText = generateShareText({
       strategy: { reportType: type, timePeriod: period },
-      type,
+      type: type === "summary" ? "summary" : "full",
       period,
       customTitle: `My ${type} Business Report`,
-      isFinancial: true
+      isFinancial: false // Let the function handle report type appropriately
     });
 
     if (platform === "whatsapp") {

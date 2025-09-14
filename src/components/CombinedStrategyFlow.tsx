@@ -468,25 +468,30 @@ const CombinedStrategyFlow = ({
       customTitle = 'My Business Strategy';
       shareText = generateShareText({
         strategy,
+        type: 'summary',
         customTitle,
         language
       });
     } else if (currentSection === 'milestones') {
       customTitle = 'My Business Milestones';
-      shareText = `${customTitle}
-
-📈 Business Stage: Growth Stage
-📋 Total Milestones: ${milestones.length}
-
-Milestones:
-${milestones.length > 0 ? milestones.map(m => `🎯 ${m.title || m.name}`).join('\n') : '🎯 No milestones added yet'}
-
-Created with Jenga Biz Africa ✨`;
+      shareText = generateShareText({
+        strategy: { milestones },
+        type: 'milestones',
+        customTitle,
+        language
+      });
     } else if (currentSection === 'financial') {
       customTitle = 'My Financial Summary';
       isFinancial = true;
       shareText = generateShareText({
-        strategy: {},
+        strategy: {
+          totalRevenue: 0,
+          totalExpenses: 0,
+          netProfit: 0,
+          revenueEntries: [],
+          expenseEntries: [],
+          currency: 'KSh'
+        },
         customTitle,
         isFinancial,
         language

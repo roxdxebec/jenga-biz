@@ -110,6 +110,7 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
   const handleWhatsAppShare = () => {
     const shareText = generateShareText({
       strategy,
+      type: isFinancial ? undefined : 'summary',
       customTitle,
       isFinancial,
       language
@@ -120,6 +121,7 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
   const handleEmailShare = () => {
     const shareText = generateShareText({
       strategy,
+      type: isFinancial ? undefined : 'summary',
       customTitle,
       isFinancial,
       language
@@ -130,6 +132,7 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
   const handleCopyText = async () => {
     const shareText = generateShareText({
       strategy,
+      type: isFinancial ? undefined : 'summary',
       customTitle,
       isFinancial,
       language
