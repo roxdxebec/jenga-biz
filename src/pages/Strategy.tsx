@@ -12,6 +12,7 @@ const Strategy = () => {
   const template = location.state?.template;
   const language = location.state?.language || 'en';
   const strategyId = searchParams.get('id');
+  const defaultTab = searchParams.get('tab');
 
   console.log('STRATEGY.TSX DEBUG: Component mounted/updated');
   console.log('STRATEGY.TSX DEBUG: strategyId from URL:', strategyId);
@@ -67,6 +68,7 @@ const Strategy = () => {
       onHome={handleHome}
       initialLanguage={language}
       currentStrategy={strategies.find(s => s.id === strategyId)}
+      defaultTab={defaultTab}
     />
   );
 };

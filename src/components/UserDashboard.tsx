@@ -18,7 +18,9 @@ import {
   Trash2,
   Download,
   Share2,
-  FileDown
+  FileDown,
+  Target,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
@@ -66,6 +68,42 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     navigate(`/strategy?id=${strategy.id}`);
   };
   const handleEditProfile = () => navigate('/profile');
+
+  // Delete strategy handler
+  const handleDeleteStrategy = async (id: string) => {
+    const confirmed = window.confirm("Are you sure you want to delete this strategy?");
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('strategies')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error("Error deleting strategy:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete strategy. Please try again.",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Strategy deleted successfully.",
+      });
+      // Refresh strategies after delete
+      loadStrategies();
+    }
+  };
+
+  // Navigation to specific strategy tabs
+  const handleUpdateMilestones = (strategyId: string) => {
+    navigate(`/strategy?id=${strategyId}&tab=milestones`);
+  };
+
+  const handleUpdateFinancials = (strategyId: string) => {
+    navigate(`/strategy?id=${strategyId}&tab=financials`);
+  };
 
   useEffect(() => {
     console.log('🔍 UserDashboard - useEffect triggered, user:', user?.email);
@@ -539,32 +577,65 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            console.log('DASHBOARD DEBUG: View button clicked, strategy.id:', strategy.id);
+                            console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
+                            handleViewStrategy(strategy);
+                          }}
+                          className="flex-1"
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            console.log('DASHBOARD DEBUG: Edit button clicked, strategy.id:', strategy.id);
+                            console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
+                            handleViewStrategy(strategy);
+                          }}
+                          className="flex-1"
+                        >
+                          <Edit className="w-3 h-3 mr-1" />
+                          Edit
+                        </Button>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleUpdateMilestones(strategy.id)}
+                          className="flex-1 text-xs"
+                        >
+                          <Target className="w-3 h-3 mr-1" />
+                          Milestones
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleUpdateFinancials(strategy.id)}
+                          className="flex-1 text-xs"
+                        >
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          Financials
+                        </Button>
+                      </div>
+                      
                       <Button
                         size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          console.log('DASHBOARD DEBUG: View button clicked, strategy.id:', strategy.id);
-                          console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
-                          handleViewStrategy(strategy);
-                        }}
-                        className="flex-1"
+                        variant="destructive"
+                        onClick={() => handleDeleteStrategy(strategy.id)}
+                        className="text-xs"
                       >
-                        <Eye className="w-3 h-3 mr-1" />
-                        View
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          console.log('DASHBOARD DEBUG: Edit button clicked, strategy.id:', strategy.id);
-                          console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
-                          handleViewStrategy(strategy);
-                        }}
-                        className="flex-1"
-                      >
-                        <Edit className="w-3 h-3 mr-1" />
-                        Edit
+                        <Trash2 className="w-3 h-3 mr-1" />
+                        Delete
                       </Button>
                     </div>
                   </CardContent>
@@ -574,142 +645,6 @@ const UserDashboard = ({ }: UserDashboardProps) => {
           )}
         </div>
 
-        {/* Milestones Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Your Milestones</h2>
-          </div>
-          
-          {loadingMilestones ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading milestones...</p>
-            </div>
-          ) : allMilestones.length === 0 ? (
-            <Card className="border-blue-200">
-              <CardContent className="p-6 text-center">
-                <div className="mb-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Calendar className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="font-medium text-gray-900 mb-2">No Milestones Yet</h3>
-                  <p className="text-gray-600 mb-4">
-                    Set and track important business milestones to measure your progress.
-                  </p>
-                  <p className="text-sm text-gray-500">Access milestones through your saved strategies above.</p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {allMilestones.slice(0, 6).map((milestone) => (
-                <Card key={milestone.id} className="border-blue-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 text-sm line-clamp-2">{milestone.title}</h4>
-                      <Badge 
-                        variant={milestone.status === 'complete' ? 'default' : 
-                                milestone.status === 'in-progress' ? 'secondary' : 'outline'}
-                        className="text-xs ml-2"
-                      >
-                        {milestone.status === 'not-started' ? 'Not Started' :
-                         milestone.status === 'in-progress' ? 'In Progress' :
-                         milestone.status === 'complete' ? 'Complete' : 'Overdue'}
-                      </Badge>
-                    </div>
-                    {milestone.target_date && (
-                      <p className="text-xs text-gray-500 mb-2">
-                        Target: {new Date(milestone.target_date).toLocaleDateString()}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-400">
-                      Created {formatDistanceToNow(new Date(milestone.created_at), { addSuffix: true })}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Financial Data Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Your Financial Data</h2>
-          </div>
-          
-          {loadingFinancial ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading financial data...</p>
-            </div>
-          ) : financialData.recentTransactions.length === 0 ? (
-            <Card className="border-green-200">
-              <CardContent className="p-6 text-center">
-                <div className="mb-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BarChart3 className="w-6 h-6 text-green-600" />
-                  </div>
-                  <h3 className="font-medium text-gray-900 mb-2">No Financial Data Yet</h3>
-                  <p className="text-gray-600 mb-4">
-                    Track your revenue and expenses to monitor your business health.
-                  </p>
-                  <p className="text-sm text-gray-500">Access your financials through your saved strategies above.</p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <Card className="border-green-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        {profile?.country === 'KE' ? 'KSh' : '$'} {financialData.totalRevenue.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <BarChart3 className="w-5 h-5 text-green-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-red-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Expenses</p>
-                      <p className="text-2xl font-bold text-red-600">
-                        {profile?.country === 'KE' ? 'KSh' : '$'} {financialData.totalExpenses.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="p-2 bg-red-100 rounded-lg">
-                      <BarChart3 className="w-5 h-5 text-red-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-blue-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Net Profit</p>
-                      <p className={`text-2xl font-bold ${financialData.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {profile?.country === 'KE' ? 'KSh' : '$'} {financialData.netProfit.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className={`p-2 rounded-lg ${financialData.netProfit >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
-                      <BarChart3 className={`w-5 h-5 ${financialData.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </div>
 
         {/* Comprehensive Download/Share Section */}
         {(strategies.length > 0 || allMilestones.length > 0 || financialData.recentTransactions.length > 0) && (

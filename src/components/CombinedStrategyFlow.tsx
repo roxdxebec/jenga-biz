@@ -18,6 +18,7 @@ interface CombinedStrategyFlowProps {
   onHome?: () => void;
   initialLanguage?: string;
   currentStrategy?: any;
+  defaultTab?: string | null;
 }
 
 const CombinedStrategyFlow = ({ 
@@ -25,7 +26,8 @@ const CombinedStrategyFlow = ({
   onBack,
   onHome, 
   initialLanguage = 'en',
-  currentStrategy: propCurrentStrategy
+  currentStrategy: propCurrentStrategy,
+  defaultTab
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -190,6 +192,23 @@ const CombinedStrategyFlow = ({
       console.log("Loaded normalized strategy into builder:", normalized);
     }
   }, [propCurrentStrategy]);
+
+  // Handle default tab navigation
+  useEffect(() => {
+    if (defaultTab) {
+      setTimeout(() => {
+        const sectionId = defaultTab === 'milestones' ? 'milestones-section' : 
+                         defaultTab === 'financials' ? 'financial-tracker-section' : null;
+        
+        if (sectionId) {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }, 500); // Small delay to ensure content is rendered
+    }
+  }, [defaultTab, strategy]); // Include strategy to ensure content is loaded
 
   // Load existing strategy data or create from template
   useEffect(() => {
