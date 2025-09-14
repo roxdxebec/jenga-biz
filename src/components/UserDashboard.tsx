@@ -20,8 +20,15 @@ import {
   Share2,
   FileDown,
   Target,
-  DollarSign
+  DollarSign,
+  MoreVertical
 } from 'lucide-react';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import { supabase } from '@/integrations/supabase/client';
@@ -577,11 +584,62 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                      <div className="flex gap-2">
+                    <div className="flex gap-2">
+                      {/* Desktop actions */}
+                      <div className="hidden md:flex gap-2 flex-wrap">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            console.log('DASHBOARD DEBUG: View button clicked, strategy.id:', strategy.id);
+                            console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
+                            handleViewStrategy(strategy);
+                          }}
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          View
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
+                          onClick={() => {
+                            console.log('DASHBOARD DEBUG: Edit button clicked, strategy.id:', strategy.id);
+                            console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
+                            handleViewStrategy(strategy);
+                          }}
+                        >
+                          <Edit className="w-3 h-3 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleUpdateMilestones(strategy.id)}
+                        >
+                          <Target className="w-3 h-3 mr-1" />
+                          Milestones
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleUpdateFinancials(strategy.id)}
+                        >
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          Financials
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeleteStrategy(strategy.id)}
+                        >
+                          <Trash2 className="w-3 h-3 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
+
+                      {/* Mobile actions */}
+                      <div className="flex md:hidden gap-2 w-full">
+                        <Button
+                          size="sm"
                           onClick={() => {
                             console.log('DASHBOARD DEBUG: View button clicked, strategy.id:', strategy.id);
                             console.log('DASHBOARD DEBUG: Full strategy object:', strategy);
@@ -605,38 +663,33 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                           <Edit className="w-3 h-3 mr-1" />
                           Edit
                         </Button>
+
+                        {/* More menu */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="sm" variant="outline">
+                              <MoreVertical className="w-3 h-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-background border z-50">
+                            <DropdownMenuItem onClick={() => handleUpdateMilestones(strategy.id)}>
+                              <Target className="w-4 h-4 mr-2" />
+                              Update Milestones
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUpdateFinancials(strategy.id)}>
+                              <DollarSign className="w-4 h-4 mr-2" />
+                              Update Financials
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => handleDeleteStrategy(strategy.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                      
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleUpdateMilestones(strategy.id)}
-                          className="flex-1 text-xs"
-                        >
-                          <Target className="w-3 h-3 mr-1" />
-                          Milestones
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleUpdateFinancials(strategy.id)}
-                          className="flex-1 text-xs"
-                        >
-                          <DollarSign className="w-3 h-3 mr-1" />
-                          Financials
-                        </Button>
-                      </div>
-                      
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDeleteStrategy(strategy.id)}
-                        className="text-xs"
-                      >
-                        <Trash2 className="w-3 h-3 mr-1" />
-                        Delete
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>
