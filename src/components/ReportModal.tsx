@@ -1,41 +1,34 @@
+"use client";
+
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useToast } from "@/hooks/use-toast";
 
 interface ReportModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: (options: { type: string; period: string }) => void;
-  mode: 'download' | 'share';
+  mode: "download" | "share";
 }
 
 export default function ReportModal({ open, onClose, onConfirm, mode }: ReportModalProps) {
   const [type, setType] = useState("full");
   const [period, setPeriod] = useState("30days");
-  const isMobile = useIsMobile();
   const { toast } = useToast();
 
   const handleConfirm = () => {
     onConfirm({ type, period });
-    onClose();
-  };
-
-  const handleMobileShare = () => {
-    const shareText = `Here is my ${type} report for the period: ${period}.`;
-    const url = window.location.href;
-
-    if (navigator.share) {
-      navigator.share({
-        title: "Business Report",
-        text: shareText,
-        url: url,
-      });
-    }
     onClose();
   };
 
@@ -44,9 +37,14 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
     const url = window.location.href;
 
     if (platform === "whatsapp") {
-      window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + url)}`, "_blank");
+      window.open(
+        `https://web.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + url)}`,
+        "_blank"
+      );
     } else if (platform === "email") {
-      window.location.href = `mailto:?subject=Business Report&body=${encodeURIComponent(shareText + "\n\n" + url)}`;
+      window.location.href = `mailto:?subject=Business Report&body=${encodeURIComponent(
+        shareText + "\n\n" + url
+      )}`;
     } else if (platform === "copy") {
       navigator.clipboard.writeText(`${shareText}\n\n${url}`);
       toast({
@@ -61,25 +59,29 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === "download" ? "Download Report" : "Share Report"}</DialogTitle>
+          <DialogTitle>
+            {mode === "download" ? "Download Report" : "Share Report"}
+          </DialogTitle>
+          <DialogDescription>
+            Choose the type of report and time period.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div>
+          <div className="space-y-2">
             <Label>Report Type</Label>
-            <RadioGroup value={type} onValueChange={setType}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="full" id="full" />
-                <Label htmlFor="full">Full Report</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="summary" id="summary" />
-                <Label htmlFor="summary">Summary Only</Label>
-              </div>
-            </RadioGroup>
+            <Select value={type} onValueChange={setType}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="full">Full Report</SelectItem>
+                <SelectItem value="summary">Summary Only</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label>Time Period</Label>
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger>
@@ -94,20 +96,24 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
           </div>
         </div>
 
-        <DialogFooter className="flex gap-2">
+        <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
 
           {mode === "download" ? (
             <Button onClick={handleConfirm}>Download</Button>
-          ) : isMobile ? (
-            <Button onClick={handleMobileShare}>Share</Button>
           ) : (
             <>
-              <Button onClick={() => handleDesktopShare("whatsapp")}>WhatsApp</Button>
-              <Button onClick={() => handleDesktopShare("email")}>Email</Button>
-              <Button onClick={() => handleDesktopShare("copy")}>Copy Link</Button>
+              <Button onClick={() => handleDesktopShare("whatsapp")}>
+                WhatsApp
+              </Button>
+              <Button onClick={() => handleDesktopShare("email")}>
+                Email
+              </Button>
+              <Button onClick={() => handleDesktopShare("copy")}>
+                Copy Link
+              </Button>
             </>
           )}
         </DialogFooter>
