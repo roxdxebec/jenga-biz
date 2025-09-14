@@ -112,7 +112,7 @@ export default function ReportModal({ open, onClose, onConfirm, mode, strategy, 
                 Email
               </Button>
               <Button onClick={() => handleShare("copy")}>
-                Copy Link
+                Copy Text
               </Button>
             </>
           )}

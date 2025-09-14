@@ -70,6 +70,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   const [loadingFinancial, setLoadingFinancial] = useState(true);
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportMode, setReportMode] = useState<'download' | 'share'>('download');
+  const [selectedStrategy, setSelectedStrategy] = useState<any | null>(null);
 
   // Navigation handlers using React Router
   const handleBackToHome = () => navigate('/');
@@ -117,16 +118,17 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   };
 
   // Report modal handlers
-  const handleDownloadReport = () => {
+  const handleDownloadReport = (strategy: any) => {
+    setSelectedStrategy(strategy);
     setReportMode('download');
     setReportModalOpen(true);
   };
 
-  const handleShareReport = () => {
+  const handleShareReport = (strategy: any) => {
+    setSelectedStrategy(strategy);
     setReportMode('share');
     setReportModalOpen(true);
   };
-
   const handleReportConfirm = (options: { type: string; period: string }) => {
     if (reportMode === 'download') {
       if (options.type === 'financials') {
@@ -695,11 +697,11 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                               <DollarSign className="w-4 h-4 mr-2" />
                               Update Financials
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={handleDownloadReport}>
+                            <DropdownMenuItem onClick={() => handleDownloadReport(strategy)}>
                               <Download className="w-4 h-4 mr-2" />
                               Download Report
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={handleShareReport}>
+                            <DropdownMenuItem onClick={() => handleShareReport(strategy)}>
                               <Share2 className="w-4 h-4 mr-2" />
                               Share Report
                             </DropdownMenuItem>
@@ -731,8 +733,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         onClose={() => setReportModalOpen(false)}
         onConfirm={handleReportConfirm}
         mode={reportMode}
-        strategy={strategies[0]}
-        language="en"
+        strategy={selectedStrategy || undefined}
+        language={(selectedStrategy as any)?.language || 'en'}
       />
     </div>
   );

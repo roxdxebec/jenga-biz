@@ -76,7 +76,7 @@ Created with Jenga Biz Africa ✨`;
   }
 
   if (type === 'summary' || type === 'full') {
-    return `${customTitle || t.shareTitle}
+    const header = `${customTitle || t.shareTitle}
 
 📈 ${strategy?.businessName || strategy?.business_name || strategy?.name || 'My Business'}
 
@@ -96,34 +96,48 @@ Created with Jenga Biz Africa ✨`;
 
 ⚙️ Operations: ${strategy?.operationalNeeds || strategy?.operational_needs || 'Not specified'}
 
-📊 Growth Goals: ${strategy?.growthGoals || strategy?.growth_goals || 'Not specified'}
+📊 Growth Goals: ${strategy?.growthGoals || strategy?.growth_goals || 'Not specified'}`;
+
+    if (type === 'summary') {
+      return `${header}
+
+Created with Jenga Biz Africa ✨`;
+    }
+
+    // Full report: include milestones and financial sections (with headers even if empty)
+    const milestonesCount = strategy?.milestones?.length || 0;
+    const milestonesList = strategy?.milestones?.length > 0
+      ? strategy.milestones.map((m: any) => `🎯 ${m.title || m.name}`).join('\n')
+      : '🎯 No milestones added yet';
+
+    const currency = strategy?.currency || strategy?.currencySymbol || 'KSh';
+    const totalRevenue = (strategy?.totalRevenue ?? strategy?.totalIncome ?? 0) as number;
+    const totalExpenses = (strategy?.totalExpenses ?? 0) as number;
+    const netProfit = (strategy?.netProfit ?? (totalRevenue - totalExpenses)) as number;
+    const revenueEntries = (strategy?.revenueEntries?.length ?? strategy?.transactions?.filter((t: any) => t.type === 'income')?.length ?? 0) as number;
+    const expenseEntries = (strategy?.expenseEntries?.length ?? strategy?.transactions?.filter((t: any) => t.type === 'expense')?.length ?? 0) as number;
+    const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0';
+
+    return `${header}
+
+🏁 Milestones
+📋 Total Milestones: ${milestonesCount}
+
+${milestonesList}
+
+💼 Financial Summary
+💰 Total Revenue: ${currency} ${Number(totalRevenue).toFixed(2)}
+💸 Total Expenses: ${currency} ${Number(totalExpenses).toFixed(2)}
+📈 Net Profit: ${currency} ${Number(netProfit).toFixed(2)}
+
+📋 Revenue Entries: ${revenueEntries}
+📋 Expense Entries: ${expenseEntries}
+
+Profit Margin: ${profitMargin}%
 
 Created with Jenga Biz Africa ✨`;
   }
-  
-  return `${customTitle || t.shareTitle}
 
-📈 ${strategy?.businessName || strategy?.business_name || strategy?.name || 'My Business'}
-
-🎯 Vision: ${strategy?.vision || 'Not specified'}
-
-🚀 Mission: ${strategy?.mission || 'Not specified'}
-
-👥 Target Market: ${strategy?.targetMarket || strategy?.target_market || 'Not specified'}
-
-💰 Revenue Model: ${strategy?.revenueModel || strategy?.revenue_model || 'Not specified'}
-
-⭐ Value Proposition: ${strategy?.valueProposition || strategy?.value_proposition || 'Not specified'}
-
-🤝 Key Partners: ${strategy?.keyPartners || strategy?.key_partners || 'Not specified'}
-
-📢 Marketing: ${strategy?.marketingApproach || strategy?.marketing_approach || 'Not specified'}
-
-⚙️ Operations: ${strategy?.operationalNeeds || strategy?.operational_needs || 'Not specified'}
-
-📊 Growth Goals: ${strategy?.growthGoals || strategy?.growth_goals || 'Not specified'}
-
-Created with Jenga Biz Africa ✨`;
 };
 
 export const useShareActions = () => {
