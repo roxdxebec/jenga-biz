@@ -107,11 +107,11 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
           ) : isMobile ? (
             <Button onClick={handleMobileShare}>Share</Button>
           ) : (
-            <div className="flex gap-2">
+            <>
               <Button onClick={() => handleDesktopShare("whatsapp")}>WhatsApp</Button>
               <Button onClick={() => handleDesktopShare("email")}>Email</Button>
               <Button onClick={() => handleDesktopShare("copy")}>Copy Link</Button>
-            </div>
+            </>
           )}
         </DialogFooter>
       </DialogContent>
