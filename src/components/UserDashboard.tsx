@@ -465,18 +465,21 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         <div className="max-w-7xl mx-auto">
           {/* Top Row - Back button and Actions */}
           <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                console.log('Back to Home clicked');
-                handleBackToHome();
-              }}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
+            <div className="flex items-center gap-4">
+              <img src="/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-12 w-auto" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  console.log('Back to Home clicked');
+                  handleBackToHome();
+                }}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Home
+              </Button>
+            </div>
             
             <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
               <Button
