@@ -731,6 +731,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         onClose={() => setReportModalOpen(false)}
         onConfirm={handleReportConfirm}
         mode={reportMode}
+        strategy={strategies[0]}
+        language="en"
       />
     </div>
   );

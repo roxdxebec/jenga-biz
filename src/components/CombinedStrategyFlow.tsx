@@ -475,7 +475,7 @@ const CombinedStrategyFlow = ({
     } else if (currentSection === 'milestones') {
       customTitle = 'My Business Milestones';
       shareText = generateShareText({
-        strategy: { milestones },
+        strategy: { ...strategy, milestones },
         type: 'milestones',
         customTitle,
         language
@@ -484,16 +484,9 @@ const CombinedStrategyFlow = ({
       customTitle = 'My Financial Summary';
       isFinancial = true;
       shareText = generateShareText({
-        strategy: {
-          totalRevenue: 0,
-          totalExpenses: 0,
-          netProfit: 0,
-          revenueEntries: [],
-          expenseEntries: [],
-          currency: 'KSh'
-        },
+        strategy,
         customTitle,
-        isFinancial,
+        isFinancial: true,
         language
       });
     }

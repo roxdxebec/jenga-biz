@@ -20,9 +20,11 @@ interface ReportModalProps {
   onClose: () => void;
   onConfirm: (options: { type: string; period: string }) => void;
   mode: "download" | "share";
+  strategy?: any;
+  language?: string;
 }
 
-export default function ReportModal({ open, onClose, onConfirm, mode }: ReportModalProps) {
+export default function ReportModal({ open, onClose, onConfirm, mode, strategy, language = 'en' }: ReportModalProps) {
   const [type, setType] = useState("full");
   const [period, setPeriod] = useState("30days");
   const { toast } = useToast();
@@ -36,19 +38,19 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
 
   const handleShare = (platform: "whatsapp" | "email" | "copy") => {
     const shareText = generateShareText({
-      strategy: { reportType: type, timePeriod: period },
+      strategy,
       type: type === "summary" ? "summary" : "full",
-      period,
       customTitle: `My ${type} Business Report`,
-      isFinancial: false // Let the function handle report type appropriately
+      isFinancial: false,
+      language
     });
 
     if (platform === "whatsapp") {
-      shareActions.handleWhatsAppShare(shareText);
+      shareActions.handleWhatsAppShare(shareText, language);
     } else if (platform === "email") {
-      shareActions.handleEmailShare(shareText, "Business Report");
+      shareActions.handleEmailShare(shareText, `My ${type} Business Report`);
     } else if (platform === "copy") {
-      shareActions.handleCopyText(shareText);
+      shareActions.handleCopyText(shareText, language);
     }
     onClose();
   };
