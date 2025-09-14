@@ -101,16 +101,25 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          {mode === 'download' ? (
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+
+          {mode === "download" ? (
             <Button onClick={handleConfirm}>Download</Button>
           ) : isMobile ? (
             <Button onClick={handleMobileShare}>Share</Button>
           ) : (
             <>
-              <Button onClick={() => handleDesktopShare("whatsapp")}>WhatsApp</Button>
-              <Button onClick={() => handleDesktopShare("email")}>Email</Button>
-              <Button onClick={() => handleDesktopShare("copy")}>Copy Link</Button>
+              <Button onClick={() => handleDesktopShare("whatsapp")}>
+                WhatsApp
+              </Button>
+              <Button onClick={() => handleDesktopShare("email")}>
+                Email
+              </Button>
+              <Button onClick={() => handleDesktopShare("copy")}>
+                Copy Link
+              </Button>
             </>
           )}
         </DialogFooter>
