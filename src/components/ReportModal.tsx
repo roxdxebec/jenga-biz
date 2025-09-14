@@ -28,7 +28,7 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
   const handleMobileShare = () => {
     const shareText = `Here is my ${type} report for the period: ${period}.`;
     const url = window.location.href;
-    
+
     if (navigator.share) {
       navigator.share({
         title: "Business Report",
@@ -59,47 +59,41 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === 'download' ? 'Download Report' : 'Share Report'}</DialogTitle>
+          <DialogTitle>{mode === "download" ? "Download Report" : "Share Report"}</DialogTitle>
         </DialogHeader>
+
         <div className="space-y-4">
           <div>
-            <Label className="mb-2 block">Report Type</Label>
-            <RadioGroup value={type} onValueChange={setType} className="space-y-2">
+            <Label>Report Type</Label>
+            <RadioGroup value={type} onValueChange={setType}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="full" id="full" />
-                <Label htmlFor="full">Full</Label>
+                <Label htmlFor="full">Full Report</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="strategy" id="strategy" />
-                <Label htmlFor="strategy">Strategy Only</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="milestones" id="milestones" />
-                <Label htmlFor="milestones">Milestones Only</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="financials" id="financials" />
-                <Label htmlFor="financials">Financials Only</Label>
+                <RadioGroupItem value="summary" id="summary" />
+                <Label htmlFor="summary">Summary Only</Label>
               </div>
             </RadioGroup>
           </div>
+
           <div>
-            <Label className="mb-2 block">Period</Label>
+            <Label>Time Period</Label>
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger>
-                <SelectValue placeholder="Select period" />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="30days">Last 30 days</SelectItem>
-                <SelectItem value="quarter">Last Quarter</SelectItem>
-                <SelectItem value="ytd">Year-to-Date</SelectItem>
-                <SelectItem value="custom">Custom Range</SelectItem>
+                <SelectItem value="7days">Last 7 Days</SelectItem>
+                <SelectItem value="30days">Last 30 Days</SelectItem>
+                <SelectItem value="90days">Last 90 Days</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
+
         <DialogFooter className="flex gap-2">
           <Button variant="outline" onClick={onClose}>
             Cancel
@@ -111,15 +105,9 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
             <Button onClick={handleMobileShare}>Share</Button>
           ) : (
             <>
-              <Button onClick={() => handleDesktopShare("whatsapp")}>
-                WhatsApp
-              </Button>
-              <Button onClick={() => handleDesktopShare("email")}>
-                Email
-              </Button>
-              <Button onClick={() => handleDesktopShare("copy")}>
-                Copy Link
-              </Button>
+              <Button onClick={() => handleDesktopShare("whatsapp")}>WhatsApp</Button>
+              <Button onClick={() => handleDesktopShare("email")}>Email</Button>
+              <Button onClick={() => handleDesktopShare("copy")}>Copy Link</Button>
             </>
           )}
         </DialogFooter>
