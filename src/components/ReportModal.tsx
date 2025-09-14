@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
 
 interface ReportModalProps {
   open: boolean;
@@ -15,9 +17,43 @@ interface ReportModalProps {
 export default function ReportModal({ open, onClose, onConfirm, mode }: ReportModalProps) {
   const [type, setType] = useState("full");
   const [period, setPeriod] = useState("30days");
+  const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   const handleConfirm = () => {
     onConfirm({ type, period });
+    onClose();
+  };
+
+  const handleMobileShare = () => {
+    const shareText = `Here is my ${type} report for the period: ${period}.`;
+    const url = window.location.href;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: "Business Report",
+        text: shareText,
+        url: url,
+      });
+    }
+    onClose();
+  };
+
+  const handleDesktopShare = (platform: "whatsapp" | "email" | "copy") => {
+    const shareText = `Here is my ${type} report for the period: ${period}.`;
+    const url = window.location.href;
+
+    if (platform === "whatsapp") {
+      window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + url)}`, "_blank");
+    } else if (platform === "email") {
+      window.location.href = `mailto:?subject=Business Report&body=${encodeURIComponent(shareText + "\n\n" + url)}`;
+    } else if (platform === "copy") {
+      navigator.clipboard.writeText(`${shareText}\n\n${url}`);
+      toast({
+        title: "Link copied!",
+        description: "Report link copied to clipboard.",
+      });
+    }
     onClose();
   };
 
@@ -66,9 +102,17 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleConfirm}>
-            {mode === 'download' ? 'Download' : 'Share'}
-          </Button>
+          {mode === 'download' ? (
+            <Button onClick={handleConfirm}>Download</Button>
+          ) : isMobile ? (
+            <Button onClick={handleMobileShare}>Share</Button>
+          ) : (
+            <div className="flex gap-2">
+              <Button onClick={() => handleDesktopShare("whatsapp")}>WhatsApp</Button>
+              <Button onClick={() => handleDesktopShare("email")}>Email</Button>
+              <Button onClick={() => handleDesktopShare("copy")}>Copy Link</Button>
+            </div>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
