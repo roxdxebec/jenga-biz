@@ -466,7 +466,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
           {/* Top Row - Back button and Actions */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <img src="/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-12 w-auto" />
+              <img src="/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-10 w-auto" />
               <Button
                 variant="ghost"
                 size="sm"
