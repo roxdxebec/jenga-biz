@@ -34,6 +34,7 @@ import { useStrategy } from '@/hooks/useStrategy';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import ReportModal from './ReportModal';
 
 interface UserDashboardProps {
   // No props needed - using React Router navigation
@@ -66,6 +67,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   const [loadingMilestones, setLoadingMilestones] = useState(true);
   const [financialData, setFinancialData] = useState<any>({ totalRevenue: 0, totalExpenses: 0, recentTransactions: [] });
   const [loadingFinancial, setLoadingFinancial] = useState(true);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportMode, setReportMode] = useState<'download' | 'share'>('download');
 
   // Navigation handlers using React Router
   const handleBackToHome = () => navigate('/');
@@ -110,6 +113,29 @@ const UserDashboard = ({ }: UserDashboardProps) => {
 
   const handleUpdateFinancials = (strategyId: string) => {
     navigate(`/strategy?id=${strategyId}&tab=financials`);
+  };
+
+  // Report modal handlers
+  const handleDownloadReport = () => {
+    setReportMode('download');
+    setReportModalOpen(true);
+  };
+
+  const handleShareReport = () => {
+    setReportMode('share');
+    setReportModalOpen(true);
+  };
+
+  const handleReportConfirm = (options: { type: string; period: string }) => {
+    if (reportMode === 'download') {
+      if (options.type === 'financials') {
+        handleComprehensiveDownload('milestones'); // Use existing logic for now
+      } else {
+        handleComprehensiveDownload(options.type as 'full' | 'strategy' | 'milestones');
+      }
+    } else {
+      handleComprehensiveShare();
+    }
   };
 
   useEffect(() => {
@@ -680,6 +706,14 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                               <DollarSign className="w-4 h-4 mr-2" />
                               Update Financials
                             </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleDownloadReport}>
+                              <Download className="w-4 h-4 mr-2" />
+                              Download Report
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handleShareReport}>
+                              <Share2 className="w-4 h-4 mr-2" />
+                              Share Report
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-destructive"
                               onClick={() => handleDeleteStrategy(strategy.id)}
@@ -699,66 +733,16 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         </div>
 
 
-        {/* Comprehensive Download/Share Section */}
-        {(strategies.length > 0 || allMilestones.length > 0 || financialData.recentTransactions.length > 0) && (
-          <div className="mb-8">
-            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
-              <CardHeader>
-                <CardTitle className="text-lg text-purple-900 flex items-center">
-                  <FileDown className="w-5 h-5 mr-2" />
-                  Download & Share Your Business Data
-                </CardTitle>
-                <p className="text-sm text-purple-700">
-                  Generate comprehensive reports combining your strategies, milestones, and financial data
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Button
-                    onClick={() => handleComprehensiveDownload('full')}
-                    className="bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center gap-2 py-3"
-                    size="lg"
-                  >
-                    <Download className="w-4 h-4" />
-                    Full Report
-                  </Button>
-                  
-                  <Button
-                    onClick={() => handleComprehensiveDownload('strategy')}
-                    className="bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 py-3"
-                    size="lg"
-                    variant="outline"
-                  >
-                    <Download className="w-4 h-4" />
-                    Strategy Only
-                  </Button>
-                  
-                  <Button
-                    onClick={() => handleComprehensiveDownload('milestones')}
-                    className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2 py-3"
-                    size="lg"
-                    variant="outline"
-                  >
-                    <Download className="w-4 h-4" />
-                    Milestones Only
-                  </Button>
-                  
-                  <Button
-                    onClick={() => handleComprehensiveShare()}
-                    className="bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center gap-2 py-3"
-                    size="lg"
-                    variant="outline"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Share Report
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
       </div>
+
+      {/* Report Modal */}
+      <ReportModal
+        open={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        onConfirm={handleReportConfirm}
+        mode={reportMode}
+      />
     </div>
   );
 };
