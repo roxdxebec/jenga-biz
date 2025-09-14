@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { generateShareText, useShareActions } from "@/lib/shareUtils";
 
 interface ReportModalProps {
   open: boolean;
@@ -26,38 +26,29 @@ export default function ReportModal({ open, onClose, onConfirm, mode }: ReportMo
   const [type, setType] = useState("full");
   const [period, setPeriod] = useState("30days");
   const { toast } = useToast();
-  const isMobile = useIsMobile();
 
   const handleConfirm = () => {
     onConfirm({ type, period });
     onClose();
   };
 
+  const shareActions = useShareActions();
+
   const handleShare = (platform: "whatsapp" | "email" | "copy") => {
-    const shareText = `Here is my ${type} report for the period: ${period}.`;
-    const url = window.location.href;
+    const shareText = generateShareText({
+      strategy: { reportType: type, timePeriod: period },
+      type,
+      period,
+      customTitle: `My ${type} Business Report`,
+      isFinancial: true
+    });
 
     if (platform === "whatsapp") {
-      if (isMobile) {
-        // Mobile deep link to WhatsApp app
-        window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText + " " + url)}`;
-      } else {
-        // Desktop web WhatsApp
-        window.open(
-          `https://web.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + url)}`,
-          "_blank"
-        );
-      }
+      shareActions.handleWhatsAppShare(shareText);
     } else if (platform === "email") {
-      window.location.href = `mailto:?subject=Business Report&body=${encodeURIComponent(
-        shareText + "\n\n" + url
-      )}`;
+      shareActions.handleEmailShare(shareText, "Business Report");
     } else if (platform === "copy") {
-      navigator.clipboard.writeText(`${shareText}\n\n${url}`);
-      toast({
-        title: "Link copied!",
-        description: "Report link copied to clipboard.",
-      });
+      shareActions.handleCopyText(shareText);
     }
     onClose();
   };

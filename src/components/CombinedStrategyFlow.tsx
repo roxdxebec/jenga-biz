@@ -9,6 +9,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
 import { useStrategy } from '@/hooks/useStrategy';
 import { useToast } from '@/hooks/use-toast';
+import { generateShareText, useShareActions } from '@/lib/shareUtils';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -456,23 +457,51 @@ const CombinedStrategyFlow = ({
     setShowShareModal(true);
   };
 
+  const shareActions = useShareActions();
+
   const handleShareOption = (option: string) => {
-    const shareText = `Check out my ${currentSection} summary from Jenga Biz Africa!`;
-    const shareUrl = window.location.href;
+    let shareText = '';
+    let customTitle = '';
+    let isFinancial = false;
+
+    if (currentSection === 'strategy') {
+      customTitle = 'My Business Strategy';
+      shareText = generateShareText({
+        strategy,
+        customTitle,
+        language
+      });
+    } else if (currentSection === 'milestones') {
+      customTitle = 'My Business Milestones';
+      shareText = `${customTitle}
+
+📈 Business Stage: Growth Stage
+📋 Total Milestones: ${milestones.length}
+
+Milestones:
+${milestones.length > 0 ? milestones.map(m => `🎯 ${m.title || m.name}`).join('\n') : '🎯 No milestones added yet'}
+
+Created with Jenga Biz Africa ✨`;
+    } else if (currentSection === 'financial') {
+      customTitle = 'My Financial Summary';
+      isFinancial = true;
+      shareText = generateShareText({
+        strategy: {},
+        customTitle,
+        isFinancial,
+        language
+      });
+    }
     
     switch (option) {
       case 'whatsapp':
-        window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`);
+        shareActions.handleWhatsAppShare(shareText, language);
         break;
       case 'email':
-        window.open(`mailto:?subject=${encodeURIComponent(`My ${currentSection} from Jenga Biz Africa`)}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`);
+        shareActions.handleEmailShare(shareText, customTitle);
         break;
       case 'copy':
-        navigator.clipboard.writeText(shareUrl);
-        toast({
-          title: 'Link Copied',
-          description: 'Share link copied to clipboard.',
-        });
+        shareActions.handleCopyText(shareText, language);
         break;
       case 'pdf':
         handleDownload(currentSection);
