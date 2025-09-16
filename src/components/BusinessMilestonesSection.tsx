@@ -260,23 +260,11 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
   const handleAddMilestone = async () => {
     if (customMilestone.trim()) {
-      // Use strategyData.id if currentStrategy.id is not available
-      const strategyId = currentStrategy?.id || strategyData?.id;
-      
-      if (!strategyId) {
-        toast({
-          title: "Error",
-          description: "Please save your strategy first before adding milestones.",
-          variant: "destructive"
-        });
-        return;
-      }
-      
       await saveMilestone({
         title: customMilestone.trim(),
         status: 'not-started',
         business_stage: businessStage,
-        strategy_id: strategyId
+        strategy_id: currentStrategy?.id || strategyData?.id || null
       });
       
       setCustomMilestone('');
@@ -294,23 +282,11 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const handleAddSuggestedMilestone = async (milestoneTitle: string) => {
-    // Use strategyData.id if currentStrategy.id is not available
-    const strategyId = currentStrategy?.id || strategyData?.id;
-    
-    if (!strategyId) {
-      toast({
-        title: "Error", 
-        description: "Please save your strategy first before adding milestones.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
     await saveMilestone({
       title: milestoneTitle,
       status: 'not-started',
       business_stage: businessStage,
-      strategy_id: strategyId
+      strategy_id: currentStrategy?.id || strategyData?.id || null
     });
     
     trackBusinessMilestone('created', {
