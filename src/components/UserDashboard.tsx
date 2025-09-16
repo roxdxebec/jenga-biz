@@ -86,25 +86,59 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     const confirmed = window.confirm("Are you sure you want to delete this strategy?");
     if (!confirmed) return;
 
-    const { error } = await supabase
-      .from('strategies')
-      .delete()
-      .eq('id', id);
+    console.log('🔍 Delete strategy - ID:', id, 'User:', user?.id);
 
-    if (error) {
-      console.error("Error deleting strategy:", error);
+    try {
+      // First verify the strategy exists and belongs to the user
+      const { data: strategyCheck, error: checkError } = await supabase
+        .from('strategies')
+        .select('id, business_name, user_id')
+        .eq('id', id)
+        .eq('user_id', user?.id)
+        .single();
+
+      if (checkError || !strategyCheck) {
+        console.error('Strategy not found or access denied:', checkError);
+        toast({
+          title: "Error",
+          description: "Strategy not found or you don't have permission to delete it.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('🔍 Strategy verified:', strategyCheck);
+
+      // Delete the strategy
+      const { error: deleteError } = await supabase
+        .from('strategies')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user?.id);
+
+      if (deleteError) {
+        console.error("Error deleting strategy:", deleteError);
+        toast({
+          title: "Error",
+          description: "Failed to delete strategy. Please try again.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('🔍 Strategy deleted successfully');
+        toast({
+          title: "Success",
+          description: "Strategy deleted successfully.",
+        });
+        // Refresh strategies after delete
+        loadStrategies();
+      }
+    } catch (error) {
+      console.error("Unexpected error during delete:", error);
       toast({
         title: "Error",
-        description: "Failed to delete strategy. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Strategy deleted successfully.",
-      });
-      // Refresh strategies after delete
-      loadStrategies();
     }
   };
 
