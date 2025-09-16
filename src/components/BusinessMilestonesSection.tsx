@@ -14,6 +14,7 @@ import { addToCalendar } from '@/lib/calendar';
 import CoachingTip from '@/components/CoachingTip';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useStrategy } from '@/hooks/useStrategy';
+import { useLocation } from 'react-router-dom';
 
 interface BusinessMilestonesSectionProps {
   isPro?: boolean;
@@ -28,6 +29,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   const { milestones, saveMilestone, deleteMilestone, currentStrategy } = useStrategy();
   const { trackBusinessMilestone, trackJourney } = useAnalytics();
   const { toast } = useToast();
+  
+  const location = useLocation();
+  const getStrategyId = () => {
+    const urlId = new URLSearchParams(location.search).get('id');
+    return currentStrategy?.id || strategyData?.id || urlId || undefined;
+  };
 
   // Helper function to get stage-specific milestones
   const getStageSpecificMilestones = (stage: string) => {
@@ -260,7 +267,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
   const handleAddMilestone = async () => {
     if (customMilestone.trim()) {
-      const strategyId = currentStrategy?.id || strategyData?.id;
+      const strategyId = getStrategyId();
       
       if (!strategyId) {
         toast({
@@ -290,7 +297,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const handleAddSuggestedMilestone = async (milestoneTitle: string) => {
-    const strategyId = currentStrategy?.id || strategyData?.id;
+    const strategyId = getStrategyId();
       
     if (!strategyId) {
       toast({
