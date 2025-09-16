@@ -198,15 +198,6 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
                 </>
               )}
             </Button>
-            
-            <Button
-              onClick={handleDownloadPdf}
-              variant="outline"
-              className="w-full"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              {t.downloadPdf}
-            </Button>
           </div>
         </div>
       </DialogContent>
