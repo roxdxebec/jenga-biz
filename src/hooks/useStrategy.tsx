@@ -179,13 +179,13 @@ export const useStrategy = () => {
 
   // Save milestone
   const saveMilestone = async (milestoneData: Partial<Milestone>) => {
-    if (!user || !milestoneData.title) return null;
+    if (!user) return null;
 
     try {
       const dataToSave = {
         title: milestoneData.title,
         user_id: user.id,
-        strategy_id: currentStrategy?.id || null,
+        strategy_id: milestoneData.strategy_id || currentStrategy?.id || null,
         target_date: milestoneData.target_date || null,
         status: milestoneData.status || 'not-started',
         business_stage: milestoneData.business_stage || 'ideation',
@@ -193,9 +193,11 @@ export const useStrategy = () => {
       };
 
       let result;
+      let isUpdate = false;
       
       if (milestoneData.id) {
         // Update existing milestone
+        isUpdate = true;
         const { data, error } = await supabase
           .from('milestones')
           .update(dataToSave)
@@ -224,12 +226,43 @@ export const useStrategy = () => {
         setMilestones(prev => [result, ...prev]);
       }
 
+      // Verification: Re-fetch the milestone from DB to confirm persistence
+      const { data: verificationData, error: verificationError } = await supabase
+        .from('milestones')
+        .select('*')
+        .eq('id', result.id)
+        .single();
+
+      if (verificationError || !verificationData) {
+        throw new Error('Failed to verify milestone persistence');
+      }
+
+      // Check if all fields match what we saved
+      const fieldsMatch = 
+        verificationData.title === dataToSave.title &&
+        verificationData.strategy_id === dataToSave.strategy_id &&
+        verificationData.target_date === dataToSave.target_date &&
+        verificationData.status === dataToSave.status &&
+        verificationData.business_stage === dataToSave.business_stage;
+
+      if (!fieldsMatch) {
+        throw new Error('Milestone data verification failed');
+      }
+
+      // Show success toast
+      toast({
+        title: isUpdate ? 'Milestone updated successfully' : 'Milestone added successfully',
+        description: isUpdate ? 
+          'Your milestone changes have been saved.' : 
+          'Your new milestone has been added.',
+      });
+
       return result;
     } catch (error) {
       console.error('Error saving milestone:', error);
       toast({
         title: 'Error',
-        description: 'Failed to save milestone',
+        description: 'Failed to save milestone. Please try again.',
         variant: 'destructive'
       });
       return null;

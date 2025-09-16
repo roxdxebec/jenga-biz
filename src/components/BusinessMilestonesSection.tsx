@@ -260,71 +260,103 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
   const handleAddMilestone = async () => {
     if (customMilestone.trim()) {
-      await saveMilestone({
+      const strategyId = currentStrategy?.id || strategyData?.id;
+      
+      if (!strategyId) {
+        toast({
+          title: "Error",
+          description: "Please save your strategy first before adding milestones.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const result = await saveMilestone({
         title: customMilestone.trim(),
         status: 'not-started',
         business_stage: businessStage,
-        strategy_id: currentStrategy?.id || strategyData?.id || null
+        strategy_id: strategyId
       });
       
-      setCustomMilestone('');
-      trackBusinessMilestone('created', {
-        title: customMilestone.trim(),
-        category: businessStage,
-        businessStage
-      });
-      
-      toast({
-        title: "Milestone added successfully",
-        description: `"${customMilestone.trim()}" has been added to your milestones.`,
-      });
+      if (result) {
+        setCustomMilestone('');
+        trackBusinessMilestone('created', {
+          title: customMilestone.trim(),
+          category: businessStage,
+          businessStage
+        });
+      }
     }
   };
 
   const handleAddSuggestedMilestone = async (milestoneTitle: string) => {
-    await saveMilestone({
+    const strategyId = currentStrategy?.id || strategyData?.id;
+      
+    if (!strategyId) {
+      toast({
+        title: "Error",
+        description: "Please save your strategy first before adding milestones.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const result = await saveMilestone({
       title: milestoneTitle,
       status: 'not-started',
       business_stage: businessStage,
-      strategy_id: currentStrategy?.id || strategyData?.id || null
+      strategy_id: strategyId
     });
     
-    trackBusinessMilestone('created', {
-      title: milestoneTitle,
-      category: businessStage,
-      businessStage
-    });
-    
-    toast({
-      title: "Milestone added successfully",
-      description: `"${milestoneTitle}" has been added to your milestones.`,
-    });
+    if (result) {
+      trackBusinessMilestone('created', {
+        title: milestoneTitle,
+        category: businessStage,
+        businessStage
+      });
+    }
   };
 
   const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
-    await saveMilestone({
+    const milestone = milestones.find(m => m.id === milestoneId);
+    if (!milestone) return;
+
+    const result = await saveMilestone({
       id: milestoneId,
-      status: newStatus
+      title: milestone.title,
+      status: newStatus,
+      business_stage: milestone.business_stage,
+      strategy_id: milestone.strategy_id,
+      target_date: milestone.target_date
     });
     
-    if (newStatus === 'complete') {
+    if (result && newStatus === 'complete') {
       trackBusinessMilestone('completed', {
-        title: milestones.find(m => m.id === milestoneId)?.title || 'Unknown'
+        title: milestone.title
       });
     }
   };
 
   const handleUpdateMilestoneDate = async (milestoneId: string, date: Date | undefined) => {
-    await saveMilestone({
+    const milestone = milestones.find(m => m.id === milestoneId);
+    if (!milestone) return;
+
+    const result = await saveMilestone({
       id: milestoneId,
-      target_date: date?.toISOString()
+      title: milestone.title,
+      target_date: date?.toISOString() || null,
+      status: milestone.status,
+      business_stage: milestone.business_stage,
+      strategy_id: milestone.strategy_id
     });
     
-    // Use general activity tracking for date updates
-    trackJourney('/milestones', 'milestone_date_updated', {
-      milestoneId,
-      targetDate: date
-    });
+    if (result) {
+      // Use general activity tracking for date updates
+      trackJourney('/milestones', 'milestone_date_updated', {
+        milestoneId,
+        targetDate: date
+      });
+    }
   };
 
   const handleDeleteMilestone = async (milestoneId: string) => {
