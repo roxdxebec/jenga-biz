@@ -238,10 +238,14 @@ export const useStrategy = () => {
       }
 
       // Check if all fields match what we saved
+      // For target_date, compare only the date portion (YYYY-MM-DD) to avoid timezone/formatting issues
+      const savedDateOnly = dataToSave.target_date ? new Date(dataToSave.target_date).toISOString().split('T')[0] : null;
+      const verifiedDateOnly = verificationData.target_date ? new Date(verificationData.target_date).toISOString().split('T')[0] : null;
+      
       const fieldsMatch = 
         verificationData.title === dataToSave.title &&
         verificationData.strategy_id === dataToSave.strategy_id &&
-        verificationData.target_date === dataToSave.target_date &&
+        savedDateOnly === verifiedDateOnly &&
         verificationData.status === dataToSave.status &&
         verificationData.business_stage === dataToSave.business_stage;
 

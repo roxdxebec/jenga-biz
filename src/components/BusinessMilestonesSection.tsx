@@ -328,12 +328,14 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     const milestone = milestones.find(m => m.id === milestoneId);
     if (!milestone) return;
 
+    const strategyId = getStrategyId();
+    
     const result = await saveMilestone({
       id: milestoneId,
       title: milestone.title,
       status: newStatus,
       business_stage: milestone.business_stage,
-      strategy_id: milestone.strategy_id,
+      strategy_id: strategyId,
       target_date: milestone.target_date
     });
     
@@ -348,13 +350,15 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     const milestone = milestones.find(m => m.id === milestoneId);
     if (!milestone) return;
 
+    const strategyId = getStrategyId();
+
     const result = await saveMilestone({
       id: milestoneId,
       title: milestone.title,
       target_date: date?.toISOString() || null,
       status: milestone.status,
       business_stage: milestone.business_stage,
-      strategy_id: milestone.strategy_id
+      strategy_id: strategyId
     });
     
     if (result) {
