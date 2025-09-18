@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, XCircle, ArrowLeft, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { AuthDialog } from '@/components/auth/AuthDialog';
+import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -130,7 +130,7 @@ const Auth = () => {
       )}
 
       {/* Auth Dialog */}
-      <AuthDialog 
+      <EnhancedAuthDialog 
         open={showAuthDialog} 
         onOpenChange={(open) => {
           setShowAuthDialog(open);

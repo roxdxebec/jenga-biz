@@ -12,17 +12,16 @@ import { ArrowLeft, Upload, User, Building2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ProfileData {
-  full_name: string;
+  contact_person_name: string;
   email: string;
-  contact_phone: string;
+  phone_number: string;
   website: string;
   industry: string;
   country: string;
   organization_name: string;
   business_type: string;
   account_type: string;
-  profile_picture_url: string;
-  logo_url: string;
+  organization_logo: string;
 }
 
 const Profile = () => {
@@ -31,17 +30,16 @@ const Profile = () => {
   const { toast } = useToast();
   
   const [profile, setProfile] = useState<ProfileData>({
-    full_name: '',
+    contact_person_name: '',
     email: '',
-    contact_phone: '',
+    phone_number: '',
     website: '',
     industry: '',
     country: '',
     organization_name: '',
     business_type: '',
-    account_type: 'business',
-    profile_picture_url: '',
-    logo_url: ''
+    account_type: 'Business',
+    organization_logo: ''
   });
   
   const [uploading, setUploading] = useState(false);
@@ -50,6 +48,16 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       loadProfile();
+      
+      // Auto-populate name and email from auth user
+      if (user.email && !profile.email) {
+        setProfile(prev => ({
+          ...prev,
+          email: user.email || '',
+          contact_person_name: user.user_metadata?.full_name || '',
+          account_type: user.user_metadata?.account_type || 'Business'
+        }));
+      }
     }
   }, [user]);
 
@@ -69,17 +77,16 @@ const Profile = () => {
 
     if (data) {
       setProfile({
-        full_name: data.full_name || '',
-        email: data.email || '',
-        contact_phone: data.contact_phone || '',
+        contact_person_name: data.full_name || user?.user_metadata?.full_name || '',
+        email: data.email || user?.email || '',
+        phone_number: data.contact_phone || '',
         website: data.website || '',
         industry: data.industry || '',
         country: data.country || '',
         organization_name: data.organization_name || '',
         business_type: data.business_type || '',
-        account_type: data.account_type || 'business',
-        profile_picture_url: data.profile_picture_url || '',
-        logo_url: data.logo_url || ''
+        account_type: data.account_type || user?.user_metadata?.account_type || 'Business',
+        organization_logo: data.logo_url || data.profile_picture_url || ''
       });
     }
   };
@@ -94,21 +101,23 @@ const Profile = () => {
     if (!user || saving) return;
 
     setSaving(true);
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        full_name: dataToSave.full_name,
-        contact_phone: dataToSave.contact_phone,
-        website: dataToSave.website,
-        industry: dataToSave.industry,
-        country: dataToSave.country,
-        organization_name: dataToSave.organization_name,
-        business_type: dataToSave.business_type,
-        profile_picture_url: dataToSave.profile_picture_url,
-        logo_url: dataToSave.logo_url,
-        is_profile_complete: true
-      })
-      .eq('id', user.id);
+    
+    // Use the helper function for proper upsert
+    const { saveProfileForUser } = await import('@/lib/profile');
+    const { error } = await saveProfileForUser(user.id, {
+      email: dataToSave.email,
+      full_name: dataToSave.contact_person_name,
+      contact_phone: dataToSave.phone_number,
+      website: dataToSave.website,
+      industry: dataToSave.industry,
+      country: dataToSave.country,
+      organization_name: dataToSave.organization_name,
+      business_type: dataToSave.business_type,
+      account_type: dataToSave.account_type,
+      profile_picture_url: dataToSave.organization_logo,
+      logo_url: dataToSave.organization_logo,
+      is_profile_complete: true
+    });
 
     setSaving(false);
 
@@ -118,6 +127,11 @@ const Profile = () => {
         title: "Error",
         description: "Failed to save profile",
         variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Profile saved successfully",
       });
     }
   };
@@ -151,9 +165,8 @@ const Profile = () => {
       .getPublicUrl(fileName);
 
     const imageUrl = data.publicUrl;
-    const field = profile.account_type === 'organization' ? 'logo_url' : 'profile_picture_url';
     
-    const updatedProfile = { ...profile, [field]: imageUrl };
+    const updatedProfile = { ...profile, organization_logo: imageUrl };
     setProfile(updatedProfile);
     await saveProfile(updatedProfile);
     
@@ -164,8 +177,8 @@ const Profile = () => {
     });
   };
 
-  const isOrganization = profile.account_type === 'organization';
-  const imageUrl = isOrganization ? profile.logo_url : profile.profile_picture_url;
+  const isOrganization = profile.account_type === 'Ecosystem Enabler';
+  const imageUrl = profile.organization_logo;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-4">
@@ -193,8 +206,8 @@ const Profile = () => {
                   <AvatarImage src={imageUrl} />
                   <AvatarFallback className="text-lg">
                     {isOrganization ? 
-                      (profile.organization_name?.charAt(0) || 'O') : 
-                      (profile.full_name?.charAt(0) || 'U')
+                      (profile.organization_name?.charAt(0) || 'E') : 
+                      (profile.contact_person_name?.charAt(0) || 'B')
                     }
                   </AvatarFallback>
                 </Avatar>
@@ -229,7 +242,7 @@ const Profile = () => {
                   <Label htmlFor="account_type">Account Type</Label>
                   <Input
                     id="account_type"
-                    value={profile.account_type === 'organization' ? 'Organization' : 'Business'}
+                    value={profile.account_type}
                     disabled
                     className="bg-muted"
                   />
@@ -246,13 +259,13 @@ const Profile = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="full_name">
-                    {isOrganization ? 'Contact Person Name' : 'Full Name'}
+                  <Label htmlFor="contact_person_name">
+                    {isOrganization ? 'Contact Person Name' : 'Contact Person Name'}
                   </Label>
                   <Input
-                    id="full_name"
-                    value={profile.full_name}
-                    onChange={(e) => handleInputChange('full_name', e.target.value)}
+                    id="contact_person_name"
+                    value={profile.contact_person_name}
+                    onChange={(e) => handleInputChange('contact_person_name', e.target.value)}
                   />
                 </div>
 
@@ -268,11 +281,11 @@ const Profile = () => {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="contact_phone">Phone Number</Label>
+                  <Label htmlFor="phone_number">Phone Number</Label>
                   <Input
-                    id="contact_phone"
-                    value={profile.contact_phone}
-                    onChange={(e) => handleInputChange('contact_phone', e.target.value)}
+                    id="phone_number"
+                    value={profile.phone_number}
+                    onChange={(e) => handleInputChange('phone_number', e.target.value)}
                   />
                 </div>
 

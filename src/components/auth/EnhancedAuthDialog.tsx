@@ -25,7 +25,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
     email: "", 
     password: "", 
     fullName: "",
-    accountType: "business",
+    accountType: "Business",
     inviteCode: ""
   });
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -147,7 +147,11 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
         title: "Account Created!",
         description: "Please check your email to verify your account.",
       });
-      // Dialog will auto-close due to auth state change
+      // Redirect to profile page to complete setup
+      setTimeout(() => {
+        onOpenChange(false);
+        window.location.href = '/profile';
+      }, 1000);
     }
     
     setIsLoading(false);
@@ -319,7 +323,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                       onValueChange={(value) => setSignupData({ ...signupData, accountType: value })}
                     >
                       <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50">
-                        <RadioGroupItem value="business" id="business" />
+                        <RadioGroupItem value="Business" id="business" />
                         <Building2 className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
                           <Label htmlFor="business" className="font-medium">Business</Label>
@@ -327,17 +331,17 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50">
-                        <RadioGroupItem value="organization" id="organization" />
+                        <RadioGroupItem value="Ecosystem Enabler" id="enabler" />
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
-                          <Label htmlFor="organization" className="font-medium">Organization</Label>
-                          <p className="text-sm text-muted-foreground">For hubs, accelerators, TVETs</p>
+                          <Label htmlFor="enabler" className="font-medium">Ecosystem Enabler</Label>
+                          <p className="text-sm text-muted-foreground">For hubs, TVET, universities, VCs, foundations, financial institutions, NGOs</p>
                         </div>
                       </div>
                     </RadioGroup>
                   </div>
 
-                  {signupData.accountType === 'organization' && (
+                  {signupData.accountType === 'Ecosystem Enabler' && (
                     <div className="space-y-2">
                       <Label htmlFor="invite-code">Invite Code (Optional for now)</Label>
                       <Input

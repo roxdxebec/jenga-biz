@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
-          account_type: accountType || 'business',
+          account_type: accountType || 'Business',
           invite_code: inviteCode,
         },
       },
