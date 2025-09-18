@@ -178,49 +178,47 @@ export const useStrategy = () => {
   };
 
   // Save milestone
-  const saveMilestone = async (milestoneData: Partial<Milestone>) => {
+  const saveMilestone = async (milestone: Milestone) => {
     if (!user) return null;
 
     try {
-      // Import the helper function
-      const { saveMilestone: saveMilestoneHelper } = await import('@/lib/milestones');
-      
-      const strategyId = milestoneData.strategy_id || currentStrategy?.id;
-      if (!strategyId) {
-        throw new Error('Strategy ID is required');
-      }
+      const { data, error } = await supabase
+        .from("milestones")
+        .upsert(
+          {
+            id: milestone.id,
+            user_id: user.id,
+            strategy_id: milestone.strategy_id,
+            title: milestone.title,
+            target_date: milestone.target_date ?? new Date().toISOString().split('T')[0],
+            status: milestone.status ?? "pending",
+            business_stage: milestone.business_stage,
+          },
+          { onConflict: "id" }
+        )
+        .select()
+        .single();
 
-      // Prepare milestone data with required fields
-      const milestoneToSave = {
-        id: milestoneData.id,
-        title: milestoneData.title || '',
-        description: null,
-        target_date: milestoneData.target_date || new Date().toISOString().split('T')[0],
-        status: milestoneData.status || 'pending'
-      };
-
-      const { data, error } = await saveMilestoneHelper(user.id, strategyId, milestoneToSave);
-      
       if (error) throw error;
-
+      
       // Update local state immediately
-      if (milestoneData.id) {
+      if (milestone.id) {
         // Update existing milestone
-        setMilestones(prev => prev.map(m => m.id === data[0]?.id ? data[0] : m));
+        setMilestones(prev => prev.map(m => m.id === data.id ? data : m));
       } else {
         // Add new milestone
-        setMilestones(prev => [data[0], ...prev]);
+        setMilestones(prev => [data, ...prev]);
       }
 
       // Show success toast
       toast({
-        title: milestoneData.id ? 'Milestone updated successfully' : 'Milestone added successfully',
-        description: milestoneData.id ? 
+        title: milestone.id ? 'Milestone updated successfully' : 'Milestone added successfully',
+        description: milestone.id ? 
           'Your milestone changes have been saved.' : 
           'Your new milestone has been added.',
       });
 
-      return data[0];
+      return data;
     } catch (error) {
       console.error('Error saving milestone:', error);
       toast({

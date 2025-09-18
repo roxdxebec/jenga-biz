@@ -71,6 +71,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
     });
+    
+    if (!error) {
+      // After successful login, fetch profile and redirect based on account_type
+      setTimeout(async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('account_type')
+              .eq('id', user.id)
+              .single();
+            
+            if (profile?.account_type === 'ecosystem_enabler') {
+              window.location.href = '/saas';
+            } else if (profile?.account_type === 'business') {
+              window.location.href = '/b2c';
+            }
+          }
+        } catch (profileError) {
+          console.error('Error fetching profile for redirect:', profileError);
+        }
+      }, 100);
+    }
+    
     return { error };
   };
 

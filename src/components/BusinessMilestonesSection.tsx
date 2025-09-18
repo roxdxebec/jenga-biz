@@ -554,7 +554,11 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           value={milestone.title}
                           onChange={(e) => saveMilestone({
                             id: milestone.id,
-                            title: e.target.value
+                            title: e.target.value,
+                            status: milestone.status,
+                            strategy_id: milestone.strategy_id,
+                            target_date: milestone.target_date,
+                            business_stage: milestone.business_stage
                           })}
                           className="font-medium text-gray-900 bg-transparent border-none p-0 text-base focus:bg-white focus:border focus:border-orange-300 focus:px-3 focus:py-2 focus:rounded-md"
                         />
