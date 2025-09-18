@@ -282,7 +282,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         title: customMilestone.trim(),
         status: 'not-started',
         business_stage: businessStage,
-        strategy_id: strategyId
+        strategy_id: strategyId,
+        target_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 30 days from now
       });
       
       if (result) {
@@ -312,7 +313,8 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
       title: milestoneTitle,
       status: 'not-started',
       business_stage: businessStage,
-      strategy_id: strategyId
+      strategy_id: strategyId,
+      target_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 30 days from now
     });
     
     if (result) {
