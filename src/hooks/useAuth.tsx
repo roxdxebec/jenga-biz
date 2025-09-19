@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               .eq('id', user.id)
               .single();
             
-            if (profile?.account_type === 'ecosystem_enabler') {
+            if (profile?.account_type === 'organization') {
               window.location.href = '/saas';
             } else if (profile?.account_type === 'business') {
               window.location.href = '/b2c';

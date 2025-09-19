@@ -33,6 +33,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="/saas" element={<SaaSFeatures onSignOut={() => {}} />} />
+            <Route path="/b2c" element={<Index />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
