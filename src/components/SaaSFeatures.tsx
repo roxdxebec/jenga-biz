@@ -1,137 +1,172 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/hooks/useAuth';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { BarChart3, TrendingUp, FileText, Download, Calendar, Users } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
+import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
+import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
+import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { Separator } from '@/components/ui/separator';
+import { 
+  BarChart3, 
+  Users, 
+  TrendingUp, 
+  FileText, 
+  Settings, 
+  LogOut,
+  Building2,
+  Target,
+  DollarSign
+} from 'lucide-react';
 
 interface SaaSFeaturesProps {
   onSignOut: () => void;
 }
 
 const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
-  const [reports, setReports] = useState([
-    { id: 1, name: 'Q4 Business Report', date: '2024-12-15', status: 'completed' },
-    { id: 2, name: 'Market Analysis', date: '2024-11-28', status: 'in-progress' },
-    { id: 3, name: 'Financial Overview', date: '2024-11-20', status: 'completed' }
-  ]);
+  const { signOut } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
 
-  const handleGenerateReport = () => {
-    const newReport = {
-      id: reports.length + 1,
-      name: `Business Report ${new Date().toISOString().split('T')[0]}`,
-      date: new Date().toISOString().split('T')[0],
-      status: 'in-progress'
-    };
-    setReports([newReport, ...reports]);
+  const handleSignOut = async () => {
+    await signOut();
+    onSignOut();
+    window.location.href = '/auth';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-blue-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Business Intelligence Dashboard</h1>
-          <Button
-            variant="outline"
-            onClick={() => {
-              onSignOut();
-              window.location.href = '/auth';
-            }}
-            className="border-gray-200 text-gray-700 hover:bg-gray-50"
-          >
-            Sign Out
-          </Button>
+      <div className="border-b bg-card">
+        <div className="flex h-16 items-center px-6">
+          <div className="flex items-center space-x-4">
+            <Building2 className="h-6 w-6" />
+            <h1 className="text-xl font-semibold">Ecosystem Enabler Dashboard</h1>
+          </div>
+          <div className="ml-auto flex items-center space-x-4">
+            <Button variant="ghost" size="sm">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-blue-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
-                Generate Report
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Create comprehensive business reports with AI analysis.</p>
-              <Button 
-                onClick={handleGenerateReport}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                Generate New Report
-              </Button>
-            </CardContent>
-          </Card>
+      <div className="flex-1 space-y-4 p-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="financial" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Financial
+            </TabsTrigger>
+            <TabsTrigger value="impact" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Impact
+            </TabsTrigger>
+            <TabsTrigger value="admin" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Admin
+            </TabsTrigger>
+          </TabsList>
 
-          <Card className="border-green-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-green-600" />
-                Analytics
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">View detailed analytics and performance metrics.</p>
-              <Button variant="outline" className="w-full">
-                View Analytics
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border-orange-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-orange-600" />
-                Team Management
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">Manage your team and collaboration settings.</p>
-              <Button variant="outline" className="w-full">
-                Manage Team
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Report History */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Report History
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {reports.map((report) => (
-                <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <h3 className="font-medium">{report.name}</h3>
-                    <p className="text-sm text-gray-600">Generated on {report.date}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      report.status === 'completed' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {report.status === 'completed' ? 'Completed' : 'In Progress'}
-                    </span>
-                    {report.status === 'completed' && (
-                      <Button size="sm" variant="outline">
-                        <Download className="w-4 h-4 mr-1" />
-                        Download
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Businesses</CardTitle>
+                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">1,234</div>
+                  <p className="text-xs text-muted-foreground">+12% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">892</div>
+                  <p className="text-xs text-muted-foreground">+8% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Revenue Impact</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">$2.4M</div>
+                  <p className="text-xs text-muted-foreground">+15% from last month</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                  <Target className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">87%</div>
+                  <p className="text-xs text-muted-foreground">+3% from last month</p>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+            
+            <Separator />
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Button className="h-24 flex-col gap-2" variant="outline">
+                    <FileText className="h-6 w-6" />
+                    Generate Report
+                  </Button>
+                  <Button className="h-24 flex-col gap-2" variant="outline">
+                    <Users className="h-6 w-6" />
+                    Invite Users
+                  </Button>
+                  <Button className="h-24 flex-col gap-2" variant="outline">
+                    <Settings className="h-6 w-6" />
+                    Configure Hub
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="financial">
+            <FinancialInsightsDashboard />
+          </TabsContent>
+
+          <TabsContent value="impact">
+            <ImpactMeasurementDashboard />
+          </TabsContent>
+
+          <TabsContent value="admin">
+            <AdminDashboard />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
