@@ -181,34 +181,55 @@ export const useStrategy = () => {
   const saveMilestone = async (milestone: Milestone) => {
     if (!user) return null;
 
+    // 0️⃣ Guard: Ensure currentStrategy is loaded or milestone has strategy_id
+    if (!milestone.strategy_id && !currentStrategy?.id) {
+      toast({
+        title: 'Loading...',
+        description: 'Please wait for strategy to load before saving a milestone.',
+        variant: 'destructive',
+      });
+      return null;
+    }
+
     try {
-      // Resolve strategy_id: prefer passed value, then currentStrategy, then fetch active from DB
+      // 1️⃣ Resolve strategy_id
       let resolvedStrategyId = milestone.strategy_id || currentStrategy?.id;
+
+      // Only fetch from DB if absolutely needed
       if (!resolvedStrategyId) {
-        const { data: activeStrategy, error: activeStrategyError } = await supabase
-          .from('strategies')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .order('updated_at', { ascending: false })
-          .maybeSingle();
-        console.log('Fetched active strategy for milestone save:', { activeStrategy, activeStrategyError });
-        if (activeStrategy?.id) {
-          resolvedStrategyId = activeStrategy.id;
+        try {
+          const { data: activeStrategy, error: activeStrategyError } = await supabase
+            .from('strategies')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('is_active', true)
+            .order('updated_at', { ascending: false })
+            .maybeSingle();
+
+          console.log('Fetched active strategy for milestone save:', { activeStrategy, activeStrategyError });
+
+          if (activeStrategy?.id) {
+            resolvedStrategyId = activeStrategy.id;
+          } else {
+            toast({
+              title: 'Error',
+              description: 'Please save your strategy first before adding milestones.',
+              variant: 'destructive',
+            });
+            return null;
+          }
+        } catch (fetchError) {
+          console.error('Error fetching active strategy:', fetchError);
+          toast({
+            title: 'Error',
+            description: 'Failed to load strategies. Please refresh and try again.',
+            variant: 'destructive',
+          });
+          return null;
         }
       }
 
-      // Validate required fields after attempting to resolve strategy_id
-      if (!resolvedStrategyId) {
-        toast({
-          title: 'Error',
-          description: 'Please save your strategy first before adding milestones.',
-          variant: 'destructive'
-        });
-        return null;
-      }
-
-      // Prepare milestone data with all required fields
+      // 2️⃣ Prepare milestone data
       const milestoneData = {
         id: milestone.id || undefined,
         user_id: user.id,
@@ -219,12 +240,10 @@ export const useStrategy = () => {
         business_stage: milestone.business_stage || 'ideation',
       };
 
+      // 3️⃣ Upsert milestone
       const { data, error } = await supabase
         .from('milestones')
-        .upsert(
-          milestoneData,
-          { onConflict: 'id' }
-        )
+        .upsert(milestoneData, { onConflict: 'id' })
         .select()
         .maybeSingle();
 
@@ -232,16 +251,14 @@ export const useStrategy = () => {
 
       if (error) throw error;
 
-      // Update local state immediately
+      // 4️⃣ Update local state immediately
       if (milestone.id) {
-        // Update existing milestone
         setMilestones(prev => prev.map(m => m.id === data!.id ? data! : m));
       } else if (data) {
-        // Add new milestone
         setMilestones(prev => [data, ...prev]);
       }
 
-      // Show success toast
+      // 5️⃣ Show success toast
       toast({
         title: milestone.id ? 'Milestone updated successfully' : 'Milestone added successfully',
         description: milestone.id ?
@@ -250,12 +267,13 @@ export const useStrategy = () => {
       });
 
       return data;
+
     } catch (error) {
       console.error('Error saving milestone:', error);
       toast({
         title: 'Error',
         description: 'Failed to save milestone. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return null;
     }
