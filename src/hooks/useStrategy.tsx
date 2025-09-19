@@ -182,18 +182,31 @@ export const useStrategy = () => {
     if (!user) return null;
 
     try {
+      // Prepare milestone data with all required fields
+      const milestoneData = {
+        id: milestone.id || undefined,
+        user_id: user.id,
+        strategy_id: milestone.strategy_id || currentStrategy?.id,
+        title: milestone.title,
+        target_date: milestone.target_date || null,
+        status: milestone.status || "not-started",
+        business_stage: milestone.business_stage || "ideation",
+      };
+
+      // Validate required fields
+      if (!milestoneData.strategy_id) {
+        toast({
+          title: 'Error',
+          description: 'Please save your strategy first before adding milestones.',
+          variant: 'destructive'
+        });
+        return null;
+      }
+
       const { data, error } = await supabase
         .from("milestones")
         .upsert(
-          {
-            id: milestone.id,
-            user_id: user.id,
-            strategy_id: milestone.strategy_id,
-            title: milestone.title,
-            target_date: milestone.target_date ?? new Date().toISOString().split('T')[0],
-            status: milestone.status ?? "pending",
-            business_stage: milestone.business_stage,
-          },
+          milestoneData,
           { onConflict: "id" }
         )
         .select()

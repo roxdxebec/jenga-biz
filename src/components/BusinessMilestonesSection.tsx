@@ -269,15 +269,6 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     if (customMilestone.trim()) {
       const strategyId = getStrategyId();
       
-      if (!strategyId) {
-        toast({
-          title: "Error",
-          description: "Please save your strategy first before adding milestones.",
-          variant: "destructive"
-        });
-        return;
-      }
-
       const result = await saveMilestone({
         title: customMilestone.trim(),
         status: 'not-started',
@@ -300,15 +291,6 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   const handleAddSuggestedMilestone = async (milestoneTitle: string) => {
     const strategyId = getStrategyId();
       
-    if (!strategyId) {
-      toast({
-        title: "Error",
-        description: "Please save your strategy first before adding milestones.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     const result = await saveMilestone({
       title: milestoneTitle,
       status: 'not-started',
