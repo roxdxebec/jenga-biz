@@ -182,19 +182,24 @@ export const useStrategy = () => {
     if (!user) return null;
 
     try {
-      // Prepare milestone data with all required fields
-      const milestoneData = {
-        id: milestone.id || undefined,
-        user_id: user.id,
-        strategy_id: milestone.strategy_id || currentStrategy?.id,
-        title: milestone.title,
-        target_date: milestone.target_date || null,
-        status: milestone.status || "not-started",
-        business_stage: milestone.business_stage || "ideation",
-      };
+      // Resolve strategy_id: prefer passed value, then currentStrategy, then fetch active from DB
+      let resolvedStrategyId = milestone.strategy_id || currentStrategy?.id;
+      if (!resolvedStrategyId) {
+        const { data: activeStrategy, error: activeStrategyError } = await supabase
+          .from('strategies')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .order('updated_at', { ascending: false })
+          .maybeSingle();
+        console.log('Fetched active strategy for milestone save:', { activeStrategy, activeStrategyError });
+        if (activeStrategy?.id) {
+          resolvedStrategyId = activeStrategy.id;
+        }
+      }
 
-      // Validate required fields
-      if (!milestoneData.strategy_id) {
+      // Validate required fields after attempting to resolve strategy_id
+      if (!resolvedStrategyId) {
         toast({
           title: 'Error',
           description: 'Please save your strategy first before adding milestones.',
@@ -203,22 +208,35 @@ export const useStrategy = () => {
         return null;
       }
 
+      // Prepare milestone data with all required fields
+      const milestoneData = {
+        id: milestone.id || undefined,
+        user_id: user.id,
+        strategy_id: resolvedStrategyId,
+        title: milestone.title,
+        target_date: milestone.target_date ?? null,
+        status: milestone.status || 'not-started',
+        business_stage: milestone.business_stage || 'ideation',
+      };
+
       const { data, error } = await supabase
-        .from("milestones")
+        .from('milestones')
         .upsert(
           milestoneData,
-          { onConflict: "id" }
+          { onConflict: 'id' }
         )
         .select()
-        .single();
+        .maybeSingle();
+
+      console.log('Milestone upsert response:', { data, error });
 
       if (error) throw error;
-      
+
       // Update local state immediately
       if (milestone.id) {
         // Update existing milestone
-        setMilestones(prev => prev.map(m => m.id === data.id ? data : m));
-      } else {
+        setMilestones(prev => prev.map(m => m.id === data!.id ? data! : m));
+      } else if (data) {
         // Add new milestone
         setMilestones(prev => [data, ...prev]);
       }
@@ -226,8 +244,8 @@ export const useStrategy = () => {
       // Show success toast
       toast({
         title: milestone.id ? 'Milestone updated successfully' : 'Milestone added successfully',
-        description: milestone.id ? 
-          'Your milestone changes have been saved.' : 
+        description: milestone.id ?
+          'Your milestone changes have been saved.' :
           'Your new milestone has been added.',
       });
 
