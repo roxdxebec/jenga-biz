@@ -177,97 +177,50 @@ export const useStrategy = () => {
     }
   };
 
-  // Save milestone
+  // Save milestone - simplified version
   const saveMilestone = async (milestone: Milestone) => {
     if (!user) return null;
 
-    // 0️⃣ Guard: Ensure currentStrategy is loaded or milestone has strategy_id
-    if (!milestone.strategy_id && !currentStrategy?.id) {
+    const milestoneData = {
+      id: milestone.id || undefined,
+      user_id: user.id,
+      strategy_id: milestone.strategy_id || currentStrategy?.id,
+      title: milestone.title,
+      target_date: milestone.target_date || new Date().toISOString().split('T')[0],
+      status: milestone.status || 'not-started',
+      business_stage: milestone.business_stage || 'ideation',
+    };
+
+    if (!milestoneData.strategy_id) {
       toast({
-        title: 'Loading...',
-        description: 'Please wait for strategy to load before saving a milestone.',
+        title: 'Error',
+        description: 'Please save your strategy first before adding milestones.',
         variant: 'destructive',
       });
       return null;
     }
 
     try {
-      // 1️⃣ Resolve strategy_id
-      let resolvedStrategyId = milestone.strategy_id || currentStrategy?.id;
-
-      // Only fetch from DB if absolutely needed
-      if (!resolvedStrategyId) {
-        try {
-          const { data: activeStrategy, error: activeStrategyError } = await supabase
-            .from('strategies')
-            .select('id')
-            .eq('user_id', user.id)
-            .eq('is_active', true)
-            .order('updated_at', { ascending: false })
-            .maybeSingle();
-
-          console.log('Fetched active strategy for milestone save:', { activeStrategy, activeStrategyError });
-
-          if (activeStrategy?.id) {
-            resolvedStrategyId = activeStrategy.id;
-          } else {
-            toast({
-              title: 'Error',
-              description: 'Please save your strategy first before adding milestones.',
-              variant: 'destructive',
-            });
-            return null;
-          }
-        } catch (fetchError) {
-          console.error('Error fetching active strategy:', fetchError);
-          toast({
-            title: 'Error',
-            description: 'Failed to load strategies. Please refresh and try again.',
-            variant: 'destructive',
-          });
-          return null;
-        }
-      }
-
-      // 2️⃣ Prepare milestone data
-      const milestoneData = {
-        id: milestone.id || undefined,
-        user_id: user.id,
-        strategy_id: resolvedStrategyId,
-        title: milestone.title,
-        target_date: milestone.target_date ?? null,
-        status: milestone.status || 'not-started',
-        business_stage: milestone.business_stage || 'ideation',
-      };
-
-      // 3️⃣ Upsert milestone
       const { data, error } = await supabase
         .from('milestones')
         .upsert(milestoneData, { onConflict: 'id' })
         .select()
-        .maybeSingle();
-
-      console.log('Milestone upsert response:', { data, error });
-
+        .single();
+      
       if (error) throw error;
 
-      // 4️⃣ Update local state immediately
-      if (milestone.id) {
-        setMilestones(prev => prev.map(m => m.id === data!.id ? data! : m));
-      } else if (data) {
-        setMilestones(prev => [data, ...prev]);
-      }
+      setMilestones(prev =>
+        milestone.id ? prev.map(m => (m.id === data.id ? data : m)) : [data, ...prev]
+      );
 
-      // 5️⃣ Show success toast
       toast({
         title: milestone.id ? 'Milestone updated successfully' : 'Milestone added successfully',
-        description: milestone.id ?
-          'Your milestone changes have been saved.' :
-          'Your new milestone has been added.',
+        description: milestone.id
+          ? 'Your milestone changes have been saved.'
+          : 'Your new milestone has been added.',
       });
 
       return data;
-
     } catch (error) {
       console.error('Error saving milestone:', error);
       toast({
@@ -353,7 +306,14 @@ export const useStrategy = () => {
     }
   }, [user]);
 
-  // Load milestones when current strategy changes
+  // 1️⃣ Ensure currentStrategy is set
+  useEffect(() => {
+    if (!currentStrategy && strategies.length > 0) {
+      setCurrentStrategy(strategies[0]); // fallback to first strategy
+    }
+  }, [currentStrategy, strategies]);
+
+  // 2️⃣ Load milestones whenever currentStrategy changes
   useEffect(() => {
     if (currentStrategy?.id) {
       loadMilestones(currentStrategy.id);
