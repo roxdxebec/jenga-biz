@@ -60,7 +60,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   console.log('🔍 UserDashboard - Component rendering v2 (no-onboarding)', user?.email, 'authLoading:', authLoading);
   
   // Import useStrategy hook
-  const { strategies, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
+  const { strategies, currentStrategy, setCurrentStrategy, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -174,6 +174,13 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       handleComprehensiveShare();
     }
   };
+
+  // 1️⃣ Ensure currentStrategy is set
+  useEffect(() => {
+    if (!currentStrategy && strategies.length > 0) {
+      setCurrentStrategy(strategies[0]); // fallback to first strategy
+    }
+  }, [currentStrategy, strategies, setCurrentStrategy]);
 
   useEffect(() => {
     console.log('🔍 UserDashboard - useEffect triggered, user:', user?.email);
@@ -481,7 +488,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     return report;
   };
 
-  if (authLoading || loadingProfile) {
+  // 2️⃣ Wait for currentStrategy to load instead of redirecting
+  if (authLoading || loadingProfile || (strategies.length > 0 && !currentStrategy)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
         <div className="text-center">
