@@ -4,11 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Zap, Target, DollarSign, LogOut, User, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useStrategy } from '@/hooks/useStrategy';
 import LanguageSelector from '@/components/LanguageSelector';
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { setCurrentStrategy } = useStrategy();
   const [language, setLanguage] = useState('en');
 
   const translations = {
@@ -143,7 +145,10 @@ const Index = () => {
       buttonColor: 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600',
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
-      onClick: () => navigate('/strategy', { state: { language } })
+      onClick: () => {
+        setCurrentStrategy(null);
+        navigate('/strategy', { state: { language } });
+      }
     }
   ];
 

@@ -175,12 +175,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     }
   };
 
-  // 1️⃣ Ensure currentStrategy is set
-  useEffect(() => {
-    if (!currentStrategy && strategies.length > 0) {
-      setCurrentStrategy(strategies[0]); // fallback to first strategy
-    }
-  }, [currentStrategy, strategies, setCurrentStrategy]);
+  // Do not auto-set strategies[0]. Respect currentStrategy set by user
 
   useEffect(() => {
     console.log('🔍 UserDashboard - useEffect triggered, user:', user?.email);

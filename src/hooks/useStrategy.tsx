@@ -191,7 +191,7 @@ export const useStrategy = () => {
       business_stage: milestone.business_stage || 'ideation',
     };
 
-    if (!milestoneData.strategy_id) {
+    if (!milestoneData.strategy_id && !currentStrategy?.id) {
       toast({
         title: 'Error',
         description: 'Please save your strategy first before adding milestones.',
@@ -306,12 +306,12 @@ export const useStrategy = () => {
     }
   }, [user]);
 
-  // 1️⃣ Ensure currentStrategy is set
+  // Remove auto-fallback. Only set currentStrategy explicitly when user selects one
   useEffect(() => {
-    if (!currentStrategy && strategies.length > 0) {
-      setCurrentStrategy(strategies[0]); // fallback to first strategy
+    if (currentStrategy === null) {
+      setCurrentStrategy(null);
     }
-  }, [currentStrategy, strategies]);
+  }, [currentStrategy]);
 
   // 2️⃣ Load milestones whenever currentStrategy changes
   useEffect(() => {
