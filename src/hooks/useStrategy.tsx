@@ -306,12 +306,13 @@ export const useStrategy = () => {
     }
   }, [user]);
 
-  // Remove auto-fallback. Only set currentStrategy explicitly when user selects one
+  // Only set currentStrategy when user explicitly selects or when loading finishes with no strategy set
   useEffect(() => {
-    if (currentStrategy === null) {
-      setCurrentStrategy(null);
+    if (strategies.length === 0) return; // nothing to set
+    if (currentStrategy === undefined) {
+      setCurrentStrategy(null); // explicitly mark as none selected
     }
-  }, [currentStrategy]);
+  }, [strategies, currentStrategy, setCurrentStrategy]);
 
   // 2️⃣ Load milestones whenever currentStrategy changes
   useEffect(() => {

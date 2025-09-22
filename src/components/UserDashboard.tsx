@@ -175,17 +175,14 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     }
   };
 
-  // Do not auto-set strategies[0]. Respect currentStrategy set by user
-
+  // Do not auto-set strategies[0]. Just load data for the user
   useEffect(() => {
-    console.log('🔍 UserDashboard - useEffect triggered, user:', user?.email);
-    if (user) {
-      console.log('🔍 UserDashboard - User found, loading profile and data...');
-      loadUserProfile();
-      loadStrategies();
-      loadUserMilestones();
-      loadUserFinancialData();
-    }
+    if (!user) return;
+    console.log('🔍 UserDashboard - loading user data...');
+    loadUserProfile();
+    loadStrategies();
+    loadUserMilestones();
+    loadUserFinancialData();
   }, [user]);
 
   const loadUserProfile = async () => {
