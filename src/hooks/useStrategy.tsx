@@ -306,9 +306,9 @@ export const useStrategy = () => {
     }
   }, [user]);
 
-  // Only set currentStrategy when user explicitly selects or when loading finishes with no strategy set
+  // Ensure currentStrategy is explicitly managed
   useEffect(() => {
-    if (strategies.length === 0) return; // nothing to set
+    if (strategies.length === 0) return; // nothing to do
     if (currentStrategy === undefined) {
       setCurrentStrategy(null); // explicitly mark as none selected
     }
