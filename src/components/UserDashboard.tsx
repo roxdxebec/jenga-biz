@@ -480,14 +480,23 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     return report;
   };
 
-  // 2️⃣ Wait for currentStrategy to load instead of redirecting
-  if (authLoading || loadingProfile || (strategies.length > 0 && !currentStrategy)) {
+  // ✅ UserDashboard.tsx loading fix
+  if (authLoading || loadingProfile || loading) {
+    console.log('[Dashboard] still loading...', { authLoading, loadingProfile, loading });
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
+      <div className="flex items-center justify-center h-screen">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  console.log('[Dashboard] render check', { currentStrategy, strategiesCount: strategies.length });
+
+  // Allow dashboard to load even if no currentStrategy is selected yet
+  if (!currentStrategy && strategies.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>No strategies found. Please create one to get started.</p>
       </div>
     );
   }

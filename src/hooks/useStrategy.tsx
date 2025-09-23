@@ -306,11 +306,15 @@ export const useStrategy = () => {
     }
   }, [user]);
 
-  // Ensure currentStrategy is explicitly managed
+  // ✅ Manage currentStrategy explicitly in useStrategy.tsx
   useEffect(() => {
-    if (strategies.length === 0) return; // nothing to do
+    console.log('[useStrategy] strategies:', strategies);
+    console.log('[useStrategy] currentStrategy before check:', currentStrategy);
+
+    if (strategies.length === 0) return; // no strategies available
     if (currentStrategy === undefined) {
-      setCurrentStrategy(null); // explicitly mark as none selected
+      console.log('[useStrategy] setting currentStrategy to null');
+      setCurrentStrategy(null); // explicitly mark "none selected"
     }
   }, [strategies, currentStrategy, setCurrentStrategy]);
 
