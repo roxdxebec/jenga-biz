@@ -1,112 +1,46 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+type AuthContextType = {
+  user: any;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, fullName: string, accountType?: string, inviteCode?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
-}
+};
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // ✅ Ensure useState is called inside a valid React component
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🔍 useAuth - useEffect starting, initializing auth...');
-    let initialSessionLoaded = false;
-
-    // Set up auth state listener FIRST  
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('🔍 Auth state change - event:', event, 'session exists:', !!session);
-        console.log('🔍 Auth state change - session user:', session?.user?.email || 'no user');
-        console.log('🔍 Auth state change - initialSessionLoaded:', initialSessionLoaded);
-        
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        console.log('🔍 Auth state change - setting user to:', session?.user?.email || 'null');
-        
-        // Only set loading to false after initial session check OR on auth change
-        if (initialSessionLoaded || event !== 'INITIAL_SESSION') {
-          console.log('🔍 Auth state change - setting loading to false');
-          setLoading(false);
-        }
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('🔍 Initial session check - session exists:', !!session);
-      console.log('🔍 Initial session check - session user:', session?.user?.email || 'no user');
-      console.log('🔍 Initial session check - error:', error);
-      
-      setSession(session);
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      initialSessionLoaded = true;
-      
-      console.log('🔍 Initial session check - setting loading to false');
-      setLoading(false);
-    }).catch((error) => {
-      console.error('🔍 Initial session check failed:', error);
       setLoading(false);
     });
 
-    return () => {
-      console.log('🔍 useAuth - cleaning up subscription');
-      subscription.unsubscribe();
-    };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (!error) {
-      // After successful login, fetch profile and redirect based on account_type
-      setTimeout(async () => {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('account_type')
-              .eq('id', user.id)
-              .single();
-            
-            if (profile?.account_type === 'organization') {
-              window.location.href = '/saas';
-            } else if (profile?.account_type === 'business') {
-              window.location.href = '/b2c';
-            }
-          }
-        } catch (profileError) {
-          console.error('Error fetching profile for redirect:', profileError);
-        }
-      }, 100);
-    }
-    
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signUp = async (email: string, password: string, fullName: string, accountType?: string, inviteCode?: string) => {
-    const redirectUrl = `${window.location.origin}/auth?verified=true`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
+    const { error } = await supabase.auth.signUp({ 
+      email, 
       password,
       options: {
-        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
           account_type: accountType || 'Business',
@@ -114,71 +48,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       },
     });
-
-    // Custom email functions disabled - using default Supabase emails
-    // if (!error) {
-    //   try {
-    //     await supabase.functions.invoke('send-signup-confirmation', {
-    //       body: {
-    //         email,
-    //         confirmationUrl: redirectUrl
-    //       }
-    //     });
-    //   } catch (emailError) {
-    //     console.error('Error sending custom signup confirmation email:', emailError);
-    //     // Don't return error for email sending failure, as the signup still works
-    //   }
-    // }
-    
     return { error };
   };
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setUser(null);
   };
 
   const resetPassword = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/reset-password`;
-    
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectUrl,
-    });
-    
-    // Custom email functions disabled - using default Supabase emails
-    // if (!error) {
-    //   try {
-    //     await supabase.functions.invoke('send-password-reset', {
-    //       body: {
-    //         to: email,
-    //         resetUrl: redirectUrl,
-    //       }
-    //     });
-    //   } catch (emailError) {
-    //     console.error('Error sending custom password reset email:', emailError);
-    //     // Don't return error for email sending failure, as the reset still works
-    //   }
-    // }
-    
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
     return { error };
   };
 
-  const value = {
-    user,
-    session,
-    loading,
-    signIn,
-    signUp,
-    signOut,
-    resetPassword,
-  };
+  return (
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
+};
