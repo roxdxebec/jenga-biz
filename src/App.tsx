@@ -12,7 +12,7 @@ import PasswordReset from "./pages/PasswordReset";
 import Templates from "./pages/Templates";
 import Strategy from "./pages/Strategy";
 import Profile from "./pages/Profile";
-import { UserDashboardCheck } from "./components/UserDashboardCheck";
+import UserDashboard from "./components/UserDashboard";
 import SaaSFeatures from "./components/SaaSFeatures";
 
 const queryClient = new QueryClient();
@@ -31,7 +31,7 @@ const App = () => (
             <Route path="/templates" element={<Templates />} />
             <Route path="/strategy" element={<Strategy />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/dashboard" element={<UserDashboardCheck />} />
+            <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="/saas" element={<SaaSFeatures onSignOut={() => {}} />} />
             <Route path="/b2c" element={<Index />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

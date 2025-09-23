@@ -41,9 +41,9 @@ interface Milestone {
 export const useStrategy = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with loading true
   const [strategies, setStrategies] = useState<Strategy[]>([]);
-  const [currentStrategy, setCurrentStrategy] = useState<Strategy | null>(null);
+  const [currentStrategy, setCurrentStrategy] = useState<Strategy | undefined>(undefined); // undefined while loading
   const [milestones, setMilestones] = useState<Milestone[]>([]);
 
   // Load user's strategies
@@ -299,24 +299,24 @@ export const useStrategy = () => {
   useEffect(() => {
     if (user) {
       loadStrategies();
-    } else {
+    } else if (user === null) {
+      // User is confirmed not logged in
       setStrategies([]);
       setCurrentStrategy(null);
       setMilestones([]);
+      setLoading(false);
     }
+    // If user is undefined, keep loading state
   }, [user]);
 
-  // ✅ Manage currentStrategy explicitly in useStrategy.tsx
+  // Set currentStrategy after strategies load
   useEffect(() => {
-    console.log('[useStrategy] strategies:', strategies);
-    console.log('[useStrategy] currentStrategy before check:', currentStrategy);
-
-    if (strategies.length === 0) return; // no strategies available
-    if (currentStrategy === undefined) {
-      console.log('[useStrategy] setting currentStrategy to null');
-      setCurrentStrategy(null); // explicitly mark "none selected"
+    if (!loading && strategies.length > 0 && currentStrategy === undefined) {
+      setCurrentStrategy(strategies[0]); // Auto-select first strategy
+    } else if (!loading && strategies.length === 0 && currentStrategy === undefined) {
+      setCurrentStrategy(null); // No strategies available
     }
-  }, [strategies, currentStrategy, setCurrentStrategy]);
+  }, [loading, strategies, currentStrategy]);
 
   // 2️⃣ Load milestones whenever currentStrategy changes
   useEffect(() => {
