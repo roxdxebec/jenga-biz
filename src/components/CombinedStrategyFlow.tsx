@@ -340,7 +340,8 @@ const CombinedStrategyFlow = ({
   };
 
   const handleSaveMilestones = async () => {
-    if (milestones.length === 0) {
+    // Use milestones from useStrategy hook instead of local state
+    if (strategyMilestones.length === 0) {
       toast({
         title: 'No Milestones',
         description: 'Please add some milestones before saving.',
@@ -350,8 +351,8 @@ const CombinedStrategyFlow = ({
     }
 
     try {
-      console.log('Saving milestones data:', milestones);
-      // Here we would save milestones if there was a saveMilestones function
+      // Milestones are already saved individually via BusinessMilestonesSection
+      // This just shows confirmation
       toast({
         title: 'Milestones Saved',
         description: 'Your business milestones have been saved successfully.',
