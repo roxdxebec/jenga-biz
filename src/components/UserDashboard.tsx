@@ -480,9 +480,26 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     return report;
   };
 
-  // ✅ UserDashboard.tsx loading fix
-  if (authLoading || loadingProfile || loading) {
-    console.log('[Dashboard] still loading...', { authLoading, loadingProfile, loading });
+  // Check auth loading first
+  if (authLoading) {
+    console.log('[Dashboard] auth still loading...');
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  // If no user, redirect to auth
+  if (!user) {
+    console.log('[Dashboard] no user, redirecting to auth...');
+    navigate('/auth');
+    return null;
+  }
+
+  // Only check profile/strategy loading if we have a user
+  if (loadingProfile || loading) {
+    console.log('[Dashboard] user data still loading...', { loadingProfile, loading });
     return (
       <div className="flex items-center justify-center h-screen">
         <p>Loading dashboard...</p>
@@ -491,15 +508,6 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   }
 
   console.log('[Dashboard] render check', { currentStrategy, strategiesCount: strategies.length });
-
-  // Allow dashboard to load even if no currentStrategy is selected yet
-  if (!currentStrategy && strategies.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p>No strategies found. Please create one to get started.</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50">
