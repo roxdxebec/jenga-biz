@@ -363,7 +363,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                     </RadioGroup>
                   </div>
 
-                  {signupData.accountType === 'Ecosystem Enabler' && (
+                  {signupData.accountType === 'organization' && (
                     <div className="space-y-2">
                       <Label htmlFor="invite-code">Invite Code (Optional for now)</Label>
                       <Input
