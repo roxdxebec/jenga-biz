@@ -64,11 +64,22 @@ const Profile = () => {
   const loadProfile = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    // Helper to fetch with a single retry on network failure
+    const fetchOnce = async () => {
+      return await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+    };
+
+    let { data, error }: any = await fetchOnce();
+
+    // Retry once on transient network error
+    if (error && (error?.name === 'TypeError' || String(error).includes('Failed to fetch'))) {
+      await new Promise(r => setTimeout(r, 500));
+      ({ data, error } = await fetchOnce());
+    }
 
     if (error) {
       const msg = (error as any)?.message || (error as any)?.details || String(error);
@@ -83,16 +94,13 @@ const Profile = () => {
             is_profile_complete: false
           });
           if (upsertError) {
-            console.error('Error creating default profile:', upsertError);
-            toast({ title: 'Profile', description: 'Could not initialize your profile. Please try again.', variant: 'destructive' });
+            const upMsg = (upsertError as any)?.message || JSON.stringify(upsertError);
+            console.error('Error creating default profile:', upMsg);
+            toast({ title: 'Profile', description: upMsg, variant: 'destructive' });
             return;
           }
           // Re-fetch after creating
-          const { data: created } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
+          const { data: created } = await fetchOnce();
           if (created) {
             setProfile({
               contact_person_name: created.full_name || user?.user_metadata?.full_name || '',
@@ -108,9 +116,10 @@ const Profile = () => {
             });
           }
           return;
-        } catch (e) {
-          console.error('Profile init error:', e);
-          toast({ title: 'Profile', description: 'Failed to initialize profile.', variant: 'destructive' });
+        } catch (e: any) {
+          const emsg = e?.message || JSON.stringify(e);
+          console.error('Profile init error:', emsg);
+          toast({ title: 'Profile', description: emsg, variant: 'destructive' });
           return;
         }
       }
