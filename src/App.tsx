@@ -31,6 +31,7 @@ const App = () => (
             <Route path="/reset-password" element={<PasswordReset />} />
             <Route path="/templates" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Templates /></ProtectedRoute>} />
             <Route path="/strategy" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Strategy /></ProtectedRoute>} />
+            <Route path="/strategies" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Strategy /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><UserDashboard /></ProtectedRoute>} />
             <Route path="/saas" element={<ProtectedRoute allowedRoles={["hub_manager","admin","super_admin"]}><SaaSFeatures onSignOut={() => {}} /></ProtectedRoute>} />
