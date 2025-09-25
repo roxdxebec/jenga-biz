@@ -48,14 +48,16 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       loadProfile();
-      
+
       // Auto-populate name and email from auth user
       if (user.email && !profile.email) {
+        const metaType = (user.user_metadata?.account_type || '').toLowerCase();
+        const normalized = ['organization','ecosystem enabler','enabler','org'].includes(metaType) ? 'organization' : 'business';
         setProfile(prev => ({
           ...prev,
           email: user.email || '',
           contact_person_name: user.user_metadata?.full_name || '',
-          account_type: user.user_metadata?.account_type || 'Business'
+          account_type: normalized
         }));
       }
     }
@@ -87,10 +89,12 @@ const Profile = () => {
       if ((error as any)?.code === 'PGRST116' || msg.toLowerCase().includes('no rows') || msg.toLowerCase().includes('0 rows')) {
         try {
           const { saveProfileForUser } = await import('@/lib/profile');
+          const metaType = (user.user_metadata?.account_type || '').toLowerCase();
+          const normalized = ['organization','ecosystem enabler','enabler','org'].includes(metaType) ? 'organization' : 'business';
           const { error: upsertError } = await saveProfileForUser(user.id, {
             email: user.email || '',
             full_name: user.user_metadata?.full_name || '',
-            account_type: user.user_metadata?.account_type || 'Business',
+            account_type: normalized,
             is_profile_complete: false
           });
           if (upsertError) {
@@ -230,7 +234,7 @@ const Profile = () => {
     });
   };
 
-  const isOrganization = profile.account_type === 'Ecosystem Enabler';
+  const isOrganization = profile.account_type === 'organization';
   const imageUrl = profile.organization_logo;
 
   return (
