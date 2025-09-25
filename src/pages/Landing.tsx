@@ -84,6 +84,27 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-2xl font-bold mb-6">How it works</h2>
+          <div className="grid md:grid-cols-3 gap-6 text-left">
+            {[
+              { title: 'Create your account', desc: 'Register in seconds and set up your profile.' },
+              { title: 'Pick a template or start from scratch', desc: 'Use ready-made strategies or build your own.' },
+              { title: 'Track and grow', desc: 'Use milestones and finance tools to stay on track.' },
+            ].map((s, i) => (
+              <Card key={i} className="border-0 bg-white/70">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold mb-2">{s.title}</h3>
+                  <p className="text-gray-600">{s.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* For enablers blurb */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
         <div className="max-w-5xl mx-auto">

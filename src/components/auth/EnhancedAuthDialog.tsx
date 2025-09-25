@@ -104,9 +104,29 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      // Dialog will auto-close due to auth state change
+      try {
+        const { data: { user: current } } = await supabase.auth.getUser();
+        if (current) {
+          const { data: roles } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', current.id);
+          const roleList = (roles || []).map(r => r.role as string);
+          if (roleList.includes('super_admin')) {
+            window.location.href = '/dashboard';
+          } else if (roleList.includes('admin') || roleList.includes('hub_manager')) {
+            window.location.href = '/saas';
+          } else {
+            window.location.href = '/b2c';
+          }
+        } else {
+          window.location.href = '/';
+        }
+      } catch {
+        window.location.href = '/';
+      }
     }
-    
+
     setIsLoading(false);
   };
 
