@@ -66,7 +66,7 @@ const Profile = () => {
   const loadProfile = async () => {
     if (!user) return;
 
-    // Helper to fetch with a single retry on network failure
+    // Helper to fetch profile
     const fetchOnce = async () => {
       return await supabase
         .from('profiles')
@@ -75,12 +75,16 @@ const Profile = () => {
         .single();
     };
 
-    let { data, error }: any = await fetchOnce();
-
-    // Retry once on transient network error
-    if (error && (error?.name === 'TypeError' || String(error).includes('Failed to fetch'))) {
-      await new Promise(r => setTimeout(r, 500));
+    // Retry with backoff on network errors
+    const delays = [300, 800, 1500];
+    let data: any = null;
+    let error: any = null;
+    for (let i = 0; i < delays.length; i++) {
       ({ data, error } = await fetchOnce());
+      if (!error) break;
+      const isNetwork = error?.name === 'TypeError' || String(error).includes('Failed to fetch');
+      if (!isNetwork) break;
+      await new Promise(r => setTimeout(r, delays[i]));
     }
 
     if (error) {
