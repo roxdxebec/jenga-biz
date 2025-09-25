@@ -182,9 +182,11 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
   };
 
   // Auto-close dialog when user is authenticated
-  if (user && open) {
-    onOpenChange(false);
-  }
+  useEffect(() => {
+    if (user && open) {
+      onOpenChange(false);
+    }
+  }, [user, open, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

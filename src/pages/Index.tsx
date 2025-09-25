@@ -2,22 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Zap, Target, DollarSign, LogOut, User, BarChart3 } from 'lucide-react';
+import { FileText, Zap, Target, DollarSign, LogOut, User, BarChart3, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import LanguageSelector from '@/components/LanguageSelector';
+import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const { setCurrentStrategy } = useStrategy();
   const [language, setLanguage] = useState('en');
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   const translations = {
     en: {
       title: 'Jenga Biz Africa',
       subtitle: 'Build Your Business Strategy for the African Market',
       signOut: 'Sign Out',
+      signIn: 'Sign In',
       features: {
         templates: {
           title: 'Business Templates',
@@ -45,6 +48,7 @@ const Index = () => {
       title: 'Jenga Biz Africa',
       subtitle: 'Jenga Mkakati wa Biashara Yako kwa Soko la Afrika',
       signOut: 'Toka',
+      signIn: 'Ingia',
       features: {
         templates: {
           title: 'Violezo vya Biashara',
@@ -72,6 +76,7 @@ const Index = () => {
       title: 'جنجا بيز أفريقيا',
       subtitle: 'ابني استراتيجية عملك للسوق الأفريقي',
       signOut: 'تسجيل الخروج',
+      signIn: 'تسجيل الدخول',
       features: {
         templates: {
           title: 'قوالب الأعمال',
@@ -99,6 +104,7 @@ const Index = () => {
       title: 'Jenga Biz Africa',
       subtitle: 'Construisez Votre Stratégie d\'Entreprise pour le Marché Africain',
       signOut: 'Se Déconnecter',
+      signIn: 'Se Connecter',
       features: {
         templates: {
           title: 'Modèles d\'Entreprise',
@@ -126,6 +132,15 @@ const Index = () => {
 
   const t = translations[language] || translations.en;
 
+  // Handle authentication-required actions
+  const handleAuthRequiredAction = (action: () => void) => {
+    if (!user) {
+      setShowAuthDialog(true);
+      return;
+    }
+    action();
+  };
+
   const features = [
     {
       icon: FileText,
@@ -135,7 +150,7 @@ const Index = () => {
       buttonColor: 'bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600',
       bgColor: 'bg-orange-50',
       iconColor: 'text-orange-600',
-      onClick: () => navigate('/templates', { state: { language } })
+      onClick: () => handleAuthRequiredAction(() => navigate('/templates', { state: { language } }))
     },
     {
       icon: Zap,
@@ -146,11 +161,25 @@ const Index = () => {
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
       onClick: () => {
-        setCurrentStrategy(null);
-        navigate('/strategy', { state: { language } });
+        handleAuthRequiredAction(() => {
+          setCurrentStrategy(null);
+          navigate('/strategy', { state: { language } });
+        });
       }
     }
   ];
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -160,55 +189,70 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
             <img src="/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-12 w-auto" />
             
-            {/* Mobile-responsive navigation */}
+            {/* Mobile-responsive navigation - Show different content based on auth state */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
               <LanguageSelector 
                 currentLanguage={language}
                 onLanguageChange={setLanguage}
               />
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => {
-                  try {
-                    navigate('/dashboard');
-                  } catch (error) {
-                    console.error('Navigation error:', error);
-                    window.location.href = '/dashboard';
-                  }
-                }}
-                className="flex items-center gap-2 text-xs sm:text-sm"
-              >
-                <BarChart3 className="w-4 h-4" />
-                Dashboard
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => navigate('/profile')}
-                className="flex items-center gap-2 text-xs sm:text-sm"
-              >
-                <User className="w-4 h-4" />
-                Profile
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={async () => {
-                  try {
-                    await signOut();
-                    navigate('/auth');
-                  } catch (error) {
-                    console.error('Sign out error:', error);
-                    // Force navigation even if signOut fails
-                    navigate('/auth');
-                  }
-                }}
-                className="flex items-center gap-2 text-xs sm:text-sm"
-              >
-                <LogOut className="w-4 h-4" />
-                {t.signOut}
-              </Button>
+              
+              {user ? (
+                // Authenticated user navigation
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      try {
+                        navigate('/dashboard');
+                      } catch (error) {
+                        console.error('Navigation error:', error);
+                        window.location.href = '/dashboard';
+                      }
+                    }}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    Dashboard
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate('/profile')}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    <User className="w-4 h-4" />
+                    Profile
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={async () => {
+                      try {
+                        await signOut();
+                        // Stay on current page after sign out
+                      } catch (error) {
+                        console.error('Sign out error:', error);
+                      }
+                    }}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {t.signOut}
+                  </Button>
+                </>
+              ) : (
+                // Non-authenticated user navigation
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setShowAuthDialog(true)}
+                  className="flex items-center gap-2 text-xs sm:text-sm bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                >
+                  <LogIn className="w-4 h-4" />
+                  {t.signIn}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -256,6 +300,12 @@ const Index = () => {
           })}
         </div>
       </main>
+
+      {/* Auth Dialog */}
+      <EnhancedAuthDialog 
+        open={showAuthDialog} 
+        onOpenChange={setShowAuthDialog}
+      />
     </div>
   );
 };

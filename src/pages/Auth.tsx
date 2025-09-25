@@ -9,7 +9,7 @@ import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'login'>('loading');
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const verified = searchParams.get('verified');
@@ -17,6 +17,9 @@ const Auth = () => {
   const errorDescription = searchParams.get('error_description');
 
   useEffect(() => {
+    // Don't process until auth loading is complete
+    if (loading) return;
+    
     if (error) {
       setStatus('error');
     } else if (verified) {
@@ -30,11 +33,27 @@ const Auth = () => {
         setShowAuthDialog(true);
       }
     }
-  }, [verified, error, user]);
+  }, [verified, error, user, loading]);
 
-  // If user is authenticated, redirect to home
-  if (user) {
+  // If user is authenticated and we're not handling email verification, redirect to home
+  if (user && !verified && !error) {
     return <Navigate to="/" replace />;
+  }
+
+  // Show loading while checking auth state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -132,13 +151,7 @@ const Auth = () => {
       {/* Auth Dialog */}
       <EnhancedAuthDialog 
         open={showAuthDialog} 
-        onOpenChange={(open) => {
-          setShowAuthDialog(open);
-          if (!open && !user) {
-            // If dialog is closed and user is not logged in, redirect to home
-            navigate('/');
-          }
-        }} 
+        onOpenChange={setShowAuthDialog}
       />
     </div>
   );
