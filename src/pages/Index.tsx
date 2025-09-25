@@ -94,7 +94,7 @@ const Index = () => {
     ar: {
       title: 'جنجا بيز أفريقيا',
       subtitle: 'ابني استراتيجية عملك للسوق الأفريقي',
-      signOut: 'تسجي�� الخروج',
+      signOut: 'تسجيل الخروج',
       signIn: 'تسجيل الدخول',
       features: {
         templates: {
@@ -104,7 +104,7 @@ const Index = () => {
         },
         strategy: {
           title: 'استراتيجية مخصصة',
-          description: 'ابني استراتيجية عمل مخصصة تماماً من الصفر مع تضمين جميع الميزات - مثالي للنماذج التجارية الفريدة',
+          description: 'ابني اس��راتيجية عمل مخصصة تماماً من الصفر مع تضمين جميع الميزات - مثالي للنماذج التجارية الفريدة',
           buttonText: 'ابدأ من الصفر'
         },
         milestones: {
@@ -182,7 +182,7 @@ const Index = () => {
       onClick: () => {
         handleAuthRequiredAction(() => {
           setCurrentStrategy(null);
-          navigate('/strategy', { state: { language } });
+          navigate('/strategies', { state: { language } });
         });
       }
     }
