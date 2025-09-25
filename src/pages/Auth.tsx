@@ -79,20 +79,7 @@ const Auth = () => {
       </header>
 
       {status === 'login' ? (
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-gray-900">Welcome Back</CardTitle>
-            <p className="text-gray-600">Sign in to your Jenga Biz Africa account</p>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <Button 
-              onClick={() => setShowAuthDialog(true)}
-              className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3"
-            >
-              Sign In / Sign Up
-            </Button>
-          </CardContent>
-        </Card>
+        <></>
       ) : (
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
