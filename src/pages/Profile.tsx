@@ -131,6 +131,17 @@ const Profile = () => {
           return;
         }
       }
+      const isNetwork = (error as any)?.name === 'TypeError' || msg.includes('Failed to fetch');
+      if (isNetwork) {
+        console.warn('Network issue fetching profile, using auth metadata fallback');
+        setProfile(prev => ({
+          ...prev,
+          contact_person_name: user?.user_metadata?.full_name || prev.contact_person_name,
+          email: user?.email || prev.email,
+        }));
+        toast({ title: 'Network issue', description: 'Could not reach server. Showing basic profile. Retry later.', variant: 'destructive' });
+        return;
+      }
       console.error('Error loading profile:', msg);
       toast({ title: 'Profile', description: msg, variant: 'destructive' });
       return;
