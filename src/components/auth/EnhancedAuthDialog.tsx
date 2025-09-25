@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Eye, EyeOff, AlertCircle, Building2, Users, Info } from "lucide-react";
+import { Loader as Loader2, Eye, EyeOff, CircleAlert as AlertCircle, Building2, Users, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface EnhancedAuthDialogProps {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Zap, Target, DollarSign, LogOut, User, BarChart3, LogIn } from 'lucide-react';
+import { FileText, Zap, Target, DollarSign, LogOut, User, ChartBar as BarChart3, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import LanguageSelector from '@/components/LanguageSelector';

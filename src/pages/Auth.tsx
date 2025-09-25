@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Navigate, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, XCircle, ArrowLeft, Home } from 'lucide-react';
+import { CircleCheck as CheckCircle, Circle as XCircle, ArrowLeft, Chrome as Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
