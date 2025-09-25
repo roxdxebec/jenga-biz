@@ -21,11 +21,11 @@ interface EnhancedAuthDialogProps {
 export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [signupData, setSignupData] = useState({ 
-    email: "", 
-    password: "", 
+  const [signupData, setSignupData] = useState({
+    email: "",
+    password: "",
     fullName: "",
-    accountType: "Business",
+    accountType: "business",
     inviteCode: ""
   });
   const [showLoginPassword, setShowLoginPassword] = useState(false);
