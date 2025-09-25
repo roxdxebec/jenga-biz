@@ -353,7 +353,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50">
-                        <RadioGroupItem value="Ecosystem Enabler" id="enabler" />
+                        <RadioGroupItem value="organization" id="enabler" />
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
                           <Label htmlFor="enabler" className="font-medium">Ecosystem Enabler</Label>
