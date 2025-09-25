@@ -196,8 +196,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
 
       if (error) throw error;
       setProfile(data);
-    } catch (error) {
-      console.error('Error loading user profile:', error);
+    } catch (error: any) {
+      const msg = error?.message || JSON.stringify(error);
+      console.error('Error loading user profile:', msg);
     } finally {
       setLoadingProfile(false);
     }
