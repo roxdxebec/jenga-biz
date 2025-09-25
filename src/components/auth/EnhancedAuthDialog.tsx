@@ -345,7 +345,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                       onValueChange={(value) => setSignupData({ ...signupData, accountType: value })}
                     >
                       <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50">
-                        <RadioGroupItem value="Business" id="business" />
+                        <RadioGroupItem value="business" id="business" />
                         <Building2 className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
                           <Label htmlFor="business" className="font-medium">Business</Label>
