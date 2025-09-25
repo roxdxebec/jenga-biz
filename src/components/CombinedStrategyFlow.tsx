@@ -580,7 +580,7 @@ const CombinedStrategyFlow = ({
                 onClick={async () => {
                   try {
                     await signOut();
-                    navigate('/auth');
+                    navigate('/');
                   } catch (error) {
                     console.error('Sign out error:', error);
                     navigate('/auth');
