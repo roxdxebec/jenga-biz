@@ -3,9 +3,32 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
 import { LogIn, Rocket, ShieldCheck, BarChart3, Users } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useRoles } from '@/hooks/useRoles';
+import { useNavigate } from 'react-router-dom';
+
+const RoleAwareSaaSButton = () => {
+  const { roles } = useRoles();
+  const navigate = useNavigate();
+  const canSee = roles.includes('super_admin') || roles.includes('admin') || roles.includes('hub_manager');
+  if (!canSee) return null;
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => navigate('/saas')}
+      className="flex items-center gap-2 text-xs sm:text-sm"
+    >
+      <BarChart3 className="w-4 h-4" />
+      SaaS
+    </Button>
+  );
+};
 
 const Landing = () => {
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-orange-50">
@@ -15,15 +38,46 @@ const Landing = () => {
           <div className="flex justify-between items-center py-4">
             <img src="/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-10 w-auto" />
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAuthDialog(true)}
-                className="flex items-center gap-2"
-              >
-                <LogIn className="w-4 h-4" />
-                Sign In
-              </Button>
+              {!user ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAuthDialog(true)}
+                  className="flex items-center gap-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Sign In
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/dashboard')}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    Dashboard
+                  </Button>
+                  <RoleAwareSaaSButton />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/profile')}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    Profile
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => { await signOut(); }}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -39,15 +93,28 @@ const Landing = () => {
             Jenga Biz Africa helps entrepreneurs plan, track milestones, and manage finances with tools built for African markets.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Button
-              onClick={() => setShowAuthDialog(true)}
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white px-8 py-6 text-lg"
-            >
-              Register as Entrepreneur
-            </Button>
-            <Button variant="outline" onClick={() => setShowAuthDialog(true)}>
-              I already have an account
-            </Button>
+            {!user ? (
+              <>
+                <Button
+                  onClick={() => setShowAuthDialog(true)}
+                  className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white px-8 py-6 text-lg"
+                >
+                  Register as Entrepreneur
+                </Button>
+                <Button variant="outline" onClick={() => setShowAuthDialog(true)}>
+                  I already have an account
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => navigate('/b2c')} className="px-8 py-6 text-lg">
+                  Go to App
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/profile')}>
+                  View Profile
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -117,14 +184,14 @@ const Landing = () => {
                 <h4 className="font-semibold text-gray-900">For Ecosystem Enablers</h4>
                 <p className="text-gray-600">Hubs, universities, and institutions can onboard teams and track startups. Use the same sign up to get started.</p>
               </div>
-              <Button variant="outline" onClick={() => setShowAuthDialog(true)}>Get Started</Button>
+              <Button variant="outline" onClick={() => user ? navigate('/saas') : setShowAuthDialog(true)}>Get Started</Button>
             </CardContent>
           </Card>
         </div>
       </section>
 
       {/* Auth Dialog */}
-      <EnhancedAuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
+      <EnhancedAuthDialog open={showAuthDialog && !user} onOpenChange={setShowAuthDialog} />
     </div>
   );
 };
