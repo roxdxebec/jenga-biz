@@ -7,12 +7,13 @@ export type UserRole = 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin';
 export function useRoles() {
   const { user } = useAuth();
   const [roles, setRoles] = useState<UserRole[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       if (!user) {
         setRoles([]);
+        setLoading(false);
         return;
       }
       setLoading(true);
