@@ -71,7 +71,51 @@ const Profile = () => {
       .single();
 
     if (error) {
-      console.error('Error loading profile:', error);
+      const msg = (error as any)?.message || (error as any)?.details || String(error);
+      // If no profile exists yet, create a default one
+      if ((error as any)?.code === 'PGRST116' || msg.toLowerCase().includes('no rows') || msg.toLowerCase().includes('0 rows')) {
+        try {
+          const { saveProfileForUser } = await import('@/lib/profile');
+          const { error: upsertError } = await saveProfileForUser(user.id, {
+            email: user.email || '',
+            full_name: user.user_metadata?.full_name || '',
+            account_type: user.user_metadata?.account_type || 'Business',
+            is_profile_complete: false
+          });
+          if (upsertError) {
+            console.error('Error creating default profile:', upsertError);
+            toast({ title: 'Profile', description: 'Could not initialize your profile. Please try again.', variant: 'destructive' });
+            return;
+          }
+          // Re-fetch after creating
+          const { data: created } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          if (created) {
+            setProfile({
+              contact_person_name: created.full_name || user?.user_metadata?.full_name || '',
+              email: created.email || user?.email || '',
+              phone_number: created.contact_phone || '',
+              website: created.website || '',
+              industry: created.industry || '',
+              country: created.country || '',
+              organization_name: created.organization_name || '',
+              business_type: created.business_type || '',
+              account_type: created.account_type || user?.user_metadata?.account_type || 'Business',
+              organization_logo: created.logo_url || created.profile_picture_url || ''
+            });
+          }
+          return;
+        } catch (e) {
+          console.error('Profile init error:', e);
+          toast({ title: 'Profile', description: 'Failed to initialize profile.', variant: 'destructive' });
+          return;
+        }
+      }
+      console.error('Error loading profile:', msg);
+      toast({ title: 'Profile', description: msg, variant: 'destructive' });
       return;
     }
 

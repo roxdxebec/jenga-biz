@@ -77,7 +77,12 @@ const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
         .single();
 
       if (error) {
-        console.error('Error loading profile:', error);
+        const msg = (error as any)?.message || (error as any)?.details || String(error);
+        // Ignore missing-row errors (first-time users)
+        if ((error as any)?.code === 'PGRST116' || msg.toLowerCase().includes('no rows') || msg.toLowerCase().includes('0 rows')) {
+          return;
+        }
+        console.error('Error loading profile:', msg);
         return;
       }
 
