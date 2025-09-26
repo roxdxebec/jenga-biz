@@ -292,9 +292,30 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  System settings coming soon...
-                </p>
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium">Auto-approve Organization Accounts</h3>
+                      <p className="text-sm text-muted-foreground">When enabled, newly registered ecosystem enablers will be activated automatically. Otherwise, they will remain pending approval.</p>
+                    </div>
+                    <div>
+                      {/* Switch */}
+                      <Switch
+                        checked={autoApproveOrgs}
+                        onCheckedChange={(val: any) => setAutoApproveOrgs(!!val)}
+                        disabled={!isSuperAdmin}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    {!isSuperAdmin && (
+                      <p className="text-sm text-muted-foreground">Only super admins can change this setting.</p>
+                    )}
+                    <div className="mt-2 flex gap-2">
+                      <Button onClick={saveSettings} disabled={!isSuperAdmin}>Save</Button>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
