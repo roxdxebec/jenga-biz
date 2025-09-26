@@ -56,7 +56,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
       if (rolesError) throw rolesError;
 
       // Combine data
-      const usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
+      let usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
         id: profile.id,
         email: profile.email,
         full_name: profile.full_name,
@@ -66,6 +66,11 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
         created_at: profile.created_at,
         roles: userRoles?.filter((role: any) => role.user_id === profile.id).map((role: any) => role.role) || []
       })) || [];
+
+      // If hideSuperAdmins is enabled (e.g., in /saas), remove super_admin users from the list
+      if (hideSuperAdmins) {
+        usersWithRoles = usersWithRoles.filter(u => !(u.roles || []).includes('super_admin'));
+      }
 
       setUsers(usersWithRoles);
     } catch (error) {
