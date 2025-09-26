@@ -27,6 +27,23 @@ const RoleAwareSaaSButton = () => {
   );
 };
 
+const RoleAwareSuperAdminButton = () => {
+  const { roles } = useRoles();
+  const navigate = useNavigate();
+  if (!roles.includes('super_admin')) return null;
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => navigate('/super-admin')}
+      className="flex items-center gap-2 text-xs sm:text-sm"
+    >
+      <BarChart3 className="w-4 h-4" />
+      Super Admin
+    </Button>
+  );
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const { user, signOut, loading } = useAuth();
@@ -236,6 +253,7 @@ const Index = () => {
                   </Button>
                   {/* Show SaaS for admins/hub managers/super admins */}
                   <RoleAwareSaaSButton />
+                  <RoleAwareSuperAdminButton />
                   <Button
                     variant="outline"
                     size="sm"

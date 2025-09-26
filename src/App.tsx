@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import UserDashboard from "./components/UserDashboard";
 import SaaSFeatures from "./components/SaaSFeatures";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AdminDashboard } from "./components/dashboard/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><UserDashboard /></ProtectedRoute>} />
             <Route path="/saas" element={<ProtectedRoute allowedRoles={["hub_manager","admin","super_admin"]}><SaaSFeatures onSignOut={() => {}} /></ProtectedRoute>} />
+            <Route path="/super-admin" element={<ProtectedRoute allowedRoles={["super_admin"]}><AdminDashboard /></ProtectedRoute>} />
             <Route path="/b2c" element={<Index />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

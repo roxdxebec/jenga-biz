@@ -25,6 +25,23 @@ const RoleAwareSaaSButton = () => {
   );
 };
 
+const RoleAwareSuperAdminButton = () => {
+  const { roles } = useRoles();
+  const navigate = useNavigate();
+  if (!roles.includes('super_admin')) return null;
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => navigate('/super-admin')}
+      className="flex items-center gap-2 text-xs sm:text-sm"
+    >
+      <ShieldCheck className="w-4 h-4" />
+      Super Admin
+    </Button>
+  );
+};
+
 const Landing = () => {
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const { user, signOut } = useAuth();
@@ -60,6 +77,7 @@ const Landing = () => {
                     Dashboard
                   </Button>
                   <RoleAwareSaaSButton />
+                  <RoleAwareSuperAdminButton />
                   <Button
                     variant="outline"
                     size="sm"
