@@ -22,7 +22,7 @@ interface UserWithRoles {
   roles: string[];
 }
 
-export function UserManagement() {
+export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: boolean }) {
   const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
