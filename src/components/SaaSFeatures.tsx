@@ -30,6 +30,8 @@ interface SaaSFeaturesProps {
 const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [showInvite, setShowInvite] = useState(false);
+  const [showHubConfig, setShowHubConfig] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
