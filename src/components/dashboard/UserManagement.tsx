@@ -287,9 +287,9 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
-              <SelectContent>
+                <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
+                {!hideSuperAdmins && <SelectItem value="super_admin">Super Admin</SelectItem>}
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="hub_manager">Hub Manager</SelectItem>
                 <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
