@@ -75,10 +75,28 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
 
   const fetchStats = async () => {
     try {
+      // Determine super admin ids if in saasMode
+      let superAdminIds: string[] = [];
+      if (saasMode) {
+        const { data: sa, error: saError } = await supabase
+          .from('user_roles')
+          .select('user_id')
+          .eq('role', 'super_admin');
+        if (!saError && sa) {
+          superAdminIds = sa.map((r: any) => r.user_id);
+        }
+      }
+
+      // Helper to build not-in filter for profiles
+      const notInFilter = superAdminIds.length > 0 ? `(${superAdminIds.map((id) => `"${id}"`).join(',')})` : null;
+
       // Get total users
-      const { count: userCount } = await supabase
+      const profilesQuery = supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
+      const { count: userCount } = notInFilter
+        ? await profilesQuery.not('id', 'in', notInFilter)
+        : await profilesQuery;
 
       // Get total businesses
       const { count: businessCount } = await supabase
@@ -88,12 +106,15 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
       // Get active users (users who logged in last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      const { count: activeCount } = await supabase
+
+      const activitiesQuery = supabase
         .from('user_activities')
         .select('*', { count: 'exact', head: true })
         .eq('activity_type', 'login')
         .gte('created_at', thirtyDaysAgo.toISOString());
+      const { count: activeCount } = notInFilter
+        ? await activitiesQuery.not('user_id', 'in', notInFilter)
+        : await activitiesQuery;
 
       // Get total revenue from financial records
       const { data: revenueData } = await supabase
@@ -101,7 +122,7 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
         .select('revenue')
         .not('revenue', 'is', null);
 
-      const totalRevenue = revenueData?.reduce((sum, record) => 
+      const totalRevenue = revenueData?.reduce((sum, record) =>
         sum + (Number(record.revenue) || 0), 0) || 0;
 
       setStats({
