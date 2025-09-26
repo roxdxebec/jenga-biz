@@ -18,6 +18,7 @@ import {
 import { InviteCodeManager } from "../auth/InviteCodeManager";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { UserManagement } from "./UserManagement";
+import { Switch } from '@/components/ui/switch';
 
 interface UserRole {
   role: string;
