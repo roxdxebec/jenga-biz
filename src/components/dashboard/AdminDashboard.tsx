@@ -273,7 +273,7 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
-            <UserManagement />
+            <UserManagement hideSuperAdmins={saasMode} />
           </TabsContent>
 
           <TabsContent value="invites" className="space-y-6">
