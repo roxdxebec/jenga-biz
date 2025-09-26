@@ -153,7 +153,16 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Button className="h-24 flex-col gap-2" variant="outline" onClick={() => setActiveTab('analytics')}>
+                  <Button
+                    className="h-24 flex-col gap-2"
+                    variant="outline"
+                    onClick={() => {
+                      // set UI and deep link to analytics reporting panel
+                      setActiveTab('analytics');
+                      setAnalyticsPanel('reporting');
+                      setSearchParams({ tab: 'analytics', panel: 'reporting' });
+                    }}
+                  >
                     <FileText className="h-6 w-6" />
                     Generate Report
                   </Button>
