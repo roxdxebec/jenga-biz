@@ -180,7 +180,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AnalyticsDashboard />
+            <AnalyticsDashboard initialPanel={analyticsPanel} />
           </TabsContent>
 
           <TabsContent value="financial">
