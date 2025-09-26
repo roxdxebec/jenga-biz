@@ -36,6 +36,32 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
     totalRevenue: 0
   });
 
+  const [autoApproveOrgs, setAutoApproveOrgs] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+
+  const loadSettings = async () => {
+    try {
+      const { data, error } = await supabase.from('app_settings').select('value').eq('key', 'auto_approve_organizations').maybeSingle();
+      if (!error && data) {
+        setAutoApproveOrgs(data.value === 'true' || data.value === true);
+      }
+    } catch (err) {
+      // ignore if settings table doesn't exist
+      console.warn('Could not load settings', err);
+    }
+  };
+
+  const saveSettings = async () => {
+    try {
+      const payload = { key: 'auto_approve_organizations', value: autoApproveOrgs ? 'true' : 'false' };
+      await supabase.from('app_settings').upsert(payload, { onConflict: 'key' });
+      toast({ title: 'Settings saved', description: 'System settings updated.' });
+    } catch (err) {
+      console.warn('Failed to save settings', err);
+      toast({ title: 'Save failed', description: 'Unable to save settings (table may be missing).', variant: 'destructive' });
+    }
+  };
+
   useEffect(() => {
     checkAdminStatus();
     fetchStats();
