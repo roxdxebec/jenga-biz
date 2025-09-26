@@ -169,7 +169,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
           </TabsContent>
 
           <TabsContent value="admin">
-            <AdminDashboard />
+            <AdminDashboard saasMode />
           </TabsContent>
         </Tabs>
 
