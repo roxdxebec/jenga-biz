@@ -22,7 +22,7 @@ interface UserWithRoles {
   roles: string[];
 }
 
-export function UserManagement() {
+export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: boolean }) {
   const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,7 +56,7 @@ export function UserManagement() {
       if (rolesError) throw rolesError;
 
       // Combine data
-      const usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
+      let usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
         id: profile.id,
         email: profile.email,
         full_name: profile.full_name,
@@ -66,6 +66,11 @@ export function UserManagement() {
         created_at: profile.created_at,
         roles: userRoles?.filter((role: any) => role.user_id === profile.id).map((role: any) => role.role) || []
       })) || [];
+
+      // If hideSuperAdmins is enabled (e.g., in /saas), remove super_admin users from the list
+      if (hideSuperAdmins) {
+        usersWithRoles = usersWithRoles.filter(u => !(u.roles || []).includes('super_admin'));
+      }
 
       setUsers(usersWithRoles);
     } catch (error) {
@@ -218,17 +223,19 @@ export function UserManagement() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Super Admins</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {users.filter(u => u.roles.includes('super_admin')).length}
-            </div>
-          </CardContent>
-        </Card>
+        {!hideSuperAdmins && (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Super Admins</CardTitle>
+              <Shield className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {users.filter(u => u.roles.includes('super_admin')).length}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -280,9 +287,9 @@ export function UserManagement() {
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
-              <SelectContent>
+                <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
+                {!hideSuperAdmins && <SelectItem value="super_admin">Super Admin</SelectItem>}
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="hub_manager">Hub Manager</SelectItem>
                 <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
@@ -425,19 +432,21 @@ export function UserManagement() {
                               <div>
                                 <Label>Add Role</Label>
                                 <div className="flex gap-2 mt-2 flex-wrap">
-                                  {['entrepreneur', 'hub_manager', 'admin', 'super_admin'].map((role) => (
-                                    !user.roles.includes(role) && (
-                                      <Button
-                                        key={role}
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => updateUserRole(user.id, role as any, 'add')}
-                                      >
-                                        <UserPlus className="h-3 w-3 mr-1" />
-                                        {role}
-                                      </Button>
-                                    )
-                                  ))}
+                                  {(['entrepreneur', 'hub_manager', 'admin', 'super_admin'] as string[])
+                                    .filter(r => !(hideSuperAdmins && r === 'super_admin'))
+                                    .map((role) => (
+                                      !user.roles.includes(role) && (
+                                        <Button
+                                          key={role}
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => updateUserRole(user.id, role as any, 'add')}
+                                        >
+                                          <UserPlus className="h-3 w-3 mr-1" />
+                                          {role}
+                                        </Button>
+                                      )
+                                    ))}
                                 </div>
                               </div>
                             </div>

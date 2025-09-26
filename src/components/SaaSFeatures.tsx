@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -30,8 +31,21 @@ interface SaaSFeaturesProps {
 const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [analyticsPanel, setAnalyticsPanel] = useState<string | undefined>(undefined);
   const [showInvite, setShowInvite] = useState(false);
   const [showHubConfig, setShowHubConfig] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Initialize from URL query params: ?tab=analytics&panel=reporting
+    const tab = searchParams.get('tab');
+    const panel = searchParams.get('panel');
+    if (tab) setActiveTab(tab);
+    if (tab === 'analytics' && panel) {
+      setAnalyticsPanel(panel);
+    }
+  }, [searchParams]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -49,7 +63,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
             <h1 className="text-xl font-semibold">Ecosystem Enabler Dashboard</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => setShowHubConfig(true)}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </Button>
@@ -139,7 +153,16 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Button className="h-24 flex-col gap-2" variant="outline" onClick={() => setActiveTab('analytics')}>
+                  <Button
+                    className="h-24 flex-col gap-2"
+                    variant="outline"
+                    onClick={() => {
+                      // set UI and deep link to analytics reporting panel
+                      setActiveTab('analytics');
+                      setAnalyticsPanel('reporting');
+                      setSearchParams({ tab: 'analytics', panel: 'reporting' });
+                    }}
+                  >
                     <FileText className="h-6 w-6" />
                     Generate Report
                   </Button>
@@ -157,7 +180,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AnalyticsDashboard />
+            <AnalyticsDashboard initialPanel={analyticsPanel} />
           </TabsContent>
 
           <TabsContent value="financial">
@@ -169,7 +192,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
           </TabsContent>
 
           <TabsContent value="admin">
-            <AdminDashboard />
+            <AdminDashboard saasMode />
           </TabsContent>
         </Tabs>
 

@@ -22,14 +22,19 @@ interface DashboardMetrics {
   monthlyRegistrations: number;
 }
 
-export const AnalyticsDashboard = () => {
+export const AnalyticsDashboard = ({ initialPanel }: { initialPanel?: string | null }) => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [panel, setPanel] = useState<string>(initialPanel || 'business-intelligence');
 
   useEffect(() => {
     fetchDashboardMetrics();
   }, []);
+
+  useEffect(() => {
+    if (initialPanel) setPanel(initialPanel);
+  }, [initialPanel]);
 
   const fetchDashboardMetrics = async () => {
     try {
@@ -156,7 +161,7 @@ export const AnalyticsDashboard = () => {
       </div>
 
       {/* Detailed Analytics */}
-      <Tabs defaultValue="business-intelligence" className="w-full">
+      <Tabs value={panel} onValueChange={(v) => setPanel(v)} className="w-full">
         <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 h-auto gap-1 p-1">
           <TabsTrigger value="business-intelligence" className="text-xs sm:text-sm px-2 py-2 whitespace-nowrap">
             BI Dashboard

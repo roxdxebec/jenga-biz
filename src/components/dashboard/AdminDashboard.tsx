@@ -18,13 +18,14 @@ import {
 import { InviteCodeManager } from "../auth/InviteCodeManager";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { UserManagement } from "./UserManagement";
+import { Switch } from '@/components/ui/switch';
 
 interface UserRole {
   role: string;
   user_id: string;
 }
 
-export function AdminDashboard() {
+export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
@@ -35,6 +36,32 @@ export function AdminDashboard() {
     activeUsers: 0,
     totalRevenue: 0
   });
+
+  const [autoApproveOrgs, setAutoApproveOrgs] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+
+  const loadSettings = async () => {
+    try {
+      const { data, error } = await supabase.from('app_settings').select('value').eq('key', 'auto_approve_organizations').maybeSingle();
+      if (!error && data) {
+        setAutoApproveOrgs(data.value === 'true' || data.value === true);
+      }
+    } catch (err) {
+      // ignore if settings table doesn't exist
+      console.warn('Could not load settings', err);
+    }
+  };
+
+  const saveSettings = async () => {
+    try {
+      const payload = { key: 'auto_approve_organizations', value: autoApproveOrgs ? 'true' : 'false' };
+      await supabase.from('app_settings').upsert(payload, { onConflict: 'key' });
+      toast({ title: 'Settings saved', description: 'System settings updated.' });
+    } catch (err) {
+      console.warn('Failed to save settings', err);
+      toast({ title: 'Save failed', description: 'Unable to save settings (table may be missing).', variant: 'destructive' });
+    }
+  };
 
   useEffect(() => {
     checkAdminStatus();
@@ -60,6 +87,14 @@ export function AdminDashboard() {
       const allowed = !!adminRole;
       setIsAdmin(allowed);
 
+      // store detailed roles
+      setUserRoles((data || []).map((r: any) => ({ role: r.role, user_id: user.id })));
+      // determine super admin
+      const superAdmin = (data || []).some((r: any) => r.role === 'super_admin');
+      setIsSuperAdmin(superAdmin);
+      // load system settings
+      await loadSettings();
+
       if (!allowed) {
         toast({
           title: "Access Denied",
@@ -75,10 +110,28 @@ export function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
+      // Determine super admin ids if in saasMode
+      let superAdminIds: string[] = [];
+      if (saasMode) {
+        const { data: sa, error: saError } = await supabase
+          .from('user_roles')
+          .select('user_id')
+          .eq('role', 'super_admin');
+        if (!saError && sa) {
+          superAdminIds = sa.map((r: any) => r.user_id);
+        }
+      }
+
+      // Helper to build not-in filter for profiles
+      const notInFilter = superAdminIds.length > 0 ? `(${superAdminIds.map((id) => `"${id}"`).join(',')})` : null;
+
       // Get total users
-      const { count: userCount } = await supabase
+      const profilesQuery = supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
+      const { count: userCount } = notInFilter
+        ? await profilesQuery.not('id', 'in', notInFilter)
+        : await profilesQuery;
 
       // Get total businesses
       const { count: businessCount } = await supabase
@@ -88,12 +141,15 @@ export function AdminDashboard() {
       // Get active users (users who logged in last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      const { count: activeCount } = await supabase
+
+      const activitiesQuery = supabase
         .from('user_activities')
         .select('*', { count: 'exact', head: true })
         .eq('activity_type', 'login')
         .gte('created_at', thirtyDaysAgo.toISOString());
+      const { count: activeCount } = notInFilter
+        ? await activitiesQuery.not('user_id', 'in', notInFilter)
+        : await activitiesQuery;
 
       // Get total revenue from financial records
       const { data: revenueData } = await supabase
@@ -101,7 +157,7 @@ export function AdminDashboard() {
         .select('revenue')
         .not('revenue', 'is', null);
 
-      const totalRevenue = revenueData?.reduce((sum, record) => 
+      const totalRevenue = revenueData?.reduce((sum, record) =>
         sum + (Number(record.revenue) || 0), 0) || 0;
 
       setStats({
@@ -252,7 +308,7 @@ export function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
-            <UserManagement />
+            <UserManagement hideSuperAdmins={saasMode} />
           </TabsContent>
 
           <TabsContent value="invites" className="space-y-6">
@@ -268,9 +324,30 @@ export function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
-                  System settings coming soon...
-                </p>
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium">Auto-approve Organization Accounts</h3>
+                      <p className="text-sm text-muted-foreground">When enabled, newly registered ecosystem enablers will be activated automatically. Otherwise, they will remain pending approval.</p>
+                    </div>
+                    <div>
+                      {/* Switch */}
+                      <Switch
+                        checked={autoApproveOrgs}
+                        onCheckedChange={(val: any) => setAutoApproveOrgs(!!val)}
+                        disabled={!isSuperAdmin}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    {!isSuperAdmin && (
+                      <p className="text-sm text-muted-foreground">Only super admins can change this setting.</p>
+                    )}
+                    <div className="mt-2 flex gap-2">
+                      <Button onClick={saveSettings} disabled={!isSuperAdmin}>Save</Button>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
