@@ -432,19 +432,21 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                               <div>
                                 <Label>Add Role</Label>
                                 <div className="flex gap-2 mt-2 flex-wrap">
-                                  {['entrepreneur', 'hub_manager', 'admin', 'super_admin'].map((role) => (
-                                    !user.roles.includes(role) && (
-                                      <Button
-                                        key={role}
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => updateUserRole(user.id, role as any, 'add')}
-                                      >
-                                        <UserPlus className="h-3 w-3 mr-1" />
-                                        {role}
-                                      </Button>
-                                    )
-                                  ))}
+                                  {(['entrepreneur', 'hub_manager', 'admin', 'super_admin'] as string[])
+                                    .filter(r => !(hideSuperAdmins && r === 'super_admin'))
+                                    .map((role) => (
+                                      !user.roles.includes(role) && (
+                                        <Button
+                                          key={role}
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => updateUserRole(user.id, role as any, 'add')}
+                                        >
+                                          <UserPlus className="h-3 w-3 mr-1" />
+                                          {role}
+                                        </Button>
+                                      )
+                                    ))}
                                 </div>
                               </div>
                             </div>
