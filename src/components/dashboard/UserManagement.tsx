@@ -16,6 +16,8 @@ interface UserWithRoles {
   email: string;
   full_name: string;
   account_type: string;
+  country: string | null;
+  organization_name: string | null;
   created_at: string;
   roles: string[];
 }
@@ -27,6 +29,7 @@ export function UserManagement() {
   const [filterRole, setFilterRole] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRoles | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editValues, setEditValues] = useState<{ full_name: string; email: string; account_type: string; country: string; organization_name: string }>({ full_name: "", email: "", account_type: "", country: "", organization_name: "" });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -53,9 +56,15 @@ export function UserManagement() {
       if (rolesError) throw rolesError;
 
       // Combine data
-      const usersWithRoles: UserWithRoles[] = profiles?.map(profile => ({
-        ...profile,
-        roles: userRoles?.filter(role => role.user_id === profile.id).map(role => role.role) || []
+      const usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
+        id: profile.id,
+        email: profile.email,
+        full_name: profile.full_name,
+        account_type: profile.account_type,
+        country: profile.country,
+        organization_name: profile.organization_name,
+        created_at: profile.created_at,
+        roles: userRoles?.filter((role: any) => role.user_id === profile.id).map((role: any) => role.role) || []
       })) || [];
 
       setUsers(usersWithRoles);
@@ -119,6 +128,55 @@ export function UserManagement() {
         description: error.message || "Failed to update user role",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleOpenEdit = (user: UserWithRoles) => {
+    setSelectedUser(user);
+    setEditValues({
+      full_name: user.full_name || "",
+      email: user.email || "",
+      account_type: user.account_type || "",
+      country: user.country || "",
+      organization_name: user.organization_name || "",
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const saveProfileChanges = async () => {
+    if (!selectedUser) return;
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: editValues.full_name,
+          email: editValues.email,
+          account_type: editValues.account_type,
+          country: editValues.country || null,
+          organization_name: editValues.organization_name || null,
+        })
+        .eq('id', selectedUser.id);
+
+      if (error) throw error;
+      toast({ title: 'Updated', description: 'Profile updated successfully' });
+      await fetchUsers();
+      setIsEditModalOpen(false);
+      setSelectedUser(null);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to update profile', variant: 'destructive' });
+    }
+  };
+
+  const deactivateUser = async (userId: string) => {
+    try {
+      const { error: rolesError } = await supabase.from('user_roles').delete().eq('user_id', userId);
+      if (rolesError) throw rolesError;
+      const { error: profileError } = await supabase.from('profiles').update({ account_type: 'deactivated' }).eq('id', userId);
+      if (profileError) throw profileError;
+      toast({ title: 'Deactivated', description: 'User roles removed and account marked deactivated' });
+      await fetchUsers();
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to deactivate user', variant: 'destructive' });
     }
   };
 
@@ -294,52 +352,93 @@ export function UserManagement() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setSelectedUser(user)}
+                            onClick={() => handleOpenEdit(user)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Manage User Roles</DialogTitle>
+                            <DialogTitle>Manage User</DialogTitle>
                             <DialogDescription>
-                              Add or remove roles for {user.email}
+                              Update profile or roles for {user.email}
                             </DialogDescription>
                           </DialogHeader>
-                          <div className="space-y-4">
-                            <div>
-                              <Label>Current Roles</Label>
-                              <div className="flex flex-wrap gap-2 mt-2">
-                                {user.roles.map((role) => (
-                                  <div key={role} className="flex items-center gap-2">
-                                    <Badge className={getRoleColor(role)}>{role}</Badge>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => updateUserRole(user.id, role as any, 'remove')}
-                                    >
-                                      <Trash2 className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                ))}
+                          <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <Label htmlFor="full_name">Full Name</Label>
+                                <Input id="full_name" value={editValues.full_name} onChange={(e) => setEditValues(v => ({ ...v, full_name: e.target.value }))} />
+                              </div>
+                              <div>
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" value={editValues.email} onChange={(e) => setEditValues(v => ({ ...v, email: e.target.value }))} />
+                              </div>
+                              <div>
+                                <Label>Account Type</Label>
+                                <Select value={editValues.account_type} onValueChange={(val) => setEditValues(v => ({ ...v, account_type: val }))}>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="business">Business</SelectItem>
+                                    <SelectItem value="organization">Organization</SelectItem>
+                                    <SelectItem value="deactivated">Deactivated</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label htmlFor="country">Country</Label>
+                                <Input id="country" value={editValues.country} onChange={(e) => setEditValues(v => ({ ...v, country: e.target.value }))} />
+                              </div>
+                              <div className="md:col-span-2">
+                                <Label htmlFor="organization_name">Organization</Label>
+                                <Input id="organization_name" value={editValues.organization_name} onChange={(e) => setEditValues(v => ({ ...v, organization_name: e.target.value }))} />
                               </div>
                             </div>
-                            <div>
-                              <Label>Add Role</Label>
-                              <div className="flex gap-2 mt-2 flex-wrap">
-                                {['entrepreneur', 'hub_manager', 'admin', 'super_admin'].map((role) => (
-                                  !user.roles.includes(role) && (
-                                    <Button
-                                      key={role}
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => updateUserRole(user.id, role as any, 'add')}
-                                    >
-                                      <UserPlus className="h-3 w-3 mr-1" />
-                                      {role}
-                                    </Button>
-                                  )
-                                ))}
+
+                            <div className="flex items-center gap-2">
+                              <Button onClick={saveProfileChanges}>Save</Button>
+                              <Button variant="destructive" onClick={() => deactivateUser(user.id)}>
+                                <Trash2 className="h-4 w-4 mr-1" /> Deactivate
+                              </Button>
+                            </div>
+
+                            <div className="space-y-4 border-t pt-4">
+                              <div>
+                                <Label>Current Roles</Label>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {user.roles.map((role) => (
+                                    <div key={role} className="flex items-center gap-2">
+                                      <Badge className={getRoleColor(role)}>{role}</Badge>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => updateUserRole(user.id, role as any, 'remove')}
+                                      >
+                                        <Trash2 className="h-3 w-3" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Add Role</Label>
+                                <div className="flex gap-2 mt-2 flex-wrap">
+                                  {['entrepreneur', 'hub_manager', 'admin', 'super_admin'].map((role) => (
+                                    !user.roles.includes(role) && (
+                                      <Button
+                                        key={role}
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => updateUserRole(user.id, role as any, 'add')}
+                                      >
+                                        <UserPlus className="h-3 w-3 mr-1" />
+                                        {role}
+                                      </Button>
+                                    )
+                                  ))}
+                                </div>
                               </div>
                             </div>
                           </div>
