@@ -31,7 +31,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const handleSignOut = async () => {
     await signOut();
     onSignOut();
-    window.location.href = '/auth';
+    window.location.href = '/';
   };
 
   return (

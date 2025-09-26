@@ -129,10 +129,10 @@ const Templates = () => {
                 onClick={async () => {
                   try {
                     await signOut();
-                    navigate('/auth');
+                    navigate('/');
                   } catch (error) {
                     console.error('Sign out error:', error);
-                    navigate('/auth');
+                    navigate('/');
                   }
                 }}
                 className="flex items-center gap-2 text-xs sm:text-sm"

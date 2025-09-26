@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -197,8 +196,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
 
       if (error) throw error;
       setProfile(data);
-    } catch (error) {
-      console.error('Error loading user profile:', error);
+    } catch (error: any) {
+      const msg = error?.message || JSON.stringify(error);
+      console.error('Error loading user profile:', msg);
     } finally {
       setLoadingProfile(false);
     }
@@ -492,8 +492,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
 
   // If no user, redirect to auth
   if (!user) {
-    console.log('[Dashboard] no user, redirecting to auth...');
-    navigate('/auth');
+    console.log('[Dashboard] no user, redirecting to landing...');
+    navigate('/');
     return null;
   }
 
@@ -553,11 +553,11 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                   console.log('Sign out clicked');
                   try {
                     await signOut();
-                    navigate('/auth');
+                    navigate('/');
                   } catch (error) {
                     console.error('Sign out error:', error);
                     // Force navigation even if signOut fails
-                    window.location.href = '/auth';
+                    window.location.href = '/';
                   }
                 }}
                 className="border-gray-200 text-gray-700 hover:bg-gray-50 text-xs sm:text-sm"
