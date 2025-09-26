@@ -26,10 +26,15 @@ export const AnalyticsDashboard = ({ initialPanel }: { initialPanel?: string | n
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [panel, setPanel] = useState<string>(initialPanel || 'business-intelligence');
 
   useEffect(() => {
     fetchDashboardMetrics();
   }, []);
+
+  useEffect(() => {
+    if (initialPanel) setPanel(initialPanel);
+  }, [initialPanel]);
 
   const fetchDashboardMetrics = async () => {
     try {
