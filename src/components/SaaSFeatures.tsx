@@ -8,6 +8,9 @@ import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsi
 import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { InviteCodeManager } from '@/components/auth/InviteCodeManager';
+import { HubConfigDialog } from '@/components/Hubs/HubConfigDialog';
 import { 
   BarChart3, 
   Users, 
@@ -27,6 +30,8 @@ interface SaaSFeaturesProps {
 const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [showInvite, setShowInvite] = useState(false);
+  const [showHubConfig, setShowHubConfig] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -134,15 +139,15 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Button className="h-24 flex-col gap-2" variant="outline">
+                  <Button className="h-24 flex-col gap-2" variant="outline" onClick={() => setActiveTab('analytics')}>
                     <FileText className="h-6 w-6" />
                     Generate Report
                   </Button>
-                  <Button className="h-24 flex-col gap-2" variant="outline">
+                  <Button className="h-24 flex-col gap-2" variant="outline" onClick={() => setShowInvite(true)}>
                     <Users className="h-6 w-6" />
                     Invite Users
                   </Button>
-                  <Button className="h-24 flex-col gap-2" variant="outline">
+                  <Button className="h-24 flex-col gap-2" variant="outline" onClick={() => setShowHubConfig(true)}>
                     <Settings className="h-6 w-6" />
                     Configure Hub
                   </Button>
@@ -167,6 +172,19 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
             <AdminDashboard />
           </TabsContent>
         </Tabs>
+
+        {/* Invite Users Dialog */}
+        <Dialog open={showInvite} onOpenChange={setShowInvite}>
+          <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Invite Users</DialogTitle>
+            </DialogHeader>
+            <InviteCodeManager />
+          </DialogContent>
+        </Dialog>
+
+        {/* Configure Hub Dialog */}
+        <HubConfigDialog open={showHubConfig} onOpenChange={setShowHubConfig} />
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ export function AdminDashboard() {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalBusinesses: 0,
@@ -42,7 +42,10 @@ export function AdminDashboard() {
   }, [user]);
 
   const checkAdminStatus = async () => {
-    if (!user) return;
+    if (!user) {
+      setIsAdmin(null);
+      return;
+    }
 
     try {
       const { data, error } = await supabase
@@ -52,11 +55,12 @@ export function AdminDashboard() {
         .in('role', ['admin', 'super_admin', 'hub_manager']);
 
       if (error) throw error;
-      
+
       const adminRole = data.find(role => ['admin', 'super_admin', 'hub_manager'].includes(role.role));
-      setIsAdmin(!!adminRole);
-      
-      if (!adminRole) {
+      const allowed = !!adminRole;
+      setIsAdmin(allowed);
+
+      if (!allowed) {
         toast({
           title: "Access Denied",
           description: "You don't have admin privileges. Please contact support.",
@@ -65,6 +69,7 @@ export function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error checking admin status:', error);
+      setIsAdmin(false);
     }
   };
 
@@ -131,10 +136,14 @@ export function AdminDashboard() {
     );
   }
 
-  if (!isAdmin) {
+  if (isAdmin === null) {
+    return null;
+  }
+
+  if (isAdmin === false) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-96">
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
