@@ -108,12 +108,12 @@ export const FinancialHealthGauge = ({
                   />
                 </RadialBarChart>
               </ResponsiveContainer>
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center">
-                <div className="text-3xl font-bold">
-                  {Math.round(healthScore)}
-                </div>
-                <div className="text-sm text-muted-foreground">out of 100</div>
+            </div>
+            <div className="mt-2 text-center">
+              <div className="text-3xl font-bold">
+                {Math.round(healthScore)}
               </div>
+              <div className="text-sm text-muted-foreground">out of 100</div>
             </div>
             
             <div className="flex items-center gap-2">
