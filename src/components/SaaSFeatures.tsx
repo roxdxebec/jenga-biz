@@ -45,7 +45,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
     if (tab === 'analytics' && panel) {
       setAnalyticsPanel(panel);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleSignOut = async () => {
     await signOut();
