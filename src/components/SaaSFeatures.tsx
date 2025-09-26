@@ -31,8 +31,21 @@ interface SaaSFeaturesProps {
 const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [analyticsPanel, setAnalyticsPanel] = useState<string | undefined>(undefined);
   const [showInvite, setShowInvite] = useState(false);
   const [showHubConfig, setShowHubConfig] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Initialize from URL query params: ?tab=analytics&panel=reporting
+    const tab = searchParams.get('tab');
+    const panel = searchParams.get('panel');
+    if (tab) setActiveTab(tab);
+    if (tab === 'analytics' && panel) {
+      setAnalyticsPanel(panel);
+    }
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
