@@ -89,6 +89,11 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
 
       // store detailed roles
       setUserRoles((data || []).map((r: any) => ({ role: r.role, user_id: user.id })));
+      // determine super admin
+      const superAdmin = (data || []).some((r: any) => r.role === 'super_admin');
+      setIsSuperAdmin(superAdmin);
+      // load system settings
+      await loadSettings();
 
       if (!allowed) {
         toast({
