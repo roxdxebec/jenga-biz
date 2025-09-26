@@ -60,6 +60,9 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
       const allowed = !!adminRole;
       setIsAdmin(allowed);
 
+      // store detailed roles
+      setUserRoles((data || []).map((r: any) => ({ role: r.role, user_id: user.id })));
+
       if (!allowed) {
         toast({
           title: "Access Denied",
