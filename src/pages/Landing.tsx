@@ -77,6 +77,7 @@ const Landing = () => {
                     Dashboard
                   </Button>
                   <RoleAwareSaaSButton />
+                  <RoleAwareSuperAdminButton />
                   <Button
                     variant="outline"
                     size="sm"
