@@ -3,10 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Zap, Target, DollarSign, LogOut, User, ChartBar as BarChart3, LogIn } from 'lucide-react';
+import { useRoles } from '@/hooks/useRoles';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import LanguageSelector from '@/components/LanguageSelector';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
+
+const RoleAwareSaaSButton = () => {
+  const { roles } = useRoles();
+  const navigate = useNavigate();
+  const canSee = roles.includes('super_admin') || roles.includes('admin') || roles.includes('hub_manager');
+  if (!canSee) return null;
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => navigate('/saas')}
+      className="flex items-center gap-2 text-xs sm:text-sm"
+    >
+      <BarChart3 className="w-4 h-4" />
+      SaaS
+    </Button>
+  );
+};
 
 const Index = () => {
   const navigate = useNavigate();
@@ -85,7 +104,7 @@ const Index = () => {
         },
         strategy: {
           title: 'استراتيجية مخصصة',
-          description: 'ابني استراتيجية عمل مخصصة تماماً من الصفر مع تضمين جميع الميزات - مثالي للنماذج التجارية الفريدة',
+          description: 'ابني اس��راتيجية عمل مخصصة تماماً من الصفر مع تضمين جميع الميزات - مثالي للنماذج التجارية الفريدة',
           buttonText: 'ابدأ من الصفر'
         },
         milestones: {
@@ -163,7 +182,7 @@ const Index = () => {
       onClick: () => {
         handleAuthRequiredAction(() => {
           setCurrentStrategy(null);
-          navigate('/strategy', { state: { language } });
+          navigate('/strategies', { state: { language } });
         });
       }
     }
@@ -199,9 +218,9 @@ const Index = () => {
               {user ? (
                 // Authenticated user navigation
                 <>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
                       try {
                         navigate('/dashboard');
@@ -215,18 +234,20 @@ const Index = () => {
                     <BarChart3 className="w-4 h-4" />
                     Dashboard
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  {/* Show SaaS for admins/hub managers/super admins */}
+                  <RoleAwareSaaSButton />
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => navigate('/profile')}
                     className="flex items-center gap-2 text-xs sm:text-sm"
                   >
                     <User className="w-4 h-4" />
                     Profile
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={async () => {
                       try {
                         await signOut();

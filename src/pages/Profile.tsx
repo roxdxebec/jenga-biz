@@ -48,14 +48,16 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       loadProfile();
-      
+
       // Auto-populate name and email from auth user
       if (user.email && !profile.email) {
+        const metaType = (user.user_metadata?.account_type || '').toLowerCase();
+        const normalized = ['organization','ecosystem enabler','enabler','org'].includes(metaType) ? 'organization' : 'business';
         setProfile(prev => ({
           ...prev,
           email: user.email || '',
           contact_person_name: user.user_metadata?.full_name || '',
-          account_type: user.user_metadata?.account_type || 'Business'
+          account_type: normalized
         }));
       }
     }
@@ -64,14 +66,84 @@ const Profile = () => {
   const loadProfile = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    // Helper to fetch profile
+    const fetchOnce = async () => {
+      return await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+    };
+
+    // Retry with backoff on network errors
+    const delays = [300, 800, 1500];
+    let data: any = null;
+    let error: any = null;
+    for (let i = 0; i < delays.length; i++) {
+      ({ data, error } = await fetchOnce());
+      if (!error) break;
+      const isNetwork = error?.name === 'TypeError' || String(error).includes('Failed to fetch');
+      if (!isNetwork) break;
+      await new Promise(r => setTimeout(r, delays[i]));
+    }
 
     if (error) {
-      console.error('Error loading profile:', error);
+      const msg = (error as any)?.message || (error as any)?.details || String(error);
+      // If no profile exists yet, create a default one
+      if ((error as any)?.code === 'PGRST116' || msg.toLowerCase().includes('no rows') || msg.toLowerCase().includes('0 rows')) {
+        try {
+          const { saveProfileForUser } = await import('@/lib/profile');
+          const metaType = (user.user_metadata?.account_type || '').toLowerCase();
+          const normalized = ['organization','ecosystem enabler','enabler','org'].includes(metaType) ? 'organization' : 'business';
+          const { error: upsertError } = await saveProfileForUser(user.id, {
+            email: user.email || '',
+            full_name: user.user_metadata?.full_name || '',
+            account_type: normalized,
+            is_profile_complete: false
+          });
+          if (upsertError) {
+            const upMsg = (upsertError as any)?.message || JSON.stringify(upsertError);
+            console.error('Error creating default profile:', upMsg);
+            toast({ title: 'Profile', description: upMsg, variant: 'destructive' });
+            return;
+          }
+          // Re-fetch after creating
+          const { data: created } = await fetchOnce();
+          if (created) {
+            setProfile({
+              contact_person_name: created.full_name || user?.user_metadata?.full_name || '',
+              email: created.email || user?.email || '',
+              phone_number: created.contact_phone || '',
+              website: created.website || '',
+              industry: created.industry || '',
+              country: created.country || '',
+              organization_name: created.organization_name || '',
+              business_type: created.business_type || '',
+              account_type: created.account_type || user?.user_metadata?.account_type || 'Business',
+              organization_logo: created.logo_url || created.profile_picture_url || ''
+            });
+          }
+          return;
+        } catch (e: any) {
+          const emsg = e?.message || JSON.stringify(e);
+          console.error('Profile init error:', emsg);
+          toast({ title: 'Profile', description: emsg, variant: 'destructive' });
+          return;
+        }
+      }
+      const isNetwork = (error as any)?.name === 'TypeError' || msg.includes('Failed to fetch');
+      if (isNetwork) {
+        console.warn('Network issue fetching profile, using auth metadata fallback');
+        setProfile(prev => ({
+          ...prev,
+          contact_person_name: user?.user_metadata?.full_name || prev.contact_person_name,
+          email: user?.email || prev.email,
+        }));
+        toast({ title: 'Network issue', description: 'Could not reach server. Showing basic profile. Retry later.', variant: 'destructive' });
+        return;
+      }
+      console.error('Error loading profile:', msg);
+      toast({ title: 'Profile', description: msg, variant: 'destructive' });
       return;
     }
 
@@ -177,7 +249,7 @@ const Profile = () => {
     });
   };
 
-  const isOrganization = profile.account_type === 'Ecosystem Enabler';
+  const isOrganization = profile.account_type === 'organization';
   const imageUrl = profile.organization_logo;
 
   return (

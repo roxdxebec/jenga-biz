@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -21,11 +21,11 @@ interface EnhancedAuthDialogProps {
 export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [signupData, setSignupData] = useState({ 
-    email: "", 
-    password: "", 
+  const [signupData, setSignupData] = useState({
+    email: "",
+    password: "",
     fullName: "",
-    accountType: "Business",
+    accountType: "business",
     inviteCode: ""
   });
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -104,9 +104,29 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      // Dialog will auto-close due to auth state change
+      try {
+        const { data: { user: current } } = await supabase.auth.getUser();
+        if (current) {
+          const { data: roles } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', current.id);
+          const roleList = (roles || []).map(r => r.role as string);
+          if (roleList.includes('super_admin')) {
+            window.location.href = '/dashboard';
+          } else if (roleList.includes('admin') || roleList.includes('hub_manager')) {
+            window.location.href = '/saas';
+          } else {
+            window.location.href = '/b2c';
+          }
+        } else {
+          window.location.href = '/';
+        }
+      } catch {
+        window.location.href = '/';
+      }
     }
-    
+
     setIsLoading(false);
   };
 
@@ -325,7 +345,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                       onValueChange={(value) => setSignupData({ ...signupData, accountType: value })}
                     >
                       <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50">
-                        <RadioGroupItem value="Business" id="business" />
+                        <RadioGroupItem value="business" id="business" />
                         <Building2 className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
                           <Label htmlFor="business" className="font-medium">Business</Label>
@@ -333,7 +353,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 p-3 rounded-lg border border-border hover:bg-accent/50">
-                        <RadioGroupItem value="Ecosystem Enabler" id="enabler" />
+                        <RadioGroupItem value="organization" id="enabler" />
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <div className="flex-1">
                           <Label htmlFor="enabler" className="font-medium">Ecosystem Enabler</Label>
@@ -343,7 +363,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
                     </RadioGroup>
                   </div>
 
-                  {signupData.accountType === 'Ecosystem Enabler' && (
+                  {signupData.accountType === 'organization' && (
                     <div className="space-y-2">
                       <Label htmlFor="invite-code">Invite Code (Optional for now)</Label>
                       <Input
