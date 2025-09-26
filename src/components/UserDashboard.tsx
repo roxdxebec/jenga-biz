@@ -622,7 +622,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
               <p className="mt-2 text-sm text-gray-600">Get started by creating a strategy. You can use a template or start from scratch.</p>
               <div className="mt-4 flex justify-center gap-3">
                 <Button onClick={handleNewStrategy} variant="default">Create from Templates</Button>
-                <Button onClick={() => navigate('/strategy')} variant="outline">Start Blank Strategy</Button>
+                <Button onClick={() => navigate('/strategy')} variant="outline"><p>Create a Custom Strategy</p></Button>
               </div>
             </div>
           ) : (
