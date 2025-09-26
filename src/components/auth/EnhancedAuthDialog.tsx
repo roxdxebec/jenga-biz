@@ -150,20 +150,62 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
     setIsLoading(true);
 
     const { error } = await signUp(
-      signupData.email, 
-      signupData.password, 
+      signupData.email,
+      signupData.password,
       signupData.fullName,
       signupData.accountType,
       signupData.inviteCode || undefined
     );
-    
+
     if (error) {
       toast({
         title: "Signup Failed",
         description: error.message,
         variant: "destructive",
       });
-    } else {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Attempt to fetch the newly created user
+      const { data: { user: newUser } } = await supabase.auth.getUser();
+      if (newUser?.id) {
+        // Determine auto-approve setting
+        let autoApprove = false;
+        try {
+          const { data: setting } = await supabase.from('app_settings').select('value').eq('key', 'auto_approve_organizations').maybeSingle();
+          if (setting) autoApprove = setting.value === 'true' || setting.value === true;
+        } catch (e) {
+          // ignore
+        }
+
+        // Create basic profile for the new user
+        const profilePayload: any = {
+          email: signupData.email,
+          full_name: signupData.fullName,
+          account_type: signupData.accountType,
+          is_profile_complete: signupData.accountType !== 'organization'
+        };
+
+        await saveProfileForUser(newUser.id, profilePayload);
+
+        if (signupData.accountType === 'organization' && !autoApprove) {
+          // Notify user of pending approval
+          toast({
+            title: 'Account Pending Approval',
+            description: 'Your ecosystem enabler account is pending approval by a super admin. You will be notified when approved.',
+          });
+          // Close dialog and redirect to home
+          setTimeout(() => {
+            onOpenChange(false);
+            window.location.href = '/';
+          }, 1000);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       toast({
         title: "Account Created!",
         description: "Please check your email to verify your account.",
@@ -173,9 +215,16 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
         onOpenChange(false);
         window.location.href = '/profile';
       }, 1000);
+    } catch (e: any) {
+      console.error('Error post-signup:', e);
+      toast({ title: 'Signup', description: 'Account created. Please check your email.' });
+      setTimeout(() => {
+        onOpenChange(false);
+        window.location.href = '/';
+      }, 1000);
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
