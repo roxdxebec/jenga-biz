@@ -616,7 +616,15 @@ const UserDashboard = ({ }: UserDashboardProps) => {
               <p className="text-gray-600">Loading strategies...</p>
             </div>
           ) : strategies.length === 0 ? (
-            null
+            <div className="border border-dashed border-orange-200 rounded-lg p-6 text-center bg-orange-50">
+              <Building2 className="mx-auto text-orange-500" />
+              <h3 className="mt-4 text-lg font-semibold text-gray-900">No strategies yet</h3>
+              <p className="mt-2 text-sm text-gray-600">Get started by creating a strategy. You can use a template or start from scratch.</p>
+              <div className="mt-4 flex justify-center gap-3">
+                <Button onClick={handleNewStrategy} variant="default">Create from Templates</Button>
+                <Button onClick={() => navigate('/strategy')} variant="outline">Start Blank Strategy</Button>
+              </div>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {strategies.map((strategy) => (
