@@ -22,7 +22,7 @@ interface DashboardMetrics {
   monthlyRegistrations: number;
 }
 
-export const AnalyticsDashboard = () => {
+export const AnalyticsDashboard = ({ initialPanel }: { initialPanel?: string | null }) => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
