@@ -24,7 +24,7 @@ interface UserRole {
   user_id: string;
 }
 
-export function AdminDashboard() {
+export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
