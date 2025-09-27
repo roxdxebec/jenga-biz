@@ -359,6 +359,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => handleUpdateUserRole(user.id, role as any, 'remove')}
+                                        disabled={isUpdatingRole}
                                       >
                                         <Trash2 className="h-3 w-3" />
                                       </Button>
@@ -378,6 +379,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                                           variant="outline"
                                           size="sm"
                                           onClick={() => handleUpdateUserRole(user.id, role as any, 'add')}
+                                          disabled={isUpdatingRole}
                                         >
                                           <UserPlus className="h-3 w-3 mr-1" />
                                           {role}
