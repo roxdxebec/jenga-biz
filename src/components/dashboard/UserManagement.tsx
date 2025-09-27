@@ -51,12 +51,27 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
   const { getRoleColor } = useRoleManagement();
 
   const handleUpdateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
+    // Find user locally to avoid redundant calls
+    const target = users.find(u => u.id === userId);
+    const hasRole = target?.roles?.includes(newRole);
+
+    if (action === 'add' && hasRole) {
+      toast({ title: 'Role exists', description: `User already has role ${newRole}`, variant: 'destructive' });
+      return;
+    }
+
+    if (action === 'remove' && !hasRole) {
+      toast({ title: 'Role missing', description: `User does not have role ${newRole}`, variant: 'destructive' });
+      return;
+    }
+
     try {
       await updateUserRole(userId, newRole, action);
       // Success handling is done in the hook
-    } catch (error: any) {
-      console.error('Error updating user role:', error);
-      // Error handling is done in the hook, but we can add specific logic here if needed
+    } catch (err: any) {
+      console.error('Error updating user role:', err);
+      const message = err?.error?.message || err?.message || 'Failed to update user role.';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   };
 
