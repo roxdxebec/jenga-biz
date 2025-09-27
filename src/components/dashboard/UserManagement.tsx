@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,132 +7,56 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useUserManagement, useRoleManagement } from "@/hooks/useEdgeUserManagement";
 import { Users, UserPlus, Edit, Trash2, Search, Shield } from "lucide-react";
+import type { User } from "@/lib/api-client";
 
-interface UserWithRoles {
-  id: string;
-  email: string;
-  full_name: string;
-  account_type: string;
-  country: string | null;
-  organization_name: string | null;
-  created_at: string;
+interface UserWithRoles extends User {
   roles: string[];
 }
 
 export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: boolean }) {
-  const [users, setUsers] = useState<UserWithRoles[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRoles | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editValues, setEditValues] = useState<{ full_name: string; email: string; account_type: string; country: string; organization_name: string }>({ full_name: "", email: "", account_type: "", country: "", organization_name: "" });
+  const [editValues, setEditValues] = useState<{ 
+    full_name: string; 
+    email: string; 
+    account_type: string; 
+    country: string; 
+    organization_name: string; 
+  }>({ full_name: "", email: "", account_type: "", country: "", organization_name: "" });
+  
   const { toast } = useToast();
+  
+  // Use the edge function hooks
+  const {
+    users,
+    stats,
+    isLoading: loading,
+    updateUserRole,
+    updateUser,
+    deactivateUser: deactivateUserMutation,
+    isUpdatingRole,
+    isUpdatingUser,
+    isDeactivating
+  } = useUserManagement({ 
+    search: searchQuery || undefined, 
+    role: filterRole === "all" ? undefined : filterRole,
+    hideSuperAdmins 
+  });
+  
+  const { getRoleColor } = useRoleManagement();
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const handleUpdateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
     try {
-      setLoading(true);
-      
-      // Fetch profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (profilesError) throw profilesError;
-
-      // Fetch user roles
-      const { data: userRoles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      if (rolesError) throw rolesError;
-
-      // Combine data
-      let usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
-        id: profile.id,
-        email: profile.email,
-        full_name: profile.full_name,
-        account_type: profile.account_type,
-        country: profile.country,
-        organization_name: profile.organization_name,
-        created_at: profile.created_at,
-        roles: userRoles?.filter((role: any) => role.user_id === profile.id).map((role: any) => role.role) || []
-      })) || [];
-
-      // If hideSuperAdmins is enabled (e.g., in /saas), remove super_admin users from the list
-      if (hideSuperAdmins) {
-        usersWithRoles = usersWithRoles.filter(u => !(u.roles || []).includes('super_admin'));
-      }
-
-      setUsers(usersWithRoles);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch users",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
-    try {
-      if (action === 'add') {
-        const { data, error } = await supabase.rpc('add_user_role_with_audit', {
-          target_user_id: userId,
-          new_role: newRole,
-          requester_ip: null,
-          requester_user_agent: navigator.userAgent
-        });
-        
-        if (error) throw error;
-        if (!data) {
-          toast({
-            title: "Info",
-            description: "User already has this role",
-          });
-          return;
-        }
-      } else {
-        const { data, error } = await supabase.rpc('remove_user_role_with_audit', {
-          target_user_id: userId,
-          old_role: newRole,
-          requester_ip: null,
-          requester_user_agent: navigator.userAgent
-        });
-        
-        if (error) throw error;
-        if (!data) {
-          toast({
-            title: "Info",
-            description: "User doesn't have this role",
-          });
-          return;
-        }
-      }
-
-      await fetchUsers();
-      toast({
-        title: "Success",
-        description: `User role ${action === 'add' ? 'added' : 'removed'} successfully`,
-      });
+      await updateUserRole(userId, newRole, action);
+      // Success handling is done in the hook
     } catch (error: any) {
       console.error('Error updating user role:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update user role",
-        variant: "destructive",
-      });
+      // Error handling is done in the hook, but we can add specific logic here if needed
     }
   };
 
@@ -151,56 +75,45 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
   const saveProfileChanges = async () => {
     if (!selectedUser) return;
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: editValues.full_name,
-          email: editValues.email,
-          account_type: editValues.account_type,
-          country: editValues.country || null,
-          organization_name: editValues.organization_name || null,
-        })
-        .eq('id', selectedUser.id);
-
-      if (error) throw error;
-      toast({ title: 'Updated', description: 'Profile updated successfully' });
-      await fetchUsers();
+      await updateUser(selectedUser.id, {
+        full_name: editValues.full_name,
+        account_type: editValues.account_type,
+        country: editValues.country || undefined,
+        organization_name: editValues.organization_name || undefined,
+      });
+      
+      // Success handling is done in the hook
       setIsEditModalOpen(false);
       setSelectedUser(null);
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Failed to update profile', variant: 'destructive' });
+      console.error('Error updating profile:', error);
+      // Error handling is done in the hook
     }
   };
 
-  const deactivateUser = async (userId: string) => {
+  const handleDeactivateUser = async (userId: string) => {
     try {
-      const { error: rolesError } = await supabase.from('user_roles').delete().eq('user_id', userId);
-      if (rolesError) throw rolesError;
-      const { error: profileError } = await supabase.from('profiles').update({ account_type: 'deactivated' }).eq('id', userId);
-      if (profileError) throw profileError;
-      toast({ title: 'Deactivated', description: 'User roles removed and account marked deactivated' });
-      await fetchUsers();
+      await deactivateUserMutation(userId);
+      // Success handling is done in the hook
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Failed to deactivate user', variant: 'destructive' });
+      console.error('Error deactivating user:', error);
+      // Error handling is done in the hook
     }
   };
 
+  // Since filtering is now handled by the hook, we just use the users directly
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = filterRole === "all" || user.roles.includes(filterRole);
-    return matchesSearch && matchesRole;
-  });
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'super_admin': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      case 'admin': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
-      case 'hub_manager': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-      case 'entrepreneur': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    // Additional client-side filtering if needed
+    if (searchQuery) {
+      const matchesSearch = user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+      if (!matchesSearch) return false;
     }
-  };
+    if (filterRole !== "all" && !user.roles.includes(filterRole)) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -219,7 +132,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.length}</div>
+            <div className="text-2xl font-bold">{stats.totalUsers}</div>
           </CardContent>
         </Card>
         
@@ -231,7 +144,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {users.filter(u => u.roles.includes('super_admin')).length}
+                {stats.superAdmins}
               </div>
             </CardContent>
           </Card>
@@ -244,7 +157,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {users.filter(u => u.roles.includes('admin')).length}
+              {stats.admins}
             </div>
           </CardContent>
         </Card>
@@ -256,7 +169,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {users.filter(u => u.roles.includes('hub_manager')).length}
+              {stats.hubManagers}
             </div>
           </CardContent>
         </Card>
@@ -405,8 +318,17 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <Button onClick={saveProfileChanges}>Save</Button>
-                              <Button variant="destructive" onClick={() => deactivateUser(user.id)}>
+                              <Button 
+                                onClick={saveProfileChanges}
+                                disabled={isUpdatingUser}
+                              >
+                                {isUpdatingUser ? 'Saving...' : 'Save'}
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                onClick={() => handleDeactivateUser(user.id)}
+                                disabled={isDeactivating}
+                              >
                                 <Trash2 className="h-4 w-4 mr-1" /> Deactivate
                               </Button>
                             </div>
@@ -421,7 +343,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => updateUserRole(user.id, role as any, 'remove')}
+                                        onClick={() => handleUpdateUserRole(user.id, role as any, 'remove')}
                                       >
                                         <Trash2 className="h-3 w-3" />
                                       </Button>
@@ -440,7 +362,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                                           key={role}
                                           variant="outline"
                                           size="sm"
-                                          onClick={() => updateUserRole(user.id, role as any, 'add')}
+                                          onClick={() => handleUpdateUserRole(user.id, role as any, 'add')}
                                         >
                                           <UserPlus className="h-3 w-3 mr-1" />
                                           {role}

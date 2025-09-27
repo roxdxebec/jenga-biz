@@ -9,7 +9,16 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:edge-functions": "node scripts/test-edge-functions.js",
+    "test:smoke": "node scripts/test-edge-functions.js --smoke",
+    "test:performance": "node scripts/test-edge-functions.js --performance",
+    "test:health": "node scripts/test-edge-functions.js --smoke",
+    "report:performance": "cat performance-report.md",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:deploy": "supabase functions deploy --no-verify-jwt",
+    "supabase:migrate": "supabase db push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

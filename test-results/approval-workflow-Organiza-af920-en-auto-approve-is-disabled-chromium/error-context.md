@@ -1,0 +1,127 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - generic:
+    - list
+    - generic:
+      - banner:
+        - generic:
+          - generic:
+            - img
+            - generic:
+              - button:
+                - img
+                - text: Sign In
+      - generic:
+        - generic:
+          - heading [level=1]: Build your business strategy with confidence
+          - paragraph: Jenga Biz Africa helps entrepreneurs plan, track milestones, and manage finances with tools built for African markets.
+          - generic:
+            - button: Register as Entrepreneur
+            - button: I already have an account
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+              - heading [level=3]: Templates to start fast
+              - paragraph: Start with curated templates for popular African business models.
+          - generic:
+            - generic:
+              - generic:
+                - img
+              - heading [level=3]: Track what matters
+              - paragraph: Milestones, finances, and KPIs in one simple workspace.
+          - generic:
+            - generic:
+              - generic:
+                - img
+              - heading [level=3]: Own your journey
+              - paragraph: Built-in guidance to help you grow confidently and sustainably.
+      - generic:
+        - generic:
+          - heading [level=2]: How it works
+          - generic:
+            - generic:
+              - generic:
+                - heading [level=3]: Create your account
+                - paragraph: Register in seconds and set up your profile.
+            - generic:
+              - generic:
+                - heading [level=3]: Pick a template or start from scratch
+                - paragraph: Use ready-made strategies or build your own.
+            - generic:
+              - generic:
+                - heading [level=3]: Track and grow
+                - paragraph: Use milestones and finance tools to stay on track.
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - heading [level=4]: For Ecosystem Enablers
+                - paragraph: Hubs, universities, and institutions can onboard teams and track startups. Use the same sign up to get started.
+              - button: Get Started
+  - dialog "Welcome to Jenga Biz Africa" [active] [ref=e2]:
+    - heading "Welcome to Jenga Biz Africa" [level=2] [ref=e4]
+    - generic [ref=e5]:
+      - tablist [ref=e6]:
+        - tab "Login" [ref=e7] [cursor=pointer]
+        - tab "Sign Up" [selected] [ref=e8] [cursor=pointer]
+      - tabpanel "Sign Up" [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]:
+            - heading "Create Account" [level=3] [ref=e12]
+            - paragraph [ref=e13]: Join us to start building your business strategy
+          - generic [ref=e15]:
+            - generic [ref=e16]:
+              - generic [ref=e17]: Full Name
+              - textbox "Full Name" [ref=e18]: Test Organization User
+            - generic [ref=e19]:
+              - generic [ref=e20]: Email
+              - textbox "Email" [ref=e21]: test-org-1758988277546@example.com
+            - generic [ref=e22]:
+              - generic [ref=e23]: Account Type
+              - radiogroup [ref=e24]:
+                - generic [ref=e25]:
+                  - radio "Business" [ref=e26] [cursor=pointer]
+                  - radio
+                  - img [ref=e27]
+                  - generic [ref=e31]:
+                    - generic [ref=e32]: Business
+                    - paragraph [ref=e33]: For SMEs and entrepreneurs
+                - generic [ref=e34]:
+                  - radio "Ecosystem Enabler" [checked] [ref=e35] [cursor=pointer]:
+                    - img [ref=e37] [cursor=pointer]
+                  - radio [checked]
+                  - img [ref=e39]
+                  - generic [ref=e44]:
+                    - generic [ref=e45]: Ecosystem Enabler
+                    - paragraph [ref=e46]: For hubs, TVET, universities, VCs, foundations, financial institutions, NGOs
+            - generic [ref=e47]:
+              - generic [ref=e48]: Invite Code (Optional for now)
+              - textbox "Invite Code (Optional for now)" [ref=e49]
+              - alert [ref=e50]:
+                - img [ref=e51]
+                - generic [ref=e53]: 💡 No invite code? You can sign up now and get admin permissions later.
+            - generic [ref=e54]:
+              - generic [ref=e55]: Password
+              - generic [ref=e56]:
+                - textbox "Password" [ref=e57]: SecurePassword123!
+                - button [ref=e58] [cursor=pointer]:
+                  - img
+              - generic [ref=e60]: Strong password!
+            - alert [ref=e67]:
+              - img [ref=e68]
+              - generic [ref=e70]: "Password must include: 8+ characters, uppercase & lowercase letters, numbers, and special characters."
+            - button "Creating account..." [disabled]:
+              - img
+              - text: Creating account...
+    - button "Close" [ref=e71] [cursor=pointer]:
+      - img [ref=e72] [cursor=pointer]
+      - generic [ref=e75] [cursor=pointer]: Close
+```
