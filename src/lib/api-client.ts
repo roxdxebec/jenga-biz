@@ -250,10 +250,15 @@ class EdgeFunctionsApiClient {
    * Update user role (admin only)
    */
   async updateUserRole(
-    userId: string, 
-    role: string, 
+    userId: string,
+    role: string,
     action: 'add' | 'remove'
   ): Promise<{ message: string }> {
+    // Validate required fields client-side to avoid 400s
+    if (!userId || !role || !action) {
+      throw new ApiError({ code: 'MISSING_REQUIRED_FIELD', message: 'userId, role and action are required' });
+    }
+
     const response = await this.request<ApiResponse<{ message: string }>>('user-management/roles', {
       method: 'POST',
       body: JSON.stringify({ userId, role, action }),
