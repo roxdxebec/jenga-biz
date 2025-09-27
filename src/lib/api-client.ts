@@ -156,11 +156,37 @@ class EdgeFunctionsApiClient {
   // ==========================================
 
   /**
+   * Login via Supabase Auth and persist session
+   */
+  async login(email: string, password: string): Promise<{
+    access_token: string;
+    expires_in: number;
+    refresh_token: string | null;
+    user: { id: string; email: string | null };
+  }> {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.session || !data.user) {
+      throw new ApiError({ code: '401', message: error?.message || 'Invalid credentials' });
+    }
+    return {
+      access_token: data.session.access_token,
+      expires_in: data.session.expires_in ?? 3600,
+      refresh_token: data.session.refresh_token ?? null,
+      user: { id: data.user.id, email: data.user.email },
+    };
+  }
+
+  /**
    * Get current user profile and roles
    */
   async getProfile(): Promise<User> {
     const response = await this.request<ApiResponse<User>>('user-management/me');
     return response.data;
+  }
+
+  /** Alias for compatibility */
+  async getCurrentUser(): Promise<User> {
+    return this.getProfile();
   }
 
   /**
@@ -172,6 +198,11 @@ class EdgeFunctionsApiClient {
       body: JSON.stringify(updates),
     });
     return response.data;
+  }
+
+  /** Alias for compatibility */
+  async updateMyProfile(updates: Partial<Pick<User, 'full_name' | 'account_type' | 'country' | 'organization_name'>>): Promise<User> {
+    return this.updateProfile(updates);
   }
 
   /**
