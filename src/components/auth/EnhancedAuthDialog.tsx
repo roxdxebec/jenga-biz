@@ -171,38 +171,67 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
       // Attempt to fetch the newly created user
       const { data: { user: newUser } } = await supabase.auth.getUser();
       if (newUser?.id) {
-        // Determine auto-approve setting
-        let autoApprove = false;
-        try {
-          const { data: setting } = await supabase.from('app_settings').select('value').eq('key', 'auto_approve_organizations').maybeSingle();
-          if (setting) autoApprove = setting.value === 'true' || setting.value === true;
-        } catch (e) {
-          // ignore
-        }
-
-        // Create basic profile for the new user
-        const profilePayload: any = {
-          email: signupData.email,
-          full_name: signupData.fullName,
-          account_type: signupData.accountType,
-          is_profile_complete: signupData.accountType !== 'organization'
-        };
-
-        await saveProfileForUser(newUser.id, profilePayload);
-
-        if (signupData.accountType === 'organization' && !autoApprove) {
-          // Notify user of pending approval
-          toast({
-            title: 'Account Pending Approval',
-            description: 'Your ecosystem enabler account is pending approval by a super admin. You will be notified when approved.',
+        if (signupData.accountType === 'organization') {
+          // Use the handle_org_signup RPC for organization accounts
+          const { data: result, error: rpcError } = await supabase.rpc('handle_org_signup', {
+            user_id: newUser.id,
+            user_email: signupData.email,
+            full_name: signupData.fullName,
+            invite_code: signupData.inviteCode || null
           });
-          // Close dialog and redirect to home
-          setTimeout(() => {
-            onOpenChange(false);
-            window.location.href = '/';
-          }, 1000);
+
+          if (rpcError) {
+            console.error('Organization signup error:', rpcError);
+            toast({
+              title: 'Signup Error',
+              description: 'Failed to complete organization signup. Please contact support.',
+              variant: 'destructive'
+            });
+            setIsLoading(false);
+            return;
+          }
+
+          // Handle the result based on approval status
+          if (result?.status === 'approved') {
+            toast({
+              title: 'Organization Account Approved!',
+              description: 'Your ecosystem enabler account has been automatically approved. Welcome!',
+            });
+            // Redirect to profile to complete setup
+            setTimeout(() => {
+              onOpenChange(false);
+              window.location.href = '/profile';
+            }, 1000);
+          } else if (result?.status === 'pending') {
+            toast({
+              title: 'Account Pending Approval',
+              description: 'Your ecosystem enabler account is pending approval by a super admin. You will be notified when approved.',
+            });
+            // Close dialog and redirect to home
+            setTimeout(() => {
+              onOpenChange(false);
+              window.location.href = '/';
+            }, 1000);
+          } else {
+            // Unexpected status, show error
+            toast({
+              title: 'Signup Error',
+              description: 'Unexpected response from signup process. Please contact support.',
+              variant: 'destructive'
+            });
+          }
           setIsLoading(false);
           return;
+        } else {
+          // For business accounts, create basic profile
+          const profilePayload: any = {
+            email: signupData.email,
+            full_name: signupData.fullName,
+            account_type: signupData.accountType,
+            is_profile_complete: false
+          };
+
+          await saveProfileForUser(newUser.id, profilePayload);
         }
       }
 

@@ -1118,6 +1118,44 @@ export type Database = {
         }
         Returns: boolean
       }
+      handle_org_signup: {
+        Args: {
+          user_id: string
+          user_email: string
+          full_name: string
+          invite_code?: string
+        }
+        Returns: {
+          status: 'pending' | 'approved'
+          message: string
+        }
+      }
+      set_app_setting_with_audit: {
+        Args: {
+          setting_key: string
+          setting_value: string
+          requester_ip?: string
+          requester_user_agent?: string
+        }
+        Returns: boolean
+      }
+      approve_pending_org: {
+        Args: {
+          approval_id: string
+          requester_ip?: string
+          requester_user_agent?: string
+        }
+        Returns: boolean
+      }
+      reject_pending_org: {
+        Args: {
+          approval_id: string
+          rejection_reason?: string
+          requester_ip?: string
+          requester_user_agent?: string
+        }
+        Returns: boolean
+      }
       setup_super_admin: {
         Args: { admin_email: string }
         Returns: string

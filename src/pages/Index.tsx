@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
 import LanguageSelector from '@/components/LanguageSelector';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
+import { ApprovalStatusBanner } from '@/components/ApprovalStatusBanner';
 
 const RoleAwareSaaSButton = () => {
   const { roles } = useRoles();
@@ -296,6 +297,9 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      {/* Approval Status Banner */}
+      {user && <ApprovalStatusBanner className="mx-4 sm:mx-6 lg:mx-8 mt-4" />}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
