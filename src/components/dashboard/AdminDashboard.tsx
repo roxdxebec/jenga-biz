@@ -19,6 +19,8 @@ import { InviteCodeManager } from "../auth/InviteCodeManager";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { UserManagement } from "./UserManagement";
 import { Switch } from '@/components/ui/switch';
+import { useAppSettings } from '@/hooks/useAppSettings';
+import { PendingApprovalsList } from '../admin/PendingApprovalsList';
 
 interface UserRole {
   role: string;
@@ -37,29 +39,21 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
     totalRevenue: 0
   });
 
-  const [autoApproveOrgs, setAutoApproveOrgs] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const [autoApproveOrgs, setAutoApproveOrgs] = useState<boolean>(false);
+  const { getAutoApprove, setAutoApprove, loading: settingsLoading, error: settingsError } = useAppSettings();
 
   const loadSettings = async () => {
-    try {
-      const { data, error } = await supabase.from('app_settings').select('value').eq('key', 'auto_approve_organizations').maybeSingle();
-      if (!error && data) {
-        setAutoApproveOrgs(data.value === 'true' || data.value === true);
-      }
-    } catch (err) {
-      // ignore if settings table doesn't exist
-      console.warn('Could not load settings', err);
-    }
+    const value = await getAutoApprove();
+    setAutoApproveOrgs(value);
   };
 
   const saveSettings = async () => {
-    try {
-      const payload = { key: 'auto_approve_organizations', value: autoApproveOrgs ? 'true' : 'false' };
-      await supabase.from('app_settings').upsert(payload, { onConflict: 'key' });
-      toast({ title: 'Settings saved', description: 'System settings updated.' });
-    } catch (err) {
-      console.warn('Failed to save settings', err);
-      toast({ title: 'Save failed', description: 'Unable to save settings (table may be missing).', variant: 'destructive' });
+    const success = await setAutoApprove(autoApproveOrgs);
+    if (success) {
+      toast({ title: 'Settings saved', description: 'System settings updated successfully.' });
+    } else if (settingsError) {
+      toast({ title: 'Save failed', description: settingsError, variant: 'destructive' });
     }
   };
 
@@ -297,6 +291,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
               <PlusCircle className="h-4 w-4" />
               Invite Codes
             </TabsTrigger>
+            {isSuperAdmin && (
+              <TabsTrigger value="approvals" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Approvals
+              </TabsTrigger>
+            )}
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -314,6 +314,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
           <TabsContent value="invites" className="space-y-6">
             <InviteCodeManager />
           </TabsContent>
+
+          {isSuperAdmin && (
+            <TabsContent value="approvals" className="space-y-6">
+              <PendingApprovalsList />
+            </TabsContent>
+          )}
 
           <TabsContent value="settings" className="space-y-6">
             <Card>
@@ -335,7 +341,7 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                       <Switch
                         checked={autoApproveOrgs}
                         onCheckedChange={(val: any) => setAutoApproveOrgs(!!val)}
-                        disabled={!isSuperAdmin}
+                        disabled={!isSuperAdmin || settingsLoading}
                       />
                     </div>
                   </div>
@@ -344,7 +350,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                       <p className="text-sm text-muted-foreground">Only super admins can change this setting.</p>
                     )}
                     <div className="mt-2 flex gap-2">
-                      <Button onClick={saveSettings} disabled={!isSuperAdmin}>Save</Button>
+                      <Button 
+                        onClick={saveSettings} 
+                        disabled={!isSuperAdmin || settingsLoading}
+                      >
+                        {settingsLoading ? 'Saving...' : 'Save'}
+                      </Button>
                     </div>
                   </div>
                 </div>
