@@ -992,6 +992,78 @@ export type Database = {
           },
         ]
       }
+      app_settings: {
+        Row: {
+          key: string
+          value: Json
+          description: string | null
+          created_at: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          key: string
+          value: Json
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          key?: string
+          value?: Json
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      pending_approvals: {
+        Row: {
+          id: string
+          subject_type: string
+          subject_id: string
+          applicant_user_id: string
+          status: Database["public"]["Enums"]["approval_status"]
+          reason: string | null
+          metadata: Json
+          reviewed_by: string | null
+          reviewed_at: string | null
+          decision_note: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          subject_type: string
+          subject_id: string
+          applicant_user_id: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          reason?: string | null
+          metadata?: Json
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          decision_note?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          subject_type?: string
+          subject_id?: string
+          applicant_user_id?: string
+          status?: Database["public"]["Enums"]["approval_status"]
+          reason?: string | null
+          metadata?: Json
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          decision_note?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1065,6 +1137,7 @@ export type Database = {
         | "loan_application"
         | "investment_ready"
       user_role: "entrepreneur" | "hub_manager" | "admin" | "super_admin"
+      approval_status: "pending" | "approved" | "rejected" | "expired" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
