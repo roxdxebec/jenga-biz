@@ -96,7 +96,8 @@ class EdgeFunctionsApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_SUPABASE_URL?.replace('/rest/v1', '/functions/v1') || '';
+    const root = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+    this.baseUrl = `${root}/functions/v1`;
   }
 
   /**
@@ -104,10 +105,12 @@ class EdgeFunctionsApiClient {
    */
   private async getAuthHeaders(): Promise<Record<string, string>> {
     const { data: { session } } = await supabase.auth.getSession();
-    
+    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+
     return {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${session?.access_token || ''}`,
+      'apikey': anonKey,
     };
   }
 
@@ -115,12 +118,12 @@ class EdgeFunctionsApiClient {
    * Generic API request handler
    */
   private async request<T>(
-    endpoint: string, 
+    endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
     const headers = await this.getAuthHeaders();
-    
-    const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+
+    const res = await fetch(`${this.baseUrl}/${endpoint}`, {
       ...options,
       headers: {
         ...headers,
@@ -128,13 +131,24 @@ class EdgeFunctionsApiClient {
       },
     });
 
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new ApiError(data.error || { code: 'UNKNOWN_ERROR', message: 'An error occurred' });
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch (_) {
+      // no body
     }
 
-    return data;
+    if (!res.ok || (data && data.success === false)) {
+      const status = res.status;
+      const mapped =
+        status === 401 ? { code: '401', message: 'Invalid JWT' } :
+        status === 403 ? { code: '403', message: 'Forbidden' } :
+        status === 404 ? { code: '404', message: 'Endpoint not found' } :
+        (data && data.error) ? data.error : { code: 'UNKNOWN_ERROR', message: 'An error occurred' };
+      throw new ApiError(mapped);
+    }
+
+    return (data ?? ({} as T));
   }
 
   // ==========================================
