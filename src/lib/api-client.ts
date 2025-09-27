@@ -131,23 +131,44 @@ class EdgeFunctionsApiClient {
       },
     });
 
+    // Read response as text first to preserve raw body for better errors
+    const text = await res.text();
     let data: any = null;
-    try {
-      data = await res.json();
-    } catch (_) {
-      // no body
+
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        // not JSON, keep raw text
+        data = text;
+      }
     }
 
+    // If response is not ok, map common statuses and extract error details
     if (!res.ok || (data && data.success === false)) {
       const status = res.status;
+
+      // Prefer structured error from JSON body when available
+      const bodyError = (typeof data === 'object' && data !== null && (data.error || data.message || data?.data?.error))
+        ? (data.error || { message: data.message } || data?.data?.error)
+        : null;
+
       const mapped =
-        status === 401 ? { code: '401', message: 'Invalid JWT' } :
-        status === 403 ? { code: '403', message: 'Forbidden' } :
-        status === 404 ? { code: '404', message: 'Endpoint not found' } :
-        (data && data.error) ? data.error : { code: 'UNKNOWN_ERROR', message: 'An error occurred' };
+        status === 401 ? { code: '401', message: bodyError?.message || 'Invalid JWT' } :
+        status === 403 ? { code: '403', message: bodyError?.message || 'Forbidden' } :
+        status === 404 ? { code: '404', message: bodyError?.message || 'Endpoint not found' } :
+        bodyError ? { code: bodyError.code || String(status), message: bodyError.message || String(bodyError) } :
+        { code: String(status || 'UNKNOWN_ERROR'), message: (typeof data === 'string' ? data : (data?.message || res.statusText || 'An error occurred')) };
+
+      // Attach endpoint and raw body for easier debugging
+      (mapped as any).endpoint = endpoint;
+      (mapped as any).status = status;
+      (mapped as any).raw = text;
+
       throw new ApiError(mapped);
     }
 
+    // Success - return parsed JSON object or empty object
     return (data ?? ({} as T));
   }
 
