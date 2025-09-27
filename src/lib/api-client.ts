@@ -270,14 +270,27 @@ class EdgeFunctionsApiClient {
    * Admin update user (super admin only)
    */
   async adminUpdateUser(
-    userId: string, 
+    userId: string,
     updates: Partial<Pick<User, 'full_name' | 'account_type' | 'country' | 'organization_name'>>
   ): Promise<User> {
-    const response = await this.request<ApiResponse<User>>(`user-management?userId=${userId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updates),
-    });
-    return response.data;
+    if (!userId) {
+      throw new ApiError({ code: 'MISSING_USER_ID', message: 'userId is required' });
+    }
+
+    try {
+      const response = await this.request<ApiResponse<User>>(`user-management?userId=${userId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(updates),
+      });
+      return response.data;
+    } catch (err: any) {
+      // Map PostgREST single-row coercion error to not found
+      const raw = err?.error?.raw || err?.error?.raw || err?.error?.message || '';
+      if (String(raw).includes('PGRST116') || String(raw).includes('Cannot coerce the result to a single JSON object')) {
+        throw new ApiError({ code: '404', message: 'User not found' });
+      }
+      throw err;
+    }
   }
 
   /**
