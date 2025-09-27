@@ -4,8 +4,9 @@
  */
 
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
 import { getUserFromRequest, requireAdmin, requireSuperAdmin, AuthError } from '../_shared/auth.ts';
-import { 
+import {
   validateBody, 
   validateQuery, 
   updateProfileSchema, 
@@ -58,6 +59,10 @@ const handler = async (req: Request): Promise<Response> => {
       return await deactivateUser(req);
     }
 
+    if (method === 'GET' && path === 'health') {
+      return successResponse({ status: 'ok', service: 'user-management' });
+    }
+
     return errorResponse('NOT_FOUND', 'Endpoint not found', 404);
   } catch (error) {
     return handleError(error);
@@ -96,7 +101,7 @@ async function getUserProfile(req: Request): Promise<Response> {
  */
 async function updateUserProfile(req: Request): Promise<Response> {
   const { user, supabase } = await getUserFromRequest(req);
-  const updates = await validateBody(req, updateProfileSchema);
+  const updates = await validateBody(req, updateProfileSchema) as z.infer<typeof updateProfileSchema>;
 
   // Sanitize string inputs
   const sanitizedUpdates = {
@@ -128,12 +133,12 @@ async function getUsers(req: Request): Promise<Response> {
   requireAdmin(user);
 
   const url = new URL(req.url);
-  const query = validateQuery(url, getUsersQuerySchema);
+  const query = validateQuery(url, getUsersQuerySchema) as z.infer<typeof getUsersQuerySchema>;
   const { page, limit, search, role, accountType } = query;
   
   const offset = (page - 1) * limit;
 
-  // Build query
+  // Build query for profiles only
   let dbQuery = supabase
     .from('profiles')
     .select(`
@@ -143,18 +148,13 @@ async function getUsers(req: Request): Promise<Response> {
       account_type, 
       country, 
       organization_name, 
-      created_at,
-      user_roles!inner(role)
+      created_at
     `);
 
   // Apply filters
   if (search) {
     const searchTerm = `%${search.toLowerCase()}%`;
     dbQuery = dbQuery.or(`email.ilike.${searchTerm},full_name.ilike.${searchTerm}`);
-  }
-
-  if (role) {
-    dbQuery = dbQuery.eq('user_roles.role', role);
   }
 
   if (accountType) {
@@ -175,6 +175,27 @@ async function getUsers(req: Request): Promise<Response> {
     throw error;
   }
 
+  // Fetch all user_roles for the returned profiles
+  const userIds = profiles?.map((profile: any) => profile.id) || [];
+  let rolesMap: Record<string, string[]> = {};
+  if (userIds.length > 0) {
+    let rolesQuery = supabase
+      .from('user_roles')
+      .select('user_id, role');
+    if (role) {
+      rolesQuery = rolesQuery.eq('role', role);
+    }
+    const { data: rolesData, error: rolesError } = await rolesQuery.in('user_id', userIds);
+    if (rolesError) {
+      throw rolesError;
+    }
+    // Build a map of user_id to roles
+    for (const r of rolesData || []) {
+      if (!rolesMap[r.user_id]) rolesMap[r.user_id] = [];
+      rolesMap[r.user_id].push(r.role);
+    }
+  }
+
   // Transform data to match frontend expectations
   const users = profiles?.map((profile: any) => ({
     id: profile.id,
@@ -184,7 +205,7 @@ async function getUsers(req: Request): Promise<Response> {
     country: profile.country,
     organization_name: profile.organization_name,
     created_at: profile.created_at,
-    roles: profile.user_roles?.map((r: any) => r.role) || [],
+    roles: rolesMap[profile.id] || [],
   })) || [];
 
   return paginatedResponse(users, {
@@ -202,7 +223,7 @@ async function updateUserRole(req: Request): Promise<Response> {
   const { user, supabase } = await getUserFromRequest(req);
   requireAdmin(user);
 
-  const { userId, role, action } = await validateBody(req, updateUserRoleSchema);
+  const { userId, role, action } = await validateBody(req, updateUserRoleSchema) as z.infer<typeof updateUserRoleSchema>;
   
   // Super admin role changes require super admin privileges
   if (role === 'super_admin') {
@@ -267,7 +288,7 @@ async function adminUpdateUser(req: Request): Promise<Response> {
     return errorResponse('MISSING_USER_ID', 'User ID is required', 400);
   }
 
-  const updates = await validateBody(req, updateProfileSchema);
+  const updates = await validateBody(req, updateProfileSchema) as z.infer<typeof updateProfileSchema>;
 
   // Sanitize string inputs
   const sanitizedUpdates = {

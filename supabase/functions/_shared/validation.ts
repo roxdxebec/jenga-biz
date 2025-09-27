@@ -63,7 +63,7 @@ export const createTransactionSchema = z.object({
   currency: z.string().length(3), // ISO 4217 currency code
   category: z.string().min(1).max(50),
   description: z.string().max(500).optional(),
-  transaction_date: z.string().date().optional(),
+  transaction_date: z.coerce.date().optional(),
   metadata: z.record(z.unknown()).optional(),
 });
 
@@ -72,8 +72,8 @@ export const getTransactionsQuerySchema = z.object({
   type: transactionTypeSchema.optional(),
   category: z.string().optional(),
   currency: z.string().length(3).optional(),
-  date_from: z.string().date().optional(),
-  date_to: z.string().date().optional(),
+  date_from: z.coerce.date().optional(),
+  date_to: z.coerce.date().optional(),
   min_amount: currencyAmountSchema.optional(),
   max_amount: currencyAmountSchema.optional(),
   sort_by: z.enum(['transaction_date', 'amount', 'created_at']).default('transaction_date'),
@@ -97,8 +97,8 @@ export const createOcrJobSchema = z.object({
 export const getOcrJobsQuerySchema = z.object({
   ...paginationSchema.shape,
   status: ocrJobStatusSchema.optional(),
-  date_from: z.string().date().optional(),
-  date_to: z.string().date().optional(),
+  date_from: z.coerce.date().optional(),
+  date_to: z.coerce.date().optional(),
 });
 
 // ==========================================
