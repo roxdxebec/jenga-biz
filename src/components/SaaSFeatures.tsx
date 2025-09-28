@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,6 +9,9 @@ import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsi
 import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
 import { useHub } from '@/contexts/HubContext';
+import { useHubContext } from '@/hooks/useHubContext';
+import { useHubAnalytics } from '@/hooks/useHubAnalytics';
+import { ImpersonationBanner } from '@/components/ImpersonationBanner';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { InviteCodeManager } from '@/components/auth/InviteCodeManager';
@@ -37,6 +40,8 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const [showHubConfig, setShowHubConfig] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const { currentHub, isImpersonating } = useHubContext();
+  const { data: hubAnalytics, isLoading: analyticsLoading, error: analyticsError } = useHubAnalytics();
 
   useEffect(() => {
     // Initialize from URL query params: ?tab=analytics&panel=reporting
@@ -54,22 +59,12 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
     window.location.href = '/';
   };
 
-  const HubBadge: React.FC = () => {
-    try {
-      const { currentHubId, clearImpersonation } = useHub();
-      if (!currentHubId) return null;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="text-sm text-muted-foreground">Impersonating:</div>
-          <div className="px-2 py-1 bg-muted rounded text-xs font-medium">{currentHubId}</div>
-          <Button size="sm" variant="ghost" onClick={() => { clearImpersonation(); window.location.reload(); }}>
-            Stop
-          </Button>
-        </div>
-      );
-    } catch (err) {
-      return null;
+  // Get display title based on context
+  const getHeaderTitle = () => {
+    if (isImpersonating && currentHub) {
+      return `${currentHub.name || currentHub.slug || 'Organization'} Dashboard`;
     }
+    return 'Ecosystem Enabler Dashboard';
   };
 
   return (
@@ -79,10 +74,9 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
         <div className="flex h-16 items-center px-6">
           <div className="flex items-center space-x-4">
             <Building2 className="h-6 w-6" />
-            <h1 className="text-xl font-semibold">Ecosystem Enabler Dashboard</h1>
+            <h1 className="text-xl font-semibold">{getHeaderTitle()}</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
-            <HubBadge />
             <Button variant="ghost" size="sm" onClick={() => setShowHubConfig(true)}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
@@ -97,6 +91,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
 
       {/* Main Content */}
       <div className="flex-1 space-y-4 p-6">
+        <ImpersonationBanner />
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
@@ -129,41 +124,61 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
                   <Building2 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">1,234</div>
-                  <p className="text-xs text-muted-foreground">+12% from last month</p>
+                  <div className="text-2xl font-bold">
+                    {analyticsLoading ? '...' : (hubAnalytics?.total_businesses || 0)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {isImpersonating ? 'Organization scope' : 'Total across platform'}
+                  </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                  <CardTitle className="text-sm font-medium">Active Businesses</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">892</div>
-                  <p className="text-xs text-muted-foreground">+8% from last month</p>
+                  <div className="text-2xl font-bold">
+                    {analyticsLoading ? '...' : (hubAnalytics?.active_businesses || 0)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Currently operating</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Revenue Impact</CardTitle>
+                  <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$2.4M</div>
-                  <p className="text-xs text-muted-foreground">+15% from last month</p>
+                  <div className="text-2xl font-bold">
+                    ${analyticsLoading ? '...' : ((hubAnalytics?.total_revenue || 0).toLocaleString())}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Cumulative revenue tracked</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                  <CardTitle className="text-sm font-medium">Entrepreneurs</CardTitle>
                   <Target className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">87%</div>
-                  <p className="text-xs text-muted-foreground">+3% from last month</p>
+                  <div className="text-2xl font-bold">
+                    {analyticsLoading ? '...' : (hubAnalytics?.total_users || 0)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Unique entrepreneurs</p>
                 </CardContent>
               </Card>
             </div>
+            
+            {analyticsError && (
+              <Card className="border-destructive">
+                <CardContent className="pt-6">
+                  <p className="text-sm text-destructive">
+                    Error loading analytics: {analyticsError.message}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
             
             <Separator />
             

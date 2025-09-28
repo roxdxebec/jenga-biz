@@ -44,6 +44,71 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          key: string
+          updated_at: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          key: string
+          updated_at?: string | null
+          value: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          key?: string
+          updated_at?: string | null
+          value?: string
+        }
+        Relationships: []
+      }
+      approval_audit: {
+        Row: {
+          action: string
+          approval_id: string
+          created_at: string | null
+          id: string
+          performed_by: string | null
+          reason: string | null
+          requester_ip: unknown | null
+          requester_user_agent: string | null
+        }
+        Insert: {
+          action: string
+          approval_id: string
+          created_at?: string | null
+          id?: string
+          performed_by?: string | null
+          reason?: string | null
+          requester_ip?: unknown | null
+          requester_user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          approval_id?: string
+          created_at?: string | null
+          id?: string
+          performed_by?: string | null
+          reason?: string | null
+          requester_ip?: unknown | null
+          requester_user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_audit_approval_id_fkey"
+            columns: ["approval_id"]
+            isOneToOne: false
+            referencedRelation: "pending_approvals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_milestones: {
         Row: {
           business_id: string
@@ -397,33 +462,80 @@ export type Database = {
       }
       hubs: {
         Row: {
+          admin_user_id: string | null
           contact_email: string | null
           country: string
           created_at: string
           id: string
+          metadata: Json | null
           name: string
           region: string | null
+          slug: string | null
           updated_at: string
         }
         Insert: {
+          admin_user_id?: string | null
           contact_email?: string | null
           country: string
           created_at?: string
           id?: string
+          metadata?: Json | null
           name: string
           region?: string | null
+          slug?: string | null
           updated_at?: string
         }
         Update: {
+          admin_user_id?: string | null
           contact_email?: string | null
           country?: string
           created_at?: string
           id?: string
+          metadata?: Json | null
           name?: string
           region?: string | null
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
+      }
+      impersonation_sessions: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          session_token: string
+          super_admin_id: string
+          target_hub_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          session_token: string
+          super_admin_id: string
+          target_hub_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          session_token?: string
+          super_admin_id?: string
+          target_hub_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impersonation_sessions_target_hub_id_fkey"
+            columns: ["target_hub_id"]
+            isOneToOne: false
+            referencedRelation: "hubs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invite_codes: {
         Row: {
@@ -666,6 +778,51 @@ export type Database = {
           },
         ]
       }
+      pending_approvals: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          invite_code: string | null
+          payload: Json | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["approval_status"] | null
+          updated_at: string | null
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          invite_code?: string | null
+          payload?: Json | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["approval_status"] | null
+          updated_at?: string | null
+          user_email: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          invite_code?: string | null
+          payload?: Json | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["approval_status"] | null
+          updated_at?: string | null
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_type: string | null
@@ -741,7 +898,7 @@ export type Database = {
           changed_by_user_id: string
           id: string
           ip_address: unknown | null
-          new_role: Database["public"]["Enums"]["user_role"]
+          new_role: Database["public"]["Enums"]["user_role"] | null
           old_role: Database["public"]["Enums"]["user_role"] | null
           target_user_id: string
           timestamp: string
@@ -752,7 +909,7 @@ export type Database = {
           changed_by_user_id: string
           id?: string
           ip_address?: unknown | null
-          new_role: Database["public"]["Enums"]["user_role"]
+          new_role?: Database["public"]["Enums"]["user_role"] | null
           old_role?: Database["public"]["Enums"]["user_role"] | null
           target_user_id: string
           timestamp?: string
@@ -763,11 +920,44 @@ export type Database = {
           changed_by_user_id?: string
           id?: string
           ip_address?: unknown | null
-          new_role?: Database["public"]["Enums"]["user_role"]
+          new_role?: Database["public"]["Enums"]["user_role"] | null
           old_role?: Database["public"]["Enums"]["user_role"] | null
           target_user_id?: string
           timestamp?: string
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      settings_audit: {
+        Row: {
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          new_value: string | null
+          old_value: string | null
+          requester_ip: unknown | null
+          requester_user_agent: string | null
+          setting_key: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          requester_ip?: unknown | null
+          requester_user_agent?: string | null
+          setting_key: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          requester_ip?: unknown | null
+          requester_user_agent?: string | null
+          setting_key?: string
         }
         Relationships: []
       }
@@ -992,78 +1182,6 @@ export type Database = {
           },
         ]
       }
-      app_settings: {
-        Row: {
-          key: string
-          value: Json
-          description: string | null
-          created_at: string
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          key: string
-          value: Json
-          description?: string | null
-          created_at?: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          key?: string
-          value?: Json
-          description?: string | null
-          created_at?: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: []
-      }
-      pending_approvals: {
-        Row: {
-          id: string
-          subject_type: string
-          subject_id: string
-          applicant_user_id: string
-          status: Database["public"]["Enums"]["approval_status"]
-          reason: string | null
-          metadata: Json
-          reviewed_by: string | null
-          reviewed_at: string | null
-          decision_note: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          subject_type: string
-          subject_id: string
-          applicant_user_id: string
-          status?: Database["public"]["Enums"]["approval_status"]
-          reason?: string | null
-          metadata?: Json
-          reviewed_by?: string | null
-          reviewed_at?: string | null
-          decision_note?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          subject_type?: string
-          subject_id?: string
-          applicant_user_id?: string
-          status?: Database["public"]["Enums"]["approval_status"]
-          reason?: string | null
-          metadata?: Json
-          reviewed_by?: string | null
-          reviewed_at?: string | null
-          decision_note?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
@@ -1088,6 +1206,14 @@ export type Database = {
           total_exits: number
         }[]
       }
+      approve_pending_org: {
+        Args: {
+          approval_id: string
+          requester_ip?: unknown
+          requester_user_agent?: string
+        }
+        Returns: boolean
+      }
       calculate_stage_completion_rates: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1097,6 +1223,23 @@ export type Database = {
           total_completions: number
           total_starts: number
         }[]
+      }
+      get_current_hub_context: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_hub_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      handle_org_signup: {
+        Args: {
+          full_name: string
+          invite_code?: string
+          user_email: string
+          user_id: string
+        }
+        Returns: Json
       }
       has_role: {
         Args: {
@@ -1109,6 +1252,19 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      is_super_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      reject_pending_org: {
+        Args: {
+          approval_id: string
+          rejection_reason?: string
+          requester_ip?: unknown
+          requester_user_agent?: string
+        }
+        Returns: boolean
+      }
       remove_user_role_with_audit: {
         Args: {
           old_role: Database["public"]["Enums"]["user_role"]
@@ -1118,41 +1274,12 @@ export type Database = {
         }
         Returns: boolean
       }
-      handle_org_signup: {
-        Args: {
-          user_id: string
-          user_email: string
-          full_name: string
-          invite_code?: string
-        }
-        Returns: {
-          status: 'pending' | 'approved'
-          message: string
-        }
-      }
       set_app_setting_with_audit: {
         Args: {
+          requester_ip?: unknown
+          requester_user_agent?: string
           setting_key: string
           setting_value: string
-          requester_ip?: string
-          requester_user_agent?: string
-        }
-        Returns: boolean
-      }
-      approve_pending_org: {
-        Args: {
-          approval_id: string
-          requester_ip?: string
-          requester_user_agent?: string
-        }
-        Returns: boolean
-      }
-      reject_pending_org: {
-        Args: {
-          approval_id: string
-          rejection_reason?: string
-          requester_ip?: string
-          requester_user_agent?: string
         }
         Returns: boolean
       }
@@ -1160,12 +1287,26 @@ export type Database = {
         Args: { admin_email: string }
         Returns: string
       }
+      start_impersonation: {
+        Args: { target_hub_id: string }
+        Returns: Json
+      }
+      stop_impersonation: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       update_geographic_analytics: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }
     Enums: {
+      approval_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "expired"
+        | "cancelled"
       business_stage: "idea" | "launch" | "growth" | "scale"
       milestone_type:
         | "business_registration"
@@ -1175,7 +1316,6 @@ export type Database = {
         | "loan_application"
         | "investment_ready"
       user_role: "entrepreneur" | "hub_manager" | "admin" | "super_admin"
-      approval_status: "pending" | "approved" | "rejected" | "expired" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1303,6 +1443,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      approval_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "expired",
+        "cancelled",
+      ],
       business_stage: ["idea", "launch", "growth", "scale"],
       milestone_type: [
         "business_registration",

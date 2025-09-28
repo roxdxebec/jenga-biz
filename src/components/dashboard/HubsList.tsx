@@ -29,14 +29,31 @@ export const HubsList: React.FC = () => {
     staleTime: 30000,
   });
 
-  const handleImpersonate = (hub: Hub) => {
+  const handleImpersonate = async (hub: Hub) => {
     try {
-      localStorage.setItem('impersonate_hub', hub.id);
-      toast({ title: 'Impersonation set', description: `Impersonating ${hub.name || hub.slug || hub.id}` });
-      navigate('/saas');
+      const { startImpersonation } = await import('@/lib/tenant');
+      const result = await startImpersonation(hub.id);
+      
+      if (result.success) {
+        toast({ 
+          title: 'Impersonation started', 
+          description: `Now viewing ${hub.name || hub.slug || hub.id} data` 
+        });
+        navigate('/saas');
+      } else {
+        toast({ 
+          title: 'Error', 
+          description: result.error || 'Could not start impersonation', 
+          variant: 'destructive' 
+        });
+      }
     } catch (err) {
       console.error('Impersonation error', err);
-      toast({ title: 'Error', description: 'Could not impersonate hub', variant: 'destructive' });
+      toast({ 
+        title: 'Error', 
+        description: 'Could not impersonate hub', 
+        variant: 'destructive' 
+      });
     }
   };
 
