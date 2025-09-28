@@ -163,12 +163,22 @@ export const useImpactMeasurement = (businessId?: string) => {
   // Fetch finance access records
   const fetchFinanceRecords = async () => {
     try {
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
       let query = supabase.from('finance_access_records').select('*');
       if (businessId) {
         query = query.eq('business_id', businessId);
+      } else if (hubId) {
+        try { query = query.eq('hub_id', hubId); } catch (e) {}
       }
-      
-      const { data, error } = await query.order('record_date', { ascending: false });
+
+      let res = await query.order('record_date', { ascending: false });
+      if (res.error && String(res.error.message || res.error).includes('does not exist')) {
+        res = await supabase.from('finance_access_records').select('*').order('record_date', { ascending: false });
+      }
+
+      const { data, error } = res;
       if (error) throw error;
       setFinanceRecords(data || []);
     } catch (err) {
