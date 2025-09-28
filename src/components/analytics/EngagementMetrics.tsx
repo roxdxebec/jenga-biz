@@ -87,11 +87,7 @@ export const EngagementMetrics = () => {
         userLastActive[userId] >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
       ).length;
       
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      const returnUserRate = totalUsers ? (activeUsers / totalUsers) * 100 : 0;
+      // totalUsers will be computed hub-aware below; skip direct totalUsers query here.
 
       // Calculate user retention (simplified)
       const now = new Date();
