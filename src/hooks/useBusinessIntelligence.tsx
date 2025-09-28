@@ -294,11 +294,24 @@ export const useBusinessIntelligence = () => {
 
         setTemplateAnalytics(templateAnalyticsData);
 
-        // Fetch milestone analytics
-        const { data: milestones } = await supabase
-          .from('milestone_completion_analytics')
-          .select('*')
-          .eq('user_id', user.id);
+        // Fetch milestone analytics (try hub-aware filter first)
+        let milestones: any[] | null = null;
+        try {
+          const q = supabase.from('milestone_completion_analytics').select('*').eq('user_id', user.id);
+          if (hubId) q.eq('hub_id', hubId);
+          const res = await q;
+          if (res.error) throw res.error;
+          milestones = res.data as any[];
+        } catch (e: any) {
+          const msg = String(e?.message || e?.error || '');
+          if (msg.includes('column') && msg.includes('does not exist')) {
+            const res = await supabase.from('milestone_completion_analytics').select('*').eq('user_id', user.id);
+            milestones = res.data as any[];
+          } else {
+            console.error('Failed to load milestones:', e);
+            milestones = [];
+          }
+        }
 
         if (milestones) {
           const totalMilestones = milestones.length;
