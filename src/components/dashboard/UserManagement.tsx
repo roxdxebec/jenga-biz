@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,127 +7,71 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useUserManagement, useRoleManagement } from "@/hooks/useEdgeUserManagement";
 import { Users, UserPlus, Edit, Trash2, Search, Shield } from "lucide-react";
+import type { User } from "@/lib/api-client";
 
-interface UserWithRoles {
-  id: string;
-  email: string;
-  full_name: string;
-  account_type: string;
-  country: string | null;
-  organization_name: string | null;
-  created_at: string;
+interface UserWithRoles extends User {
   roles: string[];
 }
 
-export function UserManagement() {
-  const [users, setUsers] = useState<UserWithRoles[]>([]);
-  const [loading, setLoading] = useState(true);
+export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: boolean }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [selectedUser, setSelectedUser] = useState<UserWithRoles | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editValues, setEditValues] = useState<{ full_name: string; email: string; account_type: string; country: string; organization_name: string }>({ full_name: "", email: "", account_type: "", country: "", organization_name: "" });
+  const [editValues, setEditValues] = useState<{ 
+    full_name: string; 
+    email: string; 
+    account_type: string; 
+    country: string; 
+    organization_name: string; 
+  }>({ full_name: "", email: "", account_type: "", country: "", organization_name: "" });
+  
   const { toast } = useToast();
+  
+  // Use the edge function hooks
+  const {
+    users,
+    stats,
+    isLoading: loading,
+    updateUserRole,
+    updateUser,
+    deactivateUser: deactivateUserMutation,
+    isUpdatingRole,
+    isUpdatingUser,
+    isDeactivating
+  } = useUserManagement({ 
+    search: searchQuery || undefined, 
+    role: filterRole === "all" ? undefined : filterRole,
+    hideSuperAdmins 
+  });
+  
+  const { getRoleColor } = useRoleManagement();
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const handleUpdateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
+    // Find user locally to avoid redundant calls
+    const target = users.find(u => u.id === userId);
+    const hasRole = target?.roles?.includes(newRole);
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (profilesError) throw profilesError;
-
-      // Fetch user roles
-      const { data: userRoles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
-
-      if (rolesError) throw rolesError;
-
-      // Combine data
-      const usersWithRoles: UserWithRoles[] = profiles?.map((profile: any) => ({
-        id: profile.id,
-        email: profile.email,
-        full_name: profile.full_name,
-        account_type: profile.account_type,
-        country: profile.country,
-        organization_name: profile.organization_name,
-        created_at: profile.created_at,
-        roles: userRoles?.filter((role: any) => role.user_id === profile.id).map((role: any) => role.role) || []
-      })) || [];
-
-      setUsers(usersWithRoles);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch users",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+    if (action === 'add' && hasRole) {
+      toast({ title: 'Role exists', description: `User already has role ${newRole}`, variant: 'destructive' });
+      return;
     }
-  };
 
-  const updateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
+    if (action === 'remove' && !hasRole) {
+      toast({ title: 'Role missing', description: `User does not have role ${newRole}`, variant: 'destructive' });
+      return;
+    }
+
     try {
-      if (action === 'add') {
-        const { data, error } = await supabase.rpc('add_user_role_with_audit', {
-          target_user_id: userId,
-          new_role: newRole,
-          requester_ip: null,
-          requester_user_agent: navigator.userAgent
-        });
-        
-        if (error) throw error;
-        if (!data) {
-          toast({
-            title: "Info",
-            description: "User already has this role",
-          });
-          return;
-        }
-      } else {
-        const { data, error } = await supabase.rpc('remove_user_role_with_audit', {
-          target_user_id: userId,
-          old_role: newRole,
-          requester_ip: null,
-          requester_user_agent: navigator.userAgent
-        });
-        
-        if (error) throw error;
-        if (!data) {
-          toast({
-            title: "Info",
-            description: "User doesn't have this role",
-          });
-          return;
-        }
-      }
-
-      await fetchUsers();
-      toast({
-        title: "Success",
-        description: `User role ${action === 'add' ? 'added' : 'removed'} successfully`,
-      });
-    } catch (error: any) {
-      console.error('Error updating user role:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update user role",
-        variant: "destructive",
-      });
+      await updateUserRole(userId, newRole, action);
+      // Success handling is done in the hook
+    } catch (err: any) {
+      console.error('Error updating user role:', err);
+      const message = err?.error?.message || err?.message || 'Failed to update user role.';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   };
 
@@ -146,56 +90,45 @@ export function UserManagement() {
   const saveProfileChanges = async () => {
     if (!selectedUser) return;
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: editValues.full_name,
-          email: editValues.email,
-          account_type: editValues.account_type,
-          country: editValues.country || null,
-          organization_name: editValues.organization_name || null,
-        })
-        .eq('id', selectedUser.id);
-
-      if (error) throw error;
-      toast({ title: 'Updated', description: 'Profile updated successfully' });
-      await fetchUsers();
+      await updateUser(selectedUser.id, {
+        full_name: editValues.full_name,
+        account_type: editValues.account_type,
+        country: editValues.country || undefined,
+        organization_name: editValues.organization_name || undefined,
+      });
+      
+      // Success handling is done in the hook
       setIsEditModalOpen(false);
       setSelectedUser(null);
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Failed to update profile', variant: 'destructive' });
+      console.error('Error updating profile:', error);
+      // Error handling is done in the hook
     }
   };
 
-  const deactivateUser = async (userId: string) => {
+  const handleDeactivateUser = async (userId: string) => {
     try {
-      const { error: rolesError } = await supabase.from('user_roles').delete().eq('user_id', userId);
-      if (rolesError) throw rolesError;
-      const { error: profileError } = await supabase.from('profiles').update({ account_type: 'deactivated' }).eq('id', userId);
-      if (profileError) throw profileError;
-      toast({ title: 'Deactivated', description: 'User roles removed and account marked deactivated' });
-      await fetchUsers();
+      await deactivateUserMutation(userId);
+      // Success handling is done in the hook
     } catch (error: any) {
-      toast({ title: 'Error', description: error.message || 'Failed to deactivate user', variant: 'destructive' });
+      console.error('Error deactivating user:', error);
+      // Error handling is done in the hook
     }
   };
 
+  // Since filtering is now handled by the hook, we just use the users directly
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = filterRole === "all" || user.roles.includes(filterRole);
-    return matchesSearch && matchesRole;
-  });
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'super_admin': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      case 'admin': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
-      case 'hub_manager': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-      case 'entrepreneur': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    // Additional client-side filtering if needed
+    if (searchQuery) {
+      const matchesSearch = user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           user.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
+      if (!matchesSearch) return false;
     }
-  };
+    if (filterRole !== "all" && !user.roles.includes(filterRole)) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -214,21 +147,23 @@ export function UserManagement() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.length}</div>
+            <div className="text-2xl font-bold">{stats.totalUsers}</div>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Super Admins</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {users.filter(u => u.roles.includes('super_admin')).length}
-            </div>
-          </CardContent>
-        </Card>
+        {!hideSuperAdmins && (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Super Admins</CardTitle>
+              <Shield className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {stats.superAdmins}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -237,7 +172,7 @@ export function UserManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {users.filter(u => u.roles.includes('admin')).length}
+              {stats.admins}
             </div>
           </CardContent>
         </Card>
@@ -249,7 +184,7 @@ export function UserManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {users.filter(u => u.roles.includes('hub_manager')).length}
+              {stats.hubManagers}
             </div>
           </CardContent>
         </Card>
@@ -280,9 +215,9 @@ export function UserManagement() {
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
-              <SelectContent>
+                <SelectContent>
                 <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
+                {!hideSuperAdmins && <SelectItem value="super_admin">Super Admin</SelectItem>}
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="hub_manager">Hub Manager</SelectItem>
                 <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
@@ -398,8 +333,17 @@ export function UserManagement() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <Button onClick={saveProfileChanges}>Save</Button>
-                              <Button variant="destructive" onClick={() => deactivateUser(user.id)}>
+                              <Button 
+                                onClick={saveProfileChanges}
+                                disabled={isUpdatingUser}
+                              >
+                                {isUpdatingUser ? 'Saving...' : 'Save'}
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                onClick={() => handleDeactivateUser(user.id)}
+                                disabled={isDeactivating}
+                              >
                                 <Trash2 className="h-4 w-4 mr-1" /> Deactivate
                               </Button>
                             </div>
@@ -414,7 +358,8 @@ export function UserManagement() {
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => updateUserRole(user.id, role as any, 'remove')}
+                                        onClick={() => handleUpdateUserRole(user.id, role as any, 'remove')}
+                                        disabled={isUpdatingRole}
                                       >
                                         <Trash2 className="h-3 w-3" />
                                       </Button>
@@ -425,19 +370,22 @@ export function UserManagement() {
                               <div>
                                 <Label>Add Role</Label>
                                 <div className="flex gap-2 mt-2 flex-wrap">
-                                  {['entrepreneur', 'hub_manager', 'admin', 'super_admin'].map((role) => (
-                                    !user.roles.includes(role) && (
-                                      <Button
-                                        key={role}
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => updateUserRole(user.id, role as any, 'add')}
-                                      >
-                                        <UserPlus className="h-3 w-3 mr-1" />
-                                        {role}
-                                      </Button>
-                                    )
-                                  ))}
+                                  {(['entrepreneur', 'hub_manager', 'admin', 'super_admin'] as string[])
+                                    .filter(r => !(hideSuperAdmins && r === 'super_admin'))
+                                    .map((role) => (
+                                      !user.roles.includes(role) && (
+                                        <Button
+                                          key={role}
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() => handleUpdateUserRole(user.id, role as any, 'add')}
+                                          disabled={isUpdatingRole}
+                                        >
+                                          <UserPlus className="h-3 w-3 mr-1" />
+                                          {role}
+                                        </Button>
+                                      )
+                                    ))}
                                 </div>
                               </div>
                             </div>

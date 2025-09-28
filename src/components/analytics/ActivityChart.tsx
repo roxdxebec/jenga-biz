@@ -25,59 +25,81 @@ export const ActivityChart = () => {
   }, [timeRange]);
 
   const fetchActivityData = async () => {
+    const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
+    const buildEmptySeries = () => {
+      const base: { [key: string]: ActivityData } = {};
+      for (let i = 0; i < days; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - (days - 1 - i));
+        const ds = d.toISOString().split('T')[0];
+        base[ds] = { date: ds, logins: 0, page_views: 0, actions: 0 };
+      }
+      return Object.values(base);
+    };
+
     try {
       setLoading(true);
-      
-      const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
+
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
-      // Generate activity data from user_activities table
-      const { data, error } = await supabase
-        .from('user_activities')
-        .select('activity_type, created_at')
-        .gte('created_at', startDate.toISOString())
-        .order('created_at', { ascending: true });
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
 
-      if (error) throw error;
+      let res;
+      try {
+        const q = supabase
+          .from('user_activities')
+          .select('activity_type, created_at')
+          .gte('created_at', startDate.toISOString())
+          .order('created_at', { ascending: true });
+        if (hubId) q.eq('hub_id', hubId);
+        res = await q;
+        if (res.error) throw res.error;
+      } catch (e: any) {
+        const msg = String(e?.message || e?.error || '');
+        if (msg.includes('column') && msg.includes('does not exist')) {
+          res = await supabase
+            .from('user_activities')
+            .select('activity_type, created_at')
+            .gte('created_at', startDate.toISOString())
+            .order('created_at', { ascending: true });
+        } else {
+          throw e;
+        }
+      }
 
-      // Process data by date
-      const processedData: { [key: string]: ActivityData } = {};
-      
-      // Initialize all dates with zero values
+      const data = res.data;
+
+      const processed: { [key: string]: ActivityData } = {};
       for (let i = 0; i < days; i++) {
         const date = new Date();
         date.setDate(date.getDate() - (days - 1 - i));
         const dateStr = date.toISOString().split('T')[0];
-        processedData[dateStr] = {
-          date: dateStr,
-          logins: 0,
-          page_views: 0,
-          actions: 0
-        };
+        processed[dateStr] = { date: dateStr, logins: 0, page_views: 0, actions: 0 };
       }
 
-      // Aggregate actual data
-      data?.forEach(activity => {
-        const date = activity.created_at.split('T')[0];
-        if (processedData[date]) {
+      data?.forEach((activity: any) => {
+        const date = String(activity.created_at).split('T')[0];
+        if (processed[date]) {
           switch (activity.activity_type) {
             case 'login':
-              processedData[date].logins++;
+              processed[date].logins++;
               break;
             case 'page_view':
-              processedData[date].page_views++;
+              processed[date].page_views++;
               break;
             case 'action_taken':
-              processedData[date].actions++;
+              processed[date].actions++;
               break;
           }
         }
       });
 
-      setActivityData(Object.values(processedData));
+      setActivityData(Object.values(processed));
     } catch (error) {
-      console.error('Error fetching activity data:', error);
+      console.error('Error fetching activity data:', (error as any)?.message || error);
+      setActivityData(buildEmptySeries());
     } finally {
       setLoading(false);
     }

@@ -27,13 +27,26 @@ export const GeographicChart = () => {
 
   const fetchGeographicData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('geographic_analytics')
-        .select('*')
-        .order('user_count', { ascending: false });
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
 
-      if (error) throw error;
-      setGeoData(data || []);
+      let res;
+      try {
+        const q = supabase.from('geographic_analytics').select('*').order('user_count', { ascending: false });
+        if (hubId) q.eq('hub_id', hubId);
+        res = await q;
+        if (res.error) throw res.error;
+      } catch (e: any) {
+        const msg = String(e?.message || e?.error || '');
+        if (msg.includes('column') && msg.includes('does not exist')) {
+          // retry without hub filter
+          res = await supabase.from('geographic_analytics').select('*').order('user_count', { ascending: false });
+        } else {
+          throw e;
+        }
+      }
+
+      setGeoData(res.data || []);
     } catch (error) {
       console.error('Error fetching geographic data:', error);
     } finally {

@@ -1,73 +1,67 @@
-# Welcome to your Lovable project
+# Jenga Biz Africa - Developer README
 
-## Project info
+Welcome to the Jenga Biz Africa project. This README gives developers a concise starting point to run and understand the repository.
 
-**URL**: https://lovable.dev/projects/2d5d3ba5-84e9-4b37-ba00-6b7d536851cd
+Project URL (preview): https://jenga-biz.vercel.app
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+Prerequisites
+- Node.js (recommended via nvm)
+- npm or yarn
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/2d5d3ba5-84e9-4b37-ba00-6b7d536851cd) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+Quick start
+```bash
+# Clone repository
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Environment
+- Copy environment variables into a local `.env` or set in your host:
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_PUBLISHABLE_KEY
+  - SUPABASE_SERVICE_ROLE_KEY (server-side only)
+  - DATABASE_URL (migrations)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Important routes
+- `/` — Landing page
+- `/saas` — Ecosystem Enabler dashboard (hub_manager & admin roles)
+- `/super-admin` — Super-admin console (system settings & approvals)
+- `/b2c` — Entrepreneur/B2C area
+- `/templates` — Strategy templates
+- `/strategy` — Strategy builder (start blank)
 
-**Use GitHub Codespaces**
+Notable features
+- Role-based access control (entrepreneur, hub_manager, admin, super_admin)
+- Organization signup approval workflow (organization accounts may be created in a pending/disabled state and require super-admin approval unless auto-approve is enabled)
+- Admin settings include an "Auto-approve Organization Accounts" toggle stored in `app_settings` (persisted in Supabase)
+- SaaS dashboard excludes super_admin accounts from aggregated counts and hides super_admin role management in the SaaS user management view
+- Analytics dashboard supports deep-linking (e.g. `/saas?tab=analytics&panel=reporting`) to open a specific analytics panel
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Project structure
+- See `project_structure.md` for an up-to-date layout of the repo and recommended DB tables (including `app_settings` and `pending_approvals` patterns).
 
-## What technologies are used for this project?
+Security & approvals
+- Organization signups create a basic profile via `src/lib/profile.ts`.
+- If `auto_approve_organizations` is false, organization accounts remain pending and the user is notified after signup. Super-admin UI contains settings to toggle auto-approval and should be extended to include an approvals queue.
 
-This project is built with:
+Development notes
+- To add or modify system settings, we persist small flags to `app_settings` (key/value)
+- Add DB migrations under `supabase/migrations/` for any schema changes (e.g., `app_settings` or `pending_approvals`)
+- Audit-sensitive actions (role changes, approvals) should use stored procedures (e.g., `add_user_role_with_audit`) to enforce permission checks and create audit records
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+How to contribute
+- Open a branch, make changes, run `npm run lint` and ensure type checks
+- Push and create a PR. Use the project's CI checks if configured
 
-## How can I deploy this project?
+Where to get help
+- Project docs in `Docs/` and `SecurityArchitecture.md`
+- For Supabase connection issues open the MCP popover in the project UI or check your environment variables
 
-Simply open [Lovable](https://lovable.dev/projects/2d5d3ba5-84e9-4b37-ba00-6b7d536851cd) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Thank you for contributing to Jenga Biz Africa.

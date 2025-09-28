@@ -1,0 +1,25 @@
+{
+  "name": "Jenga Biz Africa",
+  "short_name": "JengaBiz",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "description": "Build Your Business Strategy for the African Market",
+  "icons": [
+    {
+      "src": "/jenga-biz-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/jenga-biz-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

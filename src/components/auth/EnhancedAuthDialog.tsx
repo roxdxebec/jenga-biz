@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader as Loader2, Eye, EyeOff, CircleAlert as AlertCircle, Building2, Users, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { saveProfileForUser } from '@/lib/profile';
 
 interface EnhancedAuthDialogProps {
   open: boolean;
@@ -113,7 +114,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
             .eq('user_id', current.id);
           const roleList = (roles || []).map(r => r.role as string);
           if (roleList.includes('super_admin')) {
-            window.location.href = '/dashboard';
+            window.location.href = '/super-admin';
           } else if (roleList.includes('admin') || roleList.includes('hub_manager')) {
             window.location.href = '/saas';
           } else {
@@ -149,20 +150,91 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
     setIsLoading(true);
 
     const { error } = await signUp(
-      signupData.email, 
-      signupData.password, 
+      signupData.email,
+      signupData.password,
       signupData.fullName,
       signupData.accountType,
       signupData.inviteCode || undefined
     );
-    
+
     if (error) {
       toast({
         title: "Signup Failed",
         description: error.message,
         variant: "destructive",
       });
-    } else {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Attempt to fetch the newly created user
+      const { data: { user: newUser } } = await supabase.auth.getUser();
+      if (newUser?.id) {
+        if (signupData.accountType === 'organization') {
+          // Use the handle_org_signup RPC for organization accounts
+          const { data: result, error: rpcError } = await supabase.rpc('handle_org_signup', {
+            user_id: newUser.id,
+            user_email: signupData.email,
+            full_name: signupData.fullName,
+            invite_code: signupData.inviteCode || null
+          });
+
+          if (rpcError) {
+            console.error('Organization signup error:', rpcError);
+            toast({
+              title: 'Signup Error',
+              description: 'Failed to complete organization signup. Please contact support.',
+              variant: 'destructive'
+            });
+            setIsLoading(false);
+            return;
+          }
+
+          // Handle the result based on approval status
+          if (result?.status === 'approved') {
+            toast({
+              title: 'Organization Account Approved!',
+              description: 'Your ecosystem enabler account has been automatically approved. Welcome!',
+            });
+            // Redirect to profile to complete setup
+            setTimeout(() => {
+              onOpenChange(false);
+              window.location.href = '/profile';
+            }, 1000);
+          } else if (result?.status === 'pending') {
+            toast({
+              title: 'Account Pending Approval',
+              description: 'Your ecosystem enabler account is pending approval by a super admin. You will be notified when approved.',
+            });
+            // Close dialog and redirect to home
+            setTimeout(() => {
+              onOpenChange(false);
+              window.location.href = '/';
+            }, 1000);
+          } else {
+            // Unexpected status, show error
+            toast({
+              title: 'Signup Error',
+              description: 'Unexpected response from signup process. Please contact support.',
+              variant: 'destructive'
+            });
+          }
+          setIsLoading(false);
+          return;
+        } else {
+          // For business accounts, create basic profile
+          const profilePayload: any = {
+            email: signupData.email,
+            full_name: signupData.fullName,
+            account_type: signupData.accountType,
+            is_profile_complete: false
+          };
+
+          await saveProfileForUser(newUser.id, profilePayload);
+        }
+      }
+
       toast({
         title: "Account Created!",
         description: "Please check your email to verify your account.",
@@ -172,9 +244,16 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
         onOpenChange(false);
         window.location.href = '/profile';
       }, 1000);
+    } catch (e: any) {
+      console.error('Error post-signup:', e);
+      toast({ title: 'Signup', description: 'Account created. Please check your email.' });
+      setTimeout(() => {
+        onOpenChange(false);
+        window.location.href = '/';
+      }, 1000);
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {

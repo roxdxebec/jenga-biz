@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Upload, User, Building2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ApprovalStatusBanner } from '@/components/ApprovalStatusBanner';
 
 interface ProfileData {
   contact_person_name: string;
@@ -255,6 +256,8 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-4">
       <div className="max-w-4xl mx-auto">
+        {/* Approval Status Banner */}
+        <ApprovalStatusBanner className="mb-6" />
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" onClick={() => navigate('/')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
