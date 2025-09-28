@@ -15,6 +15,7 @@ import Strategy from "./pages/Strategy";
 import Profile from "./pages/Profile";
 import UserDashboard from "./components/UserDashboard";
 import SaaSFeatures from "./components/SaaSFeatures";
+import { HubProvider } from '@/contexts/HubContext';
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AdminDashboard } from "./components/dashboard/AdminDashboard";
 
