@@ -64,6 +64,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
             <h1 className="text-xl font-semibold">Ecosystem Enabler Dashboard</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
+            <HubBadge />
             <Button variant="ghost" size="sm" onClick={() => setShowHubConfig(true)}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
