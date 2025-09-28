@@ -54,6 +54,24 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
     window.location.href = '/';
   };
 
+  const HubBadge: React.FC = () => {
+    try {
+      const { currentHubId, clearImpersonation } = useHub();
+      if (!currentHubId) return null;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">Impersonating:</div>
+          <div className="px-2 py-1 bg-muted rounded text-xs font-medium">{currentHubId}</div>
+          <Button size="sm" variant="ghost" onClick={() => { clearImpersonation(); window.location.reload(); }}>
+            Stop
+          </Button>
+        </div>
+      );
+    } catch (err) {
+      return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
