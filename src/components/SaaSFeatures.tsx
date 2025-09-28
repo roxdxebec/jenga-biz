@@ -8,6 +8,7 @@ import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
 import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { useHub } from '@/contexts/HubContext';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { InviteCodeManager } from '@/components/auth/InviteCodeManager';
