@@ -277,12 +277,8 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
         </div>
 
         {/* Main Dashboard Content */}
-        <Tabs defaultValue="analytics" className="space-y-6">
+        <Tabs defaultValue="users" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               User Management
@@ -301,11 +297,11 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
               <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="analytics" className="space-y-6">
-            <AnalyticsDashboard />
-          </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
             <UserManagement hideSuperAdmins={saasMode} />
@@ -350,8 +346,8 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                       <p className="text-sm text-muted-foreground">Only super admins can change this setting.</p>
                     )}
                     <div className="mt-2 flex gap-2">
-                      <Button 
-                        onClick={saveSettings} 
+                      <Button
+                        onClick={saveSettings}
                         disabled={!isSuperAdmin || settingsLoading}
                       >
                         {settingsLoading ? 'Saving...' : 'Save'}
@@ -361,6 +357,11 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            {/* Super Admin: list of organizations (hubs) for impersonation */}
+            <HubsList />
           </TabsContent>
         </Tabs>
       </main>
