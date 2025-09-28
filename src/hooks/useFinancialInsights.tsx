@@ -56,19 +56,32 @@ export const useFinancialInsights = (businessId?: string) => {
     setError(null);
     
     try {
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
       let query = supabase
         .from('financial_records')
         .select('*')
         .order('record_date', { ascending: false });
-      
+
       if (businessId) {
         query = query.eq('business_id', businessId);
+      } else if (hubId) {
+        try { query = query.eq('hub_id', hubId); } catch (e) { /* ignore */ }
       }
-      
-      const { data, error } = await query;
-      
+
+      let res = await query;
+      if (res.error && String(res.error.message || res.error).includes('does not exist')) {
+        res = await supabase
+          .from('financial_records')
+          .select('*')
+          .order('record_date', { ascending: false });
+      }
+
+      const { data, error } = res;
+
       if (error) throw error;
-      
+
       setFinancialRecords(data || []);
     } catch (err: any) {
       console.error('Error fetching financial records:', err);
