@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
 import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { useHub } from '@/contexts/HubContext';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { InviteCodeManager } from '@/components/auth/InviteCodeManager';
@@ -30,13 +32,44 @@ interface SaaSFeaturesProps {
 const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
   const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [analyticsPanel, setAnalyticsPanel] = useState<string | undefined>(undefined);
   const [showInvite, setShowInvite] = useState(false);
   const [showHubConfig, setShowHubConfig] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    // Initialize from URL query params: ?tab=analytics&panel=reporting
+    const tab = searchParams.get('tab');
+    const panel = searchParams.get('panel');
+    if (tab) setActiveTab(tab);
+    if (tab === 'analytics' && panel) {
+      setAnalyticsPanel(panel);
+    }
+  }, [searchParams]);
 
   const handleSignOut = async () => {
     await signOut();
     onSignOut();
     window.location.href = '/';
+  };
+
+  const HubBadge: React.FC = () => {
+    try {
+      const { currentHubId, clearImpersonation } = useHub();
+      if (!currentHubId) return null;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">Impersonating:</div>
+          <div className="px-2 py-1 bg-muted rounded text-xs font-medium">{currentHubId}</div>
+          <Button size="sm" variant="ghost" onClick={() => { clearImpersonation(); window.location.reload(); }}>
+            Stop
+          </Button>
+        </div>
+      );
+    } catch (err) {
+      return null;
+    }
   };
 
   return (
@@ -49,7 +82,8 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
             <h1 className="text-xl font-semibold">Ecosystem Enabler Dashboard</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
+            <HubBadge />
+            <Button variant="ghost" size="sm" onClick={() => setShowHubConfig(true)}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </Button>
@@ -139,7 +173,16 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Button className="h-24 flex-col gap-2" variant="outline" onClick={() => setActiveTab('analytics')}>
+                  <Button
+                    className="h-24 flex-col gap-2"
+                    variant="outline"
+                    onClick={() => {
+                      // set UI and deep link to analytics reporting panel
+                      setActiveTab('analytics');
+                      setAnalyticsPanel('reporting');
+                      setSearchParams({ tab: 'analytics', panel: 'reporting' });
+                    }}
+                  >
                     <FileText className="h-6 w-6" />
                     Generate Report
                   </Button>
@@ -157,7 +200,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AnalyticsDashboard />
+            <AnalyticsDashboard initialPanel={analyticsPanel} />
           </TabsContent>
 
           <TabsContent value="financial">
@@ -169,7 +212,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
           </TabsContent>
 
           <TabsContent value="admin">
-            <AdminDashboard />
+            <AdminDashboard saasMode />
           </TabsContent>
         </Tabs>
 

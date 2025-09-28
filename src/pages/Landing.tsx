@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { EnhancedAuthDialog } from '@/components/auth/EnhancedAuthDialog';
+import { ApprovalStatusBanner } from '@/components/ApprovalStatusBanner';
 import { LogIn, Rocket, ShieldCheck, BarChart3, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRoles } from '@/hooks/useRoles';
@@ -100,6 +101,9 @@ const Landing = () => {
           </div>
         </div>
       </header>
+
+      {/* Approval Status Banner */}
+      {user && <ApprovalStatusBanner className="mx-4 sm:mx-6 lg:mx-8 mt-4" />}
 
       {/* Hero */}
       <section className="px-4 sm:px-6 lg:px-8">
