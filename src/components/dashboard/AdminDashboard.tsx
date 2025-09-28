@@ -18,6 +18,7 @@ import {
 import { InviteCodeManager } from "../auth/InviteCodeManager";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { UserManagement } from "./UserManagement";
+import { HubsList } from './HubsList';
 import { Switch } from '@/components/ui/switch';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { PendingApprovalsList } from '../admin/PendingApprovalsList';
