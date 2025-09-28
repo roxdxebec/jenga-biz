@@ -96,12 +96,27 @@ export const useImpactMeasurement = (businessId?: string) => {
   // Fetch job creation records
   const fetchJobRecords = async () => {
     try {
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
       let query = supabase.from('job_creation_records').select('*');
       if (businessId) {
         query = query.eq('business_id', businessId);
+      } else if (hubId) {
+        try {
+          query = query.eq('hub_id', hubId);
+        } catch (e) {
+          // no-op, will be handled below
+        }
       }
-      
-      const { data, error } = await query.order('recorded_date', { ascending: false });
+
+      let res = await query.order('recorded_date', { ascending: false });
+      if (res.error && String(res.error.message || res.error).includes('does not exist')) {
+        // retry without hub filter
+        res = await supabase.from('job_creation_records').select('*').order('recorded_date', { ascending: false });
+      }
+
+      const { data, error } = res;
       if (error) throw error;
       setJobRecords((data || []).map(record => ({
         ...record,
@@ -117,12 +132,22 @@ export const useImpactMeasurement = (businessId?: string) => {
   // Fetch loan readiness assessments
   const fetchLoanAssessments = async () => {
     try {
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
       let query = supabase.from('loan_readiness_assessments').select('*');
       if (businessId) {
         query = query.eq('business_id', businessId);
+      } else if (hubId) {
+        try { query = query.eq('hub_id', hubId); } catch (e) {}
       }
-      
-      const { data, error } = await query.order('assessment_date', { ascending: false });
+
+      let res = await query.order('assessment_date', { ascending: false });
+      if (res.error && String(res.error.message || res.error).includes('does not exist')) {
+        res = await supabase.from('loan_readiness_assessments').select('*').order('assessment_date', { ascending: false });
+      }
+
+      const { data, error } = res;
       if (error) throw error;
       setLoanAssessments((data || []).map(assessment => ({
         ...assessment,
@@ -138,12 +163,22 @@ export const useImpactMeasurement = (businessId?: string) => {
   // Fetch finance access records
   const fetchFinanceRecords = async () => {
     try {
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
       let query = supabase.from('finance_access_records').select('*');
       if (businessId) {
         query = query.eq('business_id', businessId);
+      } else if (hubId) {
+        try { query = query.eq('hub_id', hubId); } catch (e) {}
       }
-      
-      const { data, error } = await query.order('record_date', { ascending: false });
+
+      let res = await query.order('record_date', { ascending: false });
+      if (res.error && String(res.error.message || res.error).includes('does not exist')) {
+        res = await supabase.from('finance_access_records').select('*').order('record_date', { ascending: false });
+      }
+
+      const { data, error } = res;
       if (error) throw error;
       setFinanceRecords(data || []);
     } catch (err) {
@@ -155,12 +190,22 @@ export const useImpactMeasurement = (businessId?: string) => {
   // Fetch business survival records
   const fetchSurvivalRecords = async () => {
     try {
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
       let query = supabase.from('business_survival_records').select('*');
       if (businessId) {
         query = query.eq('business_id', businessId);
+      } else if (hubId) {
+        try { query = query.eq('hub_id', hubId); } catch (e) {}
       }
-      
-      const { data, error } = await query.order('assessment_date', { ascending: false });
+
+      let res = await query.order('assessment_date', { ascending: false });
+      if (res.error && String(res.error.message || res.error).includes('does not exist')) {
+        res = await supabase.from('business_survival_records').select('*').order('assessment_date', { ascending: false });
+      }
+
+      const { data, error } = res;
       if (error) throw error;
       setSurvivalRecords(data || []);
     } catch (err) {

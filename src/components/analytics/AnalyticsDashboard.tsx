@@ -39,34 +39,88 @@ export const AnalyticsDashboard = ({ initialPanel }: { initialPanel?: string | n
   const fetchDashboardMetrics = async () => {
     try {
       setLoading(true);
-      
-      // Fetch key metrics
-      const [
-        { count: totalUsers },
-        { count: activeBusinesses },
-        { count: totalCountries },
-        { data: dailyActive },
-        { data: weeklyActive },
-        { data: monthlyRegs }
-      ] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('is_active', true),
-        supabase.from('geographic_analytics').select('*', { count: 'exact', head: true }),
-        supabase.from('analytics_summaries')
+
+      // Hub-aware: attempt to filter by hub_id when impersonating or in hub context
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
+
+      // Helper to attempt a filtered query and fall back if the column doesn't exist
+      const tryCount = async (builderFn: () => any) => {
+        try {
+          return await builderFn();
+        } catch (e: any) {
+          const msg = String(e?.message || e?.error || '');
+          if (msg.includes('column') && msg.includes('does not exist')) {
+            // Retry without filter
+            return await builderFn();
+          }
+          throw e;
+        }
+      };
+
+      // Build queries
+      const profilesQuery = async () => {
+        const q = supabase.from('profiles').select('*', { count: 'exact', head: true });
+        if (hubId) q.eq('hub_id', hubId);
+        return q;
+      };
+
+      const businessesQuery = async () => {
+        const q = supabase.from('businesses').select('*', { count: 'exact', head: true }).eq('is_active', true);
+        if (hubId) q.eq('hub_id', hubId);
+        return q;
+      };
+
+      const countriesQuery = async () => {
+        const q = supabase.from('geographic_analytics').select('*', { count: 'exact', head: true });
+        if (hubId) q.eq('hub_id', hubId);
+        return q;
+      };
+
+      const dailyActiveQuery = async () => {
+        const q = supabase.from('analytics_summaries')
           .select('metric_value')
           .eq('metric_type', 'daily_active_users')
           .eq('metric_date', new Date().toISOString().split('T')[0])
-          .maybeSingle(),
-        supabase.from('analytics_summaries')
+          .maybeSingle();
+        if (hubId) q.eq('hub_id', hubId);
+        return q;
+      };
+
+      const weeklyActiveQuery = async () => {
+        const q = supabase.from('analytics_summaries')
           .select('metric_value')
           .eq('metric_type', 'weekly_active_users')
           .gte('metric_date', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
-          .maybeSingle(),
-        supabase.from('analytics_summaries')
+          .maybeSingle();
+        if (hubId) q.eq('hub_id', hubId);
+        return q;
+      };
+
+      const monthlyRegsQuery = async () => {
+        const q = supabase.from('analytics_summaries')
           .select('metric_value')
           .eq('metric_type', 'monthly_registrations')
           .eq('metric_date', new Date().toISOString().slice(0, 7) + '-01')
-          .maybeSingle()
+          .maybeSingle();
+        if (hubId) q.eq('hub_id', hubId);
+        return q;
+      };
+
+      const [
+        { count: totalUsers } = { count: 0 },
+        { count: activeBusinesses } = { count: 0 },
+        { count: totalCountries } = { count: 0 },
+        { data: dailyActive } = { data: null },
+        { data: weeklyActive } = { data: null },
+        { data: monthlyRegs } = { data: null }
+      ] = await Promise.all([
+        tryCount(profilesQuery),
+        tryCount(businessesQuery),
+        tryCount(countriesQuery),
+        tryCount(dailyActiveQuery),
+        tryCount(weeklyActiveQuery),
+        tryCount(monthlyRegsQuery)
       ]);
 
       setMetrics({

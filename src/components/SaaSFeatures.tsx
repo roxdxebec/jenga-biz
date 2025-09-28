@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +8,7 @@ import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
 import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
+import { useHub } from '@/contexts/HubContext';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { InviteCodeManager } from '@/components/auth/InviteCodeManager';
@@ -53,6 +54,24 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
     window.location.href = '/';
   };
 
+  const HubBadge: React.FC = () => {
+    try {
+      const { currentHubId, clearImpersonation } = useHub();
+      if (!currentHubId) return null;
+      return (
+        <div className="flex items-center gap-2">
+          <div className="text-sm text-muted-foreground">Impersonating:</div>
+          <div className="px-2 py-1 bg-muted rounded text-xs font-medium">{currentHubId}</div>
+          <Button size="sm" variant="ghost" onClick={() => { clearImpersonation(); window.location.reload(); }}>
+            Stop
+          </Button>
+        </div>
+      );
+    } catch (err) {
+      return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -63,6 +82,7 @@ const SaaSFeatures = ({ onSignOut }: SaaSFeaturesProps) => {
             <h1 className="text-xl font-semibold">Ecosystem Enabler Dashboard</h1>
           </div>
           <div className="ml-auto flex items-center space-x-4">
+            <HubBadge />
             <Button variant="ghost" size="sm" onClick={() => setShowHubConfig(true)}>
               <Settings className="h-4 w-4 mr-2" />
               Settings
