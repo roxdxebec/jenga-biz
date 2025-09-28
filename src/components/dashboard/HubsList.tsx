@@ -19,11 +19,15 @@ export const HubsList: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const { data, isLoading, error } = useQuery(['hubs'], async () => {
-    const { data, error } = await supabase.from('hubs').select('id,name,slug,admin_user_id,created_at,metadata');
-    if (error) throw error;
-    return data as Hub[];
-  }, { staleTime: 30000 });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['hubs'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('hubs').select('id,name,slug,admin_user_id,created_at,metadata');
+      if (error) throw error;
+      return data as Hub[];
+    },
+    staleTime: 30000,
+  });
 
   const handleImpersonate = (hub: Hub) => {
     try {
