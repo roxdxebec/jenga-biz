@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Home, Save, Download, Share2, Sparkles, X, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut } from 'lucide-react';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut } from 'lucide-react';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
 import LanguageSelector from '@/components/LanguageSelector';
-import CountrySelector from '@/components/CountrySelector';
 import { useStrategy } from '@/hooks/useStrategy';
 import { useToast } from '@/hooks/use-toast';
 import { generateShareText, useShareActions } from '@/lib/shareUtils';
@@ -32,8 +31,8 @@ const CombinedStrategyFlow = ({
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-  const { saveStrategy, currentStrategy, milestones: strategyMilestones, setCurrentStrategy, clearStrategy } = useStrategy();
+  const { signOut } = useAuth();
+  const { saveStrategy, currentStrategy, milestones: strategyMilestones } = useStrategy();
   const [language, setLanguage] = useState(initialLanguage);
   const [country, setCountry] = useState('KE');
   const [currency, setCurrency] = useState('KES');
@@ -57,7 +56,7 @@ const CombinedStrategyFlow = ({
   // Modal states
   const [showShareModal, setShowShareModal] = useState(false);
   const [showAISummaryModal, setShowAISummaryModal] = useState(false);
-  const [aiSummaryContent, setAiSummaryContent] = useState(null);
+  const [aiSummaryContent, setAiSummaryContent] = useState<any>(null);
   const [currentSection, setCurrentSection] = useState('');
 
   const translations = {
@@ -95,7 +94,7 @@ const CombinedStrategyFlow = ({
     }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
   // Map Supabase snake_case fields to local camelCase builder fields
   function normalizeStrategy(data: any) {
@@ -180,7 +179,7 @@ const CombinedStrategyFlow = ({
       'GA': { currency: 'XAF', symbol: 'FCFA' }  // Gabon
     };
     
-    const countryData = currencyMap[country] || currencyMap['KE'];
+    const countryData = currencyMap[country as keyof typeof currencyMap] || currencyMap['KE'];
     setCurrency(countryData.currency);
     setCurrencySymbol(countryData.symbol);
   }, [country]);
@@ -189,8 +188,10 @@ const CombinedStrategyFlow = ({
   useEffect(() => {
     if (propCurrentStrategy) {
       const normalized = normalizeStrategy(propCurrentStrategy);
-      setStrategy(normalized);
-      console.log("Loaded normalized strategy into builder:", normalized);
+      if (normalized) {
+        setStrategy(normalized);
+        console.log("Loaded normalized strategy into builder:", normalized);
+      }
     }
   }, [propCurrentStrategy]);
 
@@ -277,12 +278,12 @@ const CombinedStrategyFlow = ({
     }
   }, [currentStrategy, template]);
 
-  const handleStrategyChange = (newStrategy) => {
+  const handleStrategyChange = (newStrategy: any) => {
     console.log('Strategy changed:', newStrategy);
     setStrategy(newStrategy);
   };
 
-  const handleMilestonesChange = (newMilestones) => {
+  const handleMilestonesChange = (newMilestones: any) => {
     setMilestones(newMilestones);
   };
 
@@ -417,7 +418,7 @@ const CombinedStrategyFlow = ({
       };
     }
     
-    setAiSummaryContent(summaryData);
+    setAiSummaryContent(summaryData as any);
     setShowAISummaryModal(true);
   };
 
@@ -431,7 +432,7 @@ const CombinedStrategyFlow = ({
     if (section === 'strategy' && strategy) {
       content = `Business Strategy Summary\n\nBusiness Name: ${strategy.businessName || 'N/A'}\nVision: ${strategy.vision || 'N/A'}\nMission: ${strategy.mission || 'N/A'}\nTarget Market: ${strategy.targetMarket || 'N/A'}\nRevenue Model: ${strategy.revenueModel || 'N/A'}\nValue Proposition: ${strategy.valueProposition || 'N/A'}\n\nCreated with Jenga Biz Africa ✨`;
     } else if (section === 'milestones') {
-      content = `Business Milestones Summary\n\nBusiness Stage: Growth Stage\nTotal Milestones: ${milestones.length}\n\nMilestones:\n${milestones.length > 0 ? milestones.map(m => `- ${m.title || m.name}`).join('\n') : 'No milestones added yet'}\n\nCreated with Jenga Biz Africa ✨`;
+      content = `Business Milestones Summary\n\nBusiness Stage: Growth Stage\nTotal Milestones: ${milestones.length}\n\nMilestones:\n${milestones.length > 0 ? milestones.map((m: any) => `- ${m.title || m.name}`).join('\n') : 'No milestones added yet'}\n\nCreated with Jenga Biz Africa ✨`;
     } else if (section === 'financial') {
       content = `Financial Summary\n\nTotal Revenue: ${currencySymbol} 0.00\nTotal Expenses: ${currencySymbol} 0.00\nNet Profit: ${currencySymbol} 0.00\nProfit Margin: 0%\n\nKey Insights:\n- Your business is profitable\n- No revenue entries recorded\n- No expense entries recorded\n\nCreated with Jenga Biz Africa ✨`;
     }
@@ -463,33 +464,31 @@ const CombinedStrategyFlow = ({
   const handleShareOption = (option: string) => {
     let shareText = '';
     let customTitle = '';
-    let isFinancial = false;
 
     if (currentSection === 'strategy') {
       customTitle = 'My Business Strategy';
       shareText = generateShareText({
         strategy,
-        type: 'summary',
+        type: 'summary' as const,
         customTitle,
         language
-      });
+      }) || '';
     } else if (currentSection === 'milestones') {
       customTitle = 'My Business Milestones';
       shareText = generateShareText({
         strategy: { ...strategy, milestones },
-        type: 'milestones',
+        type: 'milestones' as const,
         customTitle,
         language
-      });
+      }) || '';
     } else if (currentSection === 'financial') {
       customTitle = 'My Financial Summary';
-      isFinancial = true;
       shareText = generateShareText({
         strategy,
         customTitle,
         isFinancial: true,
         language
-      });
+      }) || '';
     }
     
     switch (option) {
@@ -900,7 +899,7 @@ const CombinedStrategyFlow = ({
                     <p className="text-sm text-gray-700 mt-1">{aiSummaryContent.currentMilestones}</p>
                   ) : (
                     <div className="text-sm text-gray-700 mt-1">
-                      {aiSummaryContent.currentMilestones.map((milestone, index) => (
+                      {aiSummaryContent.currentMilestones.map((milestone: any, index: number) => (
                         <p key={index}>• {milestone.title || milestone.name}</p>
                       ))}
                     </div>
@@ -938,7 +937,7 @@ const CombinedStrategyFlow = ({
                 <div>
                   <strong>Key Insights:</strong>
                   <div className="text-sm text-gray-700 mt-1 space-y-1">
-                    {aiSummaryContent.insights.map((insight, index) => (
+                    {aiSummaryContent.insights.map((insight: string, index: number) => (
                       <p key={index}>• {insight}</p>
                     ))}
                   </div>

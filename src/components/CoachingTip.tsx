@@ -15,7 +15,7 @@ const CoachingTip = ({ tip, language = 'en' }: CoachingTipProps) => {
     fr: { tipLabel: 'Conseil' }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
   return (
     <Card className="border-blue-200 bg-blue-50 mb-4">
