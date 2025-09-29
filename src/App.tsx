@@ -13,6 +13,8 @@ import PasswordReset from "./pages/PasswordReset";
 import Templates from "./pages/Templates";
 import Strategy from "./pages/Strategy";
 import Profile from "./pages/Profile";
+import Pricing from "./pages/Pricing";
+import BillingReturn from "./pages/BillingReturn";
 import UserDashboard from "./components/UserDashboard";
 import SaaSFeatures from "./components/SaaSFeatures";
 import { HubProvider } from '@/contexts/HubContext';
@@ -36,6 +38,8 @@ const App = () => (
             <Route path="/strategy" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Strategy /></ProtectedRoute>} />
             <Route path="/strategies" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Strategy /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+            <Route path="/billing/return" element={<ProtectedRoute><BillingReturn /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><UserDashboard /></ProtectedRoute>} />
             <Route path="/saas" element={<ProtectedRoute allowedRoles={["hub_manager","admin","super_admin"]}><HubProvider><HubContextProvider><SaaSFeatures onSignOut={() => {}} /></HubContextProvider></HubProvider></ProtectedRoute>} />
             <Route path="/super-admin" element={<ProtectedRoute allowedRoles={["super_admin"]}><AdminDashboard /></ProtectedRoute>} />

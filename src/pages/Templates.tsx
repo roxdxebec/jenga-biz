@@ -3,18 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Home, BarChart3, User, LogOut } from 'lucide-react';
-import { getTemplateData } from '@/data/templateData';
+import { ArrowLeft, Home, BarChart3, User, LogOut, Loader2, Eye } from 'lucide-react';
+import { useBusinessTemplates } from '@/hooks/useBusinessTemplates';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useAuth } from '@/hooks/useAuth';
+import { TemplatePreview } from '@/components/TemplatePreview';
 
 const Templates = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [language, setLanguage] = useState('en');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const [previewTemplate, setPreviewTemplate] = useState<any>(null);
   
-  const templates = getTemplateData(language);
+  const { templates, loading, error } = useBusinessTemplates();
 
   const translations = {
     en: {
@@ -61,9 +63,33 @@ const Templates = () => {
     if (selectedTemplateId) {
       const template = templates.find(t => t.id === selectedTemplateId);
       if (template) {
-        navigate('/strategy', { state: { template, language } });
+        // Convert database template to the format expected by the strategy page
+        const templateData = {
+          id: template.id,
+          name: template.name,
+          description: template.description,
+          content: template.template_config
+        };
+        navigate('/strategy', { state: { template: templateData, language } });
       }
     }
+  };
+
+  const handlePreviewTemplate = (template: any) => {
+    setPreviewTemplate(template);
+  };
+
+  const handleSelectTemplate = (template: any) => {
+    setPreviewTemplate(null);
+    setSelectedTemplateId(template.id);
+    // Convert database template to the format expected by the strategy page
+    const templateData = {
+      id: template.id,
+      name: template.name,
+      description: template.description,
+      content: template.template_config
+    };
+    navigate('/strategy', { state: { template: templateData, language } });
   };
 
   return (
@@ -163,32 +189,78 @@ const Templates = () => {
             <CardTitle className="text-center">{t.selectTemplate}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Select value={selectedTemplateId} onValueChange={setSelectedTemplateId}>
-              <SelectTrigger>
-                <SelectValue placeholder={t.selectTemplate} />
-              </SelectTrigger>
-              <SelectContent className="bg-white z-50">
-                {templates.map((template) => (
-                  <SelectItem key={template.id} value={template.id}>
-                    <div>
-                      <div className="font-medium">{template.name}</div>
-                      <div className="text-sm text-gray-500">{template.description}</div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Button 
-              onClick={handleGetStarted}
-              disabled={!selectedTemplateId}
-              className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-lg"
-            >
-              {t.getStarted}
-            </Button>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                <span>Loading templates...</span>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <p className="text-red-600 mb-4">Failed to load templates: {error}</p>
+                <Button 
+                  onClick={() => window.location.reload()}
+                  variant="outline"
+                >
+                  Retry
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid gap-4 max-h-96 overflow-y-auto">
+                  {templates.map((template) => (
+                    <Card key={template.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+                              {template.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2">
+                              {template.description}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                {template.category}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handlePreviewTemplate(template)}
+                              className="flex items-center gap-2"
+                            >
+                              <Eye className="h-4 w-4" />
+                              Preview
+                            </Button>
+                            <Button
+                              onClick={() => handleSelectTemplate(template)}
+                              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white"
+                            >
+                              {t.getStarted}
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>
+
+      {/* Template Preview Modal */}
+      {previewTemplate && (
+        <TemplatePreview
+          template={previewTemplate}
+          onSelect={handleSelectTemplate}
+          onClose={() => setPreviewTemplate(null)}
+          language={language}
+        />
+      )}
     </div>
   );
 };

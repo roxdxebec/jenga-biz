@@ -245,20 +245,30 @@ const CombinedStrategyFlow = ({
     } else if (template) {
       // Template provided - create new strategy from template
       console.log('Creating strategy from template:', template);
+      
+      // Handle both database template format and legacy template format
+      const templateContent = template.template_config || template.content || {};
+      
       setStrategy({
         businessName: template.name || '',
-        vision: template.content?.vision || '',
-        mission: template.content?.mission || '',
-        targetMarket: template.content?.targetMarket || '',
-        revenueModel: template.content?.revenueModel || '',
-        valueProposition: template.content?.valueProposition || '',
-        keyPartners: template.content?.keyPartners || '',
-        marketingApproach: template.content?.marketingApproach || '',
-        operationalNeeds: template.content?.operationalNeeds || '',
-        growthGoals: template.content?.growthGoals || ''
+        vision: templateContent.vision || '',
+        mission: templateContent.mission || '',
+        targetMarket: templateContent.targetMarket || '',
+        revenueModel: templateContent.revenueModel || '',
+        valueProposition: templateContent.valueProposition || '',
+        keyPartners: templateContent.keyPartners || '',
+        marketingApproach: templateContent.marketingApproach || '',
+        operationalNeeds: templateContent.operationalNeeds || '',
+        growthGoals: templateContent.growthGoals || ''
       });
       setTemplateId(template.id || '');
       setTemplateName(template.name || '');
+      
+      // Show success toast when template is loaded
+      toast({
+        title: "Template Loaded",
+        description: `Successfully loaded ${template.name} template. You can now customize your business strategy.`,
+      });
     } else {
       // Start from scratch - clear everything
       console.log('Start from scratch - clearing strategy data');

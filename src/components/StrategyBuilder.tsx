@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Lightbulb, Target, Users, DollarSign, Star, Handshake, Megaphone, Wrench, TrendingUp, Globe, Home, Save, ArrowLeft } from 'lucide-react';
+import { Lightbulb, Target, Users, DollarSign, Star, Handshake, Megaphone, Wrench, TrendingUp, Globe, Home, Save, ArrowLeft, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import LanguageSelector from '@/components/LanguageSelector';
 import CountrySelector from '@/components/CountrySelector';
@@ -421,6 +421,14 @@ const StrategyBuilder = ({
         <p className="text-gray-600">
           {t.subtitle}
         </p>
+        {template && (
+          <div className="mt-4 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+            <FileText className="h-4 w-4 text-blue-600" />
+            <span className="text-sm text-blue-800">
+              Using template: <strong>{template.name}</strong>
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="space-y-6">

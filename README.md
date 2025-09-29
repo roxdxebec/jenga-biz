@@ -31,6 +31,8 @@ Environment
 
 Important routes
 - `/` — Landing page
+- `/pricing` — Pricing and plan selection
+- `/billing/return` — Payment return page (polls active subscription)
 - `/saas` — Ecosystem Enabler dashboard (hub_manager & admin roles)
 - `/super-admin` — Super-admin console (system settings & approvals)
 - `/b2c` — Entrepreneur/B2C area
@@ -55,6 +57,12 @@ Development notes
 - To add or modify system settings, we persist small flags to `app_settings` (key/value)
 - Add DB migrations under `supabase/migrations/` for any schema changes (e.g., `app_settings` or `pending_approvals`)
 - Audit-sensitive actions (role changes, approvals) should use stored procedures (e.g., `add_user_role_with_audit`) to enforce permission checks and create audit records
+
+Pricing & subscriptions (development)
+- Plans are served from the `subscriptions` edge function: `GET /subscriptions/plans`
+- Dev pricing uses KES with `Free = 0.00`, `Pro = 1.00`, `Premium = 1.00`
+- Subscribe from `/pricing` triggers Paystack initiation; upon completion you are redirected to `/billing/return`, which polls `GET /subscriptions/me` to confirm activation
+- Ensure `PAYSTACK_SECRET_KEY` is set for initiation and webhook verification during local/staging tests
 
 How to contribute
 - Open a branch, make changes, run `npm run lint` and ensure type checks

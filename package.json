@@ -15,6 +15,7 @@
     "test:performance": "node scripts/test-edge-functions.js --performance",
     "test:health": "node scripts/test-edge-functions.js --smoke",
     "report:performance": "cat performance-report.md",
+    "seed:templates": "node scripts/seed-business-templates.js",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:deploy": "supabase functions deploy --no-verify-jwt",

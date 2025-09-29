@@ -21,6 +21,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import CountrySelector from '@/components/CountrySelector';
 import { africanCountries } from '@/data/africanCountries';
+import { ProFeature } from '@/components/SubscriptionGate';
 
 interface Transaction {
   id: string;
@@ -351,14 +352,29 @@ const FinancialTracker = ({
                 >
                   Record New Payment
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={triggerCamera}
-                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                <ProFeature 
+                  feature="OCR Receipt Scanning"
+                  fallback={
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      disabled
+                      className="border-gray-200 text-gray-400"
+                      title="OCR scanning requires Pro subscription"
+                    >
+                      <Camera className="w-4 h-4" />
+                    </Button>
+                  }
                 >
-                  <Camera className="w-4 h-4" />
-                </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={triggerCamera}
+                    className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                </ProFeature>
                 <Button 
                   variant="outline" 
                   size="icon"
@@ -427,14 +443,29 @@ const FinancialTracker = ({
                 >
                   Record New Expense
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={triggerCamera}
-                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                <ProFeature 
+                  feature="OCR Receipt Scanning"
+                  fallback={
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      disabled
+                      className="border-gray-200 text-gray-400"
+                      title="OCR scanning requires Pro subscription"
+                    >
+                      <Camera className="w-4 h-4" />
+                    </Button>
+                  }
                 >
-                  <Camera className="w-4 h-4" />
-                </Button>
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={triggerCamera}
+                    className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                </ProFeature>
                 <Button 
                   variant="outline" 
                   size="icon"

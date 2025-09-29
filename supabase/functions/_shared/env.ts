@@ -8,6 +8,11 @@ export interface EnvironmentConfig {
   supabaseAnonKey: string;
   supabaseServiceRoleKey: string;
   resendApiKey?: string;
+  paystack?: {
+    secretKey: string;
+    publicKey?: string;
+    baseUrl: string;
+  };
   rateLimit?: {
     redis?: {
       url: string;
@@ -44,6 +49,16 @@ class Environment {
       ...requiredVars as Required<typeof requiredVars>,
       resendApiKey: Deno.env.get('RESEND_API_KEY'),
     };
+
+    // Optional Paystack config
+    const paystackSecret = Deno.env.get('PAYSTACK_SECRET_KEY');
+    if (paystackSecret) {
+      config.paystack = {
+        secretKey: paystackSecret,
+        publicKey: Deno.env.get('PAYSTACK_PUBLIC_KEY') || undefined,
+        baseUrl: Deno.env.get('PAYSTACK_BASE_URL') || 'https://api.paystack.co'
+      };
+    }
 
     // Optional rate limiting config
     const redisUrl = Deno.env.get('UPSTASH_REDIS_REST_URL');

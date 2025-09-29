@@ -56,6 +56,14 @@ const Landing = () => {
           <div className="flex justify-between items-center py-4">
             <img src="/jenga-biz-logo.png" alt="Jenga Biz Africa" className="h-10 w-auto" />
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/pricing')}
+                className="flex items-center gap-2 text-xs sm:text-sm"
+              >
+                Pricing
+              </Button>
               {!user ? (
                 <Button
                   variant="outline"
