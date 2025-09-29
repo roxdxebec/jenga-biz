@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,26 +12,19 @@ import {
   Settings, 
   Shield,
   BarChart3,
-  Globe2,
   PlusCircle 
 } from "lucide-react";
 import { InviteCodeManager } from "../auth/InviteCodeManager";
-import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { UserManagement } from "./UserManagement";
 import { HubsList } from './HubsList';
 import { Switch } from '@/components/ui/switch';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { PendingApprovalsList } from '../admin/PendingApprovalsList';
 
-interface UserRole {
-  role: string;
-  user_id: string;
-}
 
 export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
-  const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -82,8 +75,6 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
       const allowed = !!adminRole;
       setIsAdmin(allowed);
 
-      // store detailed roles
-      setUserRoles((data || []).map((r: any) => ({ role: r.role, user_id: user.id })));
       // determine super admin
       const superAdmin = (data || []).some((r: any) => r.role === 'super_admin');
       setIsSuperAdmin(superAdmin);

@@ -9,7 +9,7 @@ import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { FinancialInsightsDashboard } from '@/components/analytics/FinancialInsightsDashboard';
 import { ImpactMeasurementDashboard } from '@/components/analytics/ImpactMeasurementDashboard';
 import { AdminDashboard } from '@/components/dashboard/AdminDashboard';
-import { useHub } from '@/contexts/HubContext';
+
 import { useHubContext } from '@/hooks/useHubContext';
 import { useHubAnalytics } from '@/hooks/useHubAnalytics';
 import { ImpersonationBanner } from '@/components/ImpersonationBanner';

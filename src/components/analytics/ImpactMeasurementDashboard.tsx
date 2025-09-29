@@ -14,8 +14,7 @@ import {
   DollarSign, 
   BarChart3, 
   Target,
-  AlertTriangle,
-  CheckCircle
+  AlertTriangle
 } from 'lucide-react';
 
 export const ImpactMeasurementDashboard = () => {

@@ -32,8 +32,8 @@ function Calendar({
     fr: ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa']
   };
 
-  const months = monthTranslations[language] || monthTranslations.en;
-  const weekdays = dayTranslations[language] || dayTranslations.en;
+  const months = monthTranslations[language as keyof typeof monthTranslations] || monthTranslations.en;
+  const weekdays = dayTranslations[language as keyof typeof dayTranslations] || dayTranslations.en;
 
   const formatCaption = React.useCallback((date: Date) => {
     const month = months[date.getMonth()];
