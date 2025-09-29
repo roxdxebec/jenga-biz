@@ -1,11 +1,16 @@
--- Seed default subscription plans (idempotent)
--- Creates a unique index on lower(name) to prevent duplicates across environments
 
--- Ensure prerequisite table exists (created by 20250929_add_subscriptions.sql)
--- This seed script is safe to run even if rerun.
 
-create unique index if not exists uq_subscription_plans_lower_name
-on public.subscription_plans (lower(name));
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE schemaname = 'public'
+      AND tablename = 'subscription_plans'
+      AND indexname = 'uq_subscription_plans_lower_name'
+  ) THEN
+    EXECUTE 'CREATE UNIQUE INDEX uq_subscription_plans_lower_name ON public.subscription_plans (lower(name))';
+  END IF;
+END $$;
 
 -- Free plan
 insert into public.subscription_plans (name, description, price, currency, billing_cycle, features, is_active)
@@ -28,7 +33,7 @@ values (
   }'::jsonb,
   true
 )
-on conflict on constraint uq_subscription_plans_lower_name do nothing;
+on conflict (lower(name)) do nothing;
 
 -- Pro plan
 insert into public.subscription_plans (name, description, price, currency, billing_cycle, features, is_active)
@@ -51,7 +56,7 @@ values (
   }'::jsonb,
   true
 )
-on conflict on constraint uq_subscription_plans_lower_name do nothing;
+on conflict (lower(name)) do nothing;
 
 -- Premium plan
 insert into public.subscription_plans (name, description, price, currency, billing_cycle, features, is_active)
@@ -75,4 +80,4 @@ values (
   }'::jsonb,
   true
 )
-on conflict on constraint uq_subscription_plans_lower_name do nothing;
+on conflict (lower(name)) do nothing;

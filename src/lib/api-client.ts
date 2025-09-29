@@ -458,6 +458,45 @@ class EdgeFunctionsApiClient {
     return res.data;
   }
 
+  async createPlan(plan: {
+    name: string;
+    description?: string;
+    price: number;
+    currency: string;
+    billing_cycle: string;
+    features: Record<string, any>;
+    is_active: boolean;
+  }): Promise<any> {
+    const res = await this.request<ApiResponse<any>>('subscriptions/plans', {
+      method: 'POST',
+      body: JSON.stringify(plan)
+    });
+    return res.data;
+  }
+
+  async updatePlan(planId: string, updates: Partial<{
+    name: string;
+    description?: string;
+    price: number;
+    currency: string;
+    billing_cycle: string;
+    features: Record<string, any>;
+    is_active: boolean;
+  }>): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`subscriptions/plans?id=${planId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates)
+    });
+    return res.data;
+  }
+
+  async deletePlan(planId: string): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`subscriptions/plans?id=${planId}`, {
+      method: 'DELETE'
+    });
+    return res.data;
+  }
+
   // ==========================================
   // Invite Codes API
   // ==========================================

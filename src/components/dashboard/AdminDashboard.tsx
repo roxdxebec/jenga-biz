@@ -12,7 +12,8 @@ import {
   Settings, 
   Shield,
   BarChart3,
-  PlusCircle 
+  PlusCircle,
+  CreditCard
 } from "lucide-react";
 import { InviteCodeManager } from "../auth/InviteCodeManager";
 import { UserManagement } from "./UserManagement";
@@ -20,6 +21,7 @@ import { HubsList } from './HubsList';
 import { Switch } from '@/components/ui/switch';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { PendingApprovalsList } from '../admin/PendingApprovalsList';
+import { SubscriptionPlansManager } from '../admin/SubscriptionPlansManager';
 
 
 export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
@@ -289,6 +291,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
               <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>
+            {isSuperAdmin && (
+              <TabsTrigger value="subscriptions" className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                Subscription Plans
+              </TabsTrigger>
+            )}
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Analytics
@@ -350,6 +358,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {isSuperAdmin && (
+            <TabsContent value="subscriptions" className="space-y-6">
+              <SubscriptionPlansManager />
+            </TabsContent>
+          )}
 
           <TabsContent value="analytics" className="space-y-6">
             {/* Super Admin: list of organizations (hubs) for impersonation */}

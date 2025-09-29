@@ -20,35 +20,51 @@ create index if not exists idx_template_permissions_tier on public.template_perm
 create index if not exists idx_template_permissions_active on public.template_permissions(is_active);
 
 -- Maintain updated_at
-create trigger if not exists trg_template_permissions_set_updated
-before update on public.template_permissions
-for each row execute function public.set_updated_at();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'trg_template_permissions_set_updated'
+  ) THEN
+    EXECUTE 'CREATE TRIGGER trg_template_permissions_set_updated BEFORE UPDATE ON public.template_permissions FOR EACH ROW EXECUTE FUNCTION public.set_updated_at()';
+  END IF;
+END $$;
 
 -- Enable RLS
 alter table public.template_permissions enable row level security;
 
 -- Public (anon) can select only active permissions
-create policy if not exists template_permissions_select_anon
-on public.template_permissions
-for select
-to anon
-using (is_active = true);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'template_permissions' AND policyname = 'template_permissions_select_anon'
+  ) THEN
+    EXECUTE 'CREATE POLICY template_permissions_select_anon ON public.template_permissions FOR SELECT TO anon USING (is_active = true)';
+  END IF;
+END $$;
 
 -- Authenticated can select active permissions as well
-create policy if not exists template_permissions_select_auth
-on public.template_permissions
-for select
-to authenticated
-using (is_active = true);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'template_permissions' AND policyname = 'template_permissions_select_auth'
+  ) THEN
+    EXECUTE 'CREATE POLICY template_permissions_select_auth ON public.template_permissions FOR SELECT TO authenticated USING (is_active = true)';
+  END IF;
+END $$;
 
 -- Only super admins can insert/update/delete
 -- relies on helper function public.is_super_admin(user_id uuid) returning boolean
-create policy if not exists template_permissions_modify_super_admin
-on public.template_permissions
-for all
-to authenticated
-using (public.is_super_admin(auth.uid()))
-with check (public.is_super_admin(auth.uid()));
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'template_permissions' AND policyname = 'template_permissions_modify_super_admin'
+  ) THEN
+    EXECUTE 'CREATE POLICY template_permissions_modify_super_admin ON public.template_permissions FOR ALL TO authenticated USING (public.is_super_admin(auth.uid())) WITH CHECK (public.is_super_admin(auth.uid()))';
+  END IF;
+END $$;
 
 -- Optional: seed example mappings (idempotent, safe during development)
 -- Note: This section assumes some templates may already exist. It is safe if none do.

@@ -37,24 +37,32 @@ for each row execute function public.set_updated_at();
 alter table public.business_templates enable row level security;
 
 -- Public/anon can select only active templates
-create policy if not exists business_templates_select_anon
-on public.business_templates
-for select
-to anon
-using (is_active = true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'business_templates' AND policyname = 'business_templates_select_anon'
+  ) THEN
+    EXECUTE 'CREATE POLICY business_templates_select_anon ON public.business_templates FOR SELECT TO anon USING (is_active = true)';
+  END IF;
+END $$;
 
 -- Authenticated can select active templates too
-create policy if not exists business_templates_select_auth
-on public.business_templates
-for select
-to authenticated
-using (is_active = true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'business_templates' AND policyname = 'business_templates_select_auth'
+  ) THEN
+    EXECUTE 'CREATE POLICY business_templates_select_auth ON public.business_templates FOR SELECT TO authenticated USING (is_active = true)';
+  END IF;
+END $$;
 
 -- Only super admins can insert/update/delete templates
 -- relies on helper function public.is_super_admin(user_id uuid) returning boolean
-create policy if not exists business_templates_modify_super_admin
-on public.business_templates
-for all
-to authenticated
-using (public.is_super_admin(auth.uid()))
-with check (public.is_super_admin(auth.uid()));
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'business_templates' AND policyname = 'business_templates_modify_super_admin'
+  ) THEN
+    EXECUTE 'CREATE POLICY business_templates_modify_super_admin ON public.business_templates FOR ALL TO authenticated USING (public.is_super_admin(auth.uid())) WITH CHECK (public.is_super_admin(auth.uid()))';
+  END IF;
+END $$;
