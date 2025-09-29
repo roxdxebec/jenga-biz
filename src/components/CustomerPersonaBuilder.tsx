@@ -9,9 +9,17 @@ import { Badge } from '@/components/ui/badge';
 import { Lock, Crown, Users, ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const CustomerPersonaBuilder = ({ onBack, isPro = false }) => {
+const CustomerPersonaBuilder = ({ onBack, isPro = false }: { onBack: () => void; isPro?: boolean }) => {
   const [selectedPersona, setSelectedPersona] = useState('');
-  const [personaData, setPersonaData] = useState({
+  const [personaData, setPersonaData] = useState<{
+    name: string;
+    ageRange: string;
+    incomeLevel: string;
+    values: string[];
+    painPoints: string[];
+    buyingChannel: string;
+    behaviorSummary: string;
+  }>({
     name: '',
     ageRange: '',
     incomeLevel: '',
@@ -124,7 +132,7 @@ const CustomerPersonaBuilder = ({ onBack, isPro = false }) => {
     'Physical stores', 'Group buying', 'Door-to-door', 'Wholesale markets'
   ];
 
-  const handlePersonaSelect = (value) => {
+  const handlePersonaSelect = (value: string) => {
     setSelectedPersona(value);
     if (value === 'custom') {
       setPersonaData({
@@ -136,8 +144,8 @@ const CustomerPersonaBuilder = ({ onBack, isPro = false }) => {
         buyingChannel: '',
         behaviorSummary: ''
       });
-    } else if (personaTemplates[value]) {
-      setPersonaData(personaTemplates[value]);
+    } else if (personaTemplates[value as keyof typeof personaTemplates]) {
+      setPersonaData(personaTemplates[value as keyof typeof personaTemplates]);
     }
   };
 

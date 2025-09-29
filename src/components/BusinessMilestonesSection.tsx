@@ -120,7 +120,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         ]
       }
     };
-    return stageMilestones[language]?.[stage] || stageMilestones.en[stage] || [];
+    return stageMilestones[language as keyof typeof stageMilestones]?.[stage as keyof typeof stageMilestones.en] || stageMilestones.en[stage as keyof typeof stageMilestones.en] || [];
   };
 
   useEffect(() => {
@@ -246,7 +246,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
   const statusOptions = [
     { value: 'not-started', label: t.notStarted, color: 'bg-gray-100 text-gray-700' },
@@ -368,19 +368,11 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     });
   };
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'complete': return 'default';
-      case 'in-progress': return 'secondary';
-      case 'overdue': return 'destructive';
-      default: return 'outline';
-    }
-  };
 
   const suggestedMilestones = getStageSpecificMilestones(businessStage);
   const existingMilestoneTitles = milestones.map(m => m.title.toLowerCase());
   const availableSuggestions = suggestedMilestones.filter(
-    suggestion => !existingMilestoneTitles.includes(suggestion.toLowerCase())
+    (suggestion: string) => !existingMilestoneTitles.includes(suggestion.toLowerCase())
   );
 
   const currentStage = businessStages.find(stage => stage.value === businessStage);
@@ -511,7 +503,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {milestones.map((milestone, index) => (
+            {milestones.map((milestone: any, index: number) => (
               <div
                 key={milestone.id}
                 className="relative p-5 border rounded-xl bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow"
@@ -550,7 +542,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                           {statusOptions.find(opt => opt.value === milestone.status)?.label}
                         </Badge>
                         <Button
-                          onClick={() => handleDeleteMilestone(milestone.id)}
+                          onClick={() => milestone.id && handleDeleteMilestone(milestone.id)}
                           size="sm"
                           variant="ghost"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1"
@@ -576,7 +568,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                             <Calendar
                               mode="single"
                               selected={milestone.target_date ? new Date(milestone.target_date) : undefined}
-                              onSelect={(date) => handleUpdateMilestoneDate(milestone.id, date)}
+                              onSelect={(date) => milestone.id && handleUpdateMilestoneDate(milestone.id, date)}
                               initialFocus
                             />
                           </PopoverContent>
@@ -584,7 +576,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       </div>
                       <Select
                         value={milestone.status}
-                        onValueChange={(value) => handleUpdateMilestoneStatus(milestone.id, value)}
+                        onValueChange={(value) => milestone.id && handleUpdateMilestoneStatus(milestone.id, value)}
                       >
                         <SelectTrigger className="w-40 border-orange-200 hover:border-orange-300">
                           <SelectValue />
@@ -601,7 +593,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                         <Button
                           onClick={() => addToCalendar({
                             title: milestone.title,
-                            startDate: new Date(milestone.target_date),
+                            startDate: milestone.target_date ? new Date(milestone.target_date) : new Date(),
                             description: `Business milestone: ${milestone.title}`
                           })}
                           size="sm"

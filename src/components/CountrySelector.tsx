@@ -1,6 +1,6 @@
 
 import { Globe } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { africanCountries, popularBusinessCountries, getCountryName } from '@/data/africanCountries';
 
 interface CountrySelectorProps {
@@ -45,7 +45,7 @@ const CountrySelector = ({
     }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
   const currentCountryInfo = africanCountries.find(c => c.code === currentCountry) || africanCountries[0];
 
   // Get countries to display

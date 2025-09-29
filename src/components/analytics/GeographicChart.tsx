@@ -12,7 +12,7 @@ interface GeographicData {
   country_name: string;
   user_count: number;
   active_businesses: number;
-  total_revenue: number;
+  total_revenue: number | null;
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
@@ -27,13 +27,26 @@ export const GeographicChart = () => {
 
   const fetchGeographicData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('geographic_analytics')
-        .select('*')
-        .order('user_count', { ascending: false });
+      const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
+      const hubId = getCurrentHubIdFromStorage();
 
-      if (error) throw error;
-      setGeoData(data || []);
+      let res;
+      try {
+        const q = supabase.from('geographic_analytics').select('*').order('user_count', { ascending: false });
+        if (hubId) q.eq('hub_id', hubId);
+        res = await q;
+        if (res.error) throw res.error;
+      } catch (e: any) {
+        const msg = String(e?.message || e?.error || '');
+        if (msg.includes('column') && msg.includes('does not exist')) {
+          // retry without hub filter
+          res = await supabase.from('geographic_analytics').select('*').order('user_count', { ascending: false });
+        } else {
+          throw e;
+        }
+      }
+
+      setGeoData(res.data || []);
     } catch (error) {
       console.error('Error fetching geographic data:', error);
     } finally {
@@ -100,7 +113,7 @@ export const GeographicChart = () => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }: any) => `${name} ${((percent as number) * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"

@@ -1,6 +1,5 @@
-import React from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Clock, CheckCircle, XCircle, Info } from 'lucide-react';
+import { Clock, CheckCircle } from 'lucide-react';
 import { useApprovalStatus } from '@/hooks/useApprovalStatus';
 
 interface ApprovalStatusBannerProps {

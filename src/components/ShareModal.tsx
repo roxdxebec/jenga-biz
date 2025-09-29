@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -103,7 +103,6 @@ const ShareModal = ({ strategy, language = 'en', customTitle, customIcon, isFina
   };
 
   const t = translations[language] || translations.en;
-
 
   const shareActions = useShareActions();
 

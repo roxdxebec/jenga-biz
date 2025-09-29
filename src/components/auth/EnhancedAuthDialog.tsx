@@ -177,8 +177,8 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
             user_id: newUser.id,
             user_email: signupData.email,
             full_name: signupData.fullName,
-            invite_code: signupData.inviteCode || null
-          });
+            invite_code: signupData.inviteCode || undefined
+          }) as { data: { status: string } | null; error: any };
 
           if (rpcError) {
             console.error('Organization signup error:', rpcError);
@@ -192,7 +192,8 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
           }
 
           // Handle the result based on approval status
-          if (result?.status === 'approved') {
+          const status = result && typeof result === 'object' && 'status' in result ? (result as any).status : null;
+          if (status === 'approved') {
             toast({
               title: 'Organization Account Approved!',
               description: 'Your ecosystem enabler account has been automatically approved. Welcome!',
@@ -202,7 +203,7 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
               onOpenChange(false);
               window.location.href = '/profile';
             }, 1000);
-          } else if (result?.status === 'pending') {
+          } else if (status === 'pending') {
             toast({
               title: 'Account Pending Approval',
               description: 'Your ecosystem enabler account is pending approval by a super admin. You will be notified when approved.',
