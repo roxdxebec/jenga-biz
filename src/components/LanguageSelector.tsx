@@ -1,6 +1,6 @@
 
 import { Globe } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
 interface LanguageSelectorProps {
   currentLanguage: string;
@@ -22,8 +22,7 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange }: LanguageSelecto
     fr: { language: 'Langue' }
   };
 
-  const t = translations[currentLanguage] || translations.en;
-  const currentLang = languages.find(lang => lang.code === currentLanguage) || languages[0];
+  const t = translations[currentLanguage as keyof typeof translations] || translations.en;
 
   return (
     <Select value={currentLanguage} onValueChange={onLanguageChange}>
