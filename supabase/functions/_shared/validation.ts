@@ -125,6 +125,55 @@ export const resetPasswordSchema = z.object({
 });
 
 // ==========================================
+// Invite Code Schemas
+// ==========================================
+
+export const createInviteCodeSchema = z.object({
+  invited_email: emailSchema,
+  account_type: z.enum(['business', 'organization']).default('business'),
+  // Optional hub context; when provided, associates the invite with a hub
+  hub_id: z.string().uuid().optional(),
+  // Optional explicit expiry in ISO string; default will be applied server-side
+  expires_at: z.string().datetime().optional(),
+});
+
+export const validateInviteCodeQuerySchema = z.object({
+  code: z.string().min(6),
+});
+
+export const consumeInviteCodeSchema = z.object({
+  code: z.string().min(6),
+  user_id: uuidSchema,
+});
+
+// ==========================================
+// Subscription & Payments Schemas
+// ==========================================
+
+export const subscriptionPlanSchema = z.object({
+  name: z.string().min(2).max(100),
+  description: z.string().max(500).optional(),
+  price: z.number().nonnegative(),
+  currency: z.string().length(3).default('KES'),
+  billing_cycle: z.enum(['monthly', 'yearly']).default('monthly'),
+  features: z.record(z.unknown()).default({}),
+  is_active: z.boolean().default(true),
+});
+
+export const updateSubscriptionPlanSchema = subscriptionPlanSchema.partial();
+
+export const assignSubscriptionSchema = z.object({
+  user_id: uuidSchema,
+  plan_id: uuidSchema,
+});
+
+// Paystack initiation schema
+export const paystackInitiateSchema = z.object({
+  plan_id: uuidSchema,
+  callback_url: z.string().url().optional(),
+});
+
+// ==========================================
 // Utility functions
 // ==========================================
 

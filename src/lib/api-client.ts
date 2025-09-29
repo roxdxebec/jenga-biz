@@ -429,6 +429,65 @@ class EdgeFunctionsApiClient {
       `financial-management/ocr?${queryParams.toString()}`
     );
   }
+
+  // ==========================================
+  // Subscriptions API
+  // ==========================================
+  async listPlans(): Promise<any[]> {
+    const res = await this.request<ApiResponse<any[]>>('subscriptions/plans');
+    // Some endpoints return plain arrays; normalize
+    return (res as any)?.data ?? (res as unknown as any[]);
+  }
+
+  async getMySubscription(): Promise<any | null> {
+    const res = await this.request<ApiResponse<any | null>>('subscriptions/me');
+    return (res as any)?.data ?? (res as unknown as any | null);
+  }
+
+  async initiatePaystack(planId: string, callbackUrl?: string): Promise<{
+    authorization_url: string;
+    access_code: string;
+    reference: string;
+  }> {
+    const payload: Record<string, unknown> = { plan_id: planId };
+    if (callbackUrl) payload.callback_url = callbackUrl;
+    const res = await this.request<ApiResponse<{ authorization_url: string; access_code: string; reference: string }>>(
+      'subscriptions/paystack/initiate',
+      { method: 'POST', body: JSON.stringify(payload) }
+    );
+    return res.data;
+  }
+
+  // ==========================================
+  // Invite Codes API
+  // ==========================================
+  async validateInviteCode(code: string): Promise<{ valid: boolean; invite?: { code: string; account_type: string; invited_email: string; expires_at: string } }> {
+    const url = `invite-codes/validate?code=${encodeURIComponent(code)}`;
+    const res = await this.request<ApiResponse<{ valid: boolean; invite?: any }>>(url);
+    return (res as any)?.data ?? (res as any);
+  }
+
+  async consumeInviteCode(code: string, userId: string): Promise<{
+    consumed: boolean;
+    linked_hub_id: string | null;
+    assigned_plan: 'free' | 'premium';
+    subscription_assigned: boolean;
+  }> {
+    const res = await this.request<ApiResponse<any>>('invite-codes/consume', {
+      method: 'POST',
+      body: JSON.stringify({ code, user_id: userId })
+    });
+    return res.data;
+  }
+
+  // ==========================================
+  // Business Templates API
+  // ==========================================
+  async listTemplates(tier?: 'free' | 'pro' | 'premium'): Promise<any[]> {
+    const qs = tier ? `?tier=${encodeURIComponent(tier)}` : '';
+    const res = await this.request<ApiResponse<any[]>>(`business-templates${qs}`);
+    return (res as any)?.data ?? (res as unknown as any[]);
+  }
 }
 
 // Create singleton instance

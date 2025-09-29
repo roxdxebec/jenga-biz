@@ -114,6 +114,63 @@ Handles transactions, financial summaries, and OCR processing:
 - Transaction categorization
 - Audit trail for all financial operations
 
+### Invite Codes (`invite-codes/`)
+
+Implements the invite code system for organizations (hubs) inviting entrepreneurs and super admins inviting organizations.
+
+**Endpoints:**
+- `POST /invite-codes` - Create an invite code (admin/hub_manager; super_admin can create organization invites)
+- `GET /invite-codes/validate?code=...` - Validate an invite code (public)
+- `POST /invite-codes/consume` - Consume an invite code after signup; links hub association when applicable
+- `GET /invite-codes/health` - Health check
+
+**Features:**
+- RBAC enforced: hub managers/admins can create entrepreneur invites only; super admins can create both
+- Invite validation with expiry and single-use enforcement
+- On consumption: if invite originated from an organization/hub, the user is linked to that hub as entrepreneur. If subscription tables exist, the function also auto-assigns the Premium plan using a service-role client (idempotent). The response includes assigned_plan and subscription_assigned flags.
+- Standardized responses, input validation (Zod), and CORS handling
+
+### Subscriptions (`subscriptions/`)
+
+REST API for managing subscription plans and user subscriptions. Note: Requires DB tables `subscription_plans` and `user_subscriptions`.
+
+**Plan Endpoints:**
+- `GET /subscriptions/plans` - List active plans (public)
+- `POST /subscriptions/plans` - Create a plan (super_admin only)
+- `PATCH /subscriptions/plans?id=UUID` - Update a plan (super_admin only)
+- `DELETE /subscriptions/plans?id=UUID` - Soft-delete (deactivate) a plan (super_admin only)
+
+**User Subscription Endpoints:**
+- `POST /subscriptions/assign` - Assign a plan to a user (admin/super_admin)
+- `GET /subscriptions/me` - Get current user’s active subscription
+
+**Payment:**
+- `POST /subscriptions/paystack/initiate` - Initialize a Paystack transaction for the authenticated user. Body: `{ plan_id: UUID, callback_url?: string }`. Returns `{ authorization_url, access_code, reference }`.
+- `POST /subscriptions/paystack/webhook` - Paystack webhook endpoint. Verifies signature and, on `charge.success`, activates a user subscription using `metadata.user_id` and `metadata.plan_id`.
+
+**Notes:**
+- Endpoints return clear errors if the required tables are not yet present.
+- Plan management is restricted to super admins initially to keep governance tight.
+- Period handling is naive for now; real billing periods will be updated via Paystack webhooks later.
+
+### Business Templates (`business-templates/`)
+Provides CRUD for business templates used to drive dynamic forms and workflows.
+
+**Endpoints:**
+- `GET /business-templates` - List active templates (public). Optional query: `?tier=free|pro|premium` to filter by subscription tier via `template_permissions`.
+- `POST /business-templates` - Create template (super admin only)
+- `PATCH /business-templates?id=UUID` - Update template (super admin only)
+- `DELETE /business-templates?id=UUID` - Soft-delete (deactivate) template (super admin only)
+- `GET /business-templates/health` - Health check
+
+**Notes:**
+- Templates include: `name`, `description`, `category`, `template_config` (JSON), `version`, `is_active`.
+- Public listing is limited to `is_active=true` templates.
+- Permissions: `template_permissions` table maps templates to tiers. During development, if no permissions are defined, all active templates are returned; otherwise filtering by `tier` is applied.
+- Migrations:
+  - `20250929_03_business_templates.sql` creates `business_templates` with RLS.
+  - `20250929_04_template_permissions.sql` creates `template_permissions` with RLS.
+
 ## 🔒 Security Features
 
 ### Authentication & Authorization
@@ -318,3 +375,13 @@ curl -X GET \
 ---
 
 For questions or issues, check the function logs in the Supabase Dashboard or run local tests to debug problems.
+
+## 📦 Default Subscription Plans
+
+A migration seeds default plans (idempotent): Free, Pro, and Premium.
+
+- Migration file: supabase/migrations/20250929_02_seed_default_subscription_plans.sql
+- Uniqueness is enforced on lower(name) to avoid duplicates across environments.
+- Features JSON is permissive during development: all entrepreneur features enabled; limits included for guidance only.
+
+You can list active plans via GET /subscriptions/plans after running migrations.
