@@ -17,9 +17,16 @@ import { saveProfileForUser } from '@/lib/profile';
 interface EnhancedAuthDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultTab?: 'login' | 'signup';
 }
 
-export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogProps) {
+export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }: EnhancedAuthDialogProps) {
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(defaultTab);
+
+  // Update active tab when defaultTab prop changes
+  useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
   const [isLoading, setIsLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({
@@ -295,7 +302,11 @@ export function EnhancedAuthDialog({ open, onOpenChange }: EnhancedAuthDialogPro
           <DialogTitle className="text-center text-foreground">Welcome to Jenga Biz Africa</DialogTitle>
         </DialogHeader>
         
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={(value) => setActiveTab(value as 'login' | 'signup')} 
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
