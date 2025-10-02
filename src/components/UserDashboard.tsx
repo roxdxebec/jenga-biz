@@ -609,6 +609,12 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Strategies</h2>
+            {profile?.account_type !== 'organization' && (
+              <Button onClick={handleNewStrategy}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Strategy
+              </Button>
+            )}
           </div>
 
           {loading ? (
