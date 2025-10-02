@@ -60,30 +60,78 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
 
   const checkAdminStatus = async () => {
     if (!user) {
+      console.log('No user found, setting isAdmin to null');
       setIsAdmin(null);
       return;
     }
-
+  
+    console.log('Checking admin status for user:', {
+      userId: user.id,
+      email: user.email,
+      currentTime: new Date().toISOString()
+    });
+  
     try {
+      // Log the raw query we're about to make
+      console.log('Querying user_roles for roles: admin, super_admin, hub_manager');
+      
       const { data, error } = await supabase
         .from('user_roles')
-        .select('role')
+        .select('*')  // Select all columns for debugging
         .eq('user_id', user.id)
         .in('role', ['admin', 'super_admin', 'hub_manager']);
-
-      if (error) throw error;
-
-      const adminRole = data.find(role => ['admin', 'super_admin', 'hub_manager'].includes(role.role));
+  
+      if (error) {
+        console.error('Error fetching user roles:', {
+          error,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        throw error;
+      }
+  
+      console.log('Fetched roles from database:', {
+        roles: data,
+        count: data?.length || 0,
+        hasSuperAdmin: data?.some(r => r.role === 'super_admin')
+      });
+  
+      // Log each role separately
+      data?.forEach((role, index) => {
+        console.log(`Role ${index + 1}:`, {
+          id: role.id,
+          role: role.role,
+          hub_id: role.hub_id,
+          created_at: role.created_at
+        });
+      });
+  
+      const adminRole = data?.find(role => 
+        ['admin', 'super_admin', 'hub_manager'].includes(role.role)
+      );
+      
       const allowed = !!adminRole;
-      setIsAdmin(allowed);
-
-      // determine super admin
-      const superAdmin = (data || []).some((r: any) => r.role === 'super_admin');
-      setIsSuperAdmin(superAdmin);
-      // load system settings
-      await loadSettings();
-
+      console.log('User has admin access:', allowed, 'Role:', adminRole?.role);
+  
+      // Check specifically for super_admin
+      const superAdmin = data?.some(r => r.role === 'super_admin');
+      console.log('Is super admin:', superAdmin);
+      setIsSuperAdmin(!!superAdmin);
+  
       if (!allowed) {
+        console.warn('User does not have admin access. Available roles:', 
+          data?.map(r => r.role).join(', ') || 'none');
+      }
+  
+      setIsAdmin(allowed);
+  
+      // Load system settings if admin
+      if (allowed) {
+        console.log('Loading system settings...');
+        await loadSettings();
+      } else {
         toast({
           title: "Access Denied",
           description: "You don't have admin privileges. Please contact support.",
@@ -91,8 +139,16 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
         });
       }
     } catch (error) {
-      console.error('Error checking admin status:', error);
-      setIsAdmin(false);
+      console.error('Error in checkAdminStatus:', {
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      toast({
+        title: "Error",
+        description: "Failed to verify admin status. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 

@@ -97,6 +97,7 @@ class EdgeFunctionsApiClient {
 
   constructor() {
     const root = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
+    console.log(root);
     this.baseUrl = `${root}/functions/v1`;
   }
 
@@ -433,12 +434,135 @@ class EdgeFunctionsApiClient {
   // ==========================================
   // Subscriptions API
   // ==========================================
-  async listPlans(): Promise<any[]> {
-    const res = await this.request<ApiResponse<any[]>>('subscriptions/plans');
-    // Some endpoints return plain arrays; normalize
-    return (res as any)?.data ?? (res as unknown as any[]);
+  /**
+   * Make a public API request without requiring authentication
+   */
+  public async publicRequest<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    try {
+      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
+      const headers = {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+        'Authorization': `Bearer ${anonKey}`,
+      };
+
+      const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+        ...options,
+        headers: {
+          ...headers,
+          ...(options.headers || {}),
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = errorText ? JSON.parse(errorText) : null;
+        } catch {
+          throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        }
+        
+        throw new ApiError({
+          code: `http_${response.status}`,
+          message: errorData?.message || errorData?.error?.message || 'Request failed',
+          details: errorData
+        });
+      }
+
+      const text = await response.text();
+      if (!text) {
+        throw new ApiError({
+          code: 'empty_response',
+          message: 'Received empty response from server'
+        });
+      }
+      return JSON.parse(text);
+    } catch (error) {
+      console.error('Public request failed:', error);
+      if (error instanceof ApiError) throw error;
+      throw new ApiError({
+        code: 'request_failed',
+        message: error instanceof Error ? error.message : 'Request failed',
+        details: error
+      });
+    }
   }
 
+  /**
+   * List all available subscription plans
+   * This works for both authenticated and unauthenticated users
+   */
+  async listPlans(): Promise<Array<{
+    id: string;
+    name: string;
+    description?: string;
+    price: number;
+    currency: string;
+    billing_cycle: string;
+    features: Record<string, any>;
+    is_active: boolean;
+  }>> {
+    try {
+      // First try public request
+      const response = await this.publicRequest<{
+        data: Array<{
+          id: string;
+          name: string;
+          description?: string;
+          price: number;
+          currency: string;
+          billing_cycle: string;
+          features: Record<string, any>;
+          is_active: boolean;
+        }>;
+      }>('subscriptions/plans');
+      
+      // Handle different response formats
+      if (Array.isArray(response)) {
+        return response.filter(plan => plan.is_active !== false);
+      }
+      if (response && Array.isArray(response.data)) {
+        return response.data.filter((plan: any) => plan.is_active !== false);
+      }
+      
+      throw new Error('Unexpected response format from server');
+    } catch (error) {
+      console.error('Failed to fetch plans with public request, falling back to authenticated request:', error);
+      
+      // Fallback to authenticated request if public fails
+      try {
+        const response = await this.request<{
+          data: Array<{
+            id: string;
+            name: string;
+            description?: string;
+            price: number;
+            currency: string;
+            billing_cycle: string;
+            features: Record<string, any>;
+            is_active: boolean;
+          }>;
+        }>('subscriptions/plans');
+
+        if (Array.isArray(response)) {
+          return response.filter(plan => plan.is_active !== false);
+        }
+        if (response && Array.isArray(response.data)) {
+          return response.data.filter((plan: any) => plan.is_active !== false);
+        }
+        
+        throw new Error('Unexpected response format from server');
+      } catch (innerError) {
+        console.error('Failed to fetch plans with authenticated request:', innerError);
+        // Return empty array instead of throwing to prevent UI crash
+        return [];
+      }
+    }
+  }
   async getMySubscription(): Promise<any | null> {
     const res = await this.request<ApiResponse<any | null>>('subscriptions/me');
     return (res as any)?.data ?? (res as unknown as any | null);

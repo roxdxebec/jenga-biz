@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "331d5ed0-1740-497e-9940-bedc986bfcd9",
+		"name": "Supabase User Management (FULL URLs)",
+		"description": "Full Postman collection for user-management Edge Function (Auth + all endpoints) — each request has complete URL fields.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26631626",
+		"_collection_link": "https://codezuka.postman.co/workspace/Jengabiz-API~b4a674b4-1cd5-413f-bc92-dcb311cd9c11/collection/26631626-331d5ed0-1740-497e-9940-bedc986bfcd9?action=share&source=collection_link&creator=26631626"
+	},
+	"item": [
+		{
+			"name": "Auth - Login (email + password)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"try {",
+							"  const jsonData = pm.response.json();",
+							"  if (jsonData.access_token) {",
+							"    pm.environment.set('access_token', jsonData.access_token);",
+							"    pm.collectionVariables.set('access_token', jsonData.access_token);",
+							"    console.log('access_token saved to environment and collection variables');",
+							"  } else {",
+							"    console.warn('No access_token in response');",
+							"  }",
+							"} catch (e) {",
+							"  console.error('Failed to parse login response', e);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"{{test_user_email}}\",\n  \"password\": \"{{test_user_password}}\"\n}"
+				},
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/auth/v1/token?grant_type=password",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"auth",
+						"v1",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "password"
+						}
+					]
+				},
+				"description": "Exchange email/password for an access_token. Run this first."
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check (GET /functions/v1/user-management/health)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management/health",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management",
+						"health"
+					]
+				},
+				"description": "Optional: add /health route in your function to confirm correct deployment."
+			},
+			"response": []
+		},
+		{
+			"name": "Get current user profile (GET /user-management/me)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management/me",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management",
+						"me"
+					]
+				},
+				"description": "Returns the current user's profile and roles. Requires a valid user access_token."
+			},
+			"response": []
+		},
+		{
+			"name": "Update my profile (PATCH /user-management/me)",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"full_name\": \"Updated Test User\",\n  \"organization_name\": \"New Org\"\n}"
+				},
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management/me",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management",
+						"me"
+					]
+				},
+				"description": "Patch your own profile. Validates against updateProfileSchema."
+			},
+			"response": []
+		},
+		{
+			"name": "Get users list (GET /user-management) - admin only",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management?page={{page}}&limit={{limit}}&search={{search}}&role={{role}}&accountType={{accountType}}",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{page}}"
+						},
+						{
+							"key": "limit",
+							"value": "{{limit}}"
+						},
+						{
+							"key": "search",
+							"value": "{{search}}"
+						},
+						{
+							"key": "role",
+							"value": "{{role}}"
+						},
+						{
+							"key": "accountType",
+							"value": "{{accountType}}"
+						}
+					]
+				},
+				"description": "Admin-only. Supports pagination and filters (page, limit, search, role, accountType)."
+			},
+			"response": []
+		},
+		{
+			"name": "Update user role (POST /user-management/roles) - admin only",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"{{target_user_id}}\",\n  \"role\": \"entrepreneur\",\n  \"action\": \"add\"\n}"
+				},
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management/roles",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management",
+						"roles"
+					]
+				},
+				"description": "Add or remove a role. Use action: 'add' or 'remove'. Admin required."
+			},
+			"response": []
+		},
+		{
+			"name": "Admin update user (PATCH /user-management?userId=uuid) - super admin only",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"full_name\": \"Admin Updated Name\",\n  \"organization_name\": \"Admin Org\"\n}"
+				},
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management?userId={{target_user_id}}",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{target_user_id}}"
+						}
+					]
+				},
+				"description": "Super-admin only: update another user's profile via query param userId."
+			},
+			"response": []
+		},
+		{
+			"name": "Deactivate user (DELETE /user-management?userId=uuid) - super admin only",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{supabase_anon_key}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{supabase_host_part1}}.{{supabase_host_part2}}.{{supabase_host_part3}}/functions/v1/user-management?userId={{target_user_id}}",
+					"protocol": "https",
+					"host": [
+						"{{supabase_host_part1}}",
+						"{{supabase_host_part2}}",
+						"{{supabase_host_part3}}"
+					],
+					"path": [
+						"functions",
+						"v1",
+						"user-management"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{target_user_id}}"
+						}
+					]
+				},
+				"description": "Super-admin only: removes roles and marks account as deactivated."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "supabase_host_part1",
+			"value": "diclwatocrixibjpajuf"
+		},
+		{
+			"key": "supabase_host_part2",
+			"value": "supabase"
+		},
+		{
+			"key": "supabase_host_part3",
+			"value": "co"
+		},
+		{
+			"key": "supabase_anon_key",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpY2x3YXRvY3JpeGlianBhanVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDIyNjEsImV4cCI6MjA3MDIxODI2MX0.414UJ0ghcBsQ6jbOd7TkjQivvOkBVX-G5qpYuO_oYNs"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "test_user_email",
+			"value": "your-test-user@example.com"
+		},
+		{
+			"key": "test_user_password",
+			"value": "yourpassword"
+		},
+		{
+			"key": "target_user_id",
+			"value": ""
+		},
+		{
+			"key": "page",
+			"value": "1"
+		},
+		{
+			"key": "limit",
+			"value": "20"
+		},
+		{
+			"key": "search",
+			"value": ""
+		},
+		{
+			"key": "role",
+			"value": ""
+		},
+		{
+			"key": "accountType",
+			"value": ""
+		}
+	]
+}
