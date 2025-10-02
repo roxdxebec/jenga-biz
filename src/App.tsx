@@ -21,6 +21,7 @@ import { HubProvider } from '@/contexts/HubContext';
 import { HubContextProvider } from '@/hooks/useHubContext';
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AdminDashboard } from "./components/dashboard/AdminDashboard";
+import { ServiceWorkerUpdater } from "./components/ServiceWorkerUpdater";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ServiceWorkerUpdater />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/reset-password" element={<PasswordReset />} />

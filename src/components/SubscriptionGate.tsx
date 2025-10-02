@@ -21,7 +21,12 @@ export function SubscriptionGate({
   fallback,
   showUpgradePrompt = true 
 }: SubscriptionGateProps) {
-  const { subscription, isLoading, hasFeature } = useSubscriptionStatus();
+  const { 
+    status: subscriptionStatus, 
+    isLoading, 
+    canAccessFeature, 
+    plan: subscriptionPlan 
+  } = useSubscriptionStatus();
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -33,7 +38,18 @@ export function SubscriptionGate({
   }
 
   // Check if user has access to the required tier
-  const hasAccess = hasFeature(requiredTier);
+  // TEMPORARY: All features are accessible, but we keep the logic for future use
+  // TEMPORARY: All features are accessible, but we keep the logic for future use
+  const hasAccess = canAccessFeature(requiredTier);
+  
+  // Log access in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[SubscriptionGate] Checking access to '${requiredTier}' tier`, {
+      hasAccess,
+      currentPlan: subscriptionPlan?.name || 'none',
+      subscriptionStatus
+    });
+  }
 
   if (hasAccess) {
     return <>{children}</>;
@@ -63,7 +79,7 @@ export function SubscriptionGate({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="border-orange-300 text-orange-700">
-                Current: {subscription.plan?.name || 'Free'}
+                Current: {subscriptionPlan?.name || 'Free'}
               </Badge>
               <ArrowRight className="h-4 w-4 text-orange-600" />
               <Badge className="bg-orange-600 text-white">

@@ -75,19 +75,23 @@ export function useSubscriptionStatus() {
   const isPro = subscription.plan?.name?.toLowerCase() === 'pro';
   const isFree = !hasActiveSubscription || subscription.plan?.name?.toLowerCase() === 'free';
 
-  // During development, allow all features for entrepreneurs regardless of subscription
+  // TEMPORARY: Allow all features regardless of subscription
+  // TODO: Implement proper subscription gating when ready
   const canAccessFeature = (feature: string) => {
-    // Development rule: all entrepreneur features accessible regardless of subscription
+    // Keep all subscription logic in place but always return true
+    // This allows us to easily restore the gating later
+    const hasAccess = true;
+    
+    // Log the feature check for debugging
     if (process.env.NODE_ENV === 'development') {
-      return true;
+      console.log(`[Subscription] Feature '${feature}' access:`, {
+        hasAccess,
+        subscriptionStatus: subscription.status,
+        plan: subscription.plan?.name || 'none'
+      });
     }
     
-    // Production logic would check subscription tier features
-    if (!hasActiveSubscription) return false;
-    
-    // For now, all active subscriptions get all features
-    // Later this can be enhanced with feature-specific checks
-    return true;
+    return hasAccess;
   };
 
   return {
