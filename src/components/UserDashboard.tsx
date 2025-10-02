@@ -199,7 +199,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       setProfile(data);
     } catch (error: any) {
       const msg = error?.message || JSON.stringify(error);
-      console.error('Error loading user profile:', msg);
+      console.error('Error loading user profile:', msg, error);
     } finally {
       setLoadingProfile(false);
     }
@@ -222,8 +222,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       
       console.log('Loaded milestones:', data);
       setAllMilestones(data || []);
-    } catch (error) {
-      console.error('Error loading user milestones:', error);
+    } catch (error: any) {
+      const msg = error?.message || JSON.stringify(error);
+      console.error('Error loading user milestones:', msg, error);
     } finally {
       setLoadingMilestones(false);
     }
@@ -256,8 +257,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         netProfit: totalRevenue - totalExpenses,
         recentTransactions
       });
-    } catch (error) {
-      console.error('Error loading financial data:', error);
+    } catch (error: any) {
+      const msg = error?.message || JSON.stringify(error);
+      console.error('Error loading financial data:', msg, error);
     } finally {
       setLoadingFinancial(false);
     }
