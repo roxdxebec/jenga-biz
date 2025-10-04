@@ -58,7 +58,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     if (error) {
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
