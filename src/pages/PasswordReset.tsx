@@ -139,7 +139,7 @@ const PasswordReset = () => {
       console.error('Error resetting password:', error);
       toast({
         title: "Password Reset Failed",
-        description: error.message || "Failed to reset password. Please try again.",
+        description: formatError(error) || "Failed to reset password. Please try again.",
         variant: "destructive",
       });
     } finally {
