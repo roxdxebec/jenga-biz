@@ -35,6 +35,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { generateShareText, useShareActions } from '@/lib/shareUtils';
+import { formatError } from '@/lib/formatError';
 import ReportModal from './ReportModal';
 
 interface UserDashboardProps {
