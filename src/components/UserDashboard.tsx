@@ -198,8 +198,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       if (error) throw error;
       setProfile(data);
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
+      const msg = formatError(error);
       console.error('Error loading user profile:', msg, error);
+      toast({ title: 'Profile load failed', description: msg, variant: 'destructive' });
     } finally {
       setLoadingProfile(false);
     }
@@ -211,7 +212,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     try {
       setLoadingMilestones(true);
       console.log('Loading milestones for user:', user.id);
-      
+
       const { data, error } = await supabase
         .from('milestones')
         .select('*')
@@ -219,12 +220,13 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
+
       console.log('Loaded milestones:', data);
       setAllMilestones(data || []);
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
+      const msg = formatError(error);
       console.error('Error loading user milestones:', msg, error);
+      toast({ title: 'Failed to load milestones', description: msg, variant: 'destructive' });
     } finally {
       setLoadingMilestones(false);
     }
@@ -236,7 +238,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     try {
       setLoadingFinancial(true);
       console.log('Loading financial data for user:', user.id);
-      
+
       const { data, error } = await supabase
         .from('financial_transactions')
         .select('*')
@@ -244,13 +246,13 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         .order('transaction_date', { ascending: false });
 
       if (error) throw error;
-      
+
       console.log('Loaded financial transactions:', data);
-      
+
       const totalRevenue = data?.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const totalExpenses = data?.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const recentTransactions = data?.slice(0, 5) || [];
-      
+
       setFinancialData({
         totalRevenue,
         totalExpenses,
@@ -258,8 +260,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         recentTransactions
       });
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
+      const msg = formatError(error);
       console.error('Error loading financial data:', msg, error);
+      toast({ title: 'Failed to load financial data', description: msg, variant: 'destructive' });
     } finally {
       setLoadingFinancial(false);
     }
