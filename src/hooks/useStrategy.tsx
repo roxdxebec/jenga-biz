@@ -1,15 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
-import { 
-  strategyClient, 
-  type Strategy, 
-  type Milestone, 
-  type Business, 
+import {
+  strategyClient,
+  type Strategy,
+  type Milestone,
+  type Business,
   type BusinessInput,
   type BusinessStage
 } from '@/lib/strategy-client';
 import { StrategyFinancialsService, type FinancialRecord } from '@/services/strategyFinancials';
+import { formatError } from '@/lib/formatError';
 
 type MilestoneStatus = 'pending' | 'approved' | 'rejected' | 'expired' | 'cancelled';
 type MilestoneType = 'business_registration' | 'first_customer' | 'first_hire' | 'break_even' | 'loan_application' | 'investment_ready' | 'other';
@@ -52,7 +53,7 @@ export const useStrategy = () => {
       console.error('Error loading strategies:', error);
       toast({
         title: 'Failed to load strategies',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive'
       });
     } finally {
@@ -74,7 +75,7 @@ export const useStrategy = () => {
       console.error('Error loading strategy:', error);
       toast({
         title: 'Failed to load strategy',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive'
       });
       return null;
@@ -181,7 +182,7 @@ export const useStrategy = () => {
       console.error('Error saving strategy:', error);
       toast({
         title: `Failed to ${isUpdate ? 'update' : 'save'} strategy`,
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive',
       });
       throw error;
@@ -260,7 +261,7 @@ export const useStrategy = () => {
       if (showToast) {
         toast({
           title: 'Error',
-          description: error.message || 'Failed to save strategy',
+          description: formatError(error) || 'Failed to save strategy',
           variant: 'destructive'
         });
       }
@@ -502,7 +503,7 @@ export const useStrategy = () => {
       console.error('Error creating milestone:', error);
       toast({
         title: 'Failed to create milestone',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive',
       });
       throw error;
@@ -525,7 +526,7 @@ export const useStrategy = () => {
       console.error('Error updating milestone:', error);
       toast({
         title: 'Failed to update milestone',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive',
       });
       throw error;
@@ -544,7 +545,7 @@ export const useStrategy = () => {
       console.error('Error deleting milestone:', error);
       toast({
         title: 'Failed to delete milestone',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive',
       });
       throw error;
@@ -574,7 +575,7 @@ export const useStrategy = () => {
       console.error('Error deleting strategy:', error);
       toast({
         title: 'Failed to delete strategy',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive',
       });
       throw error;

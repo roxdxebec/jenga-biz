@@ -35,6 +35,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { generateShareText, useShareActions } from '@/lib/shareUtils';
+import { formatError } from '@/lib/formatError';
 import ReportModal from './ReportModal';
 
 interface UserDashboardProps {
@@ -198,8 +199,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       if (error) throw error;
       setProfile(data);
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
+      const msg = formatError(error);
       console.error('Error loading user profile:', msg, error);
+      toast({ title: 'Profile load failed', description: msg, variant: 'destructive' });
     } finally {
       setLoadingProfile(false);
     }
@@ -211,7 +213,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     try {
       setLoadingMilestones(true);
       console.log('Loading milestones for user:', user.id);
-      
+
       const { data, error } = await supabase
         .from('milestones')
         .select('*')
@@ -219,12 +221,13 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
+
       console.log('Loaded milestones:', data);
       setAllMilestones(data || []);
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
+      const msg = formatError(error);
       console.error('Error loading user milestones:', msg, error);
+      toast({ title: 'Failed to load milestones', description: msg, variant: 'destructive' });
     } finally {
       setLoadingMilestones(false);
     }
@@ -236,7 +239,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     try {
       setLoadingFinancial(true);
       console.log('Loading financial data for user:', user.id);
-      
+
       const { data, error } = await supabase
         .from('financial_transactions')
         .select('*')
@@ -244,13 +247,13 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         .order('transaction_date', { ascending: false });
 
       if (error) throw error;
-      
+
       console.log('Loaded financial transactions:', data);
-      
+
       const totalRevenue = data?.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const totalExpenses = data?.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const recentTransactions = data?.slice(0, 5) || [];
-      
+
       setFinancialData({
         totalRevenue,
         totalExpenses,
@@ -258,8 +261,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         recentTransactions
       });
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
+      const msg = formatError(error);
       console.error('Error loading financial data:', msg, error);
+      toast({ title: 'Failed to load financial data', description: msg, variant: 'destructive' });
     } finally {
       setLoadingFinancial(false);
     }
@@ -612,10 +616,10 @@ const UserDashboard = ({ }: UserDashboardProps) => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Strategies</h2>
             {profile?.account_type !== 'organization' && (
-              <Button onClick={handleNewStrategy}>
+              <a href="/b2c" className="flex items-center gap-2 text-xs sm:text-sm bg-slate-900 text-white px-3 py-2 rounded-md">
                 <Plus className="w-4 h-4 mr-2" />
                 Create New Strategy
-              </Button>
+              </a>
             )}
           </div>
 
@@ -629,10 +633,6 @@ const UserDashboard = ({ }: UserDashboardProps) => {
               <Building2 className="mx-auto text-orange-500" />
               <h3 className="mt-4 text-lg font-semibold text-gray-900">No strategies yet</h3>
               <p className="mt-2 text-sm text-gray-600">Get started by creating a strategy. You can use a template or start from scratch.</p>
-              <div className="mt-4 flex justify-center gap-3">
-                <Button onClick={handleNewStrategy} variant="default">Create from Templates</Button>
-                <Button onClick={() => navigate('/strategy')} variant="outline"><p>Create a Custom Strategy</p></Button>
-              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

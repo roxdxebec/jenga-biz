@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import { formatError } from '@/lib/formatError';
 
 interface AuthDialogProps {
   open: boolean;
@@ -34,7 +35,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
@@ -57,7 +58,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     if (error) {
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {

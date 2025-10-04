@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader as Loader2, Eye, EyeOff, CircleAlert as AlertCircle, Building2, Users, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { saveProfileForUser } from '@/lib/profile';
+import { formatError } from '@/lib/formatError';
 
 interface EnhancedAuthDialogProps {
   open: boolean;
@@ -104,7 +105,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
@@ -167,7 +168,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
       setIsLoading(false);
@@ -273,7 +274,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Reset Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
@@ -288,12 +289,6 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     setIsLoading(false);
   };
 
-  // Auto-close dialog when user is authenticated
-  useEffect(() => {
-    if (user && open) {
-      onOpenChange(false);
-    }
-  }, [user, open, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
