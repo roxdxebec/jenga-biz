@@ -79,13 +79,28 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface ApiError {
-  success: false;
-  error: {
-    code: string;
-    message: string;
-    details?: any;
-  };
+export class ApiError extends Error {
+  public code: string;
+  public details: any;
+  public endpoint?: string;
+  public status?: number;
+  public raw?: string;
+
+  constructor(arg: string | { code?: string; message?: string; details?: any; endpoint?: string; status?: number; raw?: string } = '') {
+    if (typeof arg === 'string') {
+      super(arg || 'ApiError');
+      this.code = 'ERROR';
+      this.details = undefined;
+    } else {
+      super(arg.message || arg.code || 'ApiError');
+      this.code = arg.code || 'ERROR';
+      this.details = arg.details;
+      this.endpoint = arg.endpoint;
+      this.status = arg.status;
+      this.raw = arg.raw;
+    }
+    this.name = 'ApiError';
+  }
 }
 
 // ==========================================
