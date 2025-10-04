@@ -699,11 +699,3 @@ class EdgeFunctionsApiClient {
 
 // Create singleton instance
 export const apiClient = new EdgeFunctionsApiClient();
-
-// Export error type for error handling
-export class ApiError extends Error {
-  constructor(public error: { code: string; message: string; details?: any }) {
-    super(error.message);
-    this.name = 'ApiError';
-  }
-}
