@@ -1,15 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
-import { 
-  strategyClient, 
-  type Strategy, 
-  type Milestone, 
-  type Business, 
+import {
+  strategyClient,
+  type Strategy,
+  type Milestone,
+  type Business,
   type BusinessInput,
   type BusinessStage
 } from '@/lib/strategy-client';
 import { StrategyFinancialsService, type FinancialRecord } from '@/services/strategyFinancials';
+import { formatError } from '@/lib/formatError';
 
 type MilestoneStatus = 'pending' | 'approved' | 'rejected' | 'expired' | 'cancelled';
 type MilestoneType = 'business_registration' | 'first_customer' | 'first_hire' | 'break_even' | 'loan_application' | 'investment_ready' | 'other';
