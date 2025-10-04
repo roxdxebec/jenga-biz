@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Home, Save, Download, Share2, Sparkles, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut, Upload, Trash2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
 import LanguageSelector from '@/components/LanguageSelector';
-import { useStrategy } from '@/hooks/useStrategy';
+import { useStrategy, type BusinessStage } from '@/hooks/useStrategy';
 import { useToast } from '@/hooks/use-toast';
 import { generateShareText, useShareActions } from '@/lib/shareUtils';
 import { useAuth } from '@/hooks/useAuth';
@@ -24,21 +29,87 @@ interface CombinedStrategyFlowProps {
 const CombinedStrategyFlow = ({ 
   template, 
   onBack,
-  onHome, 
+  onHome = () => navigate('/'), // Default handler for home navigation
   initialLanguage = 'en',
   currentStrategy: propCurrentStrategy,
   defaultTab
 }: CombinedStrategyFlowProps) => {
   const { toast } = useToast();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
-  const { saveStrategy, currentStrategy, milestones: strategyMilestones } = useStrategy();
+  
+  // Delete confirmation state
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Handle strategy deletion
+  const handleDeleteStrategy = async () => {
+    if (!currentStrategy?.id) return;
+    
+    try {
+      setIsDeleting(true);
+      await deleteStrategy(currentStrategy.id);
+      
+      toast({
+        title: 'Strategy deleted',
+        description: 'The strategy has been successfully deleted.',
+      });
+      
+      // Navigate to home or dashboard after deletion
+      if (onHome) {
+        onHome();
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Failed to delete strategy:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete the strategy. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+  const { 
+    currentStrategy, 
+    deleteStrategy,
+    milestones: strategyMilestones,
+    loadStrategies
+  } = useStrategy();
   const [language, setLanguage] = useState(initialLanguage);
   const [country, setCountry] = useState('KE');
   const [currency, setCurrency] = useState('KES');
   const [currencySymbol, setCurrencySymbol] = useState('KSh');
-  const [strategy, setStrategy] = useState({
+  interface StrategyState {
+    businessName: string;
+    businessType: string;
+    businessStage: BusinessStage;
+    businessDescription: string;
+    registrationNumber: string;
+    registrationCertificateFile: File | null;
+    registrationCertificateUrl: string;
+    vision: string;
+    mission: string;
+    targetMarket: string;
+    revenueModel: string;
+    valueProposition: string;
+    keyPartners: string;
+    marketingApproach: string;
+    operationalNeeds: string;
+    growthGoals: string;
+  }
+
+  const [strategy, setStrategy] = useState<StrategyState>({
     businessName: '',
+    businessType: '',
+    businessStage: 'idea',
+    businessDescription: '',
+    registrationNumber: '',
+    registrationCertificateFile: null,
+    registrationCertificateUrl: '',
     vision: '',
     mission: '',
     targetMarket: '',
@@ -61,6 +132,15 @@ const CombinedStrategyFlow = ({
 
   const translations = {
     en: {
+      deleteStrategy: 'Delete Strategy',
+      deleteConfirmationTitle: 'Delete Strategy',
+      deleteConfirmationMessage: 'Are you sure you want to delete this strategy? This action cannot be undone.',
+      strategyDeleted: 'Strategy Deleted',
+      strategyDeletedMessage: 'The strategy has been successfully deleted.',
+      deleteError: 'Failed to delete strategy. Please try again.',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      deleting: 'Deleting...',
       backToTemplates: 'Back',
       home: 'Home',
       save: 'Save',
@@ -69,6 +149,15 @@ const CombinedStrategyFlow = ({
       signOut: 'Sign Out'
     },
     sw: {
+      deleteStrategy: 'Futa Mkakati',
+      deleteConfirmationTitle: 'Futa Mkakati',
+      deleteConfirmationMessage: 'Una uhakika unataka kufuta mkakati huu? Hatua hii haiwezi kutenduliwa.',
+      strategyDeleted: 'Mkakati Umefutwa',
+      strategyDeletedMessage: 'Mkakati umefutwa kwa mafanikio.',
+      deleteError: 'Imeshindwa kufuta mkakati. Tafadhali jaribu tena.',
+      cancel: 'Ghairi',
+      delete: 'Futa',
+      deleting: 'Inafutwa...',
       backToTemplates: 'Rudi',
       home: 'Nyumbani',
       save: 'Hifadhi',
@@ -95,6 +184,16 @@ const CombinedStrategyFlow = ({
   };
 
   const t = translations[language as keyof typeof translations] || translations.en;
+
+  // Handle file input change for registration certificate
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setStrategy(prev => ({
+        ...prev,
+        registrationCertificateFile: e.target.files![0]
+      }));
+    }
+  };
 
   // Map Supabase snake_case fields to local camelCase builder fields
   function normalizeStrategy(data: any) {
@@ -224,6 +323,11 @@ const CombinedStrategyFlow = ({
       console.log('COMBINEDSTRATEGYFLOW DEBUG: Loading existing strategy data:', currentStrategy);
       const loadedStrategy = {
         businessName: currentStrategy.business_name || '',
+        businessType: currentStrategy.business?.business_type || '',
+        businessStage: currentStrategy.business_stage || 'idea',
+        businessDescription: currentStrategy.business?.description || '',
+        registrationNumber: currentStrategy.business?.registration_number || '',
+        registrationCertificateUrl: currentStrategy.business?.registration_certificate_url || '',
         vision: currentStrategy.vision || '',
         mission: currentStrategy.mission || '',
         targetMarket: currentStrategy.target_market || '',
@@ -317,8 +421,18 @@ const CombinedStrategyFlow = ({
     }
     
     try {
+      // Prepare strategy data with required fields for Strategy type
       const strategyToSave = {
+        id: currentStrategy?.id,
+        user_id: user?.id || '',
+        business_id: currentStrategy?.business_id,
         business_name: strategy.businessName,
+        business_stage: strategy.businessStage,
+        business_type: strategy.businessType,
+        description: strategy.businessDescription,
+        registration_number: strategy.registrationNumber,
+        registration_certificate_file: strategy.registrationCertificateFile,
+        registration_certificate_url: strategy.registrationCertificateUrl,
         vision: strategy.vision,
         mission: strategy.mission,
         target_market: strategy.targetMarket,
@@ -328,17 +442,44 @@ const CombinedStrategyFlow = ({
         marketing_approach: strategy.marketingApproach,
         operational_needs: strategy.operationalNeeds,
         growth_goals: strategy.growthGoals,
-        language: language,
-        country: country,
-        currency: currency,
-        template_id: templateId,
-        template_name: templateName
+        // Add required fields from Strategy type
+        created_at: currentStrategy?.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        milestones: [] // Add empty milestones array to satisfy type
+      };
+
+      // Prepare business data
+      const businessData = {
+        id: currentStrategy?.business_id,
+        user_id: user?.id || '',
+        name: strategy.businessName,
+        business_type: strategy.businessType,
+        stage: strategy.businessStage,
+        description: strategy.businessDescription,
+        registration_number: strategy.registrationNumber,
+        registration_certificate_url: strategy.registrationCertificateUrl || '',
+        is_active: true,
+        // Add required fields from Business type
+        created_at: currentStrategy?.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        hub_id: null
       };
       
-      console.log('Saving strategy data:', strategyToSave);
-      const result = await saveStrategy(strategyToSave, true);
+      console.log('Saving strategy with business data:', { strategyToSave, businessData });
+      
+      // Use the new method to save both strategy and business data
+      const result = await saveStrategyWithBusinessAndMilestones(
+        strategyToSave,
+        businessData,
+        [] // We'll handle milestones separately
+      );
+      
       if (result) {
-        console.log('Strategy saved successfully:', result);
+        console.log('Strategy and business saved successfully:', result);
+        toast({
+          title: 'Success',
+          description: 'Your strategy and business information have been saved successfully.'
+        });
       }
     } catch (error) {
       console.error('Error saving strategy:', error);
@@ -549,19 +690,40 @@ const CombinedStrategyFlow = ({
                   <Home className="w-4 h-4" />
                   {t.home}
                 </Button>
+
+                {/* Delete button - only show when there's a current strategy */}
+                {currentStrategy?.id && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                    className="flex items-center gap-2 text-xs sm:text-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Strategy
+                  </Button>
+                )}
               </div>
             </div>
 
-            {/* Right section - User Navigation */}
+            {/* Right section - User Navigation */
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
-              <LanguageSelector 
-                currentLanguage={language}
-                onLanguageChange={setLanguage}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
+              {/* Delete button - only show when there's a current strategy */
+              {currentStrategy?.id && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    setDeleteConfirmationTitle(translations[language]?.deleteConfirmationTitle || 'Delete Strategy');
+                    setDeleteConfirmationMessage(translations[language]?.deleteConfirmationMessage || 'Are you sure you want to delete this strategy? This action cannot be undone.');
+                    setIsDeleteDialogOpen(true);
+                  }}
+                  className="flex items-center gap-2 text-xs sm:text-sm"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {translations[language]?.deleteStrategy || 'Delete Strategy'}
+                </Button>
+              )}
                   try {
                     navigate('/dashboard');
                   } catch (error) {
@@ -956,11 +1118,29 @@ const CombinedStrategyFlow = ({
             )}
             
             <div className="text-center text-xs text-gray-400 mt-6 border-t pt-4">
-              Created with Jenga Biz Africa ✨
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+    </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Strategy</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this strategy? This action cannot be undone and all associated data will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteStrategy}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

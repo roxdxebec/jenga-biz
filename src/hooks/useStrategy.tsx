@@ -1,165 +1,301 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
+import { 
+  strategyClient, 
+  type Strategy, 
+  type Milestone, 
+  type Business, 
+  type BusinessInput,
+  type BusinessStage
+} from '@/lib/strategy-client';
+import { StrategyFinancialsService, type FinancialRecord } from '@/services/strategyFinancials';
 
-interface Strategy {
-  id?: string;
-  user_id?: string;
-  template_id?: string;
-  template_name?: string;
-  business_name?: string;
-  vision?: string;
-  mission?: string;
-  target_market?: string;
-  revenue_model?: string;
-  value_proposition?: string;
-  key_partners?: string;
-  marketing_approach?: string;
-  operational_needs?: string;
-  growth_goals?: string;
-  language?: string;
-  country?: string;
-  currency?: string;
-  is_active?: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
+type MilestoneStatus = 'pending' | 'approved' | 'rejected' | 'expired' | 'cancelled';
+type MilestoneType = 'business_registration' | 'first_customer' | 'first_hire' | 'break_even' | 'loan_application' | 'investment_ready' | 'other';
 
-interface Milestone {
-  id?: string;
-  user_id?: string;
-  strategy_id?: string;
-  title: string;
-  target_date?: string | null;
-  status: string; // Allow any string from database, will cast when needed
-  business_stage?: string; // Allow any string from database, will cast when needed
-  created_at?: string;
-  updated_at?: string;
-}
+// Types are now imported from strategy-client
 
 export const useStrategy = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true); // Start with loading true
+  const [loading, setLoading] = useState(true);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
-  const [currentStrategy, setCurrentStrategy] = useState<Strategy | undefined>(undefined); // undefined while loading
+  const [currentStrategy, setCurrentStrategy] = useState<Strategy | null>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [loadingMilestones, setLoadingMilestones] = useState(false);
 
   // Load user's strategies
-  const loadStrategies = async () => {
-    if (!user) return;
+  const loadStrategies = useCallback(async () => {
+    console.log('loadStrategies called, user:', user?.id);
+    if (!user) {
+      console.log('No user, returning early');
+      return;
+    }
 
     setLoading(true);
     try {
-      let query = supabase
-        .from('strategies')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .order('updated_at', { ascending: false });
-
-      let { data, error } = await query;
-
-      // Fallback if column filter causes error (e.g., missing column)
-      if (error) {
-        const msg = (error as any)?.message?.toString() || '';
-        if (msg.includes('does not exist') || msg.includes('column') || msg.includes('operator does not exist')) {
-          const res = await supabase
-            .from('strategies')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('updated_at', { ascending: false });
-          data = res.data as any[] | null;
-          error = res.error as any;
-        }
+      console.log('Fetching strategies for user:', user.id);
+      const userStrategies = await strategyClient.getStrategies(user.id);
+      console.log('Fetched strategies:', userStrategies);
+      setStrategies(userStrategies);
+      
+      // If there's a current strategy, refresh it
+      if (currentStrategy) {
+        console.log('Refreshing current strategy:', currentStrategy.id);
+        const refreshed = await strategyClient.getStrategyWithMilestones(currentStrategy.id!);
+        console.log('Refreshed strategy:', refreshed);
+        setCurrentStrategy(refreshed);
+        setMilestones(refreshed.milestones);
       }
-
-      if (error) throw error;
-      setStrategies(data || []);
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
-      console.error('Error loading strategies:', msg, error);
+      console.error('Error loading strategies:', error);
       toast({
         title: 'Failed to load strategies',
-        description: msg,
+        description: error.message,
         variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, currentStrategy, toast]);
 
-  // Auto-save with debouncing
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const saveStrategy = async (strategyData: Partial<Strategy>, showToast = false) => {
+  // Load a specific strategy with its milestones
+  const loadStrategy = useCallback(async (strategyId: string) => {
+    if (!strategyId) return null;
+    
+    setLoadingMilestones(true);
+    try {
+      const strategyWithMilestones = await strategyClient.getStrategyWithMilestones(strategyId);
+      setCurrentStrategy(strategyWithMilestones);
+      setMilestones(strategyWithMilestones.milestones);
+      return strategyWithMilestones;
+    } catch (error: any) {
+      console.error('Error loading strategy:', error);
+      toast({
+        title: 'Failed to load strategy',
+        description: error.message,
+        variant: 'destructive'
+      });
+      return null;
+    } finally {
+      setLoadingMilestones(false);
+    }
+  }, [toast]);
+
+  // Save or update a strategy with business information
+  const saveStrategy = useCallback(async (
+    strategyData: Omit<Strategy, 'id' | 'created_at' | 'updated_at'> & { 
+      id?: string;
+      business_type?: string;
+      description?: string;
+      registration_number?: string;
+      registration_certificate_file?: File | null;
+      business_id?: string;
+    },
+    options: { showToast?: boolean; isUpdate?: boolean } = {}
+  ) => {
+    const { showToast = true, isUpdate = false } = options;
     if (!user) return null;
 
     try {
-      const dataToSave = {
-        ...strategyData,
-        user_id: user.id,
-        updated_at: new Date().toISOString()
-      };
+      let savedStrategy: Strategy;
+      let certificateUrl = strategyData.registration_certificate_url;
+      const businessId = strategyData.business_id;
 
-      let result;
-      
-      if (currentStrategy?.id) {
-        // Update existing strategy
-        const { data, error } = await supabase
-          .from('strategies')
-          .update(dataToSave)
-          .eq('id', currentStrategy.id)
-          .eq('user_id', user.id)
-          .select()
-          .single();
-          
-        if (error) throw error;
-        result = data;
-        
-        // Update local state
-        setCurrentStrategy(result);
-        setStrategies(prev => prev.map(s => s.id === result.id ? result : s));
-      } else {
-        // Create new strategy
-        const { data, error } = await supabase
-          .from('strategies')
-          .insert([dataToSave])
-          .select()
-          .single();
-          
-        if (error) throw error;
-        result = data;
-        
-        // Update local state
-        setCurrentStrategy(result);
-        setStrategies(prev => [result, ...prev]);
+      // Handle file upload if a new certificate file is provided
+      if (strategyData.registration_certificate_file) {
+        try {
+          certificateUrl = await strategyClient.uploadBusinessCertificate(
+            strategyData.registration_certificate_file,
+            businessId || 'temp'
+          );
+        } catch (error) {
+          console.error('Error uploading certificate:', error);
+          throw new Error('Failed to upload business registration certificate');
+        }
       }
+      
+      if (isUpdate && strategyData.id) {
+        // Update existing strategy and business
+        const { id, registration_certificate_file, ...updates } = strategyData;
+        
+        // Create business data if we have business fields
+        const businessData = {
+          id: businessId,
+          user_id: user.id,
+          name: updates.business_name,
+          business_type: updates.business_type,
+          stage: updates.business_stage,
+          description: updates.description,
+          registration_number: updates.registration_number,
+          registration_certificate_url: certificateUrl,
+        };
+
+        // Use the new method to update strategy with business
+        const result = await strategyClient.saveStrategyWithBusinessAndMilestones(
+          { ...updates, id, registration_certificate_url: certificateUrl },
+          businessData,
+          [] // No milestones to update in this flow
+        );
+
+        savedStrategy = result.strategy;
+      } else {
+        // Create new strategy with business
+        const businessData = {
+          user_id: user.id,
+          name: strategyData.business_name,
+          business_type: strategyData.business_type || '',
+          stage: strategyData.business_stage,
+          description: strategyData.description || '',
+          registration_number: strategyData.registration_number || '',
+          registration_certificate_url: certificateUrl || '',
+        };
+
+        // Use the new method to create strategy with business
+        const result = await strategyClient.saveStrategyWithBusinessAndMilestones(
+          { ...strategyData, registration_certificate_url: certificateUrl },
+          businessData,
+          [] // No milestones to create in this flow
+        );
+
+        savedStrategy = result.strategy;
+      }
+
+      // Update local state
+      setCurrentStrategy(savedStrategy);
+      
+      // Refresh strategies list
+      const updatedStrategies = await strategyClient.getStrategies(user.id);
+      setStrategies(updatedStrategies);
 
       if (showToast) {
         toast({
-          title: 'Strategy Saved',
-          description: 'Your changes have been saved automatically.',
+          title: `Strategy ${isUpdate ? 'updated' : 'saved'} successfully`,
+          description: `Your business strategy has been ${isUpdate ? 'updated' : 'created'}.`,
+        });
+      }
+
+      return savedStrategy;
+    } catch (error: any) {
+      console.error('Error saving strategy:', error);
+      toast({
+        title: `Failed to ${isUpdate ? 'update' : 'save'} strategy`,
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }, [user, toast]);
+
+  // Save strategy with business and milestones in a transaction
+  const saveStrategyWithBusinessAndMilestones = useCallback(async (
+    strategyData: Omit<Strategy, 'id' | 'created_at' | 'updated_at'> & { id?: string },
+    businessData: Omit<Business, 'id' | 'created_at' | 'updated_at'> & { id?: string },
+    milestonesData: Array<Omit<Milestone, 'id' | 'strategy_id' | 'created_at' | 'updated_at'>>,
+    options: { showToast?: boolean } = {}
+  ) => {
+    const { showToast = true } = options;
+    if (!user) return null;
+
+    try {
+      // Handle file upload if a new certificate file is provided
+      let certificateUrl = businessData.registration_certificate_url;
+      
+      if (businessData.registration_certificate_file) {
+        try {
+          certificateUrl = await strategyClient.uploadBusinessCertificate(
+            businessData.registration_certificate_file,
+            businessData.id || 'temp'
+          );
+        } catch (error) {
+          console.error('Error uploading certificate:', error);
+          throw new Error('Failed to upload business registration certificate');
+        }
+      }
+
+      // Prepare business data
+      const businessUpdate = {
+        ...businessData,
+        registration_certificate_url: certificateUrl,
+        user_id: user.id
+      };
+
+      // Prepare strategy data
+      const strategyUpdate = {
+        ...strategyData,
+        user_id: user.id,
+        business_name: businessData.name,
+        business_stage: businessData.stage || 'idea'
+      };
+
+      // Call the enhanced method
+      const result = await strategyClient.saveStrategyWithBusinessAndMilestones(
+        strategyUpdate,
+        businessUpdate,
+        milestonesData.map(milestone => ({
+          ...milestone,
+          business_id: businessData.id || undefined
+        }))
+      );
+
+      // Update local state
+      setCurrentStrategy(result.strategy);
+      setMilestones(result.milestones || []);
+      
+      // Refresh strategies list
+      const updatedStrategies = await strategyClient.getStrategies(user.id);
+      setStrategies(updatedStrategies);
+
+      if (showToast) {
+        toast({
+          title: 'Strategy saved successfully',
+          description: 'Your business strategy and milestones have been saved.',
         });
       }
 
       return result;
-    } catch (error) {
-      console.error('Error saving strategy:', error);
+    } catch (error: any) {
+      console.error('Error saving strategy with business and milestones:', error);
       if (showToast) {
         toast({
           title: 'Error',
-          description: 'Failed to save strategy',
+          description: error.message || 'Failed to save strategy',
           variant: 'destructive'
         });
       }
-      return null;
+      throw error;
     }
-  };
+  }, [user, toast]);
+
+  // Legacy method for backward compatibility
+  const saveStrategyWithMilestones = useCallback(async (
+    strategyData: Omit<Strategy, 'id' | 'created_at' | 'updated_at'>,
+    milestonesData: Array<Omit<Milestone, 'id' | 'strategy_id' | 'created_at' | 'updated_at'>>,
+    options: { showToast?: boolean } = {}
+  ) => {
+    // For backward compatibility, create a minimal business object
+    const businessData: BusinessInput = {
+      user_id: strategyData.user_id || '',
+      name: strategyData.business_name || 'My Business',
+      business_type: 'general',
+      stage: strategyData.business_stage || 'idea',
+      description: '',
+      registration_number: '',
+      registration_certificate_url: ''
+    };
+
+    return saveStrategyWithBusinessAndMilestones(
+      strategyData,
+      businessData,
+      milestonesData,
+      options
+    );
+  }, [saveStrategyWithBusinessAndMilestones]);
 
   // Auto-save strategy with debouncing
-  const autoSaveStrategy = async (strategyData: Partial<Strategy>) => {
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout>();
+  const autoSaveStrategy = useCallback(async (strategyData: Omit<Strategy, 'id' | 'created_at' | 'updated_at'> & { id?: string }) => {
     if (!user) return;
 
     // Clear existing timeout
@@ -169,42 +305,68 @@ export const useStrategy = () => {
 
     // Set new timeout for auto-save
     autoSaveTimeoutRef.current = setTimeout(() => {
-      saveStrategy(strategyData, false); // Don't show toast for auto-save
+      saveStrategy(strategyData, { showToast: false }); // Don't show toast for auto-save
     }, 1000); // 1 second debounce
-  };
+  }, [user, saveStrategy]);
 
   // Load milestones for current strategy
   const loadMilestones = async (strategyId?: string) => {
     if (!user) return;
-
+    
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('milestones')
         .select('*')
-        .eq('user_id', user.id)
-        .eq('strategy_id', strategyId || currentStrategy?.id)
-        .order('created_at', { ascending: false });
+        .eq('user_id', user.id);
+      
+      if (strategyId) {
+        query = query.eq('strategy_id', strategyId);
+      }
+      
+      query = query.order('created_at', { ascending: false });
 
+      const { data, error } = await query;
       if (error) throw error;
       
-      setMilestones(data || []);
+      // Ensure data matches Milestone type
+      const formattedMilestones = (data || []).map((milestone: any) => ({
+        id: milestone.id,
+        strategy_id: milestone.strategy_id,
+        business_id: milestone.business_id,
+        title: milestone.title,
+        description: milestone.description || '',
+        status: (milestone.status || 'pending') as MilestoneStatus,
+        target_date: milestone.target_date || null,
+        created_at: milestone.created_at,
+        updated_at: milestone.updated_at,
+        milestone_type: (milestone.milestone_type || 'other') as MilestoneType,
+        completed_at: milestone.completed_at || null
+      }));
+      
+      setMilestones(formattedMilestones);
     } catch (error) {
       console.error('Error loading milestones:', error);
     }
   };
 
   // Save milestone - simplified version
-  const saveMilestone = async (milestone: Milestone) => {
-    if (!user) return null;
+  const saveMilestone = async (milestone: Omit<Milestone, 'id' | 'created_at' | 'updated_at' | 'strategy_id' | 'business_id'> & { 
+    id?: string;
+    strategy_id?: string;
+    business_id?: string;
+  }) => {
+    if (!user || !currentStrategy?.id) return null;
 
-    const milestoneData = {
-      id: milestone.id || undefined,
-      user_id: user.id,
-      strategy_id: milestone.strategy_id || currentStrategy?.id,
+    const milestoneData: Omit<Milestone, 'id' | 'created_at' | 'updated_at'> & { id?: string } = {
+      id: milestone.id,
+      strategy_id: milestone.strategy_id || currentStrategy.id,
+      business_id: milestone.business_id || currentStrategy.business_id,
       title: milestone.title,
-      target_date: milestone.target_date || new Date().toISOString().split('T')[0],
-      status: milestone.status || 'not-started',
-      business_stage: milestone.business_stage || 'ideation',
+      description: milestone.description,
+      status: milestone.status,
+      target_date: milestone.target_date,
+      milestone_type: milestone.milestone_type || 'other' as MilestoneType,
+      completed_at: milestone.completed_at || null
     };
 
     if (!milestoneData.strategy_id && !currentStrategy?.id) {
@@ -248,67 +410,11 @@ export const useStrategy = () => {
     }
   };
 
-  // Delete milestone
-  const deleteMilestone = async (milestoneId: string) => {
-    if (!user) return false;
-
-    try {
-      const { error } = await supabase
-        .from('milestones')
-        .delete()
-        .eq('id', milestoneId)
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-      
-      // Update local state
-      setMilestones(prev => prev.filter(m => m.id !== milestoneId));
-      
-      return true;
-    } catch (error) {
-      console.error('Error deleting milestone:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete milestone',
-        variant: 'destructive'
-      });
-      return false;
-    }
-  };
-
   // Create strategy from template
   const createFromTemplate = async (template: any) => {
-    console.log('=== CREATE FROM TEMPLATE DEBUG ===');
-    console.log('User:', !!user);
-    console.log('Template received:', template);
-    
-    if (!user) {
-      console.log('No user for createFromTemplate');
-      return null;
-    }
-
-    const strategyData = {
-      template_id: template.id,
-      template_name: template.name,
-      business_name: template.name,
-      vision: template.content?.vision || '',
-      mission: template.content?.mission || '',
-      target_market: template.content?.targetMarket || '',
-      revenue_model: template.content?.revenueModel || '',
-      value_proposition: template.content?.valueProposition || '',
-      key_partners: template.content?.keyPartners || '',
-      marketing_approach: template.content?.marketingApproach || '',
-      operational_needs: template.content?.operationalNeeds || '',
-      growth_goals: template.content?.growthGoals || '',
-      language: 'en',
-      country: 'KE',
-      currency: 'KES'
-    };
-
-    console.log('Strategy data to save:', strategyData);
-    const result = await saveStrategy(strategyData);
-    console.log('Save strategy result:', result);
-    return result;
+    if (!user) return null;
+    // TODO: Implement template creation logic here
+    return null;
   };
 
   // Load strategies when user changes
@@ -348,19 +454,197 @@ export const useStrategy = () => {
     setMilestones([]);
   };
 
+  // Financial Records Management
+  const getFinancialRecords = useCallback(async (strategyId: string): Promise<FinancialRecord[]> => {
+    if (!strategyId) {
+      throw new Error('No strategy ID provided');
+    }
+    return StrategyFinancialsService.getFinancialRecords(strategyId);
+  }, []);
+
+  const createFinancialRecord = useCallback(async (strategyId: string, record: Omit<FinancialRecord, 'id' | 'strategy_id' | 'created_at' | 'updated_at'>) => {
+    if (!strategyId) {
+      throw new Error('No strategy ID provided');
+    }
+    return StrategyFinancialsService.createFinancialRecord(strategyId, record);
+  }, []);
+
+  const updateFinancialRecord = useCallback(async (id: string, updates: Partial<Omit<FinancialRecord, 'id' | 'strategy_id' | 'created_at' | 'updated_at'>>) => {
+    if (!id) {
+      throw new Error('No record ID provided');
+    }
+    return StrategyFinancialsService.updateFinancialRecord(id, updates);
+  }, []);
+
+  const deleteFinancialRecord = useCallback(async (id: string) => {
+    if (!id) {
+      throw new Error('No record ID provided');
+    }
+    return StrategyFinancialsService.deleteFinancialRecord(id);
+  }, []);
+
+  // Milestone management
+  const createMilestone = useCallback(async (milestoneData: Omit<Milestone, 'id' | 'created_at' | 'updated_at'>) => {
+    if (!milestoneData.strategy_id) {
+      throw new Error('Strategy ID is required to create a milestone');
+    }
+
+    try {
+      const newMilestone = await strategyClient.createMilestone({
+        ...milestoneData,
+        strategy_id: currentStrategy.id,
+        user_id: user?.id,
+      });
+
+      setMilestones(prev => [...prev, newMilestone]);
+      return newMilestone;
+    } catch (error: any) {
+      console.error('Error creating milestone:', error);
+      toast({
+        title: 'Failed to create milestone',
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }, [currentStrategy?.id, user?.id, toast]);
+
+  const updateMilestone = useCallback(async (
+    milestoneId: string, 
+    updates: Partial<Omit<Milestone, 'id' | 'user_id' | 'strategy_id' | 'created_at'>>
+  ) => {
+    try {
+      const updatedMilestone = await strategyClient.updateMilestone(milestoneId, updates);
+      
+      setMilestones(prev => 
+        prev.map(m => m.id === milestoneId ? { ...m, ...updatedMilestone } : m)
+      );
+      
+      return updatedMilestone;
+    } catch (error: any) {
+      console.error('Error updating milestone:', error);
+      toast({
+        title: 'Failed to update milestone',
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }, [toast]);
+
+  const deleteMilestone = useCallback(async (milestoneId: string) => {
+    try {
+      await strategyClient.deleteMilestone(milestoneId);
+      setMilestones(prev => prev.filter(m => m.id !== milestoneId));
+      toast({
+        title: 'Milestone deleted',
+        description: 'The milestone has been removed.',
+      });
+    } catch (error: any) {
+      console.error('Error deleting milestone:', error);
+      toast({
+        title: 'Failed to delete milestone',
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }, [toast]);
+
+  // Delete a strategy
+  const deleteStrategy = useCallback(async (strategyId: string) => {
+    try {
+      await strategyClient.deleteStrategy(strategyId);
+      
+      // Update local state
+      if (currentStrategy?.id === strategyId) {
+        setCurrentStrategy(null);
+        setMilestones([]);
+      }
+      
+      setStrategies(prev => prev.filter(s => s.id !== strategyId));
+      
+      toast({
+        title: 'Strategy deleted',
+        description: 'The strategy has been removed.',
+      });
+      
+      return true;
+    } catch (error: any) {
+      console.error('Error deleting strategy:', error);
+      toast({
+        title: 'Failed to delete strategy',
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  }, [currentStrategy?.id, toast]);
+
+  // Load strategies on mount and when user changes
+  useEffect(() => {
+    if (user) {
+      loadStrategies();
+    } else {
+      setStrategies([]);
+      setCurrentStrategy(null);
+      setMilestones([]);
+    }
+  }, [user, loadStrategies]);
+
+  // Get business by ID
+  const getBusiness = useCallback(async (businessId: string): Promise<Business | null> => {
+    try {
+      return await strategyClient.getBusiness(businessId);
+    } catch (error) {
+      console.error('Error fetching business:', error);
+      throw error;
+    }
+  }, []);
+
+  // Get all businesses for the current user
+  const getBusinesses = useCallback(async (): Promise<Business[]> => {
+    if (!user) return [];
+    
+    try {
+      return await strategyClient.getBusinessesByUser(user.id);
+    } catch (error) {
+      console.error('Error fetching businesses:', error);
+      throw error;
+    }
+  }, [user]);
+
+  // Upload business registration certificate
+  const uploadBusinessCertificate = useCallback(async (file: File, businessId: string): Promise<string> => {
+    try {
+      return await strategyClient.uploadBusinessCertificate(file, businessId);
+    } catch (error) {
+      console.error('Error uploading business certificate:', error);
+      throw error;
+    }
+  }, [user, toast]);
+
   return {
     loading,
     strategies,
     currentStrategy,
-    milestones,
     setCurrentStrategy,
-    clearStrategy,
+    milestones,
+    loadingMilestones,
     loadStrategies,
+    loadStrategy,
     saveStrategy,
-    autoSaveStrategy,
-    loadMilestones,
-    saveMilestone,
+    saveStrategyWithMilestones,
+    saveStrategyWithBusinessAndMilestones,
+    createFromTemplate,
+    clearStrategy,
+    getFinancialRecords,
+    createFinancialRecord,
+    updateFinancialRecord,
+    deleteFinancialRecord,
+    createMilestone,
+    updateMilestone,
     deleteMilestone,
-    createFromTemplate
+    loadMilestones,
   };
-};
+}
