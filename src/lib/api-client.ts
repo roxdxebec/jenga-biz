@@ -85,12 +85,16 @@ export class ApiError extends Error {
   public endpoint?: string;
   public status?: number;
   public raw?: string;
+  public error: { code: string; message: string; details?: any };
 
   constructor(arg: string | { code?: string; message?: string; details?: any; endpoint?: string; status?: number; raw?: string } = '') {
     if (typeof arg === 'string') {
       super(arg || 'ApiError');
       this.code = 'ERROR';
       this.details = undefined;
+      this.endpoint = undefined;
+      this.status = undefined;
+      this.raw = undefined;
     } else {
       super(arg.message || arg.code || 'ApiError');
       this.code = arg.code || 'ERROR';
@@ -100,6 +104,7 @@ export class ApiError extends Error {
       this.raw = arg.raw;
     }
     this.name = 'ApiError';
+    this.error = { code: this.code, message: this.message, details: this.details };
   }
 }
 
