@@ -612,10 +612,10 @@ const UserDashboard = ({ }: UserDashboardProps) => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Strategies</h2>
             {profile?.account_type !== 'organization' && (
-              <Button onClick={handleNewStrategy}>
+              <a href="/b2c" className="flex items-center gap-2 text-xs sm:text-sm bg-slate-900 text-white px-3 py-2 rounded-md">
                 <Plus className="w-4 h-4 mr-2" />
                 Create New Strategy
-              </Button>
+              </a>
             )}
           </div>
 
