@@ -374,11 +374,10 @@ class StrategyClient {
         payload.business_data = businessData;
       }
 
-      // Call the database function
-      const { data, error } = await (supabase.rpc as any)(
-        'create_or_update_strategy_with_business',
-        payload
-      ).single();
+      // Call the database function via RPC
+      const rpcResult = await supabase.rpc('create_or_update_strategy_with_business', payload) as any;
+      const data = rpcResult.data;
+      const error = rpcResult.error;
 
       if (error) {
         console.error('Database error:', error);
