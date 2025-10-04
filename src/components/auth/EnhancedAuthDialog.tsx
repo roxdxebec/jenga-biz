@@ -288,12 +288,6 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     setIsLoading(false);
   };
 
-  // Auto-close dialog when user is authenticated
-  useEffect(() => {
-    if (user && open) {
-      onOpenChange(false);
-    }
-  }, [user, open, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
