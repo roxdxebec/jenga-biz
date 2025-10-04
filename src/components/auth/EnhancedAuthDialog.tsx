@@ -105,7 +105,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
