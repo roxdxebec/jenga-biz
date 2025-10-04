@@ -53,7 +53,7 @@ export const useStrategy = () => {
       console.error('Error loading strategies:', error);
       toast({
         title: 'Failed to load strategies',
-        description: error.message,
+        description: formatError(error),
         variant: 'destructive'
       });
     } finally {
