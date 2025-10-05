@@ -59,7 +59,6 @@ export interface Strategy {
 export interface Milestone {
   id: string;
   strategy_id: string;
-  business_id: string;
   title: string;
   description: string;
   status: MilestoneStatus;
@@ -93,7 +92,6 @@ export interface StrategyInput {
 
 export interface MilestoneInput {
   strategy_id: string;
-  business_id: string;
   title: string;
   description: string;
   status: MilestoneStatus;
@@ -205,7 +203,18 @@ class StrategyClient {
         .from('strategies')
         .select(`
           *,
-          milestones:milestones(*)
+          milestones:milestones(*),
+          business:businesses!strategies_business_id_fkey(
+            id,
+            name,
+            business_type,
+            stage,
+            description,
+            registration_number,
+            registration_certificate_url,
+            created_at,
+            updated_at
+          )
         `)
         .eq('user_id', userId)
         .order('updated_at', { ascending: false });
@@ -322,6 +331,32 @@ class StrategyClient {
     if (error) throw error;
   }
 
+  // Delete a strategy and its related milestones (safe operation)
+  async deleteStrategy(id: string): Promise<void> {
+    try {
+      // Attempt to remove milestones first to avoid FK constraint issues
+      const { error: milestonesError } = await supabase
+        .from('milestones')
+        .delete()
+        .eq('strategy_id', id);
+
+      if (milestonesError) {
+        console.error('Error deleting related milestones for strategy:', milestonesError);
+        throw milestonesError;
+      }
+
+      const { error } = await supabase
+        .from('strategies')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error deleting strategy:', error);
+      throw error;
+    }
+  }
+
   // Batch operations
   async saveStrategyWithMilestones(
     strategyData: Omit<StrategyInput, 'id' | 'created_at' | 'updated_at'>,
@@ -363,10 +398,10 @@ class StrategyClient {
           business_id: businessData ? undefined : strategyData.business_id,
         },
         milestones_data: milestonesData.map(milestone => ({
-          ...milestone,
-          // Ensure business_id is set from strategy if not provided
-          business_id: milestone.business_id || strategyData.business_id,
-        }))
+            ...milestone,
+            // Ensure strategy_id is set from provided strategy id when available
+            strategy_id: milestone.strategy_id || strategyData.id,
+          }))
       };
 
       // Add business data if provided
@@ -375,9 +410,17 @@ class StrategyClient {
       }
 
       // Call the database function
+      // PostgREST requires the RPC parameters to match the function signature.
+      // The DB function expects named parameters: p_business_data, p_milestones_data, p_strategy_data
+      const rpcPayload = {
+        p_business_data: payload.business_data || null,
+        p_milestones_data: payload.milestones_data || [],
+        p_strategy_data: payload.strategy_data || {}
+      };
+
       const { data, error } = await (supabase.rpc as any)(
         'create_or_update_strategy_with_business',
-        payload
+        rpcPayload
       ).single();
 
       if (error) {

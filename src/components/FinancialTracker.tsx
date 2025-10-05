@@ -71,6 +71,63 @@ const FinancialTracker = ({
 
     try {
       setLoading(true);
+      // If we have a strategyId, prefer aggregated daily snapshots for totals using financial_records
+      if (strategyId) {
+        try {
+          const { data: strat, error: stratErr } = await supabase
+            .from('strategies')
+            .select('business_id')
+            .eq('id', strategyId)
+            .single();
+
+          if (!stratErr && strat && strat.business_id) {
+            const { data: frData, error: frErr } = await supabase
+              .from('financial_records')
+              .select('revenue, expenses, metric_type, record_date')
+              .eq('business_id', strat.business_id);
+
+            if (!frErr && frData) {
+              // Compute totals
+              const income = frData.reduce((s: number, r: any) => s + Number(r.revenue ?? 0), 0);
+              const expenses = frData.reduce((s: number, r: any) => s + Number(r.expenses ?? 0), 0);
+
+              // Still fetch recent transactions for listing
+              const { data: txData, error: txErr } = await supabase
+                .from('financial_transactions')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('strategy_id', strategyId)
+                .order('transaction_date', { ascending: false })
+                .limit(50);
+
+              const formattedTransactions = (!txErr && txData) ? txData.map((t: any) => ({
+                id: t.id,
+                type: t.transaction_type as 'income' | 'expense',
+                amount: Number(t.amount),
+                description: t.description,
+                category: t.category,
+                date: new Date(t.transaction_date)
+              })) : [];
+
+              setTransactions(formattedTransactions as Transaction[]);
+              // override totals displayed via derived values from transactions by setting transactions to reflect aggregated state when empty
+              if (formattedTransactions.length === 0) {
+                // create synthetic transactions to reflect aggregate totals so totals display correctly
+                const synth: Transaction[] = [];
+                if (income > 0) synth.push({ id: 'agg-income', type: 'income', amount: Number(income), description: 'Aggregated revenue', category: 'aggregated', date: new Date() });
+                if (expenses > 0) synth.push({ id: 'agg-expense', type: 'expense', amount: Number(expenses), description: 'Aggregated expenses', category: 'aggregated', date: new Date() });
+                setTransactions(synth);
+              }
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('Error using financial_records aggregate, falling back to transactions', err);
+        }
+      }
+
+      // Default fallback: fetch transactions directly
       let query = supabase
         .from('financial_transactions')
         .select('*')

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { isPending, markPending } from '@/lib/dedupe';
 
 interface StageCompletionRate {
   stage_name: string;
@@ -54,6 +55,10 @@ export const useBusinessIntelligence = () => {
     if (!user) return;
 
     try {
+      const key = `stage_start:${user.id}:${stageName}:${strategyId || 'none'}`;
+      if (isPending(key)) return;
+      markPending(key, 1000);
+
       await supabase.from('business_progress_stages').insert({
         user_id: user.id,
         strategy_id: strategyId,
@@ -69,6 +74,10 @@ export const useBusinessIntelligence = () => {
     if (!user) return;
 
     try {
+      const key = `stage_complete:${user.id}:${stageName}`;
+      if (isPending(key)) return;
+      markPending(key, 1000);
+
       // Update the most recent stage record for this user and stage
       const { data: stageRecord } = await supabase
         .from('business_progress_stages')
@@ -148,6 +157,10 @@ export const useBusinessIntelligence = () => {
     if (!user) return;
 
     try {
+      const key = `journey:${user.id}:${sessionId}:${pagePath}:${actionType}:${JSON.stringify(actionData)}`;
+      if (isPending(key)) return;
+      markPending(key, 1000);
+
       await supabase.from('user_journey_analytics').insert({
         user_id: user.id,
         session_id: sessionId,

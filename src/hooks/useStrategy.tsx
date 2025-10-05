@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
 import {
@@ -20,38 +21,46 @@ type MilestoneType = 'business_registration' | 'first_customer' | 'first_hire' |
 export const useStrategy = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
+  const toastRef = useRef(toast);
+  useEffect(() => { toastRef.current = toast; }, [toast]);
+  // start as not-loading so the first invocation of loadStrategies can run
+  const [loading, setLoading] = useState(false);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [currentStrategy, setCurrentStrategy] = useState<Strategy | null>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loadingMilestones, setLoadingMilestones] = useState(false);
 
   // Load user's strategies
+  const lastLoadRef = useRef<number | null>(null);
   const loadStrategies = useCallback(async () => {
-    console.log('loadStrategies called, user:', user?.id);
-    if (!user) {
-      console.log('No user, returning early');
+    const now = Date.now();
+    // Throttle: if we loaded within the last 1s, skip
+    if (lastLoadRef.current && now - lastLoadRef.current < 1000) {
+      console.log('loadStrategies: skip due to throttle');
       return;
     }
 
+    if (!user) {
+      console.log('loadStrategies called but no user');
+      return;
+    }
+
+    if (loading) {
+      console.log('loadStrategies: already loading, skip');
+      return;
+    }
+
+    lastLoadRef.current = now;
     setLoading(true);
     try {
       console.log('Fetching strategies for user:', user.id);
       const userStrategies = await strategyClient.getStrategies(user.id);
       console.log('Fetched strategies:', userStrategies);
       setStrategies(userStrategies);
-      
-      // If there's a current strategy, refresh it
-      if (currentStrategy) {
-        console.log('Refreshing current strategy:', currentStrategy.id);
-        const refreshed = await strategyClient.getStrategyWithMilestones(currentStrategy.id!);
-        console.log('Refreshed strategy:', refreshed);
-        setCurrentStrategy(refreshed);
-        setMilestones(refreshed.milestones);
-      }
+      // NOTE: do not refresh currentStrategy here to avoid re-entrant updates
     } catch (error: any) {
       console.error('Error loading strategies:', error);
-      toast({
+      toastRef.current?.({
         title: 'Failed to load strategies',
         description: formatError(error),
         variant: 'destructive'
@@ -59,7 +68,7 @@ export const useStrategy = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, currentStrategy, toast]);
+  }, [user]);
 
   // Load a specific strategy with its milestones
   const loadStrategy = useCallback(async (strategyId: string) => {
@@ -333,7 +342,8 @@ export const useStrategy = () => {
       const formattedMilestones = (data || []).map((milestone: any) => ({
         id: milestone.id,
         strategy_id: milestone.strategy_id,
-        business_id: milestone.business_id,
+        // business_id removed from milestone shape; keep for backward compat if present
+        // business_id: milestone.business_id,
         title: milestone.title,
         description: milestone.description || '',
         status: (milestone.status || 'pending') as MilestoneStatus,
@@ -354,14 +364,12 @@ export const useStrategy = () => {
   const saveMilestone = async (milestone: Omit<Milestone, 'id' | 'created_at' | 'updated_at' | 'strategy_id' | 'business_id'> & { 
     id?: string;
     strategy_id?: string;
-    business_id?: string;
   }) => {
     if (!user || !currentStrategy?.id) return null;
 
     const milestoneData: Omit<Milestone, 'id' | 'created_at' | 'updated_at'> & { id?: string } = {
       id: milestone.id,
       strategy_id: milestone.strategy_id || currentStrategy.id,
-      business_id: milestone.business_id || currentStrategy.business_id,
       title: milestone.title,
       description: milestone.description,
       status: milestone.status,
@@ -434,10 +442,16 @@ export const useStrategy = () => {
 
   // Set currentStrategy after strategies load
   useEffect(() => {
-    if (!loading && strategies.length > 0 && currentStrategy === undefined) {
-      setCurrentStrategy(strategies[0]); // Auto-select first strategy
-    } else if (!loading && strategies.length === 0 && currentStrategy === undefined) {
-      setCurrentStrategy(null); // No strategies available
+    if (!loading) {
+      // If we have strategies and no currentStrategy selected, pick the first
+      if (strategies.length > 0 && currentStrategy == null) {
+        setCurrentStrategy(strategies[0]); // Auto-select first strategy
+      }
+
+      // If there are no strategies but we currently have one selected, clear it
+      else if (strategies.length === 0 && currentStrategy != null) {
+        setCurrentStrategy(null);
+      }
     }
   }, [loading, strategies, currentStrategy]);
 
@@ -583,15 +597,19 @@ export const useStrategy = () => {
   }, [currentStrategy?.id, toast]);
 
   // Load strategies on mount and when user changes
+  // NOTE: depend only on `user` to avoid re-running when `loadStrategies` identity changes
   useEffect(() => {
     if (user) {
+      // call the stable function directly
       loadStrategies();
     } else {
       setStrategies([]);
       setCurrentStrategy(null);
       setMilestones([]);
     }
-  }, [user, loadStrategies]);
+    // Intentionally only depend on `user` to avoid infinite loops when callbacks change identity
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // Get business by ID
   const getBusiness = useCallback(async (businessId: string): Promise<Business | null> => {
@@ -615,6 +633,26 @@ export const useStrategy = () => {
     }
   }, [user]);
 
+  // Debug: surface what the hook is returning at runtime (one-time)
+  useEffect(() => {
+    try {
+      const exportedKeys = [
+        'loading', 'strategies', 'currentStrategy', 'milestones',
+        'loadStrategies', 'loadStrategy', 'saveStrategy', 'saveMilestone', 'saveStrategyWithBusinessAndMilestones'
+      ];
+      console.debug('useStrategy debug - exports (keys):', exportedKeys);
+      // show types of key functions
+      console.debug('useStrategy debug - types:', {
+        saveMilestone: typeof (saveMilestone as any),
+        saveStrategyWithBusinessAndMilestones: typeof (saveStrategyWithBusinessAndMilestones as any)
+      });
+    } catch (e) {
+      // swallow logging errors
+    }
+    // Intentionally run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Upload business registration certificate
   const uploadBusinessCertificate = useCallback(async (file: File, businessId: string): Promise<string> => {
     try {
@@ -636,6 +674,7 @@ export const useStrategy = () => {
     loadStrategy,
     saveStrategy,
     saveStrategyWithMilestones,
+    saveMilestone,
     saveStrategyWithBusinessAndMilestones,
     createFromTemplate,
     clearStrategy,
@@ -647,5 +686,6 @@ export const useStrategy = () => {
     updateMilestone,
     deleteMilestone,
     loadMilestones,
+    deleteStrategy,
   };
 }

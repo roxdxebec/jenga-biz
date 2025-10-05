@@ -49,8 +49,8 @@ describe('StrategyClient', () => {
       status: 'pending',
       milestone_type: 'business_registration',
       target_date: '2025-12-31',
-      business_id: 'business-123',
       strategy_id: 'strategy-123',
+      completed_at: null,
     },
   ];
 
@@ -109,7 +109,7 @@ describe('StrategyClient', () => {
           business_data: mockBusinessData,
           milestones_data: mockMilestones.map(m => ({
             ...m,
-            business_id: m.business_id || mockStrategyData.business_id,
+            strategy_id: m.strategy_id || undefined,
           })),
         }
       );
@@ -183,7 +183,7 @@ describe('StrategyClient', () => {
           business_data: updatedBusinessData,
           milestones_data: mockMilestones.map(m => ({
             ...m,
-            business_id: m.business_id || 'business-123',
+            strategy_id: m.strategy_id || undefined,
           })),
         }
       );

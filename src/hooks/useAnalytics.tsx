@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useBusinessIntelligence } from './useBusinessIntelligence';
+import { isPending, markPending } from '@/lib/dedupe';
 
 export const useAnalytics = () => {
   const { user } = useAuth();
@@ -20,6 +21,10 @@ export const useAnalytics = () => {
     if (!user) return;
 
     try {
+      const requestKey = `activity:${user.id}:${activityType}:${JSON.stringify(activityData)}`;
+      if (isPending(requestKey)) return; // dedupe
+      markPending(requestKey, 1000);
+
       await supabase.from('user_activities').insert({
         user_id: user.id,
         activity_type: activityType,

@@ -16,9 +16,10 @@ export const FinancialRecordForm = ({
 }: FinancialRecordFormProps) => {
   const [formData, setFormData] = useState({
     amount: initialData?.amount?.toString() || '',
-    record_date: initialData?.record_date || new Date().toISOString().split('T')[0],
+    record_date: (initialData as any)?.transaction_date || (initialData as any)?.record_date || new Date().toISOString().split('T')[0],
     description: initialData?.description || '',
     category: initialData?.category || 'revenue' as const,
+    transaction_type: (initialData as any)?.transaction_type || undefined,
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +34,8 @@ export const FinancialRecordForm = ({
       const recordData = {
         ...formData,
         amount: parseFloat(formData.amount),
+        transaction_date: formData.record_date,
+        transaction_type: formData.transaction_type,
       };
 
       if (initialData?.id) {

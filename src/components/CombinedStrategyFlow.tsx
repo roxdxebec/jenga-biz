@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Home, Save, Download, Share2, Sparkles, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut, Upload, Trash2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Home, Save, Download, Share2, Sparkles, MessageCircle, Mail, Copy, FileDown, BarChart3, User, LogOut, Trash2 } from 'lucide-react';
+// Removed unused form UI imports
 import StrategyBuilder from '@/components/StrategyBuilder';
 import BusinessMilestonesSection from '@/components/BusinessMilestonesSection';
 import FinancialTracker from '@/components/FinancialTracker';
-import LanguageSelector from '@/components/LanguageSelector';
-import { useStrategy, type BusinessStage } from '@/hooks/useStrategy';
+// LanguageSelector not used in this component
+import { useStrategy } from '@/hooks/useStrategy';
+import { strategyClient } from '@/lib/strategy-client';
+import type { BusinessStage } from '@/lib/strategy-client';
 import { useToast } from '@/hooks/use-toast';
 import { generateShareText, useShareActions } from '@/lib/shareUtils';
 import { useAuth } from '@/hooks/useAuth';
@@ -45,12 +44,17 @@ const CombinedStrategyFlow = ({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // cast to any to avoid strict return-type mismatch in some environments
   const {
     currentStrategy,
     deleteStrategy,
     milestones: strategyMilestones,
-    loadStrategies
-  } = useStrategy();
+    loadStrategies,
+    saveStrategyWithBusinessAndMilestones,
+    saveStrategy,
+    saveStrategyWithMilestones,
+    setCurrentStrategy
+  } = useStrategy() as any;
 
   // Local state
   const [language, setLanguage] = useState(initialLanguage);
@@ -97,8 +101,6 @@ const CombinedStrategyFlow = ({
   });
 
   const [milestones, setMilestones] = useState<any[]>([]);
-  const [templateId, setTemplateId] = useState(template?.id || '');
-  const [templateName, setTemplateName] = useState(template?.name || '');
 
   // Modal states
   const [showShareModal, setShowShareModal] = useState(false);
@@ -161,15 +163,7 @@ const CombinedStrategyFlow = ({
 
   const t = translations[language] || translations.en;
 
-  // Handle file input change for registration certificate
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setStrategy(prev => ({
-        ...prev,
-        registrationCertificateFile: e.target.files![0]
-      }));
-    }
-  };
+  // (file input handler removed - not used in this component)
 
   function normalizeStrategy(data: any) {
     if (!data) return null;
@@ -236,13 +230,13 @@ const CombinedStrategyFlow = ({
     }
 
     try {
-      const strategyToSave: any = {
+      const strategyData: any = {
         id: currentStrategy?.id,
         user_id: user?.id || '',
-        business_id: currentStrategy?.business_id,
+        business_id: currentStrategy?.business_id || undefined,
         business_name: strategy.businessName,
-        business_stage: strategy.businessStage,
         business_type: strategy.businessType,
+        business_stage: strategy.businessStage,
         description: strategy.businessDescription,
         registration_number: strategy.registrationNumber,
         registration_certificate_file: strategy.registrationCertificateFile,
@@ -255,21 +249,55 @@ const CombinedStrategyFlow = ({
         key_partners: strategy.keyPartners,
         marketing_approach: strategy.marketingApproach,
         operational_needs: strategy.operationalNeeds,
-        growth_goals: strategy.growthGoals,
-        created_at: currentStrategy?.created_at || new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        milestones: []
+        growth_goals: strategy.growthGoals
       };
 
-      // Save via hook if available
-      if ((window as any).saveStrategyWithBusinessAndMilestones) {
-        await (window as any).saveStrategyWithBusinessAndMilestones(strategyToSave, {}, []);
+      const businessData: any = {
+        id: currentStrategy?.business_id || undefined,
+        user_id: user?.id || undefined,
+        name: strategy.businessName,
+        business_type: strategy.businessType || 'general',
+        stage: strategy.businessStage || 'idea',
+        description: strategy.businessDescription || '',
+        registration_number: strategy.registrationNumber || '',
+        registration_certificate_file: strategy.registrationCertificateFile || null,
+        registration_certificate_url: strategy.registrationCertificateUrl || ''
+      };
+
+      const milestonesPayload = milestones.map(m => ({
+        title: m.title,
+        description: m.description || '',
+        status: m.status || 'pending',
+        target_date: m.target_date || m.targetDate || null,
+        milestone_type: m.milestone_type || m.type || 'other',
+        strategy_id: currentStrategy?.id || undefined,
+        completed_at: m.completed_at || null
+      }));
+
+      let result: any = null;
+      if (typeof saveStrategyWithBusinessAndMilestones === 'function') {
+        result = await saveStrategyWithBusinessAndMilestones(strategyData, businessData, milestonesPayload, { showToast: true });
+      } else if (typeof saveStrategy === 'function') {
+        const saved = await saveStrategy(strategyData, { showToast: true, isUpdate: !!strategyData.id });
+        if (saved && saved.id && milestonesPayload.length > 0 && typeof saveStrategyWithMilestones === 'function') {
+          await saveStrategyWithMilestones({ ...strategyData, id: saved.id }, milestonesPayload, { showToast: false });
+        }
+        result = saved ? { strategy: saved, milestones: milestonesPayload } : null;
+      } else {
+        throw new Error('No save function available in useStrategy hook');
+      }
+
+      try { await loadStrategies(); } catch (e) { /* ignore refresh errors */ }
+      if (result && result.strategy && typeof setCurrentStrategy === 'function') {
+        setCurrentStrategy(result.strategy);
       }
 
       toast({ title: 'Success', description: 'Your strategy and business information have been saved successfully.' });
-    } catch (error) {
+      return result;
+    } catch (error: any) {
       console.error('Error saving strategy:', error);
-      toast({ title: 'Error', description: 'Failed to save strategy. Please try again.', variant: 'destructive' });
+      toast({ title: 'Error', description: String(error) || 'Failed to save strategy. Please try again.', variant: 'destructive' });
+      throw error;
     }
   };
 
@@ -392,7 +420,13 @@ const CombinedStrategyFlow = ({
     if (!currentStrategy?.id) return;
     try {
       setIsDeleting(true);
-      await deleteStrategy(currentStrategy.id);
+      if (typeof deleteStrategy !== 'function') {
+        console.warn('deleteStrategy is not a function at delete call — falling back to direct client call', { deleteStrategy });
+        // Fallback: call the strategy client directly to avoid HMR-related missing export issues
+        await strategyClient.deleteStrategy(currentStrategy.id).catch((err: any) => { throw err; });
+      } else {
+        await deleteStrategy(currentStrategy.id);
+      }
       toast({ title: 'Strategy deleted', description: 'The strategy has been successfully deleted.' });
       handleHome();
     } catch (error) {
