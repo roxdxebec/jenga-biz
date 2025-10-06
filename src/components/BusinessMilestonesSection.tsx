@@ -26,7 +26,7 @@ interface BusinessMilestonesSectionProps {
 const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language = 'en', onMilestonesChange }: BusinessMilestonesSectionProps) => {
   const [businessStage, setBusinessStage] = useState<'ideation' | 'early' | 'growth'>('ideation');
   const [customMilestone, setCustomMilestone] = useState('');
-  const { milestones, saveMilestone, deleteMilestone, currentStrategy } = useStrategy();
+  const { milestones, saveMilestone, deleteMilestone, currentStrategy, saveStrategyWithBusinessAndMilestones } = useStrategy() as any;
   const { trackBusinessMilestone, trackJourney } = useAnalytics();
   const { toast } = useToast();
   
@@ -269,7 +269,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     if (customMilestone.trim()) {
       const strategyId = getStrategyId();
       
-      const result = await saveMilestone({
+      const result = await callSaveMilestone({
         title: customMilestone.trim(),
         status: 'not-started',
         business_stage: businessStage,
@@ -288,10 +288,27 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
     }
   };
 
+  // Guarded save wrapper to avoid runtime crashes if hook export is missing
+  const callSaveMilestone = async (payload: any) => {
+    if (typeof saveMilestone !== 'function') {
+      console.warn('saveMilestone not available from useStrategy hook');
+      toast({ title: 'Save unavailable', description: 'Unable to save milestone right now.', variant: 'destructive' });
+      return null;
+    }
+
+    try {
+      return await saveMilestone(payload);
+    } catch (err) {
+      console.error('Error in saveMilestone wrapper', err);
+      toast({ title: 'Save failed', description: 'Unable to save milestone. Please try again.', variant: 'destructive' });
+      return null;
+    }
+  };
+
   const handleAddSuggestedMilestone = async (milestoneTitle: string) => {
     const strategyId = getStrategyId();
       
-    const result = await saveMilestone({
+    const result = await callSaveMilestone({
       title: milestoneTitle,
       status: 'not-started',
       business_stage: businessStage,
@@ -309,12 +326,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
-    const milestone = milestones.find(m => m.id === milestoneId);
+    const milestone = milestones.find((m: any) => m.id === milestoneId);
     if (!milestone) return;
 
     const strategyId = getStrategyId();
     
-    const result = await saveMilestone({
+    const result = await callSaveMilestone({
       id: milestoneId,
       title: milestone.title,
       status: newStatus,
@@ -331,12 +348,12 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const handleUpdateMilestoneDate = async (milestoneId: string, date: Date | undefined) => {
-    const milestone = milestones.find(m => m.id === milestoneId);
+    const milestone = milestones.find((m: any) => m.id === milestoneId);
     if (!milestone) return;
 
     const strategyId = getStrategyId();
 
-    const result = await saveMilestone({
+    const result = await callSaveMilestone({
       id: milestoneId,
       title: milestone.title,
       target_date: date?.toISOString() || null,
@@ -370,7 +387,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
 
   const suggestedMilestones = getStageSpecificMilestones(businessStage);
-  const existingMilestoneTitles = milestones.map(m => m.title.toLowerCase());
+  const existingMilestoneTitles = milestones.map((m: any) => (m.title || '').toLowerCase());
   const availableSuggestions = suggestedMilestones.filter(
     (suggestion: string) => !existingMilestoneTitles.includes(suggestion.toLowerCase())
   );
@@ -423,6 +440,46 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
           {currentStage && (
             <p className="text-sm text-gray-600 mt-2">{currentStage.description}</p>
           )}
+          <div className="mt-3">
+            <Button
+              onClick={async () => {
+                try {
+                  const strategyId = getStrategyId();
+                  if (!strategyId) {
+                    toast({ title: 'No strategy selected', description: 'Please open or create a strategy first.', variant: 'destructive' });
+                    return;
+                  }
+
+                  // Build minimal strategy + business payload to update the business stage
+                  const strategyPayload: any = { id: strategyId };
+                  const businessPayload: any = {};
+
+                  if (currentStrategy?.business_id) {
+                    businessPayload.id = currentStrategy.business_id;
+                  }
+
+                  // Set the stage on the business payload
+                  businessPayload.stage = businessStage;
+
+                  // Call the hook method to persist
+                  if (typeof saveStrategyWithBusinessAndMilestones === 'function') {
+                    await saveStrategyWithBusinessAndMilestones(strategyPayload, businessPayload, []);
+                    toast({ title: 'Stage saved', description: `Business stage set to ${currentStage?.label}` });
+                  } else {
+                    toast({ title: 'Save not available', description: 'Save function not available. Please try again later.', variant: 'destructive' });
+                  }
+                } catch (err) {
+                  console.error('Failed to save business stage', err);
+                  toast({ title: 'Save failed', description: 'Unable to save business stage. Please try again.', variant: 'destructive' });
+                }
+              }}
+              size="sm"
+              variant="outline"
+              className="mt-3"
+            >
+              Save Stage
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -526,7 +583,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
                       <div className="flex-1 mr-4">
                         <Input
                           value={milestone.title}
-                          onChange={(e) => saveMilestone({
+                          onChange={(e) => callSaveMilestone({
                             id: milestone.id,
                             title: e.target.value,
                             status: milestone.status,

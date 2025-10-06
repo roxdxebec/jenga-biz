@@ -159,6 +159,22 @@ export function useDeactivateUser() {
   });
 }
 
+export function useDeleteUserHard() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: (userId: string) => apiClient.deleteUserHard(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast({ title: 'User deleted', description: 'User permanently deleted.' });
+    },
+    onError: (error: ApiError) => {
+      toast({ title: 'Error', description: error.error.message || 'Failed to delete user', variant: 'destructive' });
+    }
+  });
+}
+
 // ==========================================
 // Composite Hook for UserManagement Component
 // ==========================================

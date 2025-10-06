@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import CombinedStrategyFlow from '@/components/CombinedStrategyFlow';
 import { useStrategy } from '@/hooks/useStrategy';

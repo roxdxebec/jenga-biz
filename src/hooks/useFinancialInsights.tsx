@@ -58,11 +58,46 @@ export const useFinancialInsights = (businessId?: string) => {
     try {
       const { getCurrentHubIdFromStorage } = await import('@/lib/tenant');
       const hubId = getCurrentHubIdFromStorage();
+      // Prefer aggregated financial_records (daily business-level snapshots)
+      try {
+        let frQuery = supabase
+          .from('financial_records')
+          .select('*')
+          .order('record_date', { ascending: false });
 
+        if (businessId) frQuery = frQuery.eq('business_id', businessId);
+        else if (hubId) {
+          // financial_records does not have hub_id by default; leave as-is
+        }
+
+        const { data: frData, error: frError } = await frQuery;
+        if (!frError && frData && frData.length > 0) {
+          // Normalize aggregated rows into FinancialRecord shape
+          const normalized = frData.map((r: any) => ({
+            id: r.id,
+            business_id: r.business_id,
+            record_date: r.record_date,
+            revenue: Number(r.revenue ?? r.amount ?? 0),
+            expenses: Number(r.expenses ?? 0),
+            currency: (r as any).currency || 'USD',
+            notes: r.notes || null,
+            created_at: r.created_at,
+            updated_at: r.updated_at
+          }));
+
+          setFinancialRecords(normalized || []);
+          return;
+        }
+      } catch (e) {
+        // If the view/table doesn't exist or returns an error, fall back to transactions
+        console.warn('financial_records query failed, falling back to financial_transactions', e);
+      }
+
+      // Fallback: legacy per-transaction records
       let query = supabase
-        .from('financial_records')
+        .from('financial_transactions')
         .select('*')
-        .order('record_date', { ascending: false });
+        .order('transaction_date', { ascending: false });
 
       if (businessId) {
         query = query.eq('business_id', businessId);
@@ -73,16 +108,30 @@ export const useFinancialInsights = (businessId?: string) => {
       let res = await query;
       if (res.error && String(res.error.message || res.error).includes('does not exist')) {
         res = await supabase
-          .from('financial_records')
+          .from('financial_transactions')
           .select('*')
-          .order('record_date', { ascending: false });
+          .order('transaction_date', { ascending: false });
       }
 
       const { data, error } = res;
 
       if (error) throw error;
 
-      setFinancialRecords(data || []);
+      const rows = data || [];
+      // Normalize legacy and new shapes
+      const normalized = rows.map((r: any) => ({
+        id: r.id,
+        business_id: r.business_id || null,
+        record_date: r.record_date || r.transaction_date,
+        revenue: r.revenue ?? (r.amount > 0 ? Number(r.amount) : 0),
+        expenses: r.expenses ?? (r.amount < 0 ? Math.abs(Number(r.amount)) : 0),
+        currency: r.currency || r.currency || 'USD',
+        notes: r.notes || r.description || null,
+        created_at: r.created_at,
+        updated_at: r.updated_at
+      }));
+
+      setFinancialRecords(normalized || []);
     } catch (err: any) {
       console.error('Error fetching financial records:', err);
       setError(err.message);
@@ -96,9 +145,15 @@ export const useFinancialInsights = (businessId?: string) => {
     if (!user) return null;
     
     try {
+      const payload: any = {
+        ...record,
+        transaction_date: (record as any).record_date || (record as any).transaction_date,
+        transaction_type: (record as any).transaction_type || (record as any).category || 'transaction'
+      };
+
       const { data, error } = await supabase
-        .from('financial_records')
-        .insert([record])
+        .from('financial_transactions')
+        .insert([payload])
         .select()
         .single();
       

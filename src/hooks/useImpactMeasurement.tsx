@@ -118,8 +118,9 @@ export const useImpactMeasurement = (businessId?: string) => {
 
       const { data, error } = res;
       if (error) throw error;
-      setJobRecords((data || []).map(record => ({
+      setJobRecords((data || []).map((record: any) => ({
         ...record,
+        job_type: record.job_type ?? undefined,
         gender_breakdown: record.gender_breakdown as { male: number; female: number; other: number },
         age_breakdown: record.age_breakdown as { '18-25': number; '26-35': number; '36-45': number; '46-55': number; '55+': number }
       })));
@@ -149,8 +150,9 @@ export const useImpactMeasurement = (businessId?: string) => {
 
       const { data, error } = res;
       if (error) throw error;
-      setLoanAssessments((data || []).map(assessment => ({
+      setLoanAssessments((data || []).map((assessment: any) => ({
         ...assessment,
+        credit_score: assessment.credit_score ?? undefined,
         readiness_level: assessment.readiness_level as 'not_ready' | 'partially_ready' | 'loan_ready' | 'highly_qualified' | undefined,
         recommendations: assessment.recommendations as string[] | undefined
       })));
@@ -180,7 +182,7 @@ export const useImpactMeasurement = (businessId?: string) => {
 
       const { data, error } = res;
       if (error) throw error;
-      setFinanceRecords(data || []);
+  setFinanceRecords((data || []) as any[]);
     } catch (err) {
       console.error('Error fetching finance records:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch finance records');
@@ -207,7 +209,7 @@ export const useImpactMeasurement = (businessId?: string) => {
 
       const { data, error } = res;
       if (error) throw error;
-      setSurvivalRecords(data || []);
+  setSurvivalRecords((data || []) as any[]);
     } catch (err) {
       console.error('Error fetching survival records:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch survival records');

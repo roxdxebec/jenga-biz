@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from "@/hooks/use-toast";
-import { useUserManagement, useRoleManagement } from "@/hooks/useEdgeUserManagement";
+import { useUserManagement, useRoleManagement, useDeleteUserHard } from "@/hooks/useEdgeUserManagement";
 import { Users, UserPlus, Edit, Trash2, Search, Shield } from "lucide-react";
 import type { User } from "@/lib/api-client";
 
@@ -49,6 +50,7 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
   });
   
   const { getRoleColor } = useRoleManagement();
+  const deleteUserHardMut = useDeleteUserHard();
 
   const handleUpdateUserRole = async (userId: string, newRole: 'entrepreneur' | 'hub_manager' | 'admin' | 'super_admin', action: 'add' | 'remove') => {
     // Find user locally to avoid redundant calls
@@ -339,13 +341,49 @@ export function UserManagement({ hideSuperAdmins = false }: { hideSuperAdmins?: 
                               >
                                 {isUpdatingUser ? 'Saving...' : 'Save'}
                               </Button>
-                              <Button 
-                                variant="destructive" 
-                                onClick={() => handleDeactivateUser(user.id)}
-                                disabled={isDeactivating}
-                              >
-                                <Trash2 className="h-4 w-4 mr-1" /> Deactivate
-                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button 
+                                    variant="destructive" 
+                                    disabled={isDeactivating}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-1" /> Deactivate
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Deactivate User</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This will deactivate the user's account and remove access. This action can be reversed by a super admin.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel disabled={isDeactivating}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleDeactivateUser(user.id)} className="bg-destructive">Deactivate</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+
+                              {/* Permanent delete */}
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="destructive" className="ml-2" disabled={deleteUserHardMut.isPending}>
+                                    <Trash2 className="h-4 w-4 mr-1" /> Delete permanently
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete User Permanently</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This will permanently remove the user and associated records. This action is irreversible.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel disabled={deleteUserHardMut.isPending}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={async () => { await deleteUserHardMut.mutateAsync(user.id); }} className="bg-destructive">Delete</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </div>
 
                             <div className="space-y-4 border-t pt-4">

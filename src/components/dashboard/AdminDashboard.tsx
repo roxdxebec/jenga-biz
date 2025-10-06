@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { PendingApprovalsList } from '../admin/PendingApprovalsList';
 import { SubscriptionPlansManager } from '../admin/SubscriptionPlansManager';
+import TemplatesManager from './TemplatesManager';
 
 
 export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
@@ -195,14 +196,25 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
         ? await activitiesQuery.not('user_id', 'in', notInFilter)
         : await activitiesQuery;
 
-      // Get total revenue from financial records
-      const { data: revenueData } = await supabase
-        .from('financial_records')
-        .select('revenue')
-        .not('revenue', 'is', null);
+      // Get total revenue from aggregated financial_records (daily snapshots)
+      let totalRevenue = 0;
+      try {
+        // Prefer explicit revenue/expenses columns when available
+        const { data: frData, error: frError } = await supabase
+          .from('financial_records')
+          .select('revenue, expenses')
+          .not('revenue', 'is', null);
 
-      const totalRevenue = revenueData?.reduce((sum, record) =>
-        sum + (Number(record.revenue) || 0), 0) || 0;
+        if (frError) {
+          console.warn('financial_records query failed', frError);
+          totalRevenue = 0;
+        } else {
+          totalRevenue = (frData || []).reduce((sum: number, r: any) => sum + (Number(r.revenue || 0) || 0), 0);
+        }
+      } catch (err) {
+        console.error('Error querying financial_records', err);
+        totalRevenue = 0;
+      }
 
       setStats({
         totalUsers: userCount || 0,
@@ -343,6 +355,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                 Approvals
               </TabsTrigger>
             )}
+            {isSuperAdmin && (
+              <TabsTrigger value="templates" className="flex items-center gap-2">
+                <Building className="h-4 w-4" />
+                Templates
+              </TabsTrigger>
+            )}
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -370,6 +388,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
           {isSuperAdmin && (
             <TabsContent value="approvals" className="space-y-6">
               <PendingApprovalsList />
+            </TabsContent>
+          )}
+
+          {isSuperAdmin && (
+            <TabsContent value="templates" className="space-y-6">
+              <TemplatesManager />
             </TabsContent>
           )}
 

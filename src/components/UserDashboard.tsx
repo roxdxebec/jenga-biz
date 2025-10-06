@@ -1,24 +1,19 @@
-// @ts-nocheck
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
-  User, 
   Building2, 
   ArrowLeft, 
   Plus, 
-  Calendar, 
-  BarChart3, 
   Settings,
   Eye,
   Edit,
   Trash2,
   Download,
   Share2,
-  FileDown,
   Target,
   DollarSign,
   MoreVertical
@@ -34,7 +29,8 @@ import { useStrategy } from '@/hooks/useStrategy';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-import { generateShareText, useShareActions } from '@/lib/shareUtils';
+import { useShareActions } from '@/lib/shareUtils';
+import { formatError } from '@/lib/formatError';
 import ReportModal from './ReportModal';
 
 interface UserDashboardProps {
@@ -43,15 +39,70 @@ interface UserDashboardProps {
 
 interface UserProfile {
   id: string;
-  full_name?: string;
-  first_name?: string;
-  last_name?: string;
-  organization_name?: string;
-  profile_picture_url?: string;
-  logo_url?: string;
-  account_type: string;
-  industry?: string;
-  country?: string;
+  full_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  organization_name?: string | null;
+  profile_picture_url?: string | null;
+  logo_url?: string | null;
+  account_type: string | null;
+  industry?: string | null;
+  country?: string | null;
+}
+
+// Domain types
+interface Business {
+  id: string;
+  name?: string | null;
+  business_type?: string | null;
+  stage?: string | null;
+  description?: string | null;
+  registration_number?: string | null;
+  registration_certificate_url?: string | null;
+  hub_id?: string | null;
+  user_id?: string | null;
+  is_active?: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+interface Milestone {
+  id?: string;
+  strategy_id?: string;
+  title?: string;
+  description?: string;
+  status?: string;
+  target_date?: string | null;
+  milestone_type?: string | null;
+  completed_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+interface Strategy {
+  id: string;
+  user_id: string;
+  template_id?: string | null;
+  template_name?: string | null;
+  business_name?: string | null;
+  vision?: string | null;
+  mission?: string | null;
+  target_market?: string | null;
+  revenue_model?: string | null;
+  value_proposition?: string | null;
+  key_partners?: string | null;
+  marketing_approach?: string | null;
+  operational_needs?: string | null;
+  growth_goals?: string | null;
+  language?: string | null;
+  country?: string | null;
+  currency?: string | null;
+  is_active?: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  business_id?: string | null;
+  business?: Business | null;
+  milestones?: Milestone[] | null;
 }
 
 const UserDashboard = ({ }: UserDashboardProps) => {
@@ -60,21 +111,40 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   console.log('🔍 UserDashboard - Component rendering v2 (no-onboarding)', user?.email, 'authLoading:', authLoading);
   
   // Import useStrategy hook
-  const { strategies, currentStrategy, setCurrentStrategy, loading, loadStrategies, milestones, loadMilestones } = useStrategy();
+  const { strategies, currentStrategy, setCurrentStrategy, loading, loadStrategies } = useStrategy() as any;
   const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [allMilestones, setAllMilestones] = useState<any[]>([]);
-  const [loadingMilestones, setLoadingMilestones] = useState(true);
+    const [, setLoadingMilestones] = useState(true);
+    const [, setLoadingFinancial] = useState(true);
   const [financialData, setFinancialData] = useState<any>({ totalRevenue: 0, totalExpenses: 0, recentTransactions: [] });
-  const [loadingFinancial, setLoadingFinancial] = useState(true);
+  
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportMode, setReportMode] = useState<'download' | 'share'>('download');
-  const [selectedStrategy, setSelectedStrategy] = useState<any | null>(null);
+  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  const [fallbackStrategies, setFallbackStrategies] = useState<Strategy[]>([]);
+
+  // Helpers to safely handle possibly-null/undefined date strings coming from the DB
+  const safeParseDate = (dateStr?: string | null): Date | null => {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const safeFormatDistanceToNow = (dateStr?: string | null) => {
+    const d = safeParseDate(dateStr);
+    if (!d) return 'Unknown';
+    try {
+      return formatDistanceToNow(d, { addSuffix: true });
+    } catch (e) {
+      return 'Unknown';
+    }
+  };
 
   // Navigation handlers using React Router
   const handleBackToHome = () => navigate('/');
-  const handleNewStrategy = () => navigate('/templates');
+  
   const handleViewStrategy = (strategy: any) => {
     console.log('🔍 Dashboard - View strategy clicked, strategy.id:', strategy.id);
     navigate(`/strategy?id=${strategy.id}`);
@@ -176,14 +246,59 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   };
 
   // Do not auto-set strategies[0]. Just load data for the user
+  const lastLoadedUserRef = useRef<string | null>(null);
   useEffect(() => {
     if (!user) return;
+    // If we've already loaded data for this user id, skip
+    if (lastLoadedUserRef.current === user.id) return;
+    lastLoadedUserRef.current = user.id || null;
+
     console.log('🔍 UserDashboard - loading user data...');
     loadUserProfile();
+    // Primary load via strategy hook
     loadStrategies();
+    // Also fetch a fallback list of strategies (including business) in case the hook/context hasn't populated yet
+    fetchFallbackStrategiesIfNeeded();
     loadUserMilestones();
     loadUserFinancialData();
   }, [user]);
+
+  // Fallback: directly query strategies including business relation if strategies from hook are empty
+  const fetchFallbackStrategiesIfNeeded = async () => {
+    try {
+      // If the hook already has strategies, no need to fetch
+      if (strategies && strategies.length > 0) return;
+      if (!user) return;
+
+      console.log('🔍 UserDashboard - fallback fetching strategies directly');
+      const { data, error } = await supabase
+        .from('strategies')
+        .select('*, business:businesses(*)')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.warn('Fallback strategies fetch error:', formatError(error));
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // save fallback list and set the selected/current strategy so the dashboard can render immediately
+        // Cast to any because Supabase query shape can include select errors when relations are missing
+        setFallbackStrategies(data as any[] || []);
+        setSelectedStrategy((data[0] ?? null) as any);
+        try {
+          // prefer updating context currentStrategy if available
+          setCurrentStrategy && setCurrentStrategy(data[0]);
+        } catch (e) {
+          // ignore if not settable
+        }
+      }
+    } catch (err) {
+      console.error('Unexpected fallback fetch error:', err);
+    }
+  };
 
   const loadUserProfile = async () => {
     if (!user) return;
@@ -198,8 +313,9 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       if (error) throw error;
       setProfile(data);
     } catch (error: any) {
-      const msg = error?.message || JSON.stringify(error);
-      console.error('Error loading user profile:', msg);
+      const msg = formatError(error);
+      console.error('Error loading user profile:', msg, error);
+      toast({ title: 'Profile load failed', description: msg, variant: 'destructive' });
     } finally {
       setLoadingProfile(false);
     }
@@ -211,7 +327,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     try {
       setLoadingMilestones(true);
       console.log('Loading milestones for user:', user.id);
-      
+
       const { data, error } = await supabase
         .from('milestones')
         .select('*')
@@ -219,11 +335,13 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
+
       console.log('Loaded milestones:', data);
       setAllMilestones(data || []);
-    } catch (error) {
-      console.error('Error loading user milestones:', error);
+    } catch (error: any) {
+      const msg = formatError(error);
+      console.error('Error loading user milestones:', msg, error);
+      toast({ title: 'Failed to load milestones', description: msg, variant: 'destructive' });
     } finally {
       setLoadingMilestones(false);
     }
@@ -235,7 +353,54 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     try {
       setLoadingFinancial(true);
       console.log('Loading financial data for user:', user.id);
-      
+      // First attempt: use aggregated `financial_records` (business-level daily snapshots)
+      // Fetch user's strategies to map to business_id(s)
+      const { data: userStrategies, error: stratErr } = await supabase
+        .from('strategies')
+        .select('id, business_id')
+        .eq('user_id', user.id);
+
+      let businessIds: string[] = [];
+      if (!stratErr && userStrategies && userStrategies.length > 0) {
+        businessIds = userStrategies.map((s: any) => s.business_id).filter(Boolean);
+      }
+
+      if (businessIds.length > 0) {
+        try {
+          // Query financial_records for these businesses
+          const { data: frData, error: frError } = await supabase
+            .from('financial_records')
+            .select('business_id, revenue, expenses, metric_type, record_date')
+            .in('business_id', businessIds)
+            .not('revenue', 'is', null);
+
+          if (!frError && frData && frData.length > 0) {
+            // Aggregate totals using revenue/expenses columns when available
+            const totalRevenue = frData.reduce((sum: number, r: any) => sum + Number(r.revenue || 0), 0);
+            const totalExpenses = frData.reduce((sum: number, r: any) => sum + Number(r.expenses || 0), 0);
+
+            // Recent transactions: fall back to the most recent financial_transactions for listing, since records are daily aggregates
+            const { data: recentTx, error: rtErr } = await supabase
+              .from('financial_transactions')
+              .select('*')
+              .eq('user_id', user.id)
+              .order('transaction_date', { ascending: false })
+              .limit(5);
+
+            setFinancialData({
+              totalRevenue,
+              totalExpenses,
+              netProfit: totalRevenue - totalExpenses,
+              recentTransactions: (!rtErr && recentTx) ? recentTx : []
+            });
+            return;
+          }
+        } catch (err) {
+          console.warn('Error querying financial_records, will fall back to transactions', err);
+        }
+      }
+
+      // Fallback: query financial_transactions directly (per-user)
       const { data, error } = await supabase
         .from('financial_transactions')
         .select('*')
@@ -243,21 +408,23 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         .order('transaction_date', { ascending: false });
 
       if (error) throw error;
-      
-      console.log('Loaded financial transactions:', data);
-      
+
+      console.log('Loaded financial transactions (fallback):', data);
+
       const totalRevenue = data?.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const totalExpenses = data?.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
       const recentTransactions = data?.slice(0, 5) || [];
-      
+
       setFinancialData({
         totalRevenue,
         totalExpenses,
         netProfit: totalRevenue - totalExpenses,
         recentTransactions
       });
-    } catch (error) {
-      console.error('Error loading financial data:', error);
+    } catch (error: any) {
+      const msg = formatError(error);
+      console.error('Error loading financial data:', msg, error);
+      toast({ title: 'Failed to load financial data', description: msg, variant: 'destructive' });
     } finally {
       setLoadingFinancial(false);
     }
@@ -343,35 +510,36 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     report += `Date: ${timestamp}\n`;
     report += `${'='.repeat(60)}\n\n`;
 
-    // Add strategies section
-    report += `BUSINESS STRATEGIES (${strategies.length})\n`;
+  // Add strategies section
+  report += `BUSINESS STRATEGIES (${(strategies || []).length})\n`;
     report += `${'-'.repeat(30)}\n`;
-    if (strategies.length > 0) {
-      strategies.forEach((strategy, index) => {
+    if ((strategies || []).length > 0) {
+      (strategies || []).forEach((strategy: Strategy, index: number) => {
         report += `${index + 1}. ${strategy.business_name || 'Untitled Strategy'}\n`;
         if (strategy.vision) report += `   Vision: ${strategy.vision}\n`;
         if (strategy.mission) report += `   Mission: ${strategy.mission}\n`;
         if (strategy.target_market) report += `   Target Market: ${strategy.target_market}\n`;
         if (strategy.revenue_model) report += `   Revenue Model: ${strategy.revenue_model}\n`;
-        report += `   Updated: ${formatDistanceToNow(new Date(strategy.updated_at || strategy.created_at), { addSuffix: true })}\n\n`;
+        report += `   Updated: ${safeFormatDistanceToNow(strategy.updated_at || strategy.created_at)}\n\n`;
       });
     } else {
       report += `No strategies created yet.\n\n`;
     }
 
     // Add milestones section
-    report += `BUSINESS MILESTONES (${allMilestones.length})\n`;
+  report += `BUSINESS MILESTONES (${(allMilestones || []).length})\n`;
     report += `${'-'.repeat(30)}\n`;
-    if (allMilestones.length > 0) {
-      allMilestones.forEach((milestone, index) => {
-        report += `${index + 1}. ${milestone.title}\n`;
+    if ((allMilestones || []).length > 0) {
+      (allMilestones || []).forEach((milestone: any, index: number) => {
+        report += `${index + 1}. ${milestone.title || 'Untitled'}\n`;
         report += `   Status: ${milestone.status === 'not-started' ? 'Not Started' : 
                       milestone.status === 'in-progress' ? 'In Progress' : 
                       milestone.status === 'complete' ? 'Complete' : 'Overdue'}\n`;
         if (milestone.target_date) {
-          report += `   Target Date: ${new Date(milestone.target_date).toLocaleDateString()}\n`;
+          const td = safeParseDate(milestone.target_date);
+          report += `   Target Date: ${td ? td.toLocaleDateString() : 'Unknown'}\n`;
         }
-        report += `   Created: ${formatDistanceToNow(new Date(milestone.created_at), { addSuffix: true })}\n\n`;
+        report += `   Created: ${safeFormatDistanceToNow(milestone.created_at)}\n\n`;
       });
     } else {
       report += `No milestones created yet.\n\n`;
@@ -380,20 +548,26 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     // Add financial section
     report += `FINANCIAL SUMMARY\n`;
     report += `${'-'.repeat(30)}\n`;
-    report += `Total Revenue: KSh ${financialData.totalRevenue.toLocaleString()}\n`;
-    report += `Total Expenses: KSh ${financialData.totalExpenses.toLocaleString()}\n`;
-    report += `Net Profit: KSh ${financialData.netProfit.toLocaleString()}\n`;
-    report += `Recent Transactions: ${financialData.recentTransactions.length}\n\n`;
+  const totalRevenue = financialData?.totalRevenue ?? 0;
+  const totalExpenses = financialData?.totalExpenses ?? 0;
+  const netProfit = financialData?.netProfit ?? (totalRevenue - totalExpenses);
+  const recentTransactions = financialData?.recentTransactions ?? [];
 
-    if (financialData.recentTransactions.length > 0) {
+  report += `Total Revenue: KSh ${Number(totalRevenue).toLocaleString()}\n`;
+  report += `Total Expenses: KSh ${Number(totalExpenses).toLocaleString()}\n`;
+  report += `Net Profit: KSh ${Number(netProfit).toLocaleString()}\n`;
+  report += `Recent Transactions: ${recentTransactions.length}\n\n`;
+
+    if ((recentTransactions || []).length > 0) {
       report += `RECENT TRANSACTIONS (Last 5)\n`;
       report += `${'-'.repeat(30)}\n`;
-      financialData.recentTransactions.forEach((transaction, index) => {
-        report += `${index + 1}. ${transaction.description}\n`;
-        report += `   Type: ${transaction.transaction_type}\n`;
-        report += `   Amount: KSh ${Number(transaction.amount).toLocaleString()}\n`;
-        report += `   Category: ${transaction.category}\n`;
-        report += `   Date: ${new Date(transaction.transaction_date).toLocaleDateString()}\n\n`;
+      (recentTransactions || []).forEach((transaction: any, index: number) => {
+        report += `${index + 1}. ${transaction.description || 'No description'}\n`;
+        report += `   Type: ${transaction.transaction_type || 'unknown'}\n`;
+        report += `   Amount: KSh ${Number(transaction.amount || 0).toLocaleString()}\n`;
+        report += `   Category: ${transaction.category || 'Uncategorized'}\n`;
+        const td = safeParseDate(transaction.transaction_date);
+        report += `   Date: ${td ? td.toLocaleDateString() : 'Unknown'}\n\n`;
       });
     }
 
@@ -409,8 +583,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     report += `Generated: ${new Date().toLocaleDateString()}\n`;
     report += `${'='.repeat(50)}\n\n`;
 
-    if (strategies.length > 0) {
-      strategies.forEach((strategy, index) => {
+    if ((strategies || []).length > 0) {
+      (strategies || []).forEach((strategy: Strategy, index: number) => {
         report += `STRATEGY ${index + 1}: ${strategy.business_name || 'Untitled'}\n`;
         report += `${'-'.repeat(40)}\n`;
         if (strategy.vision) report += `Vision: ${strategy.vision}\n\n`;
@@ -422,8 +596,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         if (strategy.marketing_approach) report += `Marketing Approach: ${strategy.marketing_approach}\n\n`;
         if (strategy.operational_needs) report += `Operational Needs: ${strategy.operational_needs}\n\n`;
         if (strategy.growth_goals) report += `Growth Goals: ${strategy.growth_goals}\n\n`;
-        report += `Created: ${formatDistanceToNow(new Date(strategy.created_at), { addSuffix: true })}\n`;
-        report += `Updated: ${formatDistanceToNow(new Date(strategy.updated_at), { addSuffix: true })}\n\n`;
+        report += `Created: ${safeFormatDistanceToNow(strategy.created_at)}\n`;
+        report += `Updated: ${safeFormatDistanceToNow(strategy.updated_at)}\n\n`;
         report += `${'='.repeat(50)}\n\n`;
       });
     } else {
@@ -448,16 +622,17 @@ const UserDashboard = ({ }: UserDashboardProps) => {
       };
 
       Object.entries(groupedMilestones).forEach(([status, milestones]) => {
-        if (milestones.length > 0) {
+        if ((milestones || []).length > 0) {
           report += `${status.toUpperCase().replace('-', ' ')} MILESTONES (${milestones.length})\n`;
           report += `${'-'.repeat(40)}\n`;
-          milestones.forEach((milestone, index) => {
-            report += `${index + 1}. ${milestone.title}\n`;
+          (milestones || []).forEach((milestone: any, index: number) => {
+            report += `${index + 1}. ${milestone.title || 'Untitled'}\n`;
             if (milestone.target_date) {
-              report += `   Target: ${new Date(milestone.target_date).toLocaleDateString()}\n`;
+              const td = safeParseDate(milestone.target_date);
+              report += `   Target: ${td ? td.toLocaleDateString() : 'Unknown'}\n`;
             }
             report += `   Stage: ${milestone.business_stage || 'Not specified'}\n`;
-            report += `   Created: ${formatDistanceToNow(new Date(milestone.created_at), { addSuffix: true })}\n\n`;
+            report += `   Created: ${safeFormatDistanceToNow(milestone.created_at)}\n\n`;
           });
           report += `\n`;
         }
@@ -482,11 +657,44 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   };
 
   // Check auth loading first
+  // If auth appears stuck, provide a small diagnostic UI to let the developer/user retry the session check
   if (authLoading) {
     console.log('[Dashboard] auth still loading...');
+    const handleRetryAuth = async () => {
+      try {
+        console.log('[Dashboard] retrying auth.getSession()...');
+        const { data } = await supabase.auth.getSession();
+        console.log('[Dashboard] getSession result:', data?.session?.user ?? null);
+        // Note: the AuthProvider listens to auth state changes and will update context accordingly
+      } catch (err) {
+        console.error('Auth retry failed', err);
+      }
+    };
+
     return (
       <div className="flex items-center justify-center h-screen">
-        <p>Loading dashboard...</p>
+        <div className="text-center">
+          <p className="mb-4">Loading dashboard... (auth still initializing)</p>
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={handleRetryAuth}
+              className="px-4 py-2 bg-orange-600 text-white rounded-md"
+            >
+              Retry auth
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="px-4 py-2 border border-gray-300 rounded-md"
+            >
+              Go to landing
+            </button>
+          </div>
+          <div className="mt-4 text-xs text-gray-500">
+            <div>authLoading: {String(authLoading)}</div>
+            <div>user id: {user?.id ?? 'null'}</div>
+            <div>Tip: if this stays stuck, check DevTools network tab for blocked requests or service-worker routing.</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -498,14 +706,11 @@ const UserDashboard = ({ }: UserDashboardProps) => {
     return null;
   }
 
-  // Only check profile/strategy loading if we have a user
+  // We no longer block the entire dashboard render while profile or strategies load.
+  // Individual sections show their own loading states. This prevents the UI from
+  // getting stuck when one of the loads is delayed or has missing data.
   if (loadingProfile || loading) {
-    console.log('[Dashboard] user data still loading...', { loadingProfile, loading });
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p>Loading dashboard...</p>
-      </div>
-    );
+    console.log('[Dashboard] partial data loading...', { loadingProfile, loading });
   }
 
   console.log('[Dashboard] render check', { currentStrategy, strategiesCount: strategies.length });
@@ -571,7 +776,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
           {/* Profile Information Row */}
           <div className="flex items-start gap-4">
             <Avatar className="h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0">
-              <AvatarImage src={getProfileImage()} alt={getUserDisplayName()} />
+              <AvatarImage src={getProfileImage() ?? undefined} alt={getUserDisplayName()} />
               <AvatarFallback className="bg-orange-100 text-orange-700 text-lg">
                 {getUserInitials()}
               </AvatarFallback>
@@ -609,6 +814,12 @@ const UserDashboard = ({ }: UserDashboardProps) => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Strategies</h2>
+            {profile?.account_type !== 'organization' && (
+              <a href="/b2c" className="flex items-center gap-2 text-xs sm:text-sm bg-slate-900 text-white px-3 py-2 rounded-md">
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Strategy
+              </a>
+            )}
           </div>
 
           {loading ? (
@@ -621,14 +832,10 @@ const UserDashboard = ({ }: UserDashboardProps) => {
               <Building2 className="mx-auto text-orange-500" />
               <h3 className="mt-4 text-lg font-semibold text-gray-900">No strategies yet</h3>
               <p className="mt-2 text-sm text-gray-600">Get started by creating a strategy. You can use a template or start from scratch.</p>
-              <div className="mt-4 flex justify-center gap-3">
-                <Button onClick={handleNewStrategy} variant="default">Create from Templates</Button>
-                <Button onClick={() => navigate('/strategy')} variant="outline"><p>Create a Custom Strategy</p></Button>
-              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {strategies.map((strategy) => (
+              { (strategies && strategies.length > 0 ? strategies : fallbackStrategies).map((strategy: Strategy) => (
                 <Card key={strategy.id} className="border-orange-200 hover:border-orange-300 transition-colors">
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -648,7 +855,7 @@ const UserDashboard = ({ }: UserDashboardProps) => {
                     
                     <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                       <span>
-                        Updated {formatDistanceToNow(new Date(strategy.updated_at || strategy.created_at || ''), { addSuffix: true })}
+                        Updated {safeFormatDistanceToNow(strategy.updated_at || strategy.created_at)}
                       </span>
                       <div className="flex items-center gap-1">
                         {strategy.language && (

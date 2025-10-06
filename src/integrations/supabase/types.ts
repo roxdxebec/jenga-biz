@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -109,41 +110,7 @@ export type Database = {
           },
         ]
       }
-      business_milestones: {
-        Row: {
-          business_id: string
-          completed_at: string | null
-          created_at: string
-          id: string
-          milestone_type: Database["public"]["Enums"]["milestone_type"]
-          notes: string | null
-        }
-        Insert: {
-          business_id: string
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          milestone_type: Database["public"]["Enums"]["milestone_type"]
-          notes?: string | null
-        }
-        Update: {
-          business_id?: string
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          milestone_type?: Database["public"]["Enums"]["milestone_type"]
-          notes?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "business_milestones_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      
       business_progress_stages: {
         Row: {
           completed_at: string | null
@@ -343,36 +310,39 @@ export type Database = {
       }
       financial_records: {
         Row: {
-          business_id: string
-          created_at: string
-          currency: string | null
-          expenses: number | null
           id: string
-          notes: string | null
+          business_id: string
           record_date: string
-          revenue: number | null
+          amount: number
+          revenue: number
+          expenses: number
+          metric_type: string
+          notes: string | null
+          created_at: string
           updated_at: string
         }
         Insert: {
-          business_id: string
-          created_at?: string
-          currency?: string | null
-          expenses?: number | null
           id?: string
-          notes?: string | null
+          business_id: string
           record_date: string
-          revenue?: number | null
+          amount?: number
+          revenue?: number
+          expenses?: number
+          metric_type?: string
+          notes?: string | null
+          created_at?: string
           updated_at?: string
         }
         Update: {
-          business_id?: string
-          created_at?: string
-          currency?: string | null
-          expenses?: number | null
           id?: string
-          notes?: string | null
+          business_id?: string
           record_date?: string
-          revenue?: number | null
+          amount?: number
+          revenue?: number
+          expenses?: number
+          metric_type?: string
+          notes?: string | null
+          created_at?: string
           updated_at?: string
         }
         Relationships: [
@@ -385,6 +355,7 @@ export type Database = {
           },
         ]
       }
+      
       financial_transactions: {
         Row: {
           amount: number
@@ -743,6 +714,8 @@ export type Database = {
           strategy_id: string | null
           target_date: string | null
           title: string
+          completed_at: string | null
+          milestone_type: Database["public"]["Enums"]["milestone_type"] | null
           updated_at: string
           user_id: string
         }
@@ -754,6 +727,8 @@ export type Database = {
           strategy_id?: string | null
           target_date?: string | null
           title: string
+          completed_at?: string | null
+          milestone_type?: Database["public"]["Enums"]["milestone_type"] | null
           updated_at?: string
           user_id: string
         }
@@ -765,6 +740,8 @@ export type Database = {
           strategy_id?: string | null
           target_date?: string | null
           title?: string
+          completed_at?: string | null
+          milestone_type?: Database["public"]["Enums"]["milestone_type"] | null
           updated_at?: string
           user_id?: string
         }

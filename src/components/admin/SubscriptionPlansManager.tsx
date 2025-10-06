@@ -52,8 +52,8 @@ export function SubscriptionPlansManager() {
   const loadPlans = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.listPlans();
-      setPlans(Array.isArray(data) ? data : []);
+  const data = await apiClient.listPlans();
+  setPlans(Array.isArray(data) ? (data as SubscriptionPlan[]) : []);
     } catch (error: any) {
       console.error('Failed to load plans:', error);
       toast({

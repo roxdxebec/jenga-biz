@@ -5,14 +5,18 @@
 
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
-import { getUserFromRequest, requireAdmin, requireSuperAdmin, AuthError } from '../_shared/auth.ts';
+import { getUserFromRequest, requireAdmin, requireSuperAdmin, getServiceRoleClient, AuthError, isAdmin, isHubManager } from '../_shared/auth.ts';
 import {
-  validateBody, 
-  validateQuery, 
-  updateProfileSchema, 
-  updateUserRoleSchema, 
+  validateBody,
+  validateQuery,
+  updateProfileSchema,
+  updateUserRoleSchema,
   getUsersQuerySchema,
-  sanitizeString 
+  sanitizeString,
+  // invite schemas
+  createInviteCodeSchema,
+  validateInviteCodeQuerySchema,
+  consumeInviteCodeSchema,
 } from '../_shared/validation.ts';
 import { 
   handleCors, 
@@ -45,6 +49,24 @@ const handler = async (req: Request): Promise<Response> => {
     
     if (method === 'GET' && path === 'user-management') {
       return await getUsers(req);
+    }
+    
+    // Invite code endpoints under /user-management/invite*
+    if (method === 'POST' && path === 'invite-codes' || (method === 'POST' && path === 'invite')) {
+      return await createInvite(req);
+    }
+
+    // Atomic signup + consume endpoint
+    if (method === 'POST' && path === 'invite-signup') {
+      return await inviteSignupAndConsume(req);
+    }
+
+    if (method === 'GET' && (path === 'invite-codes' || path === 'invite') && url.pathname.endsWith('/validate')) {
+      return await validateInvite(req);
+    }
+
+    if (method === 'POST' && (path === 'invite-codes' || path === 'invite') && url.pathname.endsWith('/consume')) {
+      return await consumeInvite(req);
     }
     
     if (method === 'POST' && path === 'roles') {
@@ -93,6 +115,299 @@ async function getUserProfile(req: Request): Promise<Response> {
     roles: user.roles,
     ...profile,
   });
+}
+
+// --- Invite handlers (mirrors invite-codes/index.ts but available under user-management)
+// POST /user-management/invite or POST /user-management/invite-codes
+async function createInvite(req: Request): Promise<Response> {
+  const { user, supabase } = await getUserFromRequest(req);
+  // At minimum require hub_manager/admin or super_admin
+  requireAdmin(user);
+
+  const body = await validateBody(req, createInviteCodeSchema) as any;
+
+  // Enforce RBAC: non-super-admins cannot create organization invites
+  if (body.account_type === 'organization') {
+    requireSuperAdmin(user);
+  }
+
+  // Determine inviter hub context if creator is hub_manager/admin
+  let inviterHubId: string | null = null;
+  if (isHubManager(user) || isAdmin(user)) {
+    const { data: rolesRows, error: rolesErr } = await supabase
+      .from('user_roles')
+      .select('hub_id, role')
+      .eq('user_id', user.id);
+    if (rolesErr) throw rolesErr;
+    const hubContext = (rolesRows || []).find((r: any) => (r.role === 'hub_manager' || r.role === 'admin') && r.hub_id);
+    inviterHubId = hubContext?.hub_id || null;
+  }
+
+  const code = (Math.random().toString(36).substring(2, 8) + '-' + Math.random().toString(36).substring(2, 8)).toUpperCase();
+  const expiresAt = body.expires_at || new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString(); // 14 days default
+
+  const { data, error } = await supabase
+    .from('invite_codes')
+    .insert({
+      code,
+      invited_email: body.invited_email,
+      account_type: body.account_type,
+      created_by: user.id,
+      expires_at: expiresAt,
+    })
+    .select('*')
+    .single();
+
+  if (error) throw error;
+
+  return successResponse({ ...data, hub_context: inviterHubId }, 201);
+}
+
+// GET /user-management/invite/validate?code=...
+async function validateInvite(req: Request): Promise<Response> {
+  const url = new URL(req.url);
+  const { code } = validateQuery(url, validateInviteCodeQuerySchema) as any;
+
+  // Public validation via anon client
+  const { data, error } = await (await import('https://esm.sh/@supabase/supabase-js@2')).createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_ANON_KEY')!
+  )
+  .from('invite_codes')
+  .select('*')
+  .eq('code', code)
+  .is('used_at', null)
+  .gte('expires_at', new Date().toISOString())
+  .maybeSingle();
+
+  if (error) throw error;
+  if (!data) {
+    return successResponse({ valid: false });
+  }
+
+  return successResponse({ valid: true, invite: { code: data.code, account_type: data.account_type, invited_email: data.invited_email, expires_at: data.expires_at } });
+}
+
+// POST /user-management/invite/consume
+async function consumeInvite(req: Request): Promise<Response> {
+  const { user, supabase } = await getUserFromRequest(req);
+  const { code, user_id } = await validateBody(req, consumeInviteCodeSchema) as any;
+
+  if (user.id !== user_id && !isAdmin(user)) {
+    throw new AuthError('Not allowed to consume invite for another user', 403);
+  }
+
+  // Fetch invite
+  const { data: invite, error: inviteErr } = await supabase
+    .from('invite_codes')
+    .select('*')
+    .eq('code', code)
+    .is('used_at', null)
+    .gte('expires_at', new Date().toISOString())
+    .single();
+  if (inviteErr) throw inviteErr;
+
+  // Determine creator's hub context
+  let creatorHubId: string | null = null;
+  if (invite) {
+    const { data: creatorRoles } = await supabase
+      .from('user_roles')
+      .select('hub_id, role')
+      .eq('user_id', invite.created_by);
+    const hubCtx = (creatorRoles || []).find((r: any) => (r.role === 'hub_manager' || r.role === 'admin') && r.hub_id);
+    creatorHubId = hubCtx?.hub_id || null;
+  }
+
+  // Mark invite as used
+  const { error: updateErr } = await supabase
+    .from('invite_codes')
+    .update({ used_by: user_id, used_at: new Date().toISOString() })
+    .eq('code', code);
+  if (updateErr) throw updateErr;
+
+  // If the invite is for a business account and there is a hub context, link user to hub as entrepreneur
+  let linkedHubId: string | null = null;
+  if (invite.account_type === 'business' && creatorHubId) {
+    const { error: roleErr } = await supabase
+      .from('user_roles')
+      .insert({ user_id, role: 'entrepreneur', hub_id: creatorHubId });
+    if (roleErr && roleErr.code !== '23505') { // ignore duplicate role
+      throw roleErr;
+    }
+    linkedHubId = creatorHubId;
+  }
+
+  // Attempt to auto-assign Premium subscription using service role
+  let assignedPlan = linkedHubId ? 'premium' : 'free';
+  let subscriptionAssigned = false;
+  if (linkedHubId) {
+    try {
+      const serviceClient = getServiceRoleClient();
+      const now = new Date();
+      const periodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+      const { data: premiumPlan, error: planErr } = await serviceClient
+        .from('subscription_plans')
+        .select('id, name, is_active')
+        .ilike('name', 'premium')
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (planErr) {
+        if ((planErr as any).code !== '42P01') throw planErr;
+      }
+
+      if (premiumPlan?.id) {
+        const { data: existingSubs, error: subErr } = await serviceClient
+          .from('user_subscriptions')
+          .select('id, status, current_period_end')
+          .eq('user_id', user_id)
+          .eq('status', 'active')
+          .gt('current_period_end', now.toISOString());
+
+        if (subErr) {
+          if ((subErr as any).code !== '42P01') throw subErr;
+        }
+
+        if (!existingSubs || existingSubs.length === 0) {
+          const { error: assignErr } = await serviceClient
+            .from('user_subscriptions')
+            .insert({
+              user_id,
+              plan_id: premiumPlan.id,
+              status: 'active',
+              current_period_start: now.toISOString(),
+              current_period_end: periodEnd.toISOString(),
+            });
+
+          if (assignErr) {
+            if ((assignErr as any).code !== '42P01') throw assignErr;
+          } else {
+            subscriptionAssigned = true;
+          }
+        } else {
+          subscriptionAssigned = true;
+        }
+      }
+    } catch (e) {
+      console.error('Premium auto-assignment error:', e);
+    }
+  }
+
+  return successResponse({ consumed: true, linked_hub_id: linkedHubId, assigned_plan: assignedPlan, subscription_assigned: subscriptionAssigned });
+}
+
+// POST /user-management/invite-signup
+// Body: { email, password, full_name, account_type, invite_code }
+async function inviteSignupAndConsume(req: Request): Promise<Response> {
+  // This endpoint performs an atomic-ish signup: it creates the auth user using the service role
+  // admin REST API, then consumes the invite and creates profile/roles using the service client.
+  // If any DB step fails, it attempts to delete the created auth user to avoid orphan accounts.
+
+  const body = await validateBody(req, (await import('../_shared/validation.ts')).signupSchema) as any;
+
+  // Validate invite code first using anon client
+  const { data: invite, error: inviteErr } = await (await import('https://esm.sh/@supabase/supabase-js@2')).createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_ANON_KEY')!
+  )
+  .from('invite_codes')
+  .select('*')
+  .eq('code', body.invite_code)
+  .is('used_at', null)
+  .gte('expires_at', new Date().toISOString())
+  .maybeSingle();
+
+  if (inviteErr) throw inviteErr;
+  if (!invite) return errorResponse('INVALID_INVITE', 'Invite code is invalid or expired', 400);
+
+  // Create auth user via Admin REST API
+  const { env: envModule } = await import('../_shared/env.ts');
+  const config = envModule.getConfig();
+  const adminCreateUrl = `${config.supabaseUrl}/auth/v1/admin/users`;
+
+  let createdAuthUserId: string | null = null;
+  try {
+    const resp = await fetch(adminCreateUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
+        'apikey': config.supabaseServiceRoleKey,
+        'x-api-key': config.supabaseServiceRoleKey,
+      },
+      body: JSON.stringify({
+        email: body.email,
+        password: body.password,
+        email_confirm: true,
+        user_metadata: { full_name: body.full_name, account_type: body.account_type }
+      })
+    });
+
+    const respBody = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      console.error('Admin user create failed:', resp.status, respBody);
+      return errorResponse('AUTH_CREATE_FAILED', 'Failed to create auth user', 500);
+    }
+
+    createdAuthUserId = respBody.id;
+  } catch (e) {
+    console.error('Admin user create error:', e);
+    return errorResponse('AUTH_CREATE_ERROR', 'Error creating auth user', 500);
+  }
+
+  // Use service role client to create profile, roles, consume invite
+  const service = getServiceRoleClient();
+  try {
+    // Begin DB ops
+    // Mark invite as used and set used_by
+    const { error: markErr } = await service
+      .from('invite_codes')
+      .update({ used_at: new Date().toISOString(), used_by: createdAuthUserId })
+      .eq('code', body.invite_code);
+    if (markErr) throw markErr;
+
+    // Insert profile
+    const { error: profileErr } = await service
+      .from('profiles')
+      .insert({ id: createdAuthUserId, email: body.email, full_name: body.full_name, account_type: body.account_type, is_profile_complete: false });
+    if (profileErr) throw profileErr;
+
+    // If invite has hub context, assign entrepreneur role
+    if ((invite as any)?.account_type === 'business') {
+      // determine creator's hub
+      const { data: creatorRoles } = await service
+        .from('user_roles')
+        .select('hub_id, role')
+        .eq('user_id', (invite as any).created_by);
+      const hubCtx = (creatorRoles || []).find((r: any) => (r.role === 'hub_manager' || r.role === 'admin') && r.hub_id);
+      if (hubCtx?.hub_id) {
+        const { error: roleErr } = await service.from('user_roles').insert({ user_id: createdAuthUserId, role: 'entrepreneur', hub_id: hubCtx.hub_id });
+        if (roleErr && roleErr.code !== '23505') throw roleErr;
+      }
+    }
+
+    return successResponse({ userId: createdAuthUserId, created: true });
+  } catch (dbErr) {
+    console.error('DB ops after auth create failed, attempting rollback:', dbErr);
+    // Attempt to delete the created auth user to avoid orphans
+    try {
+      const deleteUrl = `${config.supabaseUrl}/auth/v1/admin/users/${createdAuthUserId}`;
+      await fetch(deleteUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
+          'apikey': config.supabaseServiceRoleKey,
+          'x-api-key': config.supabaseServiceRoleKey,
+        },
+      });
+    } catch (delErr) {
+      console.error('Failed to rollback auth user after DB failure:', delErr);
+    }
+
+    return handleError(dbErr);
+  }
 }
 
 /**
@@ -321,6 +636,7 @@ async function deactivateUser(req: Request): Promise<Response> {
 
   const url = new URL(req.url);
   const userId = url.searchParams.get('userId');
+  const hard = url.searchParams.get('hard') === 'true';
   
   if (!userId) {
     return errorResponse('MISSING_USER_ID', 'User ID is required', 400);
@@ -344,6 +660,86 @@ async function deactivateUser(req: Request): Promise<Response> {
 
   if (profileError) {
     throw profileError;
+  }
+
+  if (hard) {
+    // Perform permanent deletion using service role client
+    try {
+      const service = getServiceRoleClient();
+
+      // First, attempt to delete the auth user using the Admin REST API as a reliable fallback.
+      // This uses the service role key and the project's Supabase URL.
+      try {
+        const { env: envModule } = await import('../_shared/env.ts');
+        const config = envModule.getConfig();
+        const adminUrl = `${config.supabaseUrl}/auth/v1/admin/users/${userId}`;
+
+        // Retry loop: 3 attempts with exponential backoff (100ms, 300ms, 900ms)
+        const maxAttempts = 3;
+        let attempt = 0;
+        let lastErr: any = null;
+
+        while (attempt < maxAttempts) {
+          attempt += 1;
+          try {
+            const resp = await fetch(adminUrl, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                // Provide both Authorization and apikey headers - some edge routes expect apikey
+                'Authorization': `Bearer ${config.supabaseServiceRoleKey}`,
+                'apikey': config.supabaseServiceRoleKey,
+                'x-api-key': config.supabaseServiceRoleKey,
+              },
+            });
+
+            // Read response body for logs (always capture) before checking status
+            const body = await resp.text();
+            if (resp.ok) {
+              // success
+              lastErr = null;
+              break;
+            }
+
+            // Non-ok response, capture body for logging
+            lastErr = { status: resp.status, statusText: resp.statusText, body };
+            console.error(`Admin REST delete attempt ${attempt} failed:`, lastErr);
+          } catch (e) {
+            lastErr = e;
+            console.error(`Admin REST delete attempt ${attempt} error:`, e);
+          }
+
+          // Backoff before next attempt
+          if (attempt < maxAttempts) {
+            const backoffMs = 100 * Math.pow(3, attempt - 1); // 100, 300, 900
+            await new Promise(res => setTimeout(res, backoffMs));
+          }
+        }
+
+        if (lastErr) {
+          console.error('Admin REST delete final error after retries:', lastErr);
+          // Return structured error including a short hint for debugging (don't leak secrets)
+          return errorResponse('AUTH_DELETE_FAILED', `Failed to delete auth user after ${maxAttempts} attempts`, 500);
+        }
+      } catch (e) {
+        console.error('Admin REST delete error:', e);
+        return errorResponse('AUTH_DELETE_ERROR', 'Error deleting auth user via admin REST API', 500);
+      }
+
+      // If we reach here, auth user was deleted successfully. Now delete related DB rows.
+      await service.from('user_roles').delete().eq('user_id', userId);
+      await service.from('profiles').delete().eq('id', userId);
+      // Try remove user subscriptions if table exists
+      try {
+        await service.from('user_subscriptions').delete().eq('user_id', userId);
+      } catch (_) {
+        // ignore if table missing
+      }
+
+      return successResponse({ userId, deleted: true });
+    } catch (e: any) {
+      return handleError(e);
+    }
   }
 
   return successResponse({

@@ -19,7 +19,8 @@ export function useHubAnalytics() {
         throw error;
       }
       
-      return data as HubAnalytics;
+  // Supabase rpc returns Json or unknown; cast via unknown first to satisfy TS
+  return data as unknown as HubAnalytics;
     },
     staleTime: 30000, // Cache for 30 seconds
     retry: 2

@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader as Loader2, Eye, EyeOff, CircleAlert as AlertCircle, Building2, Users, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { saveProfileForUser } from '@/lib/profile';
+import { formatError } from '@/lib/formatError';
 
 interface EnhancedAuthDialogProps {
   open: boolean;
@@ -43,7 +44,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, feedback: "" });
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const { signIn, signUp, resetPassword, user } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const { toast } = useToast();
 
   // Password strength checker
@@ -104,7 +105,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
@@ -167,7 +168,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
       setIsLoading(false);
@@ -273,7 +274,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     if (error) {
       toast({
         title: "Reset Failed",
-        description: error.message,
+        description: formatError(error),
         variant: "destructive",
       });
     } else {
@@ -288,12 +289,6 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
     setIsLoading(false);
   };
 
-  // Auto-close dialog when user is authenticated
-  useEffect(() => {
-    if (user && open) {
-      onOpenChange(false);
-    }
-  }, [user, open, onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -454,41 +449,39 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
                     </RadioGroup>
                   </div>
 
-                  {signupData.accountType === 'organization' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="invite-code">Invite Code (Optional for now)</Label>
-                      <Input
-                        id="invite-code"
-                        type="text"
-                        placeholder="Enter your organization invite code (optional)"
-                        value={signupData.inviteCode}
-                        onChange={(e) => {
-                          setSignupData({ ...signupData, inviteCode: e.target.value });
-                          if (e.target.value) {
-                            validateInviteCode(e.target.value);
-                          }
-                        }}
-                      />
-                      {inviteCodeValid === false && signupData.inviteCode && (
-                        <Alert>
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>Invalid invite code, but you can still proceed</AlertDescription>
-                        </Alert>
-                      )}
-                      {inviteCodeValid === true && (
-                        <Alert>
-                          <Info className="h-4 w-4" />
-                          <AlertDescription>Valid invite code!</AlertDescription>
-                        </Alert>
-                      )}
-                      {!signupData.inviteCode && (
-                        <Alert>
-                          <Info className="h-4 w-4" />
-                          <AlertDescription>💡 No invite code? You can sign up now and get admin permissions later.</AlertDescription>
-                        </Alert>
-                      )}
-                    </div>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="invite-code">Invite Code (optional)</Label>
+                    <Input
+                      id="invite-code"
+                      type="text"
+                      placeholder="Enter invite code (optional)"
+                      value={signupData.inviteCode}
+                      onChange={(e) => {
+                        setSignupData({ ...signupData, inviteCode: e.target.value });
+                        if (e.target.value) {
+                          validateInviteCode(e.target.value);
+                        }
+                      }}
+                    />
+                    {inviteCodeValid === false && signupData.inviteCode && (
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>Invalid invite code, but you can still proceed</AlertDescription>
+                      </Alert>
+                    )}
+                    {inviteCodeValid === true && (
+                      <Alert>
+                        <Info className="h-4 w-4" />
+                        <AlertDescription>Valid invite code!</AlertDescription>
+                      </Alert>
+                    )}
+                    {!signupData.inviteCode && (
+                      <Alert>
+                        <Info className="h-4 w-4" />
+                        <AlertDescription>💡 No invite code? You can sign up now and get admin permissions later.</AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>

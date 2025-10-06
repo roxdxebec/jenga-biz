@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { RotateCw } from 'lucide-react';
 
 // Extend the Window interface to include workbox
-interface Window {
+export interface Window {
   workbox?: {
     addEventListener: (event: string, callback: () => void) => void;
     removeEventListener: (event: string, callback: () => void) => void;

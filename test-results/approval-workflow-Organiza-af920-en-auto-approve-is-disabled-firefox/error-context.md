@@ -1,0 +1,53 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - img "Jenga Biz Africa" [ref=e7]
+        - generic [ref=e8]:
+          - button "Pricing" [ref=e9] [cursor=pointer]
+          - button "Sign In" [ref=e10] [cursor=pointer]:
+            - img
+            - text: Sign In
+    - generic [ref=e12]:
+      - heading "Build your business strategy with confidence" [level=1] [ref=e13]
+      - paragraph [ref=e14]: Jenga Biz Africa helps entrepreneurs plan, track milestones, and manage finances with tools built for African markets.
+      - generic [ref=e15]:
+        - button "Register as Entrepreneur" [ref=e16] [cursor=pointer]
+        - button "I already have an account" [ref=e17] [cursor=pointer]
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - img [ref=e23]
+        - heading "Templates to start fast" [level=3] [ref=e28]
+        - paragraph [ref=e29]: Start with curated templates for popular African business models.
+      - generic [ref=e31]:
+        - img [ref=e33]
+        - heading "Track what matters" [level=3] [ref=e38]
+        - paragraph [ref=e39]: Milestones, finances, and KPIs in one simple workspace.
+      - generic [ref=e41]:
+        - img [ref=e43]
+        - heading "Own your journey" [level=3] [ref=e46]
+        - paragraph [ref=e47]: Built-in guidance to help you grow confidently and sustainably.
+    - generic [ref=e49]:
+      - heading "How it works" [level=2] [ref=e50]
+      - generic [ref=e51]:
+        - generic [ref=e53]:
+          - heading "Create your account" [level=3] [ref=e54]
+          - paragraph [ref=e55]: Register in seconds and set up your profile.
+        - generic [ref=e57]:
+          - heading "Pick a template or start from scratch" [level=3] [ref=e58]
+          - paragraph [ref=e59]: Use ready-made strategies or build your own.
+        - generic [ref=e61]:
+          - heading "Track and grow" [level=3] [ref=e62]
+          - paragraph [ref=e63]: Use milestones and finance tools to stay on track.
+    - generic [ref=e67]:
+      - img [ref=e69]
+      - generic [ref=e74]:
+        - heading "For Ecosystem Enablers" [level=4] [ref=e75]
+        - paragraph [ref=e76]: Hubs, universities, and institutions can onboard teams and track startups. Use the same sign up to get started.
+      - button "Get Started" [ref=e77] [cursor=pointer]
+```

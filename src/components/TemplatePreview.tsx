@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Eye, CheckCircle, ArrowRight, Star, Users, Target, DollarSign, Handshake, Megaphone, Wrench, TrendingUp } from 'lucide-react';
+import { Eye, CheckCircle, ArrowRight, Star, Target, DollarSign, Handshake, Megaphone, Wrench, TrendingUp } from 'lucide-react';
 import { BusinessTemplate } from '@/hooks/useBusinessTemplates';
 
 interface TemplatePreviewProps {

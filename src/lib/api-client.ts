@@ -97,8 +97,10 @@ class EdgeFunctionsApiClient {
 
   constructor() {
     const root = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
-    console.log(root);
-    this.baseUrl = `${root}/functions/v1`;
+    // Prefer the dedicated functions domain to avoid proxy/CORS issues
+    // e.g., https://<project>.supabase.co -> https://<project>.functions.supabase.co
+    const functionsDomain = root.replace('https://', 'https://').replace('.supabase.co', '.functions.supabase.co');
+    this.baseUrl = functionsDomain;
   }
 
   /**
@@ -108,11 +110,15 @@ class EdgeFunctionsApiClient {
     const { data: { session } } = await supabase.auth.getSession();
     const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
 
-    return {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session?.access_token || ''}`,
+      'Accept': 'application/json',
       'apikey': anonKey,
     };
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+    return headers;
   }
 
   /**
@@ -124,13 +130,24 @@ class EdgeFunctionsApiClient {
   ): Promise<T> {
     const headers = await this.getAuthHeaders();
 
-    const res = await fetch(`${this.baseUrl}/${endpoint}`, {
-      ...options,
-      headers: {
-        ...headers,
-        ...options.headers,
-      },
-    });
+    let res: Response;
+    try {
+      res = await fetch(`${this.baseUrl}/${endpoint}`, {
+        ...options,
+        mode: 'cors',
+        cache: 'no-store',
+        headers: {
+          ...headers,
+          ...(options.headers || {}),
+        },
+      });
+    } catch (err) {
+      throw new ApiError({
+        code: 'NETWORK_ERROR',
+        message: 'Failed to reach server',
+        details: { endpoint, error: err instanceof Error ? err.message : String(err) }
+      });
+    }
 
     // Read response as text first to preserve raw body for better errors
     const text = await res.text();
@@ -194,7 +211,7 @@ class EdgeFunctionsApiClient {
       access_token: data.session.access_token,
       expires_in: data.session.expires_in ?? 3600,
       refresh_token: data.session.refresh_token ?? null,
-      user: { id: data.user.id, email: data.user.email },
+  user: { id: data.user.id, email: data.user.email ?? null },
     };
   }
 
@@ -299,6 +316,16 @@ class EdgeFunctionsApiClient {
    */
   async deactivateUser(userId: string): Promise<{ message: string }> {
     const response = await this.request<ApiResponse<{ message: string }>>(`user-management?userId=${userId}`, {
+      method: 'DELETE',
+    });
+    return response.data;
+  }
+
+  /**
+   * Permanently delete a user (super admin only) - hard delete
+   */
+  async deleteUserHard(userId: string): Promise<any> {
+    const response = await this.request<ApiResponse<any>>(`user-management?userId=${userId}&hard=true`, {
       method: 'DELETE',
     });
     return response.data;
@@ -445,17 +472,29 @@ class EdgeFunctionsApiClient {
       const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
       const headers = {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'apikey': anonKey,
         'Authorization': `Bearer ${anonKey}`,
-      };
+      } as Record<string, string>;
 
-      const response = await fetch(`${this.baseUrl}/${endpoint}`, {
-        ...options,
-        headers: {
-          ...headers,
-          ...(options.headers || {}),
-        },
-      });
+      let response: Response;
+      try {
+        response = await fetch(`${this.baseUrl}/${endpoint}`, {
+          ...options,
+          mode: 'cors',
+          cache: 'no-store',
+          headers: {
+            ...headers,
+            ...(options.headers || {}),
+          },
+        });
+      } catch (err) {
+        throw new ApiError({
+          code: 'NETWORK_ERROR',
+          message: 'Failed to reach server',
+          details: { endpoint, error: err instanceof Error ? err.message : String(err) }
+        });
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -650,6 +689,39 @@ class EdgeFunctionsApiClient {
     const qs = tier ? `?tier=${encodeURIComponent(tier)}` : '';
     const res = await this.request<ApiResponse<any[]>>(`business-templates${qs}`);
     return (res as any)?.data ?? (res as unknown as any[]);
+  }
+
+  async createTemplate(payload: { name: string; description?: string; category?: string; template_config: Record<string, any>; version?: number; is_active?: boolean; }): Promise<any> {
+    const res = await this.request<ApiResponse<any>>('business-templates', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return res.data;
+  }
+
+  async updateTemplate(id: string, updates: Partial<{ name: string; description?: string; category?: string; template_config: Record<string, any>; version?: number; is_active?: boolean; }>): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`business-templates?id=${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+    return res.data;
+  }
+
+  async deleteTemplate(id: string): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`business-templates?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+    return res.data;
+  }
+
+  /**
+   * Permanently delete a template (super admin only)
+   */
+  async deleteTemplateForce(id: string): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`business-templates?id=${encodeURIComponent(id)}&force=true`, {
+      method: 'DELETE',
+    });
+    return res.data;
   }
 }
 

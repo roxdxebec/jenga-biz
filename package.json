@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "typecheck:all": "tsc --noEmit -b .",
+    "test": "npx playwright test",
     "test:edge-functions": "node scripts/test-edge-functions.js",
     "test:smoke": "node scripts/test-edge-functions.js --smoke",
     "test:performance": "node scripts/test-edge-functions.js --performance",
@@ -96,6 +98,8 @@
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^1.0.3",
+    "workbox-window": "^7.3.0"
   }
 }
