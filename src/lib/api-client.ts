@@ -211,7 +211,7 @@ class EdgeFunctionsApiClient {
       access_token: data.session.access_token,
       expires_in: data.session.expires_in ?? 3600,
       refresh_token: data.session.refresh_token ?? null,
-      user: { id: data.user.id, email: data.user.email },
+  user: { id: data.user.id, email: data.user.email ?? null },
     };
   }
 
@@ -316,6 +316,16 @@ class EdgeFunctionsApiClient {
    */
   async deactivateUser(userId: string): Promise<{ message: string }> {
     const response = await this.request<ApiResponse<{ message: string }>>(`user-management?userId=${userId}`, {
+      method: 'DELETE',
+    });
+    return response.data;
+  }
+
+  /**
+   * Permanently delete a user (super admin only) - hard delete
+   */
+  async deleteUserHard(userId: string): Promise<any> {
+    const response = await this.request<ApiResponse<any>>(`user-management?userId=${userId}&hard=true`, {
       method: 'DELETE',
     });
     return response.data;
@@ -679,6 +689,39 @@ class EdgeFunctionsApiClient {
     const qs = tier ? `?tier=${encodeURIComponent(tier)}` : '';
     const res = await this.request<ApiResponse<any[]>>(`business-templates${qs}`);
     return (res as any)?.data ?? (res as unknown as any[]);
+  }
+
+  async createTemplate(payload: { name: string; description?: string; category?: string; template_config: Record<string, any>; version?: number; is_active?: boolean; }): Promise<any> {
+    const res = await this.request<ApiResponse<any>>('business-templates', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return res.data;
+  }
+
+  async updateTemplate(id: string, updates: Partial<{ name: string; description?: string; category?: string; template_config: Record<string, any>; version?: number; is_active?: boolean; }>): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`business-templates?id=${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+    return res.data;
+  }
+
+  async deleteTemplate(id: string): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`business-templates?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+    return res.data;
+  }
+
+  /**
+   * Permanently delete a template (super admin only)
+   */
+  async deleteTemplateForce(id: string): Promise<any> {
+    const res = await this.request<ApiResponse<any>>(`business-templates?id=${encodeURIComponent(id)}&force=true`, {
+      method: 'DELETE',
+    });
+    return res.data;
   }
 }
 

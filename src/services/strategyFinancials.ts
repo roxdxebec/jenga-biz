@@ -29,12 +29,12 @@ export class StrategyFinancialsService {
         .eq('id', strategyId)
         .single();
 
-      if (!stratErr && strat && strat.business_id) {
+      if (!stratErr && strat && typeof strat === 'object' && 'business_id' in (strat as any) && (strat as any).business_id) {
         // Query aggregated financial_records for this business
         const { data: frData, error: frErr } = await supabase
           .from('financial_records')
           .select('*')
-          .eq('business_id', strat.business_id)
+          .eq('business_id', (strat as any).business_id)
           .order('record_date', { ascending: false });
 
         if (!frErr && frData && frData.length > 0) {

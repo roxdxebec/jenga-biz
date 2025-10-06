@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch';
 import { useAppSettings } from '@/hooks/useAppSettings';
 import { PendingApprovalsList } from '../admin/PendingApprovalsList';
 import { SubscriptionPlansManager } from '../admin/SubscriptionPlansManager';
+import TemplatesManager from './TemplatesManager';
 
 
 export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
@@ -354,6 +355,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
                 Approvals
               </TabsTrigger>
             )}
+            {isSuperAdmin && (
+              <TabsTrigger value="templates" className="flex items-center gap-2">
+                <Building className="h-4 w-4" />
+                Templates
+              </TabsTrigger>
+            )}
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -381,6 +388,12 @@ export function AdminDashboard({ saasMode = false }: { saasMode?: boolean }) {
           {isSuperAdmin && (
             <TabsContent value="approvals" className="space-y-6">
               <PendingApprovalsList />
+            </TabsContent>
+          )}
+
+          {isSuperAdmin && (
+            <TabsContent value="templates" className="space-y-6">
+              <TemplatesManager />
             </TabsContent>
           )}
 

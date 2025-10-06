@@ -8,7 +8,7 @@ import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 export default function BillingReturn() {
   const [status, setStatus] = useState<'pending' | 'success' | 'failed'>('pending');
   const [message, setMessage] = useState<string>('Validating your payment...');
-  const [searchParams] = useSearchParams();
+  useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {

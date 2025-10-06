@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Copy, Plus, Mail, Clock, CheckCircle, XCircle, Building2, Users, LogIn } from 'lucide-react';
+import { Copy, Mail, Clock, CheckCircle, XCircle, Building2, Users } from 'lucide-react';
 
 // Type definitions
 interface UserRole {
@@ -23,11 +24,12 @@ interface UserRole {
 
 interface UserProfile {
   id: string;
-  email: string;
-  full_name: string;
-  avatar_url?: string;
-  updated_at?: string;
+  email: string | null;
+  full_name: string | null;
+  avatar_url?: string | null;
+  updated_at?: string | null;
   roles: UserRole[];
+  account_type?: string | null;
 }
 
 interface InviteCode {
@@ -45,6 +47,8 @@ export function InviteCodeManager() {
   const [inviteCodes, setInviteCodes] = useState<InviteCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [showRegistrationLinkModal, setShowRegistrationLinkModal] = useState(false);
+  const [lastRegistrationLink, setLastRegistrationLink] = useState<string | null>(null);
   const [newInvite, setNewInvite] = useState({
     email: '',
     accountType: 'business' as 'business' | 'organization'
@@ -54,7 +58,7 @@ export function InviteCodeManager() {
   const { toast } = useToast();
 
   // Fetch user profile and roles
-  const fetchUserProfile = useCallback(async () => {
+  const fetchUserProfile = useCallback(async (): Promise<void> => {
     setLoadingProfile(true);
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -85,11 +89,6 @@ export function InviteCodeManager() {
         ...profile,
         roles: roles || []
       });
-
-      return {
-        profile,
-        roles: roles || []
-      };
     } catch (error) {
       console.error('Error in fetchUserProfile:', {
         error,
@@ -141,6 +140,8 @@ export function InviteCodeManager() {
     setCreating(true);
     try {
       const code = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      // get current user id for created_by
+      const { data: { user } } = await supabase.auth.getUser();
       const { error } = await supabase
         .from('invite_codes')
         .insert([
@@ -149,15 +150,52 @@ export function InviteCodeManager() {
             invited_email: newInvite.email,
             account_type: newInvite.accountType,
             expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+            created_by: user?.id || ''
           },
         ]);
 
       if (error) throw error;
 
-      toast({
-        title: 'Invite code created!',
-        description: `Invite code for ${newInvite.email} has been generated.`,
-      });
+      // Send email with link to register (one-click link) - best-effort
+      try {
+        const appUrl = window.location.origin;
+        const registerUrl = `${appUrl}/register?invite_code=${encodeURIComponent(code)}&email=${encodeURIComponent(newInvite.email)}`;
+
+        // Determine functions base: prefer injected env variables; fall back to Vite env or Netlify-style functions
+        const metaEnv = (typeof import.meta !== 'undefined' ? (import.meta as any).env : {}) || {};
+        const functionsBase = (window as any).__SUPABASE_FUNCTIONS_URL__
+          || metaEnv.VITE_SUPABASE_FUNCTIONS_URL
+          || (metaEnv.VITE_SUPABASE_PROJECT_REF ? `https://${metaEnv.VITE_SUPABASE_PROJECT_REF}.functions.supabase.co` : window.location.origin);
+
+        // Improved email payload: include subject, plain text and html body
+        const payload = {
+          email: newInvite.email,
+          confirmationUrl: registerUrl,
+          subject: 'You were invited to join Jenga',
+          text: `You have been invited to join Jenga. Click or paste this link to register: ${registerUrl}`,
+          html: `<p>You have been invited to join <strong>Jenga</strong>.</p><p>Click the link below to complete registration:</p><p><a href="${registerUrl}">${registerUrl}</a></p><p>If you prefer, copy this invite code: <code>${code}</code></p>`
+        };
+
+        await fetch(`${functionsBase}/send-signup-confirmation`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        // best-effort; don't block
+        console.error('Failed to send invite email:', e);
+      }
+        const appUrl = window.location.origin;
+        const registerUrl = `${appUrl}/register?invite_code=${encodeURIComponent(code)}&email=${encodeURIComponent(newInvite.email)}`;
+
+        // show the registration link modal so admin can copy/send it immediately
+        setLastRegistrationLink(registerUrl);
+        setShowRegistrationLinkModal(true);
+
+        toast({
+          title: 'Invite code created!',
+          description: `Invite code for ${newInvite.email} has been generated.`,
+        });
 
       // Reset form and refresh list
       setNewInvite({ email: '', accountType: 'business' });
@@ -183,6 +221,38 @@ export function InviteCodeManager() {
       });
     } catch (error) {
       console.error('Failed to copy:', error);
+    }
+  };
+
+  const sendInviteEmail = async (invite: InviteCode) => {
+    try {
+      const appUrl = window.location.origin;
+      const registerUrl = `${appUrl}/register?invite_code=${encodeURIComponent(invite.code)}&email=${encodeURIComponent(invite.invited_email)}`;
+      const metaEnv = (typeof import.meta !== 'undefined' ? (import.meta as any).env : {}) || {};
+      const functionsBase = (window as any).__SUPABASE_FUNCTIONS_URL__
+        || metaEnv.VITE_SUPABASE_FUNCTIONS_URL
+        || (metaEnv.VITE_SUPABASE_PROJECT_REF ? `https://${metaEnv.VITE_SUPABASE_PROJECT_REF}.functions.supabase.co` : window.location.origin);
+
+      const payload = {
+        email: invite.invited_email,
+        confirmationUrl: registerUrl,
+        subject: 'You were invited to join Jenga',
+        text: `You have been invited to join Jenga. Register here: ${registerUrl}`,
+        html: `<p>You have been invited to join <strong>Jenga</strong>.</p><p>Click the link below to complete registration:</p><p><a href="${registerUrl}">${registerUrl}</a></p><p>Invite code: <code>${invite.code}</code></p>`
+      };
+
+      const resp = await fetch(`${functionsBase}/send-signup-confirmation`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!resp.ok) throw new Error('Email send failed');
+
+      toast({ title: 'Email sent', description: `Invite sent to ${invite.invited_email}` });
+    } catch (e) {
+      console.error('Failed to send invite email:', e);
+      toast({ title: 'Email failed', description: 'Could not send invite email', variant: 'destructive' });
     }
   };
 
@@ -310,6 +380,42 @@ export function InviteCodeManager() {
         </CardContent>
       </Card>
 
+      {/* Registration link modal shown after creating an invite */}
+      <Dialog open={showRegistrationLinkModal} onOpenChange={setShowRegistrationLinkModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Invite Link</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-2">
+            <p className="text-sm text-gray-600">Share this link with the invited user to allow one-click registration.</p>
+            <div className="bg-slate-50 p-3 rounded border font-mono text-sm break-all">{lastRegistrationLink}</div>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={async () => {
+                  if (!lastRegistrationLink) return;
+                  try {
+                    await navigator.clipboard.writeText(lastRegistrationLink);
+                    toast({ title: 'Copied', description: 'Registration link copied to clipboard' });
+                  } catch (e) {
+                    console.error('Failed to copy registration link', e);
+                    toast({ title: 'Copy failed', description: 'Could not copy link', variant: 'destructive' });
+                  }
+                }}
+              >
+                <Copy className="w-4 h-4 mr-2" /> Copy link
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={() => setShowRegistrationLinkModal(false)}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Card>
         <CardHeader>
           <CardTitle>Invite Codes</CardTitle>
@@ -359,14 +465,40 @@ export function InviteCodeManager() {
                     <TableCell className="text-sm text-muted-foreground">
                       {new Date(invite.expires_at).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex items-center space-x-2">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(invite.code)}
                         disabled={!!invite.used_at}
+                        title="Copy invite code"
                       >
                         <Copy className="w-4 h-4" />
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const appUrl = window.location.origin;
+                          const registerUrl = `${appUrl}/register?invite_code=${encodeURIComponent(invite.code)}&email=${encodeURIComponent(invite.invited_email)}`;
+                          copyToClipboard(registerUrl);
+                          toast({ title: 'Link copied', description: 'Registration link copied to clipboard' });
+                        }}
+                        disabled={!!invite.used_at}
+                        title="Copy registration link"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => sendInviteEmail(invite)}
+                        disabled={!!invite.used_at}
+                        title="Send invite email"
+                      >
+                        <Mail className="w-4 h-4" />
                       </Button>
                     </TableCell>
                   </TableRow>

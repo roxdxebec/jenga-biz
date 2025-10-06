@@ -13,7 +13,7 @@ export interface ImpersonationSession {
 
 export async function startImpersonation(hubId: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const { data, error } = await supabase.functions.invoke('hub-impersonation', {
+    const { error } = await supabase.functions.invoke('hub-impersonation', {
       body: { action: 'start', hubId }
     });
 
@@ -31,7 +31,7 @@ export async function startImpersonation(hubId: string): Promise<{ success: bool
 
 export async function stopImpersonation(): Promise<{ success: boolean; error?: string }> {
   try {
-    const { data, error } = await supabase.functions.invoke('hub-impersonation', {
+    const { error } = await supabase.functions.invoke('hub-impersonation', {
       body: { action: 'stop' }
     });
 
@@ -53,7 +53,7 @@ export async function getCurrentImpersonationStatus(): Promise<{
   error?: string;
 }> {
   try {
-    const { data, error } = await supabase.functions.invoke('hub-impersonation');
+  const { error, data } = await supabase.functions.invoke('hub-impersonation');
 
     if (error) {
       console.error('Get impersonation status error:', error);

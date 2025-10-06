@@ -10,7 +10,6 @@ import FinancialTracker from '@/components/FinancialTracker';
 // LanguageSelector not used in this component
 import { useStrategy } from '@/hooks/useStrategy';
 import { strategyClient } from '@/lib/strategy-client';
-import type { BusinessStage } from '@/lib/strategy-client';
 import { useToast } from '@/hooks/use-toast';
 import { generateShareText, useShareActions } from '@/lib/shareUtils';
 import { useAuth } from '@/hooks/useAuth';
@@ -65,7 +64,7 @@ const CombinedStrategyFlow = ({
   interface StrategyState {
     businessName: string;
     businessType: string;
-    businessStage: BusinessStage | string;
+  businessStage: string;
     businessDescription: string;
     registrationNumber: string;
     registrationCertificateFile: File | null;

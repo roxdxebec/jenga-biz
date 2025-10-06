@@ -44,7 +44,7 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, feedback: "" });
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const { signIn, signUp, resetPassword, user } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const { toast } = useToast();
 
   // Password strength checker
@@ -449,41 +449,39 @@ export function EnhancedAuthDialog({ open, onOpenChange, defaultTab = 'login' }:
                     </RadioGroup>
                   </div>
 
-                  {signupData.accountType === 'organization' && (
-                    <div className="space-y-2">
-                      <Label htmlFor="invite-code">Invite Code (Optional for now)</Label>
-                      <Input
-                        id="invite-code"
-                        type="text"
-                        placeholder="Enter your organization invite code (optional)"
-                        value={signupData.inviteCode}
-                        onChange={(e) => {
-                          setSignupData({ ...signupData, inviteCode: e.target.value });
-                          if (e.target.value) {
-                            validateInviteCode(e.target.value);
-                          }
-                        }}
-                      />
-                      {inviteCodeValid === false && signupData.inviteCode && (
-                        <Alert>
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>Invalid invite code, but you can still proceed</AlertDescription>
-                        </Alert>
-                      )}
-                      {inviteCodeValid === true && (
-                        <Alert>
-                          <Info className="h-4 w-4" />
-                          <AlertDescription>Valid invite code!</AlertDescription>
-                        </Alert>
-                      )}
-                      {!signupData.inviteCode && (
-                        <Alert>
-                          <Info className="h-4 w-4" />
-                          <AlertDescription>💡 No invite code? You can sign up now and get admin permissions later.</AlertDescription>
-                        </Alert>
-                      )}
-                    </div>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="invite-code">Invite Code (optional)</Label>
+                    <Input
+                      id="invite-code"
+                      type="text"
+                      placeholder="Enter invite code (optional)"
+                      value={signupData.inviteCode}
+                      onChange={(e) => {
+                        setSignupData({ ...signupData, inviteCode: e.target.value });
+                        if (e.target.value) {
+                          validateInviteCode(e.target.value);
+                        }
+                      }}
+                    />
+                    {inviteCodeValid === false && signupData.inviteCode && (
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>Invalid invite code, but you can still proceed</AlertDescription>
+                      </Alert>
+                    )}
+                    {inviteCodeValid === true && (
+                      <Alert>
+                        <Info className="h-4 w-4" />
+                        <AlertDescription>Valid invite code!</AlertDescription>
+                      </Alert>
+                    )}
+                    {!signupData.inviteCode && (
+                      <Alert>
+                        <Info className="h-4 w-4" />
+                        <AlertDescription>💡 No invite code? You can sign up now and get admin permissions later.</AlertDescription>
+                      </Alert>
+                    )}
+                  </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>

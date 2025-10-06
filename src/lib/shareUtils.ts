@@ -7,10 +7,16 @@ interface ShareTextOptions {
   period?: string;
   customTitle?: string;
   isFinancial?: boolean;
-  language?: string;
+  language?: string; // allow callers to pass runtime language strings; we'll guard when indexing
 }
 
-const translations = {
+const translations: Record<'en' | 'sw' | 'ar' | 'fr', {
+  shareTitle: string;
+  copiedToast: string;
+  shareFailedToast: string;
+  copyFailedToast: string;
+  copyFailedDescription: string;
+}> = {
   en: {
     shareTitle: 'My Business Strategy',
     copiedToast: 'Strategy copied to clipboard!',
@@ -42,10 +48,11 @@ const translations = {
 };
 
 export const generateShareText = ({ strategy, type, period, customTitle, isFinancial = false, language = 'en' }: ShareTextOptions) => {
-  const t = translations[language] || translations.en;
+  const langKey = (language || 'en') as keyof typeof translations;
+  const t = translations[langKey] || translations.en;
 
   if (isFinancial) {
-    return `${customTitle || t.shareTitle}
+  return `${customTitle || t.shareTitle}
 
 📊 Financial Summary (${strategy?.timePeriod || period || 'Current Period'})
 
@@ -55,8 +62,8 @@ export const generateShareText = ({ strategy, type, period, customTitle, isFinan
 
 📈 Net Profit: ${strategy?.currency || strategy?.currencySymbol || 'KSh'} ${strategy?.netProfit?.toFixed(2) || ((strategy?.totalRevenue || strategy?.totalIncome || 0) - (strategy?.totalExpenses || 0)).toFixed(2)}
 
-📋 Revenue Entries: ${strategy?.revenueEntries?.length || strategy?.transactions?.filter(t => t.type === 'income')?.length || 0}
-📋 Expense Entries: ${strategy?.expenseEntries?.length || strategy?.transactions?.filter(t => t.type === 'expense')?.length || 0}
+📋 Revenue Entries: ${strategy?.revenueEntries?.length || strategy?.transactions?.filter((tx: any) => tx.type === 'income')?.length || 0}
+📋 Expense Entries: ${strategy?.expenseEntries?.length || strategy?.transactions?.filter((tx: any) => tx.type === 'expense')?.length || 0}
 
 Profit Margin: ${(strategy?.totalRevenue || strategy?.totalIncome) > 0 ? (((strategy?.netProfit || ((strategy?.totalRevenue || strategy?.totalIncome || 0) - (strategy?.totalExpenses || 0))) / (strategy?.totalRevenue || strategy?.totalIncome)) * 100).toFixed(1) : 0}%
 
@@ -70,7 +77,7 @@ Created with Jenga Biz Africa ✨`;
 📋 Total Milestones: ${strategy?.milestones?.length || 0}
 
 Milestones:
-${strategy?.milestones?.length > 0 ? strategy.milestones.map(m => `🎯 ${m.title || m.name}`).join('\n') : '🎯 No milestones added yet'}
+${strategy?.milestones?.length > 0 ? strategy.milestones.map((m: any) => `🎯 ${m.title || m.name}`).join('\n') : '🎯 No milestones added yet'}
 
 Created with Jenga Biz Africa ✨`;
   }
@@ -114,8 +121,8 @@ Created with Jenga Biz Africa ✨`;
     const totalRevenue = (strategy?.totalRevenue ?? strategy?.totalIncome ?? 0) as number;
     const totalExpenses = (strategy?.totalExpenses ?? 0) as number;
     const netProfit = (strategy?.netProfit ?? (totalRevenue - totalExpenses)) as number;
-    const revenueEntries = (strategy?.revenueEntries?.length ?? strategy?.transactions?.filter((t: any) => t.type === 'income')?.length ?? 0) as number;
-    const expenseEntries = (strategy?.expenseEntries?.length ?? strategy?.transactions?.filter((t: any) => t.type === 'expense')?.length ?? 0) as number;
+  const revenueEntries = (strategy?.revenueEntries?.length ?? strategy?.transactions?.filter((tx: any) => tx.type === 'income')?.length ?? 0) as number;
+  const expenseEntries = (strategy?.expenseEntries?.length ?? strategy?.transactions?.filter((tx: any) => tx.type === 'expense')?.length ?? 0) as number;
     const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0';
 
     return `${header}
@@ -137,7 +144,8 @@ Profit Margin: ${profitMargin}%
 
 Created with Jenga Biz Africa ✨`;
   }
-
+  // Fallback: return a simple title if no type matched
+  return customTitle || translations[language as keyof typeof translations].shareTitle || translations.en.shareTitle;
 };
 
 export const useShareActions = () => {
@@ -146,7 +154,6 @@ export const useShareActions = () => {
 
   const handleWhatsAppShare = (text: string, language = 'en') => {
     try {
-      const t = translations[language] || translations.en;
       const encodedText = encodeURIComponent(text);
       
       if (isMobile) {
@@ -158,8 +165,9 @@ export const useShareActions = () => {
       }
     } catch (error) {
       console.error('WhatsApp share failed:', error);
+      const langKey = (language || 'en') as keyof typeof translations;
       toast({
-        title: translations[language]?.shareFailedToast || translations.en.shareFailedToast,
+        title: translations[langKey]?.shareFailedToast || translations.en.shareFailedToast,
         variant: 'destructive'
       });
     }
@@ -174,7 +182,8 @@ export const useShareActions = () => {
 
   const handleCopyText = async (text: string, language = 'en') => {
     try {
-      const t = translations[language] || translations.en;
+      const langKey = (language || 'en') as keyof typeof translations;
+      const t = translations[langKey] || translations.en;
       
       if (!navigator.clipboard) {
         // Fallback for browsers without clipboard API
@@ -197,9 +206,10 @@ export const useShareActions = () => {
       });
     } catch (err) {
       console.error('Failed to copy text: ', err);
+      const langKey = (language || 'en') as keyof typeof translations;
       toast({
-        title: translations[language]?.copyFailedToast || translations.en.copyFailedToast,
-        description: translations[language]?.copyFailedDescription || translations.en.copyFailedDescription,
+        title: translations[langKey]?.copyFailedToast || translations.en.copyFailedToast,
+        description: translations[langKey]?.copyFailedDescription || translations.en.copyFailedDescription,
         variant: 'destructive'
       });
     }

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Zap, Target, DollarSign, LogOut, User, ChartBar as BarChart3, LogIn } from 'lucide-react';
+import { FileText, Zap, LogOut, User, ChartBar as BarChart3, LogIn } from 'lucide-react';
 import { useRoles } from '@/hooks/useRoles';
 import { useAuth } from '@/hooks/useAuth';
 import { useStrategy } from '@/hooks/useStrategy';
@@ -167,7 +167,7 @@ const Index = () => {
     }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
   // Handle authentication-required actions
   const handleAuthRequiredAction = (action: () => void) => {

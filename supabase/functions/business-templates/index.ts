@@ -175,8 +175,39 @@ async function deleteTemplate(req: Request): Promise<Response> {
 
   const url = new URL(req.url);
   const id = url.searchParams.get('id');
+  const force = url.searchParams.get('force') === 'true';
   if (!id) return errorResponse('MISSING_ID', 'Template id is required', 400);
   try { uuidSchema.parse(id); } catch { return errorResponse('INVALID_ID', 'Invalid template id', 400); }
+
+  if (force) {
+    // Permanent deletion using service role to bypass RLS and ensure full removal
+    const service = getServiceRoleClient();
+    // Remove any template_permissions referencing this template first
+    try {
+      const { error: permErr } = await service
+        .from('template_permissions')
+        .delete()
+        .eq('template_id', id);
+      if (permErr && (permErr as any).code !== '42P01') {
+        return errorResponse('TEMPLATES_DB_ERROR', permErr.message, 400);
+      }
+
+      const { data, error } = await service
+        .from('business_templates')
+        .delete()
+        .eq('id', id)
+        .select('id')
+        .single();
+
+      if (error) {
+        return errorResponse('TEMPLATES_DB_ERROR', error.message, 400);
+      }
+
+      return successResponse({ id: data?.id, deleted: true });
+    } catch (e: any) {
+      return handleError(e);
+    }
+  }
 
   const { data, error } = await supabase
     .from('business_templates')

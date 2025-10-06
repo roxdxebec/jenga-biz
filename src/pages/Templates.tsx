@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// ...select components intentionally omitted in this page
 import { ArrowLeft, Home, BarChart3, User, LogOut, Loader2, Eye } from 'lucide-react';
 import { useBusinessTemplates } from '@/hooks/useBusinessTemplates';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -11,9 +11,8 @@ import { TemplatePreview } from '@/components/TemplatePreview';
 
 const Templates = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
-  const [language, setLanguage] = useState('en');
-  const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const { signOut } = useAuth();
+  const [language, setLanguage] = useState<'en' | 'sw' | 'ar' | 'fr'>('en');
   const [previewTemplate, setPreviewTemplate] = useState<any>(null);
   
   const { templates, loading, error } = useBusinessTemplates();
@@ -57,23 +56,9 @@ const Templates = () => {
     }
   };
 
-  const t = translations[language] || translations.en;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
-  const handleGetStarted = () => {
-    if (selectedTemplateId) {
-      const template = templates.find(t => t.id === selectedTemplateId);
-      if (template) {
-        // Convert database template to the format expected by the strategy page
-        const templateData = {
-          id: template.id,
-          name: template.name,
-          description: template.description,
-          content: template.template_config
-        };
-        navigate('/strategy', { state: { template: templateData, language } });
-      }
-    }
-  };
+  // (handleGetStarted removed - templates navigate via direct selection)
 
   const handlePreviewTemplate = (template: any) => {
     setPreviewTemplate(template);
@@ -81,7 +66,6 @@ const Templates = () => {
 
   const handleSelectTemplate = (template: any) => {
     setPreviewTemplate(null);
-    setSelectedTemplateId(template.id);
     // Convert database template to the format expected by the strategy page
     const templateData = {
       id: template.id,
@@ -120,10 +104,10 @@ const Templates = () => {
                 <Home className="w-4 h-4" />
                 {t.home}
               </Button>
-              <LanguageSelector 
-                currentLanguage={language}
-                onLanguageChange={setLanguage}
-              />
+                          <LanguageSelector 
+                            currentLanguage={language}
+                            onLanguageChange={(lang: string) => setLanguage(lang as any)}
+                          />
               <Button 
                 variant="outline" 
                 size="sm" 

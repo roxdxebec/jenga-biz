@@ -116,8 +116,8 @@ const UserDashboard = ({ }: UserDashboardProps) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [allMilestones, setAllMilestones] = useState<any[]>([]);
-    const [loadingMilestones, setLoadingMilestones] = useState(true);
-    const [loadingFinancial, setLoadingFinancial] = useState(true);
+    const [, setLoadingMilestones] = useState(true);
+    const [, setLoadingFinancial] = useState(true);
   const [financialData, setFinancialData] = useState<any>({ totalRevenue: 0, totalExpenses: 0, recentTransactions: [] });
   
   const [reportModalOpen, setReportModalOpen] = useState(false);

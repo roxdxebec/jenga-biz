@@ -1,104 +1,27 @@
 import { supabase } from '@/integrations/supabase/client';
-import { PostgrestError } from '@supabase/supabase-js';
+import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 
-type Nullable<T> = T | null;
+// DB row types using generated Supabase types
+type DbBusiness = Tables<'businesses'>;
+type DbStrategyRow = Tables<'strategies'>;
+type DbMilestoneRow = Tables<'milestones'>;
 
-export type BusinessStage = 'idea' | 'launch' | 'growth' | 'scale' | 'ideation';
-export type MilestoneStatus = 'pending' | 'approved' | 'rejected' | 'expired' | 'cancelled';
-export type MilestoneType = 'business_registration' | 'first_customer' | 'first_hire' | 'break_even' | 'loan_application' | 'investment_ready' | 'other';
+type DbBusinessInsert = TablesInsert<'businesses'>;
+type DbStrategyInsert = TablesInsert<'strategies'>;
+type DbMilestoneInsert = TablesInsert<'milestones'>;
 
-export interface BusinessInput {
-  user_id: string;
-  hub_id?: string | null;
-  name: string;
-  business_type?: string | null;
-  stage?: BusinessStage | null;
-  description?: string | null;
-  registration_number?: string | null;
-  registration_certificate_url?: string | null;
-  is_active?: boolean | null;
-  registration_certificate_file?: File | null;
-}
-
-// Database types
-export interface Business {
-  id: string;
-  user_id: string;
-  hub_id: string | null;
-  name: string;
-  business_type: string | null;
-  stage: BusinessStage | null;
-  description: string | null;
-  registration_number: string | null;
-  registration_certificate_url: string | null;
-  is_active: boolean | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Strategy {
-  id: string;
-  user_id: string;
-  business_id: string;
-  business_name: string;
-  business_stage: BusinessStage;
-  vision: string;
-  mission: string;
-  target_market: string;
-  revenue_model: string;
-  value_proposition: string;
-  key_partners: string;
-  marketing_approach: string;
-  operational_needs: string;
-  growth_goals: string;
-  created_at: string;
-  updated_at: string;
+// Exported domain types (normalized shapes returned by this client)
+export type Business = DbBusiness;
+export type Milestone = DbMilestoneRow;
+export type Strategy = DbStrategyRow & {
   milestones: Milestone[];
-}
+  business?: Business | null;
+};
 
-export interface Milestone {
-  id: string;
-  strategy_id: string;
-  title: string;
-  description: string;
-  status: MilestoneStatus;
-  target_date: Nullable<string>;
-  created_at: string;
-  updated_at: string;
-  milestone_type: MilestoneType;
-  completed_at: Nullable<string>;
-}
-
-// Input types
-export interface StrategyInput {
-  user_id: string;
-  business_id?: string; // Optional for creation, will be set by the backend if not provided
-  business_name: string;
-  business_stage: BusinessStage;
-  business_type?: string;
-  description?: string;
-  registration_number?: string;
-  registration_certificate_url?: string;
-  vision: string;
-  mission: string;
-  target_market: string;
-  revenue_model: string;
-  value_proposition: string;
-  key_partners: string;
-  marketing_approach: string;
-  operational_needs: string;
-  growth_goals: string;
-}
-
-export interface MilestoneInput {
-  strategy_id: string;
-  title: string;
-  description: string;
-  status: MilestoneStatus;
-  target_date?: string | null;
-  milestone_type: MilestoneType;
-  completed_at?: string | null;
-}
+// Input types used by higher-level code (allow file upload field for business)
+export type BusinessInput = DbBusinessInsert & { registration_certificate_file?: File | null; registration_certificate_url?: string | null };
+export type StrategyInput = DbStrategyInsert;
+export type MilestoneInput = DbMilestoneInsert;
 
 class StrategyClient {
   // Business Methods
@@ -111,7 +34,7 @@ class StrategyClient {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Business;
     } catch (error) {
       console.error('Error creating business:', error);
       throw error;
@@ -128,7 +51,7 @@ class StrategyClient {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Business;
     } catch (error) {
       console.error('Error updating business:', error);
       throw error;
@@ -147,7 +70,7 @@ class StrategyClient {
         if (error.code === 'PGRST116') return null; // Not found
         throw error;
       }
-      return data;
+      return data as Business;
     } catch (error) {
       console.error('Error fetching business:', error);
       throw error;
@@ -163,7 +86,7 @@ class StrategyClient {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as Business[];
     } catch (error) {
       console.error('Error fetching businesses:', error);
       throw error;
@@ -186,11 +109,11 @@ class StrategyClient {
       if (uploadError) throw uploadError;
 
       // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { data: publicData } = supabase.storage
         .from('business-documents')
-        .getPublicUrl(filePath);
+        .getPublicUrl(filePath) as any;
 
-      return publicUrl;
+      return (publicData as any)?.publicUrl || '';
     } catch (error) {
       console.error('Error uploading business certificate:', error);
       throw error;
@@ -220,7 +143,12 @@ class StrategyClient {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      return strategies || [];
+      const rows = (strategies || []) as unknown as Array<DbStrategyRow & { milestones?: DbMilestoneRow[]; business?: DbBusiness }>;
+      return rows.map(r => ({
+        ...r,
+        milestones: (r.milestones || []) as Milestone[],
+        business: r.business || null,
+      }));
     } catch (error) {
       console.error('Error fetching strategies:', error);
       throw error;
@@ -257,13 +185,18 @@ class StrategyClient {
       throw error;
     }
 
-    return data as Strategy;
+    const row = data as unknown as (DbStrategyRow & { milestones?: DbMilestoneRow[]; business?: DbBusiness });
+    return {
+      ...row,
+      milestones: (row.milestones || []) as Milestone[],
+      business: row.business || null,
+    } as Strategy;
   }
 
   async createStrategy(strategyData: Omit<StrategyInput, 'id' | 'created_at' | 'updated_at'>): Promise<Strategy> {
     const { data, error } = await supabase
       .from('strategies')
-      .insert([strategyData])
+      .insert([strategyData as any])
       .select()
       .single();
 
@@ -272,13 +205,15 @@ class StrategyClient {
       throw error;
     }
 
-    return data as Strategy;
+    // Created strategy rows won't include related milestones/business by default
+    const created = data as DbStrategyRow;
+    return { ...created, milestones: [] } as Strategy;
   }
 
   async updateStrategy(id: string, updates: Partial<StrategyInput>): Promise<Strategy> {
     const { data, error } = await supabase
       .from('strategies')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single();
@@ -288,7 +223,8 @@ class StrategyClient {
       throw error;
     }
 
-    return data as Strategy;
+    const updated = data as DbStrategyRow;
+    return { ...updated, milestones: [] } as Strategy;
   }
 
   // Milestone Methods
@@ -299,7 +235,7 @@ class StrategyClient {
 
     const { data, error } = await supabase
       .from('milestones')
-      .insert([milestone])
+      .insert([milestone as any])
       .select()
       .single();
 
@@ -313,7 +249,7 @@ class StrategyClient {
   ): Promise<Milestone> {
     const { data, error } = await supabase
       .from('milestones')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single();
@@ -336,21 +272,21 @@ class StrategyClient {
     try {
       // Attempt to remove milestones first to avoid FK constraint issues
       const { error: milestonesError } = await supabase
-        .from('milestones')
-        .delete()
-        .eq('strategy_id', id);
+          .from('milestones')
+          .delete()
+          .eq('strategy_id', id);
 
-      if (milestonesError) {
-        console.error('Error deleting related milestones for strategy:', milestonesError);
-        throw milestonesError;
-      }
+        if (milestonesError) {
+          console.error('Error deleting related milestones for strategy:', milestonesError);
+          throw milestonesError;
+        }
 
-      const { error } = await supabase
-        .from('strategies')
-        .delete()
-        .eq('id', id);
+        const { error } = await supabase
+          .from('strategies')
+          .delete()
+          .eq('id', id);
 
-      if (error) throw error;
+        if (error) throw error;
     } catch (error) {
       console.error('Error deleting strategy:', error);
       throw error;
@@ -395,7 +331,7 @@ class StrategyClient {
         strategy_data: {
           ...strategyData,
           // Ensure business_id is not set if we're creating a new business
-          business_id: businessData ? undefined : strategyData.business_id,
+          business_id: businessData ? undefined : (strategyData as any).business_id,
         },
         milestones_data: milestonesData.map(milestone => ({
             ...milestone,
@@ -432,18 +368,17 @@ class StrategyClient {
         throw new Error('No data returned from the database');
       }
 
-      // Type assertion for the response data
+      // The RPC returns a composite object: { strategy, milestones, business }
       const responseData = data as {
-        strategy: Strategy;
-        milestones?: Milestone[];
-        business?: Business;
+        strategy: DbStrategyRow;
+        milestones: DbMilestoneRow[];
+        business: DbBusiness | null;
       };
 
-      // Return the results
       return {
-        strategy: responseData.strategy,
+        strategy: { ...responseData.strategy, milestones: responseData.milestones || [], business: responseData.business || null } as Strategy,
         milestones: responseData.milestones || [],
-        business: responseData.business
+        business: responseData.business || undefined
       };
     } catch (error) {
       console.error('Error in saveStrategyWithBusinessAndMilestones:', error);

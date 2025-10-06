@@ -8,13 +8,9 @@ import {
   type Milestone,
   type Business,
   type BusinessInput,
-  type BusinessStage
 } from '@/lib/strategy-client';
 import { StrategyFinancialsService, type FinancialRecord } from '@/services/strategyFinancials';
 import { formatError } from '@/lib/formatError';
-
-type MilestoneStatus = 'pending' | 'approved' | 'rejected' | 'expired' | 'cancelled';
-type MilestoneType = 'business_registration' | 'first_customer' | 'first_hire' | 'break_even' | 'loan_application' | 'investment_ready' | 'other';
 
 // Types are now imported from strategy-client
 
@@ -110,14 +106,15 @@ export const useStrategy = () => {
 
     try {
       let savedStrategy: Strategy;
-      let certificateUrl = strategyData.registration_certificate_url;
-      const businessId = strategyData.business_id;
+      // Certificate URL may be provided on either strategyData (legacy) or businessData; prefer provided value
+      let certificateUrl = (strategyData as any).registration_certificate_url ?? undefined;
+      const businessId = (strategyData as any).business_id;
 
-      // Handle file upload if a new certificate file is provided
-      if (strategyData.registration_certificate_file) {
+      // Handle file upload if a new certificate file is provided (legacy field)
+      if ((strategyData as any).registration_certificate_file) {
         try {
           certificateUrl = await strategyClient.uploadBusinessCertificate(
-            strategyData.registration_certificate_file,
+            (strategyData as any).registration_certificate_file,
             businessId || 'temp'
           );
         } catch (error) {
@@ -135,16 +132,16 @@ export const useStrategy = () => {
           id: businessId,
           user_id: user.id,
           name: updates.business_name,
-          business_type: updates.business_type,
-          stage: updates.business_stage,
-          description: updates.description,
-          registration_number: updates.registration_number,
-          registration_certificate_url: certificateUrl,
-        };
+          business_type: updates.business_type ?? null,
+          stage: (updates as any).business_stage ?? null,
+          description: updates.description ?? null,
+          registration_number: updates.registration_number ?? null,
+          registration_certificate_url: certificateUrl ?? null,
+        } as BusinessInput & { id?: string };
 
         // Use the new method to update strategy with business
         const result = await strategyClient.saveStrategyWithBusinessAndMilestones(
-          { ...updates, id, registration_certificate_url: certificateUrl },
+          { ...(updates as any), id },
           businessData,
           [] // No milestones to update in this flow
         );
@@ -155,16 +152,16 @@ export const useStrategy = () => {
         const businessData = {
           user_id: user.id,
           name: strategyData.business_name,
-          business_type: strategyData.business_type || '',
-          stage: strategyData.business_stage,
-          description: strategyData.description || '',
-          registration_number: strategyData.registration_number || '',
-          registration_certificate_url: certificateUrl || '',
-        };
+          business_type: (strategyData as any).business_type ?? null,
+          stage: (strategyData as any).business_stage ?? null,
+          description: strategyData.description ?? null,
+          registration_number: strategyData.registration_number ?? null,
+          registration_certificate_url: certificateUrl ?? null,
+        } as BusinessInput;
 
         // Use the new method to create strategy with business
         const result = await strategyClient.saveStrategyWithBusinessAndMilestones(
-          { ...strategyData, registration_certificate_url: certificateUrl },
+          (strategyData as any),
           businessData,
           [] // No milestones to create in this flow
         );
@@ -210,12 +207,12 @@ export const useStrategy = () => {
 
     try {
       // Handle file upload if a new certificate file is provided
-      let certificateUrl = businessData.registration_certificate_url;
-      
-      if (businessData.registration_certificate_file) {
+      let certificateUrl = (businessData as any).registration_certificate_url ?? undefined;
+
+      if ((businessData as any).registration_certificate_file) {
         try {
           certificateUrl = await strategyClient.uploadBusinessCertificate(
-            businessData.registration_certificate_file,
+            (businessData as any).registration_certificate_file,
             businessData.id || 'temp'
           );
         } catch (error) {
@@ -227,17 +224,16 @@ export const useStrategy = () => {
       // Prepare business data
       const businessUpdate = {
         ...businessData,
-        registration_certificate_url: certificateUrl,
+        registration_certificate_url: certificateUrl ?? null,
         user_id: user.id
-      };
+      } as BusinessInput & { id?: string };
 
-      // Prepare strategy data
-      const strategyUpdate = {
-        ...strategyData,
+      // Prepare strategy data (keep it permissive)
+      const strategyUpdate = ({
+        ...(strategyData as any),
         user_id: user.id,
         business_name: businessData.name,
-        business_stage: businessData.stage || 'idea'
-      };
+      } as any);
 
       // Call the enhanced method
       const result = await strategyClient.saveStrategyWithBusinessAndMilestones(
@@ -245,8 +241,9 @@ export const useStrategy = () => {
         businessUpdate,
         milestonesData.map(milestone => ({
           ...milestone,
-          business_id: businessData.id || undefined
-        }))
+          business_id: (businessData as any).id || undefined,
+          strategy_id: (milestone as any).strategy_id || (strategyData as any).id || undefined,
+        })) as any
       );
 
       // Update local state
@@ -289,15 +286,25 @@ export const useStrategy = () => {
       user_id: strategyData.user_id || '',
       name: strategyData.business_name || 'My Business',
       business_type: 'general',
-      stage: strategyData.business_stage || 'idea',
+      stage: (strategyData as any).business_stage ?? 'idea',
       description: '',
       registration_number: '',
       registration_certificate_url: ''
     };
 
+    // Ensure we pass a fully-populated business object (no undefined fields) matching the DB shape
+    const businessDataFull = {
+      ...businessData,
+      business_type: businessData.business_type ?? null,
+      stage: businessData.stage ?? null,
+      description: businessData.description ?? null,
+      registration_number: businessData.registration_number ?? null,
+      registration_certificate_url: businessData.registration_certificate_url ?? null,
+    } as Omit<Business, 'id' | 'created_at' | 'updated_at'> & { id?: string };
+
     return saveStrategyWithBusinessAndMilestones(
       strategyData,
-      businessData,
+      businessDataFull,
       milestonesData,
       options
     );
@@ -338,23 +345,26 @@ export const useStrategy = () => {
       const { data, error } = await query;
       if (error) throw error;
       
-      // Ensure data matches Milestone type
-      const formattedMilestones = (data || []).map((milestone: any) => ({
-        id: milestone.id,
-        strategy_id: milestone.strategy_id,
-        // business_id removed from milestone shape; keep for backward compat if present
-        // business_id: milestone.business_id,
-        title: milestone.title,
-        description: milestone.description || '',
-        status: (milestone.status || 'pending') as MilestoneStatus,
-        target_date: milestone.target_date || null,
-        created_at: milestone.created_at,
-        updated_at: milestone.updated_at,
-        milestone_type: (milestone.milestone_type || 'other') as MilestoneType,
-        completed_at: milestone.completed_at || null
-      }));
-      
-      setMilestones(formattedMilestones);
+      // Map DB rows into our Milestone type (ensuring required fields exist)
+      const formattedMilestonesAny = (data || []).map((milestone: any) => {
+        const obj: any = {};
+        obj.id = milestone.id;
+        obj.strategy_id = milestone.strategy_id ?? null;
+        obj.business_stage = milestone.business_stage ?? null;
+        obj.title = milestone.title;
+        // DB milestone rows don't always include free-text 'description'; include if present
+        obj.description = (milestone as any).description ?? null;
+        obj.status = (milestone.status ?? null) as any;
+        obj.target_date = milestone.target_date ?? null;
+        obj.created_at = milestone.created_at;
+        obj.updated_at = milestone.updated_at;
+        obj.milestone_type = milestone.milestone_type ?? null;
+        obj.completed_at = milestone.completed_at ?? null;
+        obj.user_id = milestone.user_id ?? user?.id ?? '';
+        return obj;
+      });
+
+      setMilestones(formattedMilestonesAny as Milestone[]);
     } catch (error) {
       console.error('Error loading milestones:', error);
     }
@@ -367,15 +377,16 @@ export const useStrategy = () => {
   }) => {
     if (!user || !currentStrategy?.id) return null;
 
-    const milestoneData: Omit<Milestone, 'id' | 'created_at' | 'updated_at'> & { id?: string } = {
+    const milestoneData: any = {
       id: milestone.id,
-      strategy_id: milestone.strategy_id || currentStrategy.id,
+      strategy_id: milestone.strategy_id || currentStrategy?.id || undefined,
       title: milestone.title,
-      description: milestone.description,
-      status: milestone.status,
-      target_date: milestone.target_date,
-      milestone_type: milestone.milestone_type || 'other' as MilestoneType,
-      completed_at: milestone.completed_at || null
+      description: (milestone as any).description ?? null,
+      status: milestone.status as any,
+      target_date: milestone.target_date ?? null,
+      milestone_type: (milestone.milestone_type as any) ?? null,
+      completed_at: milestone.completed_at ?? null,
+      user_id: user?.id ?? undefined,
     };
 
     if (!milestoneData.strategy_id && !currentStrategy?.id) {
@@ -390,14 +401,14 @@ export const useStrategy = () => {
     try {
       const { data, error } = await supabase
         .from('milestones')
-        .upsert(milestoneData, { onConflict: 'id' })
+        .upsert(milestoneData as any, { onConflict: 'id' })
         .select()
         .single();
       
       if (error) throw error;
 
       setMilestones(prev =>
-        milestone.id ? prev.map(m => (m.id === data.id ? data : m)) : [data, ...prev]
+        milestone.id ? prev.map(m => (m.id === (data as any).id ? (data as any) : m)) : [(data as any), ...prev]
       );
 
       toast({
@@ -507,9 +518,9 @@ export const useStrategy = () => {
     try {
       const newMilestone = await strategyClient.createMilestone({
         ...milestoneData,
-        strategy_id: currentStrategy.id,
+        strategy_id: currentStrategy?.id,
         user_id: user?.id,
-      });
+      } as any);
 
       setMilestones(prev => [...prev, newMilestone]);
       return newMilestone;
@@ -674,6 +685,7 @@ export const useStrategy = () => {
     loadStrategy,
     saveStrategy,
     saveStrategyWithMilestones,
+  autoSaveStrategy,
     saveMilestone,
     saveStrategyWithBusinessAndMilestones,
     createFromTemplate,
@@ -687,5 +699,9 @@ export const useStrategy = () => {
     deleteMilestone,
     loadMilestones,
     deleteStrategy,
+    // helper functions
+    getBusiness,
+    getBusinesses,
+    uploadBusinessCertificate,
   };
 }

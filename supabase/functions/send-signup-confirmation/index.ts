@@ -1,7 +1,4 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +7,10 @@ const corsHeaders = {
 
 interface SignupEmailRequest {
   email: string;
-  confirmationUrl: string;
+  confirmationUrl?: string;
+  subject?: string;
+  text?: string;
+  html?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,15 +20,23 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, confirmationUrl }: SignupEmailRequest = await req.json();
+    const body: SignupEmailRequest = await req.json();
 
-    console.log('Sending signup confirmation email to:', email);
+    // Log full payload in development to help debugging (best-effort)
+    const isDev = (Deno.env.get('ENV') === 'development') || (Deno.env.get('DEV') === 'true');
+    if (isDev) {
+      try {
+        console.log('send-signup-confirmation - incoming payload:', JSON.stringify(body));
+      } catch (e) {
+        console.log('send-signup-confirmation - incoming payload (unserializable)');
+      }
+    }
 
-    const emailResponse = await resend.emails.send({
-      from: "Jenga Biz Africa <support@jengabiz.africa>",
-      to: [email],
-      subject: "Welcome to Jenga Biz Africa - Confirm Your Email",
-      html: `
+    const email = body.email;
+    const confirmationUrl = body.confirmationUrl || '';
+    const subject = body.subject || 'Welcome to Jenga Biz Africa - Confirm Your Email';
+    const text = body.text || `Please confirm your email by visiting: ${confirmationUrl}`;
+    const html = body.html || `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background-color: #f97316; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 24px;">Welcome to Jenga Biz Africa!</h1>
@@ -71,28 +79,54 @@ const handler = async (req: Request): Promise<Response> => {
             </p>
           </div>
         </div>
-      `,
-    });
+      `;
 
-    console.log("Signup confirmation email sent successfully:", emailResponse);
+    console.log('Inviting user via Supabase Auth invite:', email);
 
-    return new Response(JSON.stringify({ success: true, messageId: emailResponse.data?.id }), {
-      status: 200,
+    // Use Supabase Auth's invite endpoint so the project's configured mailer sends the invite.
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('VITE_SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('VITE_SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in function environment');
+      return new Response(JSON.stringify({ error: 'server_config_missing', message: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in function environment' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    const inviteUrl = `${supabaseUrl.replace(/\/$/, '')}/auth/v1/invite${confirmationUrl ? `?redirect_to=${encodeURIComponent(confirmationUrl)}` : ''}`;
+
+    const inviteResponse = await fetch(inviteUrl, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${serviceRoleKey}`,
+        'apikey': serviceRoleKey,
+        'x-api-key': serviceRoleKey,
       },
+      body: JSON.stringify({ email }),
     });
+
+    const inviteJson = await inviteResponse.text();
+    let inviteBody: any = null;
+    try { inviteBody = inviteJson ? JSON.parse(inviteJson) : null; } catch (e) { inviteBody = inviteJson; }
+
+    if (!inviteResponse.ok) {
+      console.error('Supabase invite failed:', inviteResponse.status, inviteBody);
+      return new Response(JSON.stringify({ success: false, status: inviteResponse.status, details: inviteBody }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    console.log('Supabase invite response:', inviteResponse.status, inviteBody);
+
+    return new Response(JSON.stringify({ success: true, data: inviteBody }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
   } catch (error: any) {
-    console.error("Error sending signup confirmation email:", error);
+    console.error('Error sending signup confirmation email:', error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: error.response?.body || 'Unknown error'
+      JSON.stringify({
+        error: error?.message || String(error),
+        details: error?.response?.body || null,
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
       }
     );
   }

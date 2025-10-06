@@ -10,6 +10,7 @@ import Landing from "./pages/Landing";
 // Auth page removed - use EnhancedAuthDialog in pages
 import NotFound from "./pages/NotFound";
 import PasswordReset from "./pages/PasswordReset";
+import Register from './pages/Register';
 import Templates from "./pages/Templates";
 import Strategy from "./pages/Strategy";
 import Profile from "./pages/Profile";
@@ -36,6 +37,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/reset-password" element={<PasswordReset />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/templates" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Templates /></ProtectedRoute>} />
             <Route path="/strategy" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Strategy /></ProtectedRoute>} />
             <Route path="/strategies" element={<ProtectedRoute allowedRoles={["entrepreneur","hub_manager","admin","super_admin"]}><Strategy /></ProtectedRoute>} />

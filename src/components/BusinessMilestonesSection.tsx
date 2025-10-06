@@ -326,7 +326,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
-    const milestone = milestones.find(m => m.id === milestoneId);
+    const milestone = milestones.find((m: any) => m.id === milestoneId);
     if (!milestone) return;
 
     const strategyId = getStrategyId();
@@ -348,7 +348,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
   };
 
   const handleUpdateMilestoneDate = async (milestoneId: string, date: Date | undefined) => {
-    const milestone = milestones.find(m => m.id === milestoneId);
+    const milestone = milestones.find((m: any) => m.id === milestoneId);
     if (!milestone) return;
 
     const strategyId = getStrategyId();
@@ -387,7 +387,7 @@ const BusinessMilestonesSection = ({ isPro = true, strategyData = null, language
 
 
   const suggestedMilestones = getStageSpecificMilestones(businessStage);
-  const existingMilestoneTitles = milestones.map(m => m.title.toLowerCase());
+  const existingMilestoneTitles = milestones.map((m: any) => (m.title || '').toLowerCase());
   const availableSuggestions = suggestedMilestones.filter(
     (suggestion: string) => !existingMilestoneTitles.includes(suggestion.toLowerCase())
   );
