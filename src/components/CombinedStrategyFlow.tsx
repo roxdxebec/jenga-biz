@@ -468,18 +468,6 @@ const CombinedStrategyFlow = ({
                   {t.home}
                 </Button>
 
-                {/* Delete button - only show when there's a current strategy */}
-                {currentStrategy?.id && (
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                    className="flex items-center gap-2 text-xs sm:text-sm"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete Strategy
-                  </Button>
-                )}
               </div>
             </div>
 
