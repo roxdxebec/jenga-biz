@@ -289,6 +289,10 @@ const CombinedStrategyFlow = ({
       try { await loadStrategies(); } catch (e) { /* ignore refresh errors */ }
       if (result && result.strategy && typeof setCurrentStrategy === 'function') {
         setCurrentStrategy(result.strategy);
+        try {
+          // Update the URL so milestones/financials have a strategy_id source immediately
+          navigate(`/strategy?id=${result.strategy.id}&tab=milestones`);
+        } catch {}
       }
 
       toast({ title: 'Success', description: 'Your strategy and business information have been saved successfully.' });
@@ -603,7 +607,7 @@ const CombinedStrategyFlow = ({
           <section id="milestones-section">
             <BusinessMilestonesSection
               isPro={true}
-              strategyData={strategy}
+              strategyData={{ ...strategy, id: currentStrategy?.id }}
               language={language}
               onMilestonesChange={handleMilestonesChange}
             />
