@@ -656,14 +656,16 @@ const CombinedStrategyFlow = ({
           <div className="border-t border-gray-200"></div>
 
           {/* Financial Tracker Section */}
+          {currentStrategy?.id && (
           <section id="financial-tracker-section">
             <FinancialTracker
               language={language}
               currency={currency}
               currencySymbol={currencySymbol}
-              strategyId={currentStrategy?.id}
+              strategyId={currentStrategy.id}
             />
           </section>
+          )}
 
           {/* Financial Summary */}
           <div className="bg-white rounded-lg p-6 shadow-sm border">
