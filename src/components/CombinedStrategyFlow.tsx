@@ -431,7 +431,11 @@ const CombinedStrategyFlow = ({
         await deleteStrategy(currentStrategy.id);
       }
       toast({ title: 'Strategy deleted', description: 'The strategy has been successfully deleted.' });
-      handleHome();
+      try {
+        navigate('/dashboard');
+      } catch (err) {
+        window.location.href = '/dashboard';
+      }
     } catch (error) {
       console.error('Failed to delete strategy:', error);
       toast({ title: 'Error', description: 'Failed to delete the strategy. Please try again.', variant: 'destructive' });
